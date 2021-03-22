@@ -2,5 +2,5 @@
 <?import javafx.scene.layout.GridPane?>
 <GridPane fx:controller="sample.Controller"
           xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
-    <JFXButton>Holap</JFXButton>
+    <JFXButton fx:id="prueba">Holap</JFXButton>
 </GridPane>
