@@ -97,3 +97,14 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 ### ========================= ###
+
+**/nbproject/private/
+**/nbproject/Makefile-*.mk
+**/nbproject/Package-*.bash
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+### ======================== ###
