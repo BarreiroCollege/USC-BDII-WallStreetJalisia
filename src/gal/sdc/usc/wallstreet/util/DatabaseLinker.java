@@ -10,8 +10,6 @@ import java.util.HashMap;
 import java.util.Properties;
 
 public class DatabaseLinker {
-    private final static String DAO_PACKAGE = "gal.sdc.usc.wallstreet.repository";
-
     private static boolean cargado = false;
     private static HashMap<Class<? extends DAO>, DAO> daos;
 
@@ -45,7 +43,7 @@ public class DatabaseLinker {
 
     private void cargarDAOs(Connection conexion) {
         try {
-            Class<?>[] clases = PackageScanner.getClasses(DatabaseLinker.DAO_PACKAGE);
+            Class<?>[] clases = PackageScanner.getClasses();
             for (Class<?> clase : clases) {
                 Class<? extends DAO> claseDao = (Class<? extends DAO>) clase;
                 Constructor<?> ctor = claseDao.getConstructor(Connection.class);
