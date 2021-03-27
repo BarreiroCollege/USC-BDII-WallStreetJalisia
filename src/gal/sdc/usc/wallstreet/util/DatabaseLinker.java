@@ -1,7 +1,5 @@
 package gal.sdc.usc.wallstreet.util;
 
-import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -11,13 +9,19 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Properties;
 
-public class Connector {
-    private final HashMap<Class<? extends DAO>, DAO> daos;
+public class DatabaseLinker {
     private final static String DAO_PACKAGE = "gal.sdc.usc.wallstreet.repository";
 
-    public Connector() {
+    private static boolean cargado = false;
+    private static HashMap<Class<? extends DAO>, DAO> daos;
+
+    public DatabaseLinker() {
+        if (!DatabaseLinker.cargado) cargarLinker();
+    }
+
+    private void cargarLinker() {
         Properties configuracion = new Properties();
-        this.daos = new HashMap<>();
+        DatabaseLinker.daos = new HashMap<>();
 
         try (FileInputStream arqConfiguracion = new FileInputStream("db.properties")) {
             configuracion.load(arqConfiguracion);
@@ -33,6 +37,7 @@ public class Connector {
                     usuario);
 
             cargarDAOs(conexion);
+            DatabaseLinker.cargado = true;
         } catch (IOException | SQLException f) {
             System.out.println(f.getMessage());
         }
@@ -40,12 +45,12 @@ public class Connector {
 
     private void cargarDAOs(Connection conexion) {
         try {
-            Class<?>[] clases = PackageScanner.getClasses(DAO_PACKAGE);
+            Class<?>[] clases = PackageScanner.getClasses(DatabaseLinker.DAO_PACKAGE);
             for (Class<?> clase : clases) {
                 Class<? extends DAO> claseDao = (Class<? extends DAO>) clase;
                 Constructor<?> ctor = claseDao.getConstructor(Connection.class);
                 DAO object = (DAO) ctor.newInstance(conexion);
-                daos.put(claseDao, object);
+                DatabaseLinker.daos.put(claseDao, object);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -53,6 +58,6 @@ public class Connector {
     }
 
     public DAO getDAO(Class<? extends DAO> clase) {
-        return daos.get(clase);
+        return DatabaseLinker.daos.get(clase);
     }
 }
