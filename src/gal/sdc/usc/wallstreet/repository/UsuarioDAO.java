@@ -21,7 +21,16 @@ public class UsuarioDAO extends DAO {
             ps.setString(1, identificador);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                usuario = Usuario.Builder(rs.getString("identificador"))
+                usuario = new Usuario.Builder(rs.getString("identificador"))
+                        .withClave(rs.getString("clave"))
+                        .withDireccion(rs.getString("direccion"))
+                        .withCp(rs.getString("cp"))
+                        .withLocalidad(rs.getString("localidad"))
+                        .withTelefono(rs.getInt("telefono"))
+                        .withSaldo(rs.getFloat("saldo"))
+                        .withSaldoBloqueado(rs.getFloat("saldo_bloqueado"))
+                        .withActivo(rs.getBoolean("activo"))
+                        .build();
             }
         } catch (SQLException e) {
             e.printStackTrace();
