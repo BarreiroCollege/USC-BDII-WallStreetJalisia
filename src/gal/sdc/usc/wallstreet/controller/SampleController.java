@@ -1,7 +1,7 @@
 package gal.sdc.usc.wallstreet.controller;
 
 import com.jfoenix.controls.JFXButton;
-import gal.sdc.usc.wallstreet.repository.PagosDAO;
+import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.util.DatabaseLinker;
 import javafx.fxml.FXML;
 
@@ -10,7 +10,7 @@ public class SampleController extends DatabaseLinker {
     private JFXButton prueba;
 
     private void prueba() {
-        PagosDAO dao = (PagosDAO) super.getDAO(PagosDAO.class);
-        dao.carga();
+        UsuarioDAO dao = (UsuarioDAO) super.getDAO(UsuarioDAO.class);
+        dao.getUsuarioPorIdentificador("fkgjhbndfhj");
     }
 }
