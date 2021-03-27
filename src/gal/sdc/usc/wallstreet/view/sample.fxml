@@ -1,6 +1,6 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import javafx.scene.layout.GridPane?>
-<GridPane fx:controller="sample.Controller"
+<GridPane fx:controller="gal.sdc.usc.wallstreet.controller.SampleController"
           xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
     <JFXButton fx:id="prueba">Holap</JFXButton>
 </GridPane>
