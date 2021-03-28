@@ -34,7 +34,7 @@ public abstract class DAO<E extends Entidad> {
             if (!columna.pk()) continue;
 
             if (type.equals(Entidad.class)) {
-                paresPk.putAll(resolverPks((Entidad) field.get(e)));
+                paresPk.putAll(resolverPks(field.get(e)));
             } else {
                 paresPk.put(columna.value(), field.get(e));
             }
@@ -91,9 +91,7 @@ public abstract class DAO<E extends Entidad> {
 
         try (PreparedStatement ps = this.conexion.prepareStatement(SQL.toString())) {
             int i = 1;
-            Iterator<Object> itMapValues = paresPk.values().iterator();
-            while (itMapValues.hasNext()) {
-                Object value = itMapValues.next();
+            for (Object value : paresPk.values()) {
                 if (value instanceof Float) {
                     ps.setFloat(i, (Float) value);
                 } else if (value instanceof Integer) {
