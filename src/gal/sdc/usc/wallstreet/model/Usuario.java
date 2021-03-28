@@ -1,5 +1,7 @@
 package gal.sdc.usc.wallstreet.model;
 
+import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
+
 import java.util.Objects;
 
 @Tabla("usuario")

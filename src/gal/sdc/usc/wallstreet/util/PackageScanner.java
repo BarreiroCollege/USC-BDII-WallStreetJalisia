@@ -9,6 +9,11 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+/**
+ * Clase que escanea un paquete y devuelve todas sus clases. Tomado
+ * originalmente de https://stackoverflow.com/a/520344/6626193 y modificado
+ * para su funcionamiento en NetBeans.
+ */
 public class PackageScanner {
     private final static String DAO_PACKAGE = "gal.sdc.usc.wallstreet.repository";
 

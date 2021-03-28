@@ -1,5 +1,7 @@
 package gal.sdc.usc.wallstreet.util;
 
+import gal.sdc.usc.wallstreet.model.Entidad;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -9,20 +11,35 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Properties;
 
+/**
+ * Clase que actúa de enlace con la base de datos. Puede ser extendida por cualquier
+ * clase al usar variables estáticas.
+ */
 public class DatabaseLinker {
+    // Indica que la conexión se ha inicializado
     private static boolean cargado = false;
-    private static HashMap<Class<? extends DAO>, DAO> daos;
+    // Lista de DAOs disponibles
+    private static HashMap<Class<? extends DAO<? extends Entidad>>, DAO<? extends Entidad>> daos;
+
+    static {
+        // Inicializar el hashmap
+        DatabaseLinker.daos = new HashMap<>();
+    }
 
     public DatabaseLinker() {
         if (!DatabaseLinker.cargado) cargarLinker();
     }
 
+    /**
+     * Función que inicializa la base de datos de la configuración
+     */
     private void cargarLinker() {
+        // Leer el archivo de configuración properties
         Properties configuracion = new Properties();
-        DatabaseLinker.daos = new HashMap<>();
-
         try (FileInputStream arqConfiguracion = new FileInputStream("db.properties")) {
             configuracion.load(arqConfiguracion);
+
+            // Cargar la configuración
             Properties usuario = new Properties();
             String gestor = configuracion.getProperty("engine");
             usuario.setProperty("user", configuracion.getProperty("user"));
@@ -34,20 +51,32 @@ public class DatabaseLinker {
                             configuracion.getProperty("dbname"),
                     usuario);
 
+            // Inicializar todos los DAOs
             cargarDAOs(conexion);
+            // Marcar como ya inicializado
             DatabaseLinker.cargado = true;
         } catch (IOException | SQLException f) {
             System.out.println(f.getMessage());
         }
     }
 
+    /**
+     * Carga todos los DAO en el HashMap
+     * @param conexion conexión con la base de datos
+     */
     private void cargarDAOs(Connection conexion) {
         try {
+            // Analizar el paquete con las clases
             Class<?>[] clases = PackageScanner.getClasses();
+            // E iterar
             for (Class<?> clase : clases) {
-                Class<? extends DAO> claseDao = (Class<? extends DAO>) clase;
+                // Castear la clase a un DAO
+                Class<? extends DAO<? extends Entidad>> claseDao = (Class<? extends DAO<? extends Entidad>>) clase;
+                // Obtener el tipo de constructor estándar
                 Constructor<?> ctor = claseDao.getConstructor(Connection.class);
-                DAO object = (DAO) ctor.newInstance(conexion);
+                // Invocar al constructor
+                DAO<? extends Entidad> object = (DAO<? extends Entidad>) ctor.newInstance(conexion);
+                // Insertar en el hashmap de DAOs
                 DatabaseLinker.daos.put(claseDao, object);
             }
         } catch (Exception e) {
@@ -55,6 +84,12 @@ public class DatabaseLinker {
         }
     }
 
+    /**
+     * Devuelve un DAO que haya sido inicializado
+     * @param clase clase del DAO a buscar
+     * @param <D> DAO de salida
+     * @return DAO instanciado
+     */
     public <D extends DAO> D getDAO(Class<D> clase) {
         return (D) DatabaseLinker.daos.get(clase);
     }
