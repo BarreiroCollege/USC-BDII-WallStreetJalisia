@@ -1,6 +1,14 @@
-<?import com.jfoenix.controls.JFXButton?>
-<?import javafx.scene.layout.GridPane?>
-<GridPane fx:controller="gal.sdc.usc.wallstreet.controller.SampleController"
-          xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
-    <JFXButton fx:id="prueba">Holap</JFXButton>
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane alignment="center" hgap="10" vgap="10" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="gal.sdc.usc.wallstreet.controller.SampleController">
+    <JFXButton fx:id="prueba" onAction="#prueba">Holap</JFXButton>
+   <columnConstraints>
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+   </rowConstraints>
 </GridPane>

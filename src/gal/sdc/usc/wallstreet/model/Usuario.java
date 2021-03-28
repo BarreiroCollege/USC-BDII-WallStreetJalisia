@@ -2,15 +2,33 @@ package gal.sdc.usc.wallstreet.model;
 
 import java.util.Objects;
 
-public class Usuario {
+@Tabla("usuario")
+public class Usuario implements Entidad {
+    @Columna(value = "identificador", pk = true)
     private String identificador;
+
+    @Columna("clave")
     private String clave;
+
+    @Columna("direccion")
     private String direccion;
+
+    @Columna("cp")
     private String cp;
+
+    @Columna("localidad")
     private String localidad;
+
+    @Columna("telefono")
     private Integer telefono;
+
+    @Columna("saldo")
     private Float saldo;
+
+    @Columna("saldo_bloqueado")
     private Float saldoBloqueado = 0.f;
+
+    @Columna("activo")
     private Boolean activo;
 
     private Usuario() {
@@ -18,10 +36,6 @@ public class Usuario {
 
     public String getIdentificador() {
         return identificador;
-    }
-
-    public void setIdentificador(String identificador) {
-        this.identificador = identificador;
     }
 
     public String getClave() {
@@ -119,8 +133,16 @@ public class Usuario {
     public static class Builder {
         private final Usuario usuario = new Usuario();
 
+        public Builder() {
+        }
+
         public Builder(String identificador) {
             usuario.identificador = identificador;
+        }
+
+        public Builder withIdentificador(String identificador) {
+            usuario.identificador = identificador;
+            return this;
         }
 
         public Builder withClave(String clave) {

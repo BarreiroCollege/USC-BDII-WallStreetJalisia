@@ -55,7 +55,7 @@ public class DatabaseLinker {
         }
     }
 
-    public DAO getDAO(Class<? extends DAO> clase) {
-        return DatabaseLinker.daos.get(clase);
+    public <D extends DAO> D getDAO(Class<D> clase) {
+        return (D) DatabaseLinker.daos.get(clase);
     }
 }
