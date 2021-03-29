@@ -1,13 +1,14 @@
 package gal.sdc.usc.wallstreet.model;
 
 import gal.sdc.usc.wallstreet.model.ddl.Columna;
+import gal.sdc.usc.wallstreet.model.ddl.Entidad;
 import gal.sdc.usc.wallstreet.model.ddl.Tabla;
 
 import java.util.Date;
 import java.util.Objects;
 
-@Tabla("comprar")
-public class Comprar {
+@Tabla("compra")
+public class Compra extends Entidad {
     @Columna(value = "fecha", pk = true)
     private Date fecha = new Date();
 
@@ -23,7 +24,7 @@ public class Comprar {
     @Columna("comision")
     private Float comision = 0.05f;
 
-    private Comprar() {
+    private Compra() {
     }
 
     public Date getFecha() {
@@ -58,10 +59,10 @@ public class Comprar {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Comprar comprar = (Comprar) o;
-        return fecha.equals(comprar.fecha) &&
-                ofertaVenta.equals(comprar.ofertaVenta) &&
-                usuarioCompra.equals(comprar.usuarioCompra);
+        Compra compra = (Compra) o;
+        return fecha.equals(compra.fecha) &&
+                ofertaVenta.equals(compra.ofertaVenta) &&
+                usuarioCompra.equals(compra.usuarioCompra);
     }
 
     @Override
@@ -71,7 +72,7 @@ public class Comprar {
 
     @Override
     public String toString() {
-        return "Comprar{" +
+        return "Compra{" +
                 "fecha=" + fecha +
                 ", ofertaVenta=" + ofertaVenta +
                 ", usuarioCompra=" + usuarioCompra +
@@ -81,44 +82,44 @@ public class Comprar {
     }
 
     public static class Builder {
-        private final Comprar comprar = new Comprar();
+        private final Compra compra = new Compra();
 
         public Builder() {
         }
 
         public Builder(Date fecha, OfertaVenta ofertaVenta, Usuario usuarioCompra) {
-            comprar.fecha = fecha;
-            comprar.ofertaVenta = ofertaVenta;
-            comprar.usuarioCompra = usuarioCompra;
+            compra.fecha = fecha;
+            compra.ofertaVenta = ofertaVenta;
+            compra.usuarioCompra = usuarioCompra;
         }
 
         public Builder withFecha(Date fecha) {
-            comprar.fecha = fecha;
+            compra.fecha = fecha;
             return this;
         }
 
         public Builder withOfertaVenta(OfertaVenta ofertaVenta) {
-            comprar.ofertaVenta = ofertaVenta;
+            compra.ofertaVenta = ofertaVenta;
             return this;
         }
 
         public Builder withUsuarioCompra(Usuario usuarioCompra) {
-            comprar.usuarioCompra = usuarioCompra;
+            compra.usuarioCompra = usuarioCompra;
             return this;
         }
 
         public Builder withCantidad(Integer cantidad) {
-            comprar.cantidad = cantidad;
+            compra.cantidad = cantidad;
             return this;
         }
 
         public Builder withComision(Float comision) {
-            comprar.comision = comision;
+            compra.comision = comision;
             return this;
         }
 
-        public Comprar build() {
-            return comprar;
+        public Compra build() {
+            return compra;
         }
     }
 }

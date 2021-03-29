@@ -7,7 +7,7 @@ import gal.sdc.usc.wallstreet.model.ddl.Tabla;
 import java.util.Objects;
 
 @Tabla("usuario")
-public class Usuario implements Entidad {
+public class Usuario extends Entidad {
     @Columna(value = "identificador", pk = true)
     private String identificador;
 

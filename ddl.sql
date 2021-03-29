@@ -49,12 +49,12 @@ alter table empresa
 
 create table pago
 (
-    fecha                       timestamp        not null,
-    empresa                     varchar(16)      not null
+    fecha                       timestamp default now() not null,
+    empresa                     varchar(16)             not null
         constraint pago_empresa_identificador_fk
             references empresa
             on update cascade,
-    beneficio_por_participacion double precision not null,
+    beneficio_por_participacion double precision        not null,
     fecha_anuncio               timestamp,
     constraint pago_pk
         primary key (fecha, empresa)
@@ -103,7 +103,7 @@ create table oferta_venta
 alter table oferta_venta
     owner to postgres;
 
-create table poseer_participacion
+create table participacion
 (
     usuario  varchar(16)       not null
         constraint poseer_participacion_usuario_identificador_fk
@@ -118,10 +118,10 @@ create table poseer_participacion
         primary key (usuario, empresa)
 );
 
-alter table poseer_participacion
+alter table participacion
     owner to postgres;
 
-create table comprar
+create table compra
 (
     fecha          timestamp        default now() not null,
     ov_fecha       timestamp                      not null,
@@ -139,7 +139,7 @@ create table comprar
             on update cascade
 );
 
-alter table comprar
+alter table compra
     owner to postgres;
 
 

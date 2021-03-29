@@ -8,9 +8,9 @@ import java.util.Date;
 import java.util.Objects;
 
 @Tabla("pago")
-public class Pago implements Entidad {
+public class Pago extends Entidad {
     @Columna(value = "fecha", pk = true)
-    private Date fecha;
+    private Date fecha = new Date();
 
     @Columna(value = "empresa", pk = true)
     private Empresa empresa;

@@ -1,6 +1,7 @@
 package gal.sdc.usc.wallstreet.repository;
 
 import gal.sdc.usc.wallstreet.model.Empresa;
+import gal.sdc.usc.wallstreet.repository.helpers.DAO;
 
 import java.sql.Connection;
 

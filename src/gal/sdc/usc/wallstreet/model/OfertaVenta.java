@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.Objects;
 
 @Tabla("oferta_venta")
-public class OfertaVenta implements Entidad {
+public class OfertaVenta extends Entidad {
     @Columna(value = "fecha", pk = true)
     private Date fecha = new Date();
 

@@ -6,8 +6,8 @@ import gal.sdc.usc.wallstreet.model.ddl.Tabla;
 
 import java.util.Objects;
 
-@Tabla("poseer_participacion")
-public class PoseerParticipacion implements Entidad {
+@Tabla("participacion")
+public class Participacion extends Entidad {
     @Columna(value = "usuario", pk = true)
     private Usuario usuario;
 
@@ -17,7 +17,7 @@ public class PoseerParticipacion implements Entidad {
     @Columna("cantidad")
     private Integer cantidad = 0;
 
-    private PoseerParticipacion() {
+    private Participacion() {
     }
 
     public Usuario getUsuario() {
@@ -40,7 +40,7 @@ public class PoseerParticipacion implements Entidad {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PoseerParticipacion that = (PoseerParticipacion) o;
+        Participacion that = (Participacion) o;
         return usuario.equals(that.usuario) &&
                 empresa.equals(that.empresa);
     }
@@ -52,7 +52,7 @@ public class PoseerParticipacion implements Entidad {
 
     @Override
     public String toString() {
-        return "PoseerParticipacion{" +
+        return "Participacion{" +
                 "usuario=" + usuario +
                 ", empresa=" + empresa +
                 ", cantidad=" + cantidad +
@@ -60,33 +60,33 @@ public class PoseerParticipacion implements Entidad {
     }
 
     public static class Builder {
-        private final PoseerParticipacion poseerParticipacion = new PoseerParticipacion();
+        private final Participacion participacion = new Participacion();
 
         public Builder() {
         }
 
         public Builder(Usuario usuario, Empresa empresa) {
-            poseerParticipacion.usuario = usuario;
-            poseerParticipacion.empresa = empresa;
+            participacion.usuario = usuario;
+            participacion.empresa = empresa;
         }
 
         public Builder withUsuario(Usuario usuario) {
-            poseerParticipacion.usuario = usuario;
+            participacion.usuario = usuario;
             return this;
         }
 
         public Builder withEmpresa(Empresa empresa) {
-            poseerParticipacion.empresa = empresa;
+            participacion.empresa = empresa;
             return this;
         }
 
         public Builder withCantidad(Integer cantidad) {
-            poseerParticipacion.cantidad = cantidad;
+            participacion.cantidad = cantidad;
             return this;
         }
 
-        public PoseerParticipacion build() {
-            return poseerParticipacion;
+        public Participacion build() {
+            return participacion;
         }
     }
 }

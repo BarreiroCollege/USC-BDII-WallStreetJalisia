@@ -51,7 +51,6 @@ public class PackageScanner {
     private static List<Class<?>> findClasses(File directory) throws ClassNotFoundException {
         List<String> names;
         if (directory.toString().startsWith("file:") && directory.toString().contains(".jar!")) {
-            System.out.println("JAR");
             names = loadFromJar();
         } else {
             names = loadFromDir(directory);

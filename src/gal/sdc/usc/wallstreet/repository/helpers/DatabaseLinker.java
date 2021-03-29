@@ -1,7 +1,7 @@
-package gal.sdc.usc.wallstreet.util;
+package gal.sdc.usc.wallstreet.repository.helpers;
 
 import gal.sdc.usc.wallstreet.model.ddl.Entidad;
-import gal.sdc.usc.wallstreet.repository.DAO;
+import gal.sdc.usc.wallstreet.util.PackageScanner;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -57,7 +57,7 @@ public class DatabaseLinker {
             // Marcar como ya inicializado
             DatabaseLinker.cargado = true;
         } catch (IOException | SQLException f) {
-            System.out.println(f.getMessage());
+            f.printStackTrace();
         }
     }
 
