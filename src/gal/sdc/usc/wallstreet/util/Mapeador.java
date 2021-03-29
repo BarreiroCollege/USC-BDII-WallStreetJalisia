@@ -1,7 +1,8 @@
 package gal.sdc.usc.wallstreet.util;
 
-import gal.sdc.usc.wallstreet.model.Columna;
-import gal.sdc.usc.wallstreet.model.Entidad;
+import gal.sdc.usc.wallstreet.model.ddl.Columna;
+import gal.sdc.usc.wallstreet.model.ddl.Entidad;
+import gal.sdc.usc.wallstreet.repository.DAO;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;

@@ -1,4 +1,4 @@
-package gal.sdc.usc.wallstreet.model;
+package gal.sdc.usc.wallstreet.model.ddl;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -16,7 +16,4 @@ public @interface Columna {
 
     // Indica si es clave primaria
     boolean pk() default false;
-
-    // Lista de columnas que referencian la clave foránea
-    String[] fk() default {};
 }

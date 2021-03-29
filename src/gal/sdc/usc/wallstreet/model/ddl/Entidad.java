@@ -1,4 +1,4 @@
-package gal.sdc.usc.wallstreet.model;
+package gal.sdc.usc.wallstreet.model.ddl;
 
 /**
  * Interfaz estándar de una entidad

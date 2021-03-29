@@ -1,4 +1,4 @@
-package gal.sdc.usc.wallstreet.model;
+package gal.sdc.usc.wallstreet.model.ddl;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

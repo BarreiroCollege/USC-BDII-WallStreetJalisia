@@ -1,8 +1,9 @@
-package gal.sdc.usc.wallstreet.util;
+package gal.sdc.usc.wallstreet.repository;
 
-import gal.sdc.usc.wallstreet.model.Columna;
-import gal.sdc.usc.wallstreet.model.Entidad;
-import gal.sdc.usc.wallstreet.model.Tabla;
+import gal.sdc.usc.wallstreet.model.ddl.Columna;
+import gal.sdc.usc.wallstreet.model.ddl.Entidad;
+import gal.sdc.usc.wallstreet.model.ddl.Tabla;
+import gal.sdc.usc.wallstreet.util.Mapeador;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

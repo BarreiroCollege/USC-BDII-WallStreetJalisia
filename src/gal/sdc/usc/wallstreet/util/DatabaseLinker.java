@@ -1,6 +1,7 @@
 package gal.sdc.usc.wallstreet.util;
 
-import gal.sdc.usc.wallstreet.model.Entidad;
+import gal.sdc.usc.wallstreet.model.ddl.Entidad;
+import gal.sdc.usc.wallstreet.repository.DAO;
 
 import java.io.FileInputStream;
 import java.io.IOException;
