@@ -157,7 +157,7 @@ public class Mapeador extends DatabaseLinker {
      * @return clase entidad especificada
      * @throws SQLException
      */
-    public static <D> D map(final ResultSet rs, Class<D> claseObj) throws SQLException {
+    public static <D extends Entidad> D map(final ResultSet rs, Class<D> claseObj) throws SQLException {
         Mapeador mapeador = new Mapeador(rs, claseObj);
         return (D) mapeador.castear();
     }

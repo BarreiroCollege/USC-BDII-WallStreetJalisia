@@ -77,7 +77,9 @@ public class PackageScanner {
             Enumeration<JarEntry> entries = jf.entries();
             while (entries.hasMoreElements()) {
                 JarEntry je = entries.nextElement();
-                if (je.getName().startsWith(DAO_PACKAGE.replace(".", "/")) && je.getName().endsWith(".class")) {
+                if (je.getName().startsWith(DAO_PACKAGE.replace(".", "/"))
+                        && je.getName().endsWith(".class")
+                        && !je.getName().replace(DAO_PACKAGE.replace(".", "/"), "").substring(1).contains("/")) {
                     classes.add(je.getName().replace(".class", "").replace("/", "."));
                 }
             }
