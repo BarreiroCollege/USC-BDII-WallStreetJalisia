@@ -4,3 +4,5 @@ port=5432
 dbname=wallstreet
 user=postgres
 pass=
+
+debug=true

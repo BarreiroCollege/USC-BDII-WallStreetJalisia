@@ -3,6 +3,7 @@ package gal.sdc.usc.wallstreet.repository.helpers;
 import gal.sdc.usc.wallstreet.model.ddl.Entidad;
 import gal.sdc.usc.wallstreet.util.PackageScanner;
 
+import javax.xml.crypto.Data;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -22,6 +23,8 @@ public class DatabaseLinker {
     // Lista de DAOs disponibles
     private static HashMap<Class<? extends DAO<? extends Entidad>>, DAO<? extends Entidad>> daos;
 
+    public static boolean DEBUG = false;
+
     static {
         // Inicializar el hashmap
         DatabaseLinker.daos = new HashMap<>();
@@ -39,6 +42,8 @@ public class DatabaseLinker {
         Properties configuracion = new Properties();
         try (FileInputStream arqConfiguracion = new FileInputStream("db.properties")) {
             configuracion.load(arqConfiguracion);
+
+            DatabaseLinker.DEBUG = configuracion.getProperty("debug").toLowerCase().equals("true");
 
             // Cargar la configuración
             Properties usuario = new Properties();
@@ -91,7 +96,11 @@ public class DatabaseLinker {
      * @param <D> DAO de salida
      * @return DAO instanciado
      */
-    public <D extends DAO> D getDAO(Class<D> clase) {
+    public <D extends DAO<? extends Entidad>> D getDAO(Class<D> clase) {
+        return DatabaseLinker.getSDAO(clase);
+    }
+
+    public static <D extends DAO<? extends Entidad>> D getSDAO(Class<D> clase) {
         return (D) DatabaseLinker.daos.get(clase);
     }
 }

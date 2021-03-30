@@ -11,7 +11,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -93,7 +92,7 @@ public class Mapeador extends DatabaseLinker {
 
             Object[] objects = new Object[values.size()];
             for (int i = 0; i < values.size(); i++) objects[i] = values.get(i);
-            return dao.get(objects);
+            return dao.seleccionar(objects);
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
         }
@@ -122,7 +121,7 @@ public class Mapeador extends DatabaseLinker {
                 } else if (type.equals(Boolean.class)) {
                     value = rs.getBoolean(columna.value());
                 } else if (type.equals(Date.class)) {
-                    value = rs.getDate(columna.value());
+                    value = rs.getTimestamp(columna.value());
                 } else {
                     value = rs.getString(columna.value());
                 }
