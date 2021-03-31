@@ -17,6 +17,7 @@ import javafx.fxml.FXML;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 public class SampleController extends DatabaseLinker {
     @FXML
@@ -28,23 +29,25 @@ public class SampleController extends DatabaseLinker {
                 .getPagosHastaAhora();
         for (PagoUsuario pago : pagos) {
             System.out.println(pago);
-        } */
+            pago.setNumParticipaciones(new Random().nextInt());
+            super.getDAO(PagoUsuarioDAO.class).actualizar(pago);
+        }
 
-        /* Pago pago = new Pago.Builder(new Date(), pagos.get(0).getPago().getEmpresa())
+        Pago pago = new Pago.Builder(new Date(), pagos.get(0).getPago().getEmpresa())
                 .withBeneficioPorParticipacion(3.1f)
                 .build();
         PagoUsuario pagoUsuario = new PagoUsuario.Builder(pagos.get(0).getUsuario(), pago)
                 .withNumParticipaciones(30)
                 .build();
 
-        super.getDAO(PagoUsuarioDAO.class).crear(pagoUsuario);
-        super.getDAO(PagoUsuarioDAO.class).borrar(pagoUsuario);
-        super.getDAO(PagoDAO.class).borrar(pago); */
+        super.getDAO(PagoUsuarioDAO.class).insertar(pagoUsuario);
+        super.getDAO(PagoUsuarioDAO.class).eliminar(pagoUsuario);
+        super.getDAO(PagoDAO.class).eliminar(pago);
 
-        /* Empresa empresa = new Empresa.Builder()
+        Empresa empresa = new Empresa.Builder()
                 .withUsuario(
                         new Usuario.Builder()
-                        .withIdentificador("mudi")
+                        .withIdentificador("mudi3")
                         .withClave("Mudi")
                         .withSaldo(0f)
                         .build()
@@ -53,9 +56,9 @@ public class SampleController extends DatabaseLinker {
                 .withNombre("Palotes")
                 .build();
 
-        super.getDAO(EmpresaDAO.class).crear(empresa); */
+        super.getDAO(EmpresaDAO.class).insertar(empresa);
 
-        /* Usuario diego = super.getDAO(UsuarioDAO.class).seleccionar("diego");
+        Usuario diego = super.getDAO(UsuarioDAO.class).seleccionar("mudi");
         Empresa diegoEmpresa = super.getDAO(EmpresaDAO.class).seleccionar(diego);
 
         Participacion participacion = new Participacion.Builder()
@@ -64,9 +67,9 @@ public class SampleController extends DatabaseLinker {
                 .withCantidad(65)
                 .build();
 
-        super.getDAO(ParticipacionDAO.class).crear(participacion); */
+        super.getDAO(ParticipacionDAO.class).insertar(participacion);
 
-        /* for (Usuario usuario : super.getDAO(UsuarioDAO.class).getUsuarios()) {
+        for (Usuario usuario : super.getDAO(UsuarioDAO.class).getUsuarios()) {
             System.out.println(usuario);
         } */
     }

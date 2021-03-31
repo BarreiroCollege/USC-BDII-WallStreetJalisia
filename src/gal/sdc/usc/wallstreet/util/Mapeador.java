@@ -8,7 +8,6 @@ import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
@@ -127,14 +126,7 @@ public class Mapeador extends DatabaseLinker {
                 }
             }
 
-            try {
-                Method with = builder.getClass().getMethod(
-                        "with" + name.substring(0, 1).toUpperCase() + name.substring(1),
-                        type);
-                with.invoke(builder, value);
-            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
+            LectorDinamico.llamarWither(name, builder, type, value);
         }
 
         try {

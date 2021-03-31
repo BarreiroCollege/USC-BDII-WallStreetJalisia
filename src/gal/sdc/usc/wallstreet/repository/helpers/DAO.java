@@ -7,8 +7,6 @@ import gal.sdc.usc.wallstreet.util.LectorDinamico;
 import gal.sdc.usc.wallstreet.util.Mapeador;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -46,20 +44,15 @@ public abstract class DAO<E extends Entidad> {
      * Resuelve recursivamente las claves foráneas devolviéndolas en un HashMap
      * apto para una consulta.
      *
-     * @note Sólo se necesitan las claves primarias, ya que no se inserta el resto de atributos
-     *       en las entidades hijas.
-     *
-     * @param nombre columna de la clase hija
-     * @param e sub-entidad sobre la que trabajar
+     * @param nombre    columna de la clase hija
+     * @param e         sub-entidad sobre la que trabajar
      * @param subNombre no nulo cuando hay más de un nivel, contiene el nombre de la columna de
      *                  segundo nivel
      * @return HashMap cuya clave es columna en SQL y valor el valor en cuestión
-     * @throws IllegalAccessException
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
+     * @note Sólo se necesitan las claves primarias, ya que no se inserta el resto de atributos
+     * en las entidades hijas.
      */
-    private HashMap<String, Object> resolverPksForaneas(String nombre, Entidad e, String subNombre)
-            throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    private HashMap<String, Object> resolverPksForaneas(String nombre, Entidad e, String subNombre) {
         HashMap<String, Object> paresPk = new HashMap<>();
 
         // Iterar sobre los atributos de la entidad
@@ -72,12 +65,16 @@ public abstract class DAO<E extends Entidad> {
             if (!columna.pk()) continue;
 
             // Llamar al getter del atributo para recuperar el valor al ser privado
-            Method method = e.getClass().getMethod("get" + name.substring(0, 1).toUpperCase() + name.substring(1));
-            Object valor = method.invoke(e);
+            Object valor = LectorDinamico.llamarGetter(name, e);
 
             // Si sigue siendo una entidad, resolver recursivamente
             if (Entidad.class.isAssignableFrom(type)) {
-                paresPk.putAll(resolverPksForaneas(nombre, (Entidad) valor, subNombre != null ? subNombre : (e.getNumPks() > 1 ? columna.value() : null)));
+                paresPk.putAll(resolverPksForaneas(
+                        nombre,
+                        // Es normal que pueda ser null, ya que puede haber valores nulos en la base de datos
+                        (Entidad) valor,
+                        subNombre != null ? subNombre : (e.getNumPks() > 1 ? columna.value() : null)
+                ));
             } else {
                 // Sino, insertar en el hashmap
                 // En caso de la clave primaria estar compuesta por un único atributo,
@@ -97,11 +94,11 @@ public abstract class DAO<E extends Entidad> {
      * Dada una serie de valores, emparejar con las columnas respectivas de la entidad
      * del DAO
      *
-     * @param pks indica si solo se quieren las claves primarias
+     * @param ta      indica si se buscan claves primarias, no primarias, o todos los atributos
      * @param valores serie de valores que actuan como clave primaria
      * @return HashMap con nombre de columna y valor apto para SQL
      */
-    private HashMap<String, Object> resolverAtributos(boolean pks, Object... valores) {
+    private HashMap<String, Object> emparejarColumnas(TipoAtributo ta, Object... valores) {
         HashMap<String, Object> paresPk = new LinkedHashMap<>();
 
         // Preparar el iterador sobre los valores dados
@@ -110,9 +107,10 @@ public abstract class DAO<E extends Entidad> {
         for (Field field : claseEntidad.getDeclaredFields()) {
             Class<?> type = field.getType();
 
-            // Si no es clave primaria, saltar
+            // Dependiendo del tipo de clave, decidir si saltar o no
             Columna columna = field.getDeclaredAnnotation(Columna.class);
-            if (pks && !columna.pk()) continue;
+            if (ta.equals(TipoAtributo.PK) && !columna.pk()) continue;
+            else if (ta.equals(TipoAtributo.NO_PK) && columna.pk()) continue;
 
             // Obtener el valor respectivo dado como PK, y confirmar
             // que coincide con el debido en la entidad
@@ -141,24 +139,28 @@ public abstract class DAO<E extends Entidad> {
     }
 
     /**
-     * Devuelve mapeadas las claves primarias de la clase
+     * Asigna los valores de los pares de atributos con los placements de un PreparedStatement
      *
-     * @param valores a enlazar con los atributos
-     * @return mapeo de atributos
+     * @param paresPk conjunto de clave valor
+     * @param ps      PreparedStatement a introducir
+     * @return posición del último parámetro
+     * @throws SQLException
      */
-    private HashMap<String, Object> resolverAtributos(Object... valores) {
-        return this.resolverAtributos(true, valores);
+    private int asignarValores(HashMap<String, Object> paresPk, PreparedStatement ps) throws SQLException {
+        return this.asignarValores(paresPk, ps, 1);
     }
 
     /**
      * Asigna los valores de los pares de atributos con los placements de un PreparedStatement
+     *
      * @param paresPk conjunto de clave valor
-     * @param ps PreparedStatement a introducir
+     * @param ps      PreparedStatement a introducir
+     * @param i       parámetro de inicio
+     * @return posición del último parámetro
      * @throws SQLException
      */
-    private void asignarValores(HashMap<String, Object> paresPk, PreparedStatement ps) throws SQLException {
+    private int asignarValores(HashMap<String, Object> paresPk, PreparedStatement ps, int i) throws SQLException {
         // Empezar en el parámetro 1, y empezar a iterar sobre los valores de los pares
-        int i = 1;
         for (Object value : paresPk.values()) {
             // Dependiendo del tipo, insertar de una forma u otra
             if (DatabaseLinker.DEBUG) System.out.println(i + " -> " + value);
@@ -180,23 +182,28 @@ public abstract class DAO<E extends Entidad> {
             // Incrementar el contador del parámetro
             i++;
         }
+
+        return i;
     }
 
     /**
      * Dada una entidad, extraer los valores de los atributos en un array
-     * @param e entidad sobre a la que extraer los valores
+     *
+     * @param e  entidad sobre a la que extraer los valores
      * @param ta indica si es inserción, actualización, búsqueda o eliminación (en caso de ser inserción,
      *           tratará de buscar recursivamente e insertar las clases foraneas inexistentes, y en el
      *           caso de actualización actualizará recursivamente)
      * @return lista de objetos que actuan como atributos
      */
-    private Object[] extraerAtributos(E e, TipoActualizacion ta) {
+    private Object[] extraerAtributos(E e, TipoActualizacion ta, TipoAtributo tat) {
         // Lista de atributos como objetos
         List<Object> atributos = new LinkedList<>();
 
         // Para cada field, comprobar si es una columna
         for (Field field : e.getClass().getDeclaredFields()) {
             if (!field.isAnnotationPresent(Columna.class)) continue;
+            Columna columna = field.getAnnotation(Columna.class);
+            if (tat.equals(TipoAtributo.NO_PK) && columna.pk()) continue;
 
             try {
                 // Extraer el valor del atributo
@@ -218,8 +225,12 @@ public abstract class DAO<E extends Entidad> {
                     switch (ta) {
                         // En caso de estar realizando inserts, insertar recursivamente
                         case INSERT:
-                            if (subDao.seleccionar(subDao.extraerAtributos(subEntidad, TipoActualizacion.SELECT)) == null) {
-                                subDao.crear(subEntidad);
+                            if (subDao.seleccionar(subDao.extraerAtributos(
+                                    subEntidad,
+                                    TipoActualizacion.SELECT,
+                                    tat
+                            )) == null) {
+                                subDao.insertar(subEntidad);
                             }
                             break;
                         // En caso de estar realizando updates, actualizar recursivamente
@@ -263,7 +274,7 @@ public abstract class DAO<E extends Entidad> {
         StringBuilder SQL = new StringBuilder("SELECT * FROM " + tabla.value() + " WHERE ");
 
         // Resolver a pares cada valor dado con su respectivo nombre de columna
-        HashMap<String, Object> paresPk = resolverAtributos(valores);
+        HashMap<String, Object> paresPk = emparejarColumnas(TipoAtributo.PK, valores);
         // Si no hay paresPk es porque algo ha pasado
         if (paresPk == null) return null;
 
@@ -297,7 +308,13 @@ public abstract class DAO<E extends Entidad> {
         return null;
     }
 
-    public final boolean crear(E e) {
+    /**
+     * INSERT recursivo genérico para el DAO
+     *
+     * @param e entidad a insertar
+     * @return true cuando se ha insertado correctamente
+     */
+    public final boolean insertar(E e) {
         // Si no es una tabla saltar
         if (!claseEntidad.isAnnotationPresent(Tabla.class)) return false;
 
@@ -306,7 +323,10 @@ public abstract class DAO<E extends Entidad> {
         StringBuilder SQL = new StringBuilder("INSERT INTO " + tabla.value() + " (");
 
         // Resolver a pares cada valor dado con su respectivo nombre de columna
-        HashMap<String, Object> paresPk = resolverAtributos(false, extraerAtributos(e, TipoActualizacion.INSERT));
+        HashMap<String, Object> paresPk = emparejarColumnas(
+                TipoAtributo.TODOS,
+                extraerAtributos(e, TipoActualizacion.INSERT, TipoAtributo.TODOS)
+        );
         // Si no hay paresPk es porque algo ha pasado
         if (paresPk == null) return false;
 
@@ -349,11 +369,85 @@ public abstract class DAO<E extends Entidad> {
         return false;
     }
 
+    /**
+     * UPDATE recursivo genérico para el DAO
+     *
+     * @param e entidad a actualizar
+     * @return true cuando se ha actualizado correctamente
+     */
     public final boolean actualizar(E e) {
+        // Si no es una tabla saltar
+        if (!claseEntidad.isAnnotationPresent(Tabla.class)) return false;
+
+        // Extraer el nombre de la tabla de la entidad
+        Tabla tabla = claseEntidad.getAnnotation(Tabla.class);
+        StringBuilder SQL = new StringBuilder("UPDATE " + tabla.value() + " SET ");
+
+        // Resolver a pares cada valor dado con su respectivo nombre de columna
+        HashMap<String, Object> paresAtributos = emparejarColumnas(
+                TipoAtributo.NO_PK,
+                extraerAtributos(e, TipoActualizacion.UPDATE, TipoAtributo.NO_PK)
+        );
+
+        // Si no hay paresPk es porque algo ha pasado
+        if (paresAtributos == null) return false;
+
+        // Para cada elemento en los pares de atributo, actualizar
+        Iterator<Map.Entry<String, Object>> itMapKey = paresAtributos.entrySet().iterator();
+        while (itMapKey.hasNext()) {
+            Map.Entry<String, Object> entry = itMapKey.next();
+            SQL.append(entry.getKey()).append("=?");
+            if (itMapKey.hasNext()) {
+                SQL.append(", ");
+            }
+        }
+
+        // Condición de búsqueda
+        SQL.append(" WHERE ");
+
+        // Resolver a pares cada valor dado con su respectivo nombre de columna
+        HashMap<String, Object> paresPk = emparejarColumnas(
+                TipoAtributo.PK,
+                extraerAtributos(e, TipoActualizacion.UPDATE, TipoAtributo.TODOS)
+        );
+        // Si no hay paresPk es porque algo ha pasado
+        if (paresPk == null) return false;
+
+        // Para cada elemento en los pares, encadenar como nuevo elemento del WHERE
+        itMapKey = paresPk.entrySet().iterator();
+        while (itMapKey.hasNext()) {
+            Map.Entry<String, Object> entry = itMapKey.next();
+            SQL.append(entry.getKey()).append("=?");
+            if (itMapKey.hasNext()) {
+                SQL.append(" AND ");
+            }
+        }
+
+        // Preparar la consulta
+        if (DatabaseLinker.DEBUG) System.out.println(SQL);
+        try (PreparedStatement ps = this.conexion.prepareStatement(SQL.toString())) {
+            // Asignar los parámetros (primero los atributos, y se da la última posición
+            // para empezar a asignar las claves primarias)
+            asignarValores(paresPk, ps, asignarValores(paresAtributos, ps));
+
+            // Ejecutar
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+
+        // Devolver false si hubo algún error
         return false;
     }
 
-    public final boolean borrar(E e) {
+    /**
+     * DELETE genérico para el DAO
+     *
+     * @param e entidad a eliminar
+     * @return true cuando se ha eliminado
+     */
+    public final boolean eliminar(E e) {
         // Si no es una tabla saltar
         if (!claseEntidad.isAnnotationPresent(Tabla.class)) return false;
 
@@ -362,7 +456,7 @@ public abstract class DAO<E extends Entidad> {
         StringBuilder SQL = new StringBuilder("DELETE FROM " + tabla.value() + " WHERE ");
 
         // Resolver a pares cada valor dado con su respectivo nombre de columna
-        HashMap<String, Object> paresPk = resolverAtributos(extraerAtributos(e, TipoActualizacion.DELETE));
+        HashMap<String, Object> paresPk = emparejarColumnas(TipoAtributo.PK, extraerAtributos(e, TipoActualizacion.DELETE, TipoAtributo.TODOS));
         // Si no hay paresPk es porque algo ha pasado
         if (paresPk == null) return false;
 

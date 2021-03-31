@@ -7,7 +7,7 @@ create table usuario
     direccion       varchar(64),
     cp              varchar(10),
     localidad       varchar(16),
-    telefono        integer                        not null,
+    telefono        integer,
     saldo           double precision               not null,
     saldo_bloqueado double precision default 0     not null,
     activo          boolean          default false not null
