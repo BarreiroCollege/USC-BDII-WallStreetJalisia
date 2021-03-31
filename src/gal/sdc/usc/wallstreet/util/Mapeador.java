@@ -32,6 +32,10 @@ public class Mapeador extends DatabaseLinker {
         this.builder = crearBuilder();
     }
 
+    /**
+     * Crea un Builder de la clase de la entidad resultante
+     * @return Builder creado
+     */
     private Object crearBuilder() {
         // Realizar una instancia de la inner-class Builder para ir creando la entidad
         Object builder = null;
@@ -46,6 +50,13 @@ public class Mapeador extends DatabaseLinker {
         return builder;
     }
 
+    /**
+     * Obtener los datos de la subentidad presente, y parsear solicitando en el DAO
+     * @param nombre columna
+     * @param e clase de la entidad
+     * @return entidad resuelta
+     * @throws SQLException
+     */
     private Entidad resolverSubentidad(String nombre, Class<? extends Entidad> e) throws SQLException {
         try {
             Class<? extends DAO<? extends Entidad>> clase = (Class<? extends DAO<? extends Entidad>>)
@@ -99,7 +110,13 @@ public class Mapeador extends DatabaseLinker {
         return null;
     }
 
-    private Object castear() throws SQLException {
+    /**
+     * De cada parámetro de la clase, obtener del result set su elemento respectivo en función de
+     * su nombre de columna usando un Builder
+     * @return entidad creada
+     * @throws SQLException
+     */
+    private Entidad castear() throws SQLException {
         for (Field field : claseObj.getDeclaredFields()) {
             Class<?> type = field.getType();
             String name = field.getName();
@@ -130,7 +147,7 @@ public class Mapeador extends DatabaseLinker {
         }
 
         try {
-            return builder.getClass().getMethod("build").invoke(builder);
+            return (Entidad) builder.getClass().getMethod("build").invoke(builder);
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
         }
