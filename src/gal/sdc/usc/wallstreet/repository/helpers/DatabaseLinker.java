@@ -100,6 +100,12 @@ public class DatabaseLinker {
         return DatabaseLinker.getSDAO(clase);
     }
 
+    /**
+     * Devuelve un DAO que haya sido inicializado
+     * @param clase clase del DAO a buscar
+     * @param <D> DAO de salida
+     * @return DAO instanciado
+     */
     public static <D extends DAO<? extends Entidad>> D getSDAO(Class<D> clase) {
         return (D) DatabaseLinker.daos.get(clase);
     }
