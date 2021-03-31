@@ -120,14 +120,13 @@ public abstract class DAO<E extends Entidad> {
             if (valor != null && !type.isAssignableFrom(valor.getClass())) {
                 System.err.println("Los tipos no coinciden!");
                 return null;
-            } else if (valor == null) {
-                System.err.println("Faltan datos!");
-                return null;
             }
 
             // En caso del atributo ser otra entidad, resolver recursivamente
             if (Entidad.class.isAssignableFrom(type)) {
                 try {
+                    // Aunque valor pueda ser nulo, es correcto, ya que puede haber atributos
+                    // nulos a insertar en SQL
                     paresPk.putAll(resolverPksForaneas(columna.value(), (Entidad) valor, null));
                 } catch (Exception e) {
                     e.printStackTrace();
