@@ -33,7 +33,7 @@ public class Usuario extends Entidad {
     private Float saldoBloqueado = 0.f;
 
     @Columna("activo")
-    private Boolean activo;
+    private Boolean activo = false;
 
     private Usuario() {
     }
