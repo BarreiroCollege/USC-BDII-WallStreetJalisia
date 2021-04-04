@@ -385,8 +385,8 @@ public abstract class DAO<E extends Entidad> {
 
         // Resolver a pares cada valor dado con su respectivo nombre de columna
         HashMap<String, Object> paresAtributos = emparejarColumnas(
-                TipoAtributo.NO_PK,
-                extraerAtributos(e, TipoActualizacion.UPDATE, TipoAtributo.NO_PK)
+                TipoAtributo.TODOS,
+                extraerAtributos(e, TipoActualizacion.UPDATE, TipoAtributo.TODOS)
         );
 
         // Si no hay paresPk es porque algo ha pasado
