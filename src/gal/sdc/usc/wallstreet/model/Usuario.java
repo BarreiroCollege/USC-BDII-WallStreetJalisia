@@ -35,11 +35,18 @@ public class Usuario extends Entidad {
     @Columna("activo")
     private Boolean activo = false;
 
+    @Columna("baja")
+    private Boolean baja = false;
+
     private Usuario() {
     }
 
     public String getIdentificador() {
         return identificador;
+    }
+
+    public void setIdentificador(String identificador) {
+        this.identificador = identificador;
     }
 
     public String getClave() {
@@ -106,6 +113,14 @@ public class Usuario extends Entidad {
         this.activo = activo;
     }
 
+    public Boolean getBaja() {
+        return baja;
+    }
+
+    public void setBaja(Boolean baja) {
+        this.baja = baja;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -131,6 +146,7 @@ public class Usuario extends Entidad {
                 ", saldo=" + saldo +
                 ", saldoBloqueado=" + saldoBloqueado +
                 ", activo=" + activo +
+                ", baja=" + baja +
                 '}';
     }
 
@@ -186,6 +202,11 @@ public class Usuario extends Entidad {
 
         public Builder withActivo(Boolean activo) {
             usuario.activo = activo;
+            return this;
+        }
+
+        public Builder withBaja(Boolean baja) {
+            usuario.baja = baja;
             return this;
         }
 

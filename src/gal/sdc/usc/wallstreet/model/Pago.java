@@ -16,10 +16,19 @@ public class Pago extends Entidad {
     private Empresa empresa;
 
     @Columna("beneficio_por_participacion")
-    private Float beneficioPorParticipacion;
+    private Float beneficioPorParticipacion = 0f;
+
+    @Columna("participacion_por_participacion")
+    private Float participacionPorParticipacion = 0f;
 
     @Columna("fecha_anuncio")
     private Date fechaAnuncio = null;
+
+    @Columna("porcentaje_beneficio")
+    private Float porcentajeBeneficio = 0f;
+
+    @Columna("porcentaje_participacion")
+    private Float porcentajeParticipacion = 0f;
 
     private Pago() {
     }
@@ -40,12 +49,36 @@ public class Pago extends Entidad {
         this.beneficioPorParticipacion = beneficioPorParticipacion;
     }
 
+    public Float getParticipacionPorParticipacion() {
+        return participacionPorParticipacion;
+    }
+
+    public void setParticipacionPorParticipacion(Float participacionPorParticipacion) {
+        this.participacionPorParticipacion = participacionPorParticipacion;
+    }
+
     public Date getFechaAnuncio() {
         return fechaAnuncio;
     }
 
     public void setFechaAnuncio(Date fechaAnuncio) {
         this.fechaAnuncio = fechaAnuncio;
+    }
+
+    public Float getPorcentajeBeneficio() {
+        return porcentajeBeneficio;
+    }
+
+    public void setPorcentajeBeneficio(Float porcentajeBeneficio) {
+        this.porcentajeBeneficio = porcentajeBeneficio;
+    }
+
+    public Float getPorcentajeParticipacion() {
+        return porcentajeParticipacion;
+    }
+
+    public void setPorcentajeParticipacion(Float porcentajeParticipacion) {
+        this.porcentajeParticipacion = porcentajeParticipacion;
     }
 
     @Override
@@ -68,7 +101,10 @@ public class Pago extends Entidad {
                 "fecha=" + fecha +
                 ", empresa=" + empresa +
                 ", beneficioPorParticipacion=" + beneficioPorParticipacion +
+                ", participacionPorParticipacion=" + participacionPorParticipacion +
                 ", fechaAnuncio=" + fechaAnuncio +
+                ", porcentajeBeneficio=" + porcentajeBeneficio +
+                ", porcentajeParticipacion=" + porcentajeParticipacion +
                 '}';
     }
 
@@ -98,8 +134,23 @@ public class Pago extends Entidad {
             return this;
         }
 
+        public Builder withParticipacionPorParticipacion(Float participacionPorParticipacion) {
+            pago.participacionPorParticipacion = participacionPorParticipacion;
+            return this;
+        }
+
         public Builder withFechaAnuncio(Date fechaAnuncio) {
             pago.fechaAnuncio = fechaAnuncio;
+            return this;
+        }
+
+        public Builder withPorcentajeBeneficio(Float porcentajeBeneficio) {
+            pago.porcentajeBeneficio = porcentajeBeneficio;
+            return this;
+        }
+
+        public Builder withPorcentajeParticipacion(Float porcentajeParticipacion) {
+            pago.porcentajeParticipacion = porcentajeParticipacion;
             return this;
         }
 
