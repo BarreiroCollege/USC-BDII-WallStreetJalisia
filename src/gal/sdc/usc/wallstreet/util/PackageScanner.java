@@ -9,6 +9,11 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+/**
+ * Clase que escanea un paquete y devuelve todas sus clases. Tomado
+ * originalmente de https://stackoverflow.com/a/520344/6626193 y modificado
+ * para su funcionamiento en NetBeans.
+ */
 public class PackageScanner {
     private final static String DAO_PACKAGE = "gal.sdc.usc.wallstreet.repository";
 
@@ -46,7 +51,6 @@ public class PackageScanner {
     private static List<Class<?>> findClasses(File directory) throws ClassNotFoundException {
         List<String> names;
         if (directory.toString().startsWith("file:") && directory.toString().contains(".jar!")) {
-            System.out.println("JAR");
             names = loadFromJar();
         } else {
             names = loadFromDir(directory);
@@ -73,7 +77,9 @@ public class PackageScanner {
             Enumeration<JarEntry> entries = jf.entries();
             while (entries.hasMoreElements()) {
                 JarEntry je = entries.nextElement();
-                if (je.getName().startsWith(DAO_PACKAGE.replace(".", "/")) && je.getName().endsWith(".class")) {
+                if (je.getName().startsWith(DAO_PACKAGE.replace(".", "/"))
+                        && je.getName().endsWith(".class")
+                        && !je.getName().replace(DAO_PACKAGE.replace(".", "/"), "").substring(1).contains("/")) {
                     classes.add(je.getName().replace(".class", "").replace("/", "."));
                 }
             }
