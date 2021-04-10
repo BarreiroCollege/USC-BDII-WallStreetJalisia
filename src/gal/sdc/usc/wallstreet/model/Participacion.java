@@ -17,6 +17,9 @@ public class Participacion extends Entidad {
     @Columna("cantidad")
     private Integer cantidad = 0;
 
+    @Columna("cantidad_bloqueada")
+    private Integer cantidadBloqueada = 0;
+
     private Participacion() {
     }
 
@@ -34,6 +37,14 @@ public class Participacion extends Entidad {
 
     public void setCantidad(Integer cantidad) {
         this.cantidad = cantidad;
+    }
+
+    public Integer getCantidadBloqueada() {
+        return cantidadBloqueada;
+    }
+
+    public void setCantidadBloqueada(Integer cantidadBloqueada) {
+        this.cantidadBloqueada = cantidadBloqueada;
     }
 
     @Override
@@ -56,6 +67,7 @@ public class Participacion extends Entidad {
                 "usuario=" + usuario +
                 ", empresa=" + empresa +
                 ", cantidad=" + cantidad +
+                ", cantidadBloqueada=" + cantidadBloqueada +
                 '}';
     }
 
@@ -82,6 +94,11 @@ public class Participacion extends Entidad {
 
         public Builder withCantidad(Integer cantidad) {
             participacion.cantidad = cantidad;
+            return this;
+        }
+
+        public Builder withCantidadBloqueada(Integer cantidadBloqueada) {
+            participacion.cantidadBloqueada = cantidadBloqueada;
             return this;
         }
 

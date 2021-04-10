@@ -27,6 +27,9 @@ public class OfertaVenta extends Entidad {
     @Columna("confirmado")
     private Boolean confirmado = false;
 
+    @Columna("comision")
+    private Float comision = 0.05f;
+
     private OfertaVenta() {
     }
 
@@ -70,6 +73,14 @@ public class OfertaVenta extends Entidad {
         this.confirmado = confirmado;
     }
 
+    public Float getComision() {
+        return comision;
+    }
+
+    public void setComision(Float comision) {
+        this.comision = comision;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -93,6 +104,7 @@ public class OfertaVenta extends Entidad {
                 ", numParticipaciones=" + numParticipaciones +
                 ", precioVenta=" + precioVenta +
                 ", confirmado=" + confirmado +
+                ", comision=" + comision +
                 '}';
     }
 
@@ -134,6 +146,11 @@ public class OfertaVenta extends Entidad {
 
         public Builder withConfirmado(Boolean confirmado) {
             ofertaVenta.confirmado = confirmado;
+            return this;
+        }
+
+        public Builder withComision(Float comision) {
+            ofertaVenta.comision = comision;
             return this;
         }
 

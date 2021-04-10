@@ -21,9 +21,6 @@ public class Compra extends Entidad {
     @Columna("cantidad")
     private Integer cantidad;
 
-    @Columna("comision")
-    private Float comision = 0.05f;
-
     private Compra() {
     }
 
@@ -47,12 +44,8 @@ public class Compra extends Entidad {
         this.cantidad = cantidad;
     }
 
-    public Float getComision() {
-        return comision;
-    }
-
-    public void setComision(Float comision) {
-        this.comision = comision;
+    public Float beneficio() {
+        return (1 - ofertaVenta.getComision()) * cantidad * ofertaVenta.getPrecioVenta();
     }
 
     @Override
@@ -77,7 +70,6 @@ public class Compra extends Entidad {
                 ", ofertaVenta=" + ofertaVenta +
                 ", usuarioCompra=" + usuarioCompra +
                 ", cantidad=" + cantidad +
-                ", comision=" + comision +
                 '}';
     }
 
@@ -110,11 +102,6 @@ public class Compra extends Entidad {
 
         public Builder withCantidad(Integer cantidad) {
             compra.cantidad = cantidad;
-            return this;
-        }
-
-        public Builder withComision(Float comision) {
-            compra.comision = comision;
             return this;
         }
 
