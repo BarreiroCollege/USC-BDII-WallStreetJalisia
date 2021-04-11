@@ -44,10 +44,6 @@ public class Compra extends Entidad {
         this.cantidad = cantidad;
     }
 
-    public Float beneficio() {
-        return (1 - ofertaVenta.getComision()) * cantidad * ofertaVenta.getPrecioVenta();
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
