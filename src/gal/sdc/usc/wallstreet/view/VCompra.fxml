@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import com.jfoenix.controls.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+
+<AnchorPane prefHeight="414.0" prefWidth="753.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.VCompraController">
+   <children>
+      <TableView layoutX="77.0" layoutY="130.0" prefHeight="188.0" prefWidth="600.0">
+        <columns>
+          <TableColumn prefWidth="163.0" text="Nombre" />
+          <TableColumn minWidth="0.0" prefWidth="111.0" text="Precio" />
+            <TableColumn prefWidth="178.0" text="Fecha Oferta" />
+            <TableColumn prefWidth="147.0" text="Particiones ofertadas" />
+        </columns>
+      </TableView>
+      <Circle id="CirculoUsuario" fill="#e9eef2" layoutX="722.0" layoutY="37.0" radius="23.0" stroke="#d0c7c7" strokeMiterLimit="100.0" strokeType="INSIDE" />
+      <JFXTextField id="CampoNombre" focusColor="#a6acbf" labelFloat="true" layoutX="140.0" layoutY="66.0" unFocusColor="#d0caca" />
+      <Text id="NombreTexto" layoutX="75.0" layoutY="83.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nombre: " wrappingWidth="65.13671875" />
+      <Text id="PrecioTexto" layoutX="355.0" layoutY="83.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Precio: " wrappingWidth="65.13671875" />
+      <JFXTextField id="CampoPrecio" focusColor="#a6acbf" labelFloat="true" layoutX="437.0" layoutY="66.0" unFocusColor="#d0caca" />
+      <JFXButton layoutX="25.0" layoutY="346.0" prefHeight="35.0" prefWidth="102.0" ripplerFill="#838282" text="Comprar" />
+   </children>
+</AnchorPane>
