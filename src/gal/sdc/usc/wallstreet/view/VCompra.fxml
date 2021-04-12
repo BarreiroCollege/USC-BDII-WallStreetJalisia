@@ -18,12 +18,12 @@
             <TableColumn id="ColumnaOfertas" fx:id="columCantidad" prefWidth="194.0" text="Particiones ofertadas" />
         </columns>
       </TableView>
-      <JFXTextField id="CampoNombre" fx:id="campoNombre" focusColor="#a6acbf" labelFloat="true" layoutX="122.0" layoutY="68.0" unFocusColor="#d0caca" />
-      <Text id="NombreTexto" fx:id="TextoNombre" layoutX="57.0" layoutY="85.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nombre: " wrappingWidth="65.13671875" />
-      <Text id="PrecioTexto" fx:id="textoPrecio" layoutX="337.0" layoutY="85.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Precio: " wrappingWidth="65.13671875" />
-      <JFXTextField id="CampoPrecio" fx:id="campoPrecio" focusColor="#a6acbf" labelFloat="true" layoutX="419.0" layoutY="68.0" unFocusColor="#d0caca" />
+      <JFXTextField id="CampoNombre" fx:id="campoNombre" focusColor="#a6acbf" labelFloat="true" layoutX="133.0" layoutY="68.0" unFocusColor="#d0caca" />
+      <Text id="NombreTexto" fx:id="TextoNombre" layoutX="57.0" layoutY="89.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nombre: " wrappingWidth="65.13671875" />
+      <Text id="PrecioTexto" fx:id="textoPrecio" layoutX="336.0" layoutY="89.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Precio: " wrappingWidth="65.13671875" />
+      <JFXTextField id="CampoPrecio" fx:id="campoPrecio" focusColor="#a6acbf" labelFloat="true" layoutX="402.0" layoutY="68.0" unFocusColor="#d0caca" />
       <JFXButton id="BtnComprar" fx:id="btnComprar" layoutX="603.0" layoutY="318.0" prefHeight="35.0" prefWidth="102.0" ripplerFill="#838282" style="-fx-background-color: #E9E9E9;" text="Comprar" />
-      <Text layoutX="57.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Saldo Disponible:" textAlignment="RIGHT" wrappingWidth="648.0" />
+      <Text layoutX="57.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Saldo disponible:" textAlignment="RIGHT" wrappingWidth="648.0" />
       <JFXButton layoutX="57.0" layoutY="318.0" prefHeight="35.0" prefWidth="76.0" style="-fx-background-color: #E9E9E9;" text="Salir" />
    </children>
 </AnchorPane>
