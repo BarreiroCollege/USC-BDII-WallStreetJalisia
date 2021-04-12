@@ -11,7 +11,7 @@ public class CarteraController extends DatabaseLinker {
     private JFXButton prueba;
 
     public void prueba(ActionEvent actionEvent) {
-        List<Participacion> participaciones = super
+        /*List<Participacion> participaciones = super
                 .getDAO(ParticipacionDAO.class)
                 .getPagosHastaAhora();
         for (PagoUsuario pago : pagos) {
