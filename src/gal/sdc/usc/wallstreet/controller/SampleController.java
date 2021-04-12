@@ -14,14 +14,16 @@ import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 
+import javax.swing.JButton;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
 public class SampleController extends DatabaseLinker {
     @FXML
-    private JFXButton prueba;
+    private Button prueba;
 
     public void prueba(ActionEvent actionEvent) {
         /* List<PagoUsuario> pagos = super
