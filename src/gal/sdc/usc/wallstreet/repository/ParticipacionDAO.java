@@ -18,6 +18,16 @@ public class ParticipacionDAO extends DAO<Participacion> {
     }
 
     /**
+     * Devuelve todas las participaciones de un usuario indicado.
+     *
+     * @param u Usuario que posee las participaciones
+     * @return List<Participacion> con las participaciones correspondientes
+     */
+    public List<Participacion> getParticipaciones(Usuario u){
+        return getParticipaciones(u.getIdentificador());
+    }
+
+    /**
      * Devuelve todas las participaciones a nombre de un usuario.
      *
      * @param idUsuario usuario que posee las participaciones
@@ -29,12 +39,11 @@ public class ParticipacionDAO extends DAO<Participacion> {
 
         try (PreparedStatement ps = conexion.prepareStatement(
                 "SELECT empresa, cantidad, cantidad_bloqueada " +
-                        "FROM participaciones WHERE usuario = ?"
+                        "FROM participacion WHERE usuario = ?"
         )) {
             ps.setString(1, idUsuario);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                //TODO: mapeador?
                 Participacion participacion = new Participacion.Builder().withUsuario(usuario)
                         .withEmpresa(
                                 new Empresa.Builder(

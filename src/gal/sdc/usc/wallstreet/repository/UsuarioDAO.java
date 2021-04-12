@@ -12,13 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UsuarioDAO extends DAO<Usuario> {
+
     public UsuarioDAO(Connection conexion) {
-
         super(conexion, Usuario.class);
-        System.out.println("UsuarioDAO instanciado");
-        // jola
-
-        //super(conexion, Usuario.class);
     }
 
     public List<Usuario> getUsuarios() {
@@ -35,5 +31,14 @@ public class UsuarioDAO extends DAO<Usuario> {
         }
         return usuarios;
 
+    }
+
+    /**
+     * Busca un usuario concreto en la base de datos a partir de su identificador
+     * @param identificador Identificador único del usuario dentro de la base de datos
+     * @return Usuario con el identificador correcto, null en caso de no existir
+     */
+    public Usuario getUsuario(String identificador){
+        return getUsuarios().stream().filter( user -> identificador.equals( user.getIdentificador() ) ).findFirst().orElse(null);
     }
 }
