@@ -114,6 +114,7 @@ create table participacion
             references empresa
             on update cascade,
     cantidad integer default 0 not null,
+    cantidad_bloqueada integer default 0 not null,
     constraint poseer_participacion_pk
         primary key (usuario, empresa)
 );
