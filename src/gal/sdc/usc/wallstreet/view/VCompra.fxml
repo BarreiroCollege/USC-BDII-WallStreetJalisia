@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
 <?import com.jfoenix.controls.*?>
 <?import java.lang.*?>
@@ -7,21 +8,22 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
 
-<AnchorPane prefHeight="414.0" prefWidth="753.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.VCompraController">
+<AnchorPane fx:id="ventanaCompra" prefHeight="389.0" prefWidth="761.0" style="-fx-background-color: #FFF9F9;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.VCompraController">
    <children>
-      <TableView layoutX="77.0" layoutY="130.0" prefHeight="188.0" prefWidth="600.0">
+      <TableView id="tablaEmpresas" fx:id="tablaOfertas" layoutX="68.0" layoutY="127.0" prefHeight="188.0" prefWidth="648.0" style="-fx-background-color: #FFF9F9; -fx-border-width: 1; -fx-border-color: #D9D9D9;">
         <columns>
-          <TableColumn prefWidth="163.0" text="Nombre" />
-          <TableColumn minWidth="0.0" prefWidth="111.0" text="Precio" />
-            <TableColumn prefWidth="178.0" text="Fecha Oferta" />
-            <TableColumn prefWidth="147.0" text="Particiones ofertadas" />
+          <TableColumn id="ColumnaNombre" fx:id="columNombre" prefWidth="163.0" text="Nombre" />
+          <TableColumn id="ColumnaPrecio" fx:id="columPrecio" minWidth="0.0" prefWidth="111.0" text="Precio" />
+            <TableColumn id="ColumnaFecha" fx:id="columFecha" prefWidth="178.0" text="Fecha Oferta" />
+            <TableColumn id="ColumnaOfertas" fx:id="columCantidad" prefWidth="194.0" text="Particiones ofertadas" />
         </columns>
       </TableView>
-      <Circle id="CirculoUsuario" fill="#e9eef2" layoutX="722.0" layoutY="37.0" radius="23.0" stroke="#d0c7c7" strokeMiterLimit="100.0" strokeType="INSIDE" />
-      <JFXTextField id="CampoNombre" focusColor="#a6acbf" labelFloat="true" layoutX="140.0" layoutY="66.0" unFocusColor="#d0caca" />
-      <Text id="NombreTexto" layoutX="75.0" layoutY="83.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nombre: " wrappingWidth="65.13671875" />
-      <Text id="PrecioTexto" layoutX="355.0" layoutY="83.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Precio: " wrappingWidth="65.13671875" />
-      <JFXTextField id="CampoPrecio" focusColor="#a6acbf" labelFloat="true" layoutX="437.0" layoutY="66.0" unFocusColor="#d0caca" />
-      <JFXButton layoutX="25.0" layoutY="346.0" prefHeight="35.0" prefWidth="102.0" ripplerFill="#838282" text="Comprar" />
+      <JFXTextField id="CampoNombre" fx:id="campoNombre" focusColor="#a6acbf" labelFloat="true" layoutX="133.0" layoutY="84.0" unFocusColor="#d0caca" />
+      <Text id="NombreTexto" fx:id="TextoNombre" layoutX="68.0" layoutY="101.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nombre: " wrappingWidth="65.13671875" />
+      <Text id="PrecioTexto" fx:id="textoPrecio" layoutX="348.0" layoutY="101.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Precio: " wrappingWidth="65.13671875" />
+      <JFXTextField id="CampoPrecio" fx:id="campoPrecio" focusColor="#a6acbf" labelFloat="true" layoutX="430.0" layoutY="84.0" unFocusColor="#d0caca" />
+      <JFXButton id="BtnComprar" fx:id="btnComprar" layoutX="614.0" layoutY="334.0" prefHeight="35.0" prefWidth="102.0" ripplerFill="#838282" style="-fx-background-color: #E9E9E9;" text="Comprar" />
+      <Text layoutX="68.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Saldo Disponible:" textAlignment="RIGHT" wrappingWidth="648.0" />
+      <JFXButton layoutX="68.0" layoutY="334.0" prefHeight="35.0" prefWidth="76.0" style="-fx-background-color: #E9E9E9;" text="Salir" />
    </children>
 </AnchorPane>
