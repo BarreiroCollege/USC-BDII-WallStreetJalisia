@@ -128,7 +128,7 @@ public class RegistroController extends DatabaseLinker implements Initializable 
         btnAcceso.setOnAction(e -> Main.setScene(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT));
         btnRegistro.setOnAction(this::registrar);
 
-        this.usuarioYaExiste = Validadores.personalizado("Sólo puede tener numeros y letras");
+        this.usuarioNoValido = Validadores.personalizado("Sólo puede tener numeros y letras");
         this.usuarioYaExiste = Validadores.personalizado("Este usuario ya existe");
         this.claveDebil = Validadores.personalizado("Esta clave es demasiado débil");
     }
