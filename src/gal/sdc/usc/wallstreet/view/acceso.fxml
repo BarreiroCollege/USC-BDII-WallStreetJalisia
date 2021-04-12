@@ -9,9 +9,15 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import java.net.URL?>
 <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0"
             xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="gal.sdc.usc.wallstreet.controller.AccesoController">
+            fx:controller="gal.sdc.usc.wallstreet.controller.AccesoController"
+            fx:id="anchor">
+    <stylesheets>
+        <URL value="@styles/snackbar.css"/>
+    </stylesheets>
+
     <HBox alignment="CENTER" AnchorPane.bottomAnchor="350.0" AnchorPane.leftAnchor="0.0"
           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" prefHeight="150.0">
         <Label text="Wall Street Jalisia">
@@ -20,13 +26,14 @@
             </font>
         </Label>
     </HBox>
+
     <VBox AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
           AnchorPane.topAnchor="150.0" alignment="CENTER" prefHeight="250.0">
         <VBox prefHeight="250.0" alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
             <VBox.margin>
                 <Insets left="25.0" right="25.0" top="40.0"/>
             </VBox.margin>
-            <JFXTextField alignment="CENTER" promptText="Nombre de Usuario" labelFloat="true" fx:id="txtUsuario"/>
+            <JFXTextField alignment="CENTER" promptText="Nombre de usuario" labelFloat="true" fx:id="txtUsuario"/>
             <Label minHeight="60.0"/>
             <JFXPasswordField alignment="CENTER" promptText="Contraseña" labelFloat="true" fx:id="txtClave"/>
         </VBox>

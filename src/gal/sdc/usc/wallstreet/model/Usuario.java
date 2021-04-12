@@ -30,7 +30,7 @@ public class Usuario extends Entidad {
     private Integer telefono;
 
     @Columna("saldo")
-    private Float saldo;
+    private Float saldo = 0.f;
 
     @Columna("saldo_bloqueado")
     private Float saldoBloqueado = 0.f;

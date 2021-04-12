@@ -13,7 +13,7 @@ public class Validadores {
 
     public static ErrorValidator personalizado(String msg) {
         ErrorValidator error = new ErrorValidator(msg);
-        error.setIcon(Iconos.icono(FontAwesomeIcon.WARNING));
+        error.setIcon(Iconos.icono(FontAwesomeIcon.WARNING, "1em"));
         error.getIcon().setStyle("-fx-font-family: FontAwesome;");
         return error;
     }
