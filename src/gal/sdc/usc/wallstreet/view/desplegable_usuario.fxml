@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="54.0" prefWidth="152.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.DesplegableUsuarioController">
+   <children>
+      <JFXButton layoutX="44.0" layoutY="14.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="102.0" text="Ver perfil" />
+       <JFXButton layoutX="50.0" layoutY="39.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="102.0" text="Cerrar sesión" />
+   </children>
+</AnchorPane>
