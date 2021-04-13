@@ -5,6 +5,8 @@ import gal.sdc.usc.wallstreet.repository.ParticipacionDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -18,6 +20,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CarteraController extends DatabaseLinker {
     private final ObservableList<Participacion> datosTabla = FXCollections.observableArrayList();
@@ -39,6 +42,7 @@ public class CarteraController extends DatabaseLinker {
     private Button cartera_btn_filtrar;
 
     private String cbTexto;
+    private FilteredList<String> empresas;
 
     /**
      * Inicializa la tabla de datos que se muestra en Cartera
@@ -59,10 +63,22 @@ public class CarteraController extends DatabaseLinker {
         for (Participacion part : datosTabla){
             cb_empresa.getItems().add(part.getEmpresa().getNombre());
         }
+        empresas = cb_empresa.getItems().filtered(null);
 
-        // La ComboBox es editable. Se define un listener para guardar el valor escrito/seleccionado.
-        //TODO: filtrar opciones según el texto escrito
-        cb_empresa.valueProperty().addListener((observable, oldValue, newValue) -> cbTexto = newValue);
+        // La ComboBox es editable y actualiza sus opciones en función de lo escrito por el usuario.
+        cb_empresa.valueProperty().addListener((observable, oldValue, newValue) -> {
+            FilteredList<String> empresasFiltradas = empresas;
+            empresasFiltradas.setPredicate(empresa -> {
+                if (newValue == null || newValue.isEmpty()){
+                    // Corrige bug cuando se intentan borrar caracteres
+                    return true;
+                }
+                // Una empresa se mantiene como opción si su nombre contiene lo escrito.
+                return empresa.toLowerCase().contains(newValue.toLowerCase());
+            });
+            cb_empresa.setItems(empresasFiltradas);
+            cbTexto = newValue;     // Se guarda el valor para un posible filtrado (botón)
+        });
     }
 
     public void actualizarDatos() {
