@@ -1,60 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.*?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.CarteraController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.CarteraController">
    <children>
-      <DatePicker layoutX="484.0" layoutY="298.0" prefHeight="26.0" prefWidth="85.0" />
+
       <TableView fx:id="cartera_tabla" layoutX="29.0" layoutY="98.0" prefHeight="263.0" prefWidth="274.0">
         <columns>
-          <TableColumn fx:id="cartera_tabla_empresa" prefWidth="91.3" resizable="false" text="Empresa" />
-           <TableColumn fx:id="cartera_tabla_cant" prefWidth="91.2" resizable="false" text="Cantidad" />
-           <TableColumn fx:id="cartera_tabla_cant_bloq" prefWidth="91.2" resizable="false" text="Bloqueadas" />
+          <TableColumn fx:id="cartera_tabla_empresa" editable="false" prefWidth="91.3" text="Empresa" />
+            <TableColumn fx:id="cartera_tabla_cif" editable="false" prefWidth="75.0" text="CIF" />
+           <TableColumn fx:id="cartera_tabla_cant" editable="false" prefWidth="91.2" text="Cantidad" />
+           <TableColumn fx:id="cartera_tabla_cant_bloq" editable="false" prefWidth="91.2" text="Bloqueadas" />
         </columns>
       </TableView>
-      <Text layoutX="64.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Mi Cartera">
-         <font>
-            <Font size="22.0" />
-         </font>
-      </Text>
-      <Text layoutX="435.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Saldo:">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Text>
-      <Text fx:id="txt_saldo" layoutX="503.0" layoutY="62.0" strokeType="OUTSIDE" strokeWidth="0.0" >
+
+      <Text fx:id="txt_saldo" layoutX="503.0" layoutY="62.0" strokeType="OUTSIDE" strokeWidth="0.0">
          <font>
             <Font size="14.0" />
          </font>
       </Text>
-      <Text layoutX="423.0" layoutY="127.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Filtrar">
+
+      <JFXComboBox fx:id="cb_empresa" layoutX="428.0" layoutY="99.0" prefHeight="26.0" prefWidth="129.0" editable="true"/>
+      <JFXTextField layoutX="428.0" layoutY="145.0" prefHeight="26.0" prefWidth="53.0" promptText="Mín" labelFloat="true"/>
+      <JFXTextField layoutX="503.0" layoutY="145.0" prefHeight="26.0" prefWidth="54.0" promptText="Máx" labelFloat="true"/>
+      <JFXTextField layoutX="428.0" layoutY="201.0" prefHeight="26.0" prefWidth="53.0" promptText="Mín" labelFloat="true"/>
+      <JFXTextField layoutX="503.0" layoutY="201.0" prefHeight="26.0" prefWidth="54.0" promptText="Máx" labelFloat="true"/>
+      <JFXDatePicker layoutX="495.0" layoutY="250.0" prefHeight="26.0" prefWidth="85.0" />
+      <JFXDatePicker layoutX="495.0" layoutY="280.0" prefHeight="26.0" prefWidth="85.0" />
+
+      <Label layoutX="430.0" layoutY="44.0" text="Saldo:">
          <font>
             <Font size="18.0" />
          </font>
-      </Text>
-      <Text layoutX="353.0" layoutY="170.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Empresa">
+      </Label>
+      <Label layoutX="57.0" layoutY="41.0" text="Mi Cartera">
          <font>
-            <Font size="14.0" />
+            <Font name="System Bold" size="22.0" />
          </font>
-      </Text>
-      <ComboBox layoutX="428.0" layoutY="152.0" prefHeight="26.0" prefWidth="129.0" />
-      <Text layoutX="320.0" layoutY="200.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Número de participaciones no bloqueadas" textAlignment="RIGHT" wrappingWidth="85.60000000000014" />
-      <TextField layoutX="428.0" layoutY="204.0" prefHeight="26.0" prefWidth="53.0" promptText="Mín" />
-      <TextField layoutX="503.0" layoutY="204.0" prefHeight="26.0" prefWidth="54.0" promptText="Máx" />
-      <Text layoutX="336.0" layoutY="331.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Última fecha de pago" textAlignment="RIGHT" wrappingWidth="69.3740234375" />
-      <Text layoutX="415.0" layoutY="316.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Después de" />
-      <Text layoutX="422.0" layoutY="352.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Antes de" />
-      <DatePicker layoutX="484.0" layoutY="334.0" prefHeight="26.0" prefWidth="85.0" />
-      <Text layoutX="320.0" layoutY="260.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Número de participaciones bloqueadas" textAlignment="RIGHT" wrappingWidth="85.60000000000014" />
-      <TextField layoutX="428.0" layoutY="257.0" prefHeight="26.0" prefWidth="53.0" promptText="Mín" />
-      <TextField layoutX="503.0" layoutY="257.0" prefHeight="26.0" prefWidth="54.0" promptText="Máx" />
+      </Label>
+
+      <Label layoutX="372.0" layoutY="104.0" text="Empresa" />
+      <Label layoutX="322.0" layoutY="139.0" prefHeight="51.0" prefWidth="99.0" text="Número de participaciones no bloqueadas" textAlignment="RIGHT" wrapText="true" />
+      <Label layoutX="322.0" layoutY="201.0" prefHeight="51.0" prefWidth="99.0" text="Número de participaciones bloqueadas" textAlignment="RIGHT" wrapText="true" />
+      <Label layoutX="427.0" layoutY="257.0" text="Después de" />
+      <Label layoutX="427.0" layoutY="291.0" text="Antes de" />
+      <Label layoutX="328.0" layoutY="253.0" prefHeight="51.0" prefWidth="92.0" text="Última fecha de pago" textAlignment="RIGHT" wrapText="true" />
+      <JFXButton fx:id="cartera_btn_filtrar" layoutX="404.0" layoutY="329.0" mnemonicParsing="false" onAction="#filtrarDatos" text="Filtrar" />
    </children>
 </AnchorPane>

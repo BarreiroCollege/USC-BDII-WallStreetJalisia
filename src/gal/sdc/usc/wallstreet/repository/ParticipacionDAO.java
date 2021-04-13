@@ -38,17 +38,21 @@ public class ParticipacionDAO extends DAO<Participacion> {
         Usuario usuario = new Usuario.Builder(idUsuario).build();
 
         try (PreparedStatement ps = conexion.prepareStatement(
-                "SELECT empresa, cantidad, cantidad_bloqueada " +
-                        "FROM participacion WHERE usuario = ?"
+                "SELECT p.empresa, e.nombre, e.cif, p.cantidad, p.cantidad_bloqueada " +
+                        "FROM participacion p JOIN empresa e ON p.empresa = e.usuario " +
+                        "WHERE p.usuario = ?"
         )) {
             ps.setString(1, idUsuario);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
+                //TODO: mapeador?
                 Participacion participacion = new Participacion.Builder().withUsuario(usuario)
                         .withEmpresa(
                                 new Empresa.Builder(
                                         new Usuario.Builder(rs.getString("empresa")).build()
-                                ).build()
+                                )
+                                .withCif(rs.getString("cif"))
+                                .withNombre(rs.getString("nombre")).build()
                         )
                         .withCantidad(rs.getInt("cantidad"))
                         .withCantidadBloqueada(rs.getInt("cantidad_bloqueada")).build();
