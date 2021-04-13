@@ -10,20 +10,18 @@
 
 <AnchorPane fx:id="ventanaCompra" prefHeight="389.0" prefWidth="761.0" style="-fx-background-color: #FFF9F9;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.VCompraController">
    <children>
-      <TableView id="tablaEmpresas" fx:id="tablaOfertas" layoutX="57.0" layoutY="111.0" prefHeight="188.0" prefWidth="648.0" style="-fx-background-color: #FFF9F9; -fx-border-width: 1; -fx-border-color: #D9D9D9;">
+      <TableView id="tablaOfertas" fx:id="tablaOfertas" layoutX="57.0" layoutY="111.0" prefHeight="188.0" prefWidth="648.0" style="-fx-background-color: #FFF9F9; -fx-border-width: 1; -fx-border-color: #D9D9D9;">
         <columns>
-          <TableColumn id="ColumnaNombre" fx:id="columNombre" prefWidth="163.0" text="Nombre" />
-          <TableColumn id="ColumnaPrecio" fx:id="columPrecio" minWidth="0.0" prefWidth="111.0" text="Precio" />
-            <TableColumn id="ColumnaFecha" fx:id="columFecha" prefWidth="178.0" text="Fecha Oferta" />
-            <TableColumn id="ColumnaOfertas" fx:id="columCantidad" prefWidth="194.0" text="Particiones ofertadas" />
+          <TableColumn id="ColumnaNombre" fx:id="nombreCol" prefWidth="163.0" text="Nombre" />
+          <TableColumn id="ColumnaPrecio" fx:id="precioCol" minWidth="0.0" prefWidth="111.0" text="Precio" />
+            <TableColumn id="ColumnaFecha" fx:id="fechaCol" prefWidth="178.0" text="Fecha Oferta" />
+            <TableColumn id="ColumnaOfertas" fx:id="cantidadCol" prefWidth="194.0" text="Particiones ofertadas" />
         </columns>
       </TableView>
-      <JFXTextField id="CampoNombre" fx:id="campoNombre" focusColor="#a6acbf" labelFloat="true" layoutX="133.0" layoutY="68.0" onKeyPressed="#buscarPorNombre" unFocusColor="#d0caca" />
-      <Text id="NombreTexto" fx:id="TextoNombre" layoutX="57.0" layoutY="89.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nombre: " wrappingWidth="65.13671875" />
-      <Text id="PrecioTexto" fx:id="textoPrecio" layoutX="336.0" layoutY="89.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Precio: " wrappingWidth="65.13671875" />
-      <JFXTextField id="CampoPrecio" fx:id="campoPrecio" focusColor="#a6acbf" labelFloat="true" layoutX="402.0" layoutY="68.0" onKeyPressed="#buscarPorPrecio" unFocusColor="#d0caca" />
-      <JFXButton id="BtnComprar" fx:id="btnComprar" layoutX="603.0" layoutY="318.0" prefHeight="35.0" prefWidth="102.0" ripplerFill="#838282" style="-fx-background-color: #E9E9E9;" text="Comprar" />
+      <JFXTextField id="CampoPrecio" fx:id="campoPrecio" focusColor="#a6acbf" labelFloat="true" layoutX="466.0" layoutY="67.0" prefHeight="31.0" prefWidth="102.0" promptText="Precio" unFocusColor="#d0caca" />
+      <JFXButton id="BtnComprar" fx:id="btnComprar" layoutX="603.0" layoutY="318.0" onDragDetected="#btnComprarEvent" prefHeight="35.0" prefWidth="102.0" ripplerFill="#838282" style="-fx-background-color: #E9E9E9;" text="Comprar" />
       <Text layoutX="57.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Saldo disponible:" textAlignment="RIGHT" wrappingWidth="648.0" />
       <JFXButton fx:id="btnSalir" layoutX="57.0" layoutY="318.0" onAction="#btnSalirEvent" prefHeight="35.0" prefWidth="76.0" style="-fx-background-color: #E9E9E9;" text="Salir" />
+      <JFXComboBox fx:id="empresaComboBox" layoutX="57.0" layoutY="67.0" onAction="#empresaSelected" prefHeight="31.0" prefWidth="347.0" promptText="Empresa" visibleRowCount="8" />
    </children>
 </AnchorPane>
