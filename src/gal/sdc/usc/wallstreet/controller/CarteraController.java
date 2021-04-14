@@ -2,7 +2,9 @@ package gal.sdc.usc.wallstreet.controller;
 
 import com.jfoenix.controls.JFXTextField;
 import gal.sdc.usc.wallstreet.model.Participacion;
+import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.ParticipacionDAO;
+import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -13,9 +15,10 @@ import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.text.Text;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Predicate;
 
 public class CarteraController extends DatabaseLinker {
@@ -33,8 +36,9 @@ public class CarteraController extends DatabaseLinker {
     @FXML
     private TableColumn<Participacion, String> cartera_tabla_pago;
     @FXML
-    private Text txt_saldo;
-
+    private Label txt_saldo;
+    @FXML
+    private Label txt_saldo_real;
 
     // Opciones de filtrado
     @FXML
@@ -64,6 +68,7 @@ public class CarteraController extends DatabaseLinker {
      */
     @FXML
     public void initialize(){
+        final DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("d/L/y", new Locale("es","ES")); // Asigna el formato de fecha para la tabla
 
         // Establecemos los valores que contendrá cada columna
         cartera_tabla_empresa.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getNombre()));
@@ -71,12 +76,12 @@ public class CarteraController extends DatabaseLinker {
         cartera_tabla_cant.setCellValueFactory( new PropertyValueFactory<>("cantidad") );
         cartera_tabla_cant_bloq.setCellValueFactory( new PropertyValueFactory<>("cantidadBloqueada") );
         cartera_tabla_pago.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getFechaUltimoPago() == null?
-                "null" : celda.getValue().getEmpresa().getFechaUltimoPago().toLocalDateTime().toLocalDate().toString()));
+                "Nunca" : celda.getValue().getEmpresa().getFechaUltimoPago().toLocalDateTime().toLocalDate().format(formatoFecha) ));
         // TODO: testear filtrado por fecha (meter valores de prueba)
 
         // Indicamos a la tabla que sus contenidos serán los de la lista datosTabla
-        cartera_tabla.setItems(datosTabla);
         actualizarDatos();
+        cartera_tabla.setItems(datosTabla);
 
         // La ComboBox muestra los nombres de las empresas.
         for (Participacion part : datosTabla){
@@ -101,16 +106,18 @@ public class CarteraController extends DatabaseLinker {
 
     public void actualizarDatos() {
 
-        String idUsuario = "Xia"; /* TODO ELIMINAR ESTE PARÁMETRO TEMPORAL DE DEBUG */
+        // TODO OPERACIONES A TRAVÉS DEL USUARIO CON LOGIN
+        Usuario usuario = super.getDAO(UsuarioDAO.class).getUsuario("Xia");
 
-        // Accedemos al DAO de Participaciones para comprobar las del usuario
-        // TODO Mostrar datos para el usuario con la sesión actual
-        List<Participacion> participaciones = super.getDAO(ParticipacionDAO.class).getParticipaciones(idUsuario);
+        // Accedemos al DAO de Participaciones para comprobar las participaciones que posea el usuario
+        List<Participacion> participaciones = super.getDAO(ParticipacionDAO.class).getParticipaciones(usuario);
 
-        // Limpiamos los datos de la tabla e insertamos los que acabamos de obtener
-        datosTabla.clear();
-        datosTabla.addAll(participaciones);
-        //txt_saldo.setText(super.getDAO(UsuarioDAO.class).getUsuario(idUsuario).getSaldo().toString() + " €");
+        // Introducimos los datos leidos de la bd a nuestra ObservableList
+        datosTabla.setAll(participaciones);
+
+        // Actualizamos el saldo del usuario consultado
+        txt_saldo.setText( usuario.getSaldo()-usuario.getSaldoBloqueado() + " €");
+        txt_saldo_real.setText( usuario.getSaldo() + " €");
     }
 
     /**

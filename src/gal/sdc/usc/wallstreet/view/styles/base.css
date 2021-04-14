@@ -1,0 +1,35 @@
+.root {
+    -fx-base: #f4f4f4;
+    -fx-accent: #4059a9;
+    -fx-focus-color: #4059a9;
+    -fx-default-button: #000000;
+    -fx-faint-focus-color: #000000;
+}
+
+/*.table-view{
+    -fx-background-color: #717eac;
+}*/
+
+.table-view .virtual-flow .scroll-bar:horizontal,
+.table-view .virtual-flow .scroll-bar:horizontal .track,
+.table-view .virtual-flow .scroll-bar:horizontal .track-background {
+    -fx-background-color: transparent;
+}
+
+.table-view .virtual-flow .scroll-bar .increment-button,
+.table-view .virtual-flow .scroll-bar .decrement-button {
+    -fx-opacity: 0;
+}
+
+.table-view .virtual-flow .scroll-bar:horizontal .thumb {
+    -fx-background-color: #4059a9 ;
+}
+
+.column-header{
+    -fx-background-color: #adbde0;
+}
+
+.date-picker{
+    -jfx-default-color: #4059a9;
+    -fx-show-week-numbers: true;
+}
