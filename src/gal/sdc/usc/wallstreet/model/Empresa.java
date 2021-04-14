@@ -4,6 +4,7 @@ import gal.sdc.usc.wallstreet.model.ddl.Columna;
 import gal.sdc.usc.wallstreet.model.ddl.Entidad;
 import gal.sdc.usc.wallstreet.model.ddl.Tabla;
 
+import java.sql.Timestamp;
 import java.util.Objects;
 
 @Tabla("empresa")
@@ -16,6 +17,8 @@ public class Empresa extends Entidad {
 
     @Columna("nombre")
     private String nombre;
+
+    private Timestamp fechaUltimoPago;
 
     private Empresa() {
     }
@@ -38,6 +41,14 @@ public class Empresa extends Entidad {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public Timestamp getFechaUltimoPago() {
+        return fechaUltimoPago;
+    }
+
+    public void setFechaUltimoPago(Timestamp fechaUltimoPago) {
+        this.fechaUltimoPago = fechaUltimoPago;
     }
 
     @Override
@@ -84,6 +95,11 @@ public class Empresa extends Entidad {
 
         public Builder withNombre(String nombre) {
             empresa.nombre = nombre;
+            return this;
+        }
+
+        public Builder withFechaUltimoPago(Timestamp fechaUltimoPago) {
+            empresa.fechaUltimoPago = fechaUltimoPago;
             return this;
         }
 

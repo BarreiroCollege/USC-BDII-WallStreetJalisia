@@ -1,26 +1,23 @@
 package gal.sdc.usc.wallstreet.controller;
 
+import com.jfoenix.controls.JFXTextField;
 import gal.sdc.usc.wallstreet.model.Participacion;
 import gal.sdc.usc.wallstreet.repository.ParticipacionDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 
+import java.sql.Timestamp;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
 
 public class CarteraController extends DatabaseLinker {
     private final ObservableList<Participacion> datosTabla = FXCollections.observableArrayList();
@@ -35,9 +32,26 @@ public class CarteraController extends DatabaseLinker {
     @FXML
     private TableColumn<Participacion, Integer> cartera_tabla_cant_bloq;
     @FXML
+    private TableColumn<Participacion, String> cartera_tabla_pago;
+    @FXML
     private Text txt_saldo;
+
+    // Opciones de filtrado
     @FXML
     private ComboBox<String> cb_empresa;
+    @FXML
+    private JFXTextField txt_min_part;
+    @FXML
+    private JFXTextField txt_max_part;
+    @FXML
+    private JFXTextField txt_min_part_bloq;
+    @FXML
+    private JFXTextField txt_max_part_bloq;
+    @FXML
+    private DatePicker datepck_despues_pago;
+    @FXML
+    private DatePicker datepck_antes_pago;
+
     @FXML
     private Button cartera_btn_filtrar;
 
@@ -50,11 +64,16 @@ public class CarteraController extends DatabaseLinker {
      */
     @FXML
     public void initialize(){
+
         // Establecemos los valores que contendrá cada columna
         cartera_tabla_empresa.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getNombre()));
         cartera_tabla_cif.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getCif()));
         cartera_tabla_cant.setCellValueFactory( new PropertyValueFactory<>("cantidad") );
         cartera_tabla_cant_bloq.setCellValueFactory( new PropertyValueFactory<>("cantidadBloqueada") );
+        cartera_tabla_pago.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getFechaUltimoPago() == null?
+                "null" : celda.getValue().getEmpresa().getFechaUltimoPago().toLocalDateTime().toLocalDate().toString()));
+        // TODO: testear filtrado por fecha (meter valores de prueba)
+
         // Indicamos a la tabla que sus contenidos serán los de la lista datosTabla
         cartera_tabla.setItems(datosTabla);
         actualizarDatos();
@@ -104,17 +123,40 @@ public class CarteraController extends DatabaseLinker {
         // Se guardan todas las participaciones en un FilteredList
         FilteredList<Participacion> partFiltradas = new FilteredList<>(datosTabla, p -> true);
 
-        // Se realiza el filtrado
-        partFiltradas.setPredicate(participacion -> {
-            // Se comprueba si hay algún valor seleccionado o escrito en la ComboBox
-            if (cb_empresa.getValue() != null && !cb_empresa.getValue().isEmpty()){
-                // El nombre comercial de la empresa de la participación debe contener la selección
-                if (!participacion.getEmpresa().getNombre().toLowerCase().contains(cbTexto.toLowerCase())){
-                    return false;
-                }
+        if(txt_min_part.getText() != null && !txt_min_part.getText().isEmpty()){
+            // Solo se aceptan caracteres numéricos
+            if (!txt_min_part.getText().matches("[0-9]+")){
+                // TODO: mostrar error?
+                return;
             }
-            return true;
-        });
+        }
+
+        if(txt_max_part.getText() != null && !txt_max_part.getText().isEmpty()){
+            // Solo se aceptan caracteres numéricos
+            if (!txt_max_part.getText().matches("[0-9]+")){
+                // TODO: mostrar error?
+                return;
+            }
+        }
+
+        if(txt_min_part_bloq.getText() != null && !txt_min_part_bloq.getText().isEmpty()){
+            // Solo se aceptan caracteres numéricos
+            if (!txt_min_part_bloq.getText().matches("[0-9]+")){
+                // TODO: mostrar error?
+                return;
+            }
+        }
+        if(txt_max_part_bloq.getText() != null && !txt_max_part_bloq.getText().isEmpty()){
+            // Solo se aceptan caracteres numéricos
+            if (!txt_max_part_bloq.getText().matches("[0-9]+")){
+                // TODO: mostrar error?
+                return;
+            }
+        }
+
+        Predicate<Participacion> predicadoTotal = construirPredicadosFiltro();
+        // Se eliminan aquellas participaciones no válidas
+        partFiltradas.setPredicate(predicadoTotal);
 
         // Una FilteredList no se puede modificar. Se almacena como SortedList para que pueda ser ordenada.
         SortedList<Participacion> partOrdenadas = new SortedList<>(partFiltradas);
@@ -124,6 +166,69 @@ public class CarteraController extends DatabaseLinker {
 
         // Se borra la antigua información de la tabla y se muestra la nueva.
         cartera_tabla.setItems(partOrdenadas);
+    }
+
+    private Predicate<Participacion> construirPredicadosFiltro(){
+        // Predicado correspondiente a la ComboBox
+        Predicate<Participacion> predComboBox = participacion -> {
+            // Se comprueba si hay algún valor seleccionado o escrito en la ComboBox
+            if (cb_empresa.getValue() != null && !cb_empresa.getValue().isEmpty()){
+                // El nombre comercial de la empresa de la participación debe contener la selección
+                return participacion.getEmpresa().getNombre().toLowerCase().contains(cbTexto.toLowerCase());
+            }
+            return true;
+        };
+
+        // Predicados correspondientes al rango de participaciones no bloqueadas
+        Predicate<Participacion> predMinPart = participacion -> {
+            if (txt_min_part.getText() != null && !txt_min_part.getText().isEmpty()){
+                return participacion.getCantidad() >= Integer.parseInt(txt_min_part.getText());
+            }
+            return true;
+        };
+
+        Predicate<Participacion> predMaxPart= participacion -> {
+            if (txt_max_part.getText() != null && !txt_max_part.getText().isEmpty()){
+                return participacion.getCantidad() <= Integer.parseInt(txt_max_part.getText());
+            }
+            return true;
+        };
+
+        // Predicados correspondientes al rango de participaciones bloqueadas
+        Predicate<Participacion> predMinPartBloq = participacion -> {
+            if (txt_min_part_bloq.getText() != null && !txt_min_part_bloq.getText().isEmpty()){
+                return participacion.getCantidadBloqueada() >= Integer.parseInt(txt_min_part_bloq.getText());
+            }
+            return true;
+        };
+
+        Predicate<Participacion> predMaxPartBloq = participacion -> {
+            if (txt_max_part_bloq.getText() != null && !txt_max_part_bloq.getText().isEmpty()){
+                return participacion.getCantidadBloqueada() <= Integer.parseInt(txt_max_part_bloq.getText());
+            }
+            return true;
+        };
+
+        // Predicados correspondientes al rango de fechas del último pago
+        // Se filtra en función del último pago que realizó la empresa (que el usuario puede no haber recibido)
+        Predicate<Participacion> predDespuesFecha = participacion -> {
+            if (datepck_despues_pago.getValue() != null && participacion.getEmpresa().getFechaUltimoPago() != null){
+                return participacion.getEmpresa().getFechaUltimoPago()
+                        .compareTo(java.sql.Date.valueOf(datepck_despues_pago.getValue())) >= 0;
+            }
+            return true;
+        };
+
+        Predicate<Participacion> predAntesFecha = participacion -> {
+            if (datepck_antes_pago.getValue() != null && participacion.getEmpresa().getFechaUltimoPago() != null){
+                return participacion.getEmpresa().getFechaUltimoPago()
+                        .compareTo(java.sql.Date.valueOf(datepck_antes_pago.getValue())) <= 0;
+            }
+            return true;
+        };
+
+        return predComboBox.and(predMinPart).and(predMaxPart).and(predMinPartBloq).and(predMaxPartBloq)
+                .and(predDespuesFecha).and(predAntesFecha);
     }
 
 }

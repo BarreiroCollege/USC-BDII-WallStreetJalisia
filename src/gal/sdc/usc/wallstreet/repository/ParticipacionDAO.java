@@ -23,7 +23,7 @@ public class ParticipacionDAO extends DAO<Participacion> {
      * @param u Usuario que posee las participaciones
      * @return List<Participacion> con las participaciones correspondientes
      */
-    public List<Participacion> getParticipaciones(Usuario u){
+    public List<Participacion> getParticipaciones(Usuario u) {
         return getParticipaciones(u.getIdentificador());
     }
 
@@ -51,11 +51,22 @@ public class ParticipacionDAO extends DAO<Participacion> {
                                 new Empresa.Builder(
                                         new Usuario.Builder(rs.getString("empresa")).build()
                                 )
-                                .withCif(rs.getString("cif"))
-                                .withNombre(rs.getString("nombre")).build()
+                                        .withCif(rs.getString("cif"))
+                                        .withNombre(rs.getString("nombre")).build()
                         )
                         .withCantidad(rs.getInt("cantidad"))
                         .withCantidadBloqueada(rs.getInt("cantidad_bloqueada")).build();
+
+                try (PreparedStatement psFecha = conexion.prepareStatement(
+                        "SELECT max(fecha) FROM pago WHERE empresa = ?"
+                )) {
+                    psFecha.setString(1, participacion.getEmpresa().getUsuario().getIdentificador());
+                    ResultSet rsFecha = psFecha.executeQuery();
+                    if (rsFecha.next()) {
+                        participacion.getEmpresa().setFechaUltimoPago(rsFecha.getTimestamp(1));
+                    }
+                }
+
                 participaciones.add(participacion);
             }
         } catch (SQLException e) {

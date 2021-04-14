@@ -18,6 +18,7 @@
             <TableColumn fx:id="cartera_tabla_cif" editable="false" prefWidth="75.0" text="CIF" />
            <TableColumn fx:id="cartera_tabla_cant" editable="false" prefWidth="91.2" text="Cantidad" />
            <TableColumn fx:id="cartera_tabla_cant_bloq" editable="false" prefWidth="91.2" text="Bloqueadas" />
+           <TableColumn fx:id="cartera_tabla_pago" editable="false" prefWidth="91.2" text="Último pago" />
         </columns>
       </TableView>
 
@@ -28,12 +29,12 @@
       </Text>
 
       <JFXComboBox fx:id="cb_empresa" layoutX="428.0" layoutY="99.0" prefHeight="26.0" prefWidth="129.0" editable="true"/>
-      <JFXTextField layoutX="428.0" layoutY="145.0" prefHeight="26.0" prefWidth="53.0" promptText="Mín" labelFloat="true"/>
-      <JFXTextField layoutX="503.0" layoutY="145.0" prefHeight="26.0" prefWidth="54.0" promptText="Máx" labelFloat="true"/>
-      <JFXTextField layoutX="428.0" layoutY="201.0" prefHeight="26.0" prefWidth="53.0" promptText="Mín" labelFloat="true"/>
-      <JFXTextField layoutX="503.0" layoutY="201.0" prefHeight="26.0" prefWidth="54.0" promptText="Máx" labelFloat="true"/>
-      <JFXDatePicker layoutX="495.0" layoutY="250.0" prefHeight="26.0" prefWidth="85.0" />
-      <JFXDatePicker layoutX="495.0" layoutY="280.0" prefHeight="26.0" prefWidth="85.0" />
+      <JFXTextField fx:id="txt_min_part" layoutX="428.0" layoutY="145.0" prefHeight="26.0" prefWidth="53.0" promptText="Mín" labelFloat="true"/>
+      <JFXTextField fx:id="txt_max_part" layoutX="503.0" layoutY="145.0" prefHeight="26.0" prefWidth="54.0" promptText="Máx" labelFloat="true"/>
+      <JFXTextField fx:id="txt_min_part_bloq" layoutX="428.0" layoutY="201.0" prefHeight="26.0" prefWidth="53.0" promptText="Mín" labelFloat="true"/>
+      <JFXTextField fx:id="txt_max_part_bloq" layoutX="503.0" layoutY="201.0" prefHeight="26.0" prefWidth="54.0" promptText="Máx" labelFloat="true"/>
+      <JFXDatePicker fx:id="datepck_despues_pago" layoutX="495.0" layoutY="250.0" prefHeight="26.0" prefWidth="85.0" />
+      <JFXDatePicker fx:id="datepck_antes_pago" layoutX="495.0" layoutY="280.0" prefHeight="26.0" prefWidth="85.0" />
 
       <Label layoutX="430.0" layoutY="44.0" text="Saldo:">
          <font>
