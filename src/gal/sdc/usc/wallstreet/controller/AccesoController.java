@@ -109,6 +109,8 @@ public class AccesoController extends DatabaseLinker implements Initializable {
                 Empresa empresa = super.getDAO(EmpresaDAO.class).seleccionar(usuario);
                 super.setEmpresa(empresa);
             }
+
+            Main.setScene(PrincipalController.VIEW, PrincipalController.WIDTH, PrincipalController.HEIGHT);
         });
     }
 }

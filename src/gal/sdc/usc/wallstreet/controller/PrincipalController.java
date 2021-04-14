@@ -1,7 +1,11 @@
 package gal.sdc.usc.wallstreet.controller;
 
 import com.jfoenix.controls.JFXButton;
+import gal.sdc.usc.wallstreet.model.Empresa;
+import gal.sdc.usc.wallstreet.model.Inversor;
 import gal.sdc.usc.wallstreet.model.Participacion;
+import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
+import gal.sdc.usc.wallstreet.util.TipoUsuario;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -11,7 +15,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
 
-public class PrincipalEmpresaController {
+public class PrincipalController extends DatabaseLinker {
+    public static final String VIEW = "principal";
+    public static final Integer HEIGHT = 551;
+    public static final Integer WIDTH = 683;
+
     @FXML
     private JFXButton buttonPerfilUsuario;
     @FXML
@@ -32,7 +40,16 @@ public class PrincipalEmpresaController {
 
     @FXML
     public void initialize(){
-        seleccionVentana(false);
+        switch (super.getTipoUsuario()) {
+            case EMPRESA:
+                Empresa empresa = super.getEmpresa();
+                break;
+            case INVERSOR:
+                Inversor inversor = super.getInversor();
+                break;
+        }
+
+        seleccionVentana(super.getTipoUsuario().equals(TipoUsuario.EMPRESA));
     }
     /*
     public void Initialize(){
