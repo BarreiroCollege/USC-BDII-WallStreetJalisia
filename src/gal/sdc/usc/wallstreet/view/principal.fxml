@@ -27,7 +27,7 @@
             <font>
                 <Font size="20.0" />
             </font></Label>
-        <JFXButton fx:id="buttonComprar" layoutX="33.0" layoutY="468.0" mnemonicParsing="false" text="Comprar">
+        <JFXButton fx:id="buttonComprar" layoutX="44.0" layoutY="468.0" mnemonicParsing="false" text="Comprar">
             <font>
                 <Font size="18.0" />
             </font></JFXButton>
