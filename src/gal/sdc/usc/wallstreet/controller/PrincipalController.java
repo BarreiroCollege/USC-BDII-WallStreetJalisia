@@ -9,10 +9,12 @@ import gal.sdc.usc.wallstreet.util.TipoUsuario;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 
 public class PrincipalController extends DatabaseLinker {
@@ -33,13 +35,23 @@ public class PrincipalController extends DatabaseLinker {
     @FXML
     private JFXButton verPerfilButton;
 
+    @FXML
     private TableView<Participacion> tablaParticipaciones;
+
+    @FXML
+    private TableColumn<Participacion, String> colEmpresa;
+
+    @FXML
+    private TableColumn<Participacion, Integer> colCantidad;
+
 
     Parent principalEmpresa;
     Scene scene;
 
     @FXML
     public void initialize(){
+        Group root = new Group();
+        scene = new Scene(root, 683, 551);
         switch (super.getTipoUsuario()) {
             case EMPRESA:
                 Empresa empresa = super.getEmpresa();
@@ -48,8 +60,8 @@ public class PrincipalController extends DatabaseLinker {
                 Inversor inversor = super.getInversor();
                 break;
         }
-
         seleccionVentana(super.getTipoUsuario().equals(TipoUsuario.EMPRESA));
+        gestionTablaParticipaciones();
     }
     /*
     public void Initialize(){
@@ -80,23 +92,14 @@ public class PrincipalController extends DatabaseLinker {
     }
 
     public void gestionTablaParticipaciones(){
-       tablaParticipaciones = new TableView<>();
-       ObservableList<Participacion> participaciones = FXCollections.observableArrayList();
+       ObservableList<Participacion> participaciones = FXCollections.observableArrayList(
+       );
        tablaParticipaciones.setItems(participaciones);
 
-       tablaParticipaciones.setLayoutX(56.0);
-       tablaParticipaciones.setLayoutY(152.0);
-       tablaParticipaciones.setMaxHeight(200);
-       tablaParticipaciones.setMaxWidth(200);
-       tablaParticipaciones.setPrefHeight(200);
-       tablaParticipaciones.setPrefWidth(200);
-
        //Declaramos el nombre de las columnas
-        TableColumn colEmpresa = new TableColumn("Empresa");
-        TableColumn colCantidad = new TableColumn("Cantidad");
 
-        tablaParticipaciones.getColumns().addAll(colEmpresa, colCantidad);
-
+        colEmpresa.setCellValueFactory(new PropertyValueFactory<Participacion, String>("empresa"));
+        colCantidad.setCellValueFactory(new PropertyValueFactory<Participacion, Integer>("cantidad"));
 
     }
 

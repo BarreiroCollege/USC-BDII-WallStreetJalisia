@@ -6,7 +6,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="551.0" prefWidth="683.0" xmlns="http://javafx.com/javafx/8.0.261" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.PrincipalController">
+<AnchorPane prefHeight="551.0" prefWidth="683.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.PrincipalController">
     <children>
         <Line endX="568.5" layoutX="115.0" layoutY="69.0" startX="-115.0" />
         <Line endX="-17.5" endY="293.5" layoutX="333.0" layoutY="141.0" startX="-17.5" startY="-71.5" />
@@ -24,15 +24,15 @@
                 <Font size="20.0" />
             </font></Label>
         <Label layoutX="401.0" layoutY="124.0" text="Ofertas de venta:" />
-        <JFXButton layoutX="33.0" layoutY="468.0" mnemonicParsing="false" text="Comprar" fx:id="buttonComprar">
+        <JFXButton fx:id="buttonComprar" layoutX="33.0" layoutY="468.0" mnemonicParsing="false" text="Comprar">
             <font>
                 <Font size="18.0" />
             </font></JFXButton>
-        <JFXButton layoutX="190.0" layoutY="468.0" mnemonicParsing="false" text="Vender" fx:id="buttonVender">
+        <JFXButton fx:id="buttonVender" layoutX="190.0" layoutY="468.0" mnemonicParsing="false" text="Vender">
             <font>
                 <Font size="18.0" />
             </font></JFXButton>
-        <JFXButton layoutX="365.0" layoutY="468.0" mnemonicParsing="false" text="Pagos" fx:id="buttonPagos">
+        <JFXButton fx:id="buttonPagos" layoutX="365.0" layoutY="468.0" mnemonicParsing="false" text="Pagos">
             <font>
                 <Font size="18.0" />
             </font></JFXButton>
@@ -54,5 +54,16 @@
           </Menu>
         </menus>
       </MenuBar>
+
+        <TableView fx:id="tablaParticipaciones" layoutX="57.0" layoutY="152.0" prefHeight="200.0" prefWidth="200.0">
+        <columns>
+            <TableColumn prefWidth="75.0" text="Participaciones">
+               <columns>
+                <TableColumn fx:id="colEmpresa" prefWidth="100.0" text="Empresa" />
+                <TableColumn fx:id="colCantidad" prefWidth="100.0" text="Cantidad" />
+               </columns>
+            </TableColumn>
+        </columns>
+      </TableView>
     </children>
 </AnchorPane>
