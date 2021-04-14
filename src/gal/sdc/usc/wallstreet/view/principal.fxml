@@ -6,42 +6,33 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="551.0" prefWidth="683.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.PrincipalEmpresaController">
+<AnchorPane prefHeight="551.0" prefWidth="683.0" xmlns="http://javafx.com/javafx/8.0.261" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.PrincipalEmpresaController">
     <children>
         <Line endX="568.5" layoutX="115.0" layoutY="69.0" startX="-115.0" />
         <Line endX="-17.5" endY="293.5" layoutX="333.0" layoutY="141.0" startX="-17.5" startY="-71.5" />
         <Line endX="568.0" layoutX="115.0" layoutY="435.0" startX="-115.0" />
-        <TableView layoutX="56.0" layoutY="152.0" prefHeight="200.0" prefWidth="200.0">
-            <columns>
-                <TableColumn prefWidth="75.0" text="C1" />
-                <TableColumn prefWidth="75.0" text="C2" />
-            </columns>
-        </TableView>
+
         <TableView layoutX="401.0" layoutY="152.0" prefHeight="200.0" prefWidth="200.0">
-            <columns>
-                <TableColumn prefWidth="75.0" text="C1" />
-                <TableColumn prefWidth="75.0" text="C2" />
-            </columns>
         </TableView>
         <Label layoutX="56.0" layoutY="124.0" text="Participaciones:" />
         <Label layoutX="14.0" layoutY="69.0" text="Tu cartera:">
             <font>
                 <Font size="20.0" />
             </font></Label>
-        <Label layoutX="14.0" layoutY="14.0" text="Saldo:">
+        <Label layoutX="560.0" layoutY="30.0" text="Saldo:">
             <font>
                 <Font size="20.0" />
             </font></Label>
         <Label layoutX="401.0" layoutY="124.0" text="Ofertas de venta:" />
-        <JFXButton layoutX="33.0" layoutY="468.0" mnemonicParsing="false" text="Comprar">
+        <JFXButton layoutX="33.0" layoutY="468.0" mnemonicParsing="false" text="Comprar" fx:id="buttonComprar">
             <font>
                 <Font size="18.0" />
             </font></JFXButton>
-        <JFXButton layoutX="190.0" layoutY="468.0" mnemonicParsing="false" text="Vender">
+        <JFXButton layoutX="190.0" layoutY="468.0" mnemonicParsing="false" text="Vender" fx:id="buttonVender">
             <font>
                 <Font size="18.0" />
             </font></JFXButton>
-        <JFXButton layoutX="365.0" layoutY="468.0" mnemonicParsing="false" text="Pagos">
+        <JFXButton layoutX="365.0" layoutY="468.0" mnemonicParsing="false" text="Pagos" fx:id="buttonPagos">
             <font>
                 <Font size="18.0" />
             </font></JFXButton>
@@ -53,11 +44,11 @@
         </JFXButton>
         <JFXButton layoutX="460.0" layoutY="383.0" mnemonicParsing="false" text="Mostrar más">
         </JFXButton>
-      <MenuBar layoutX="612.0" layoutY="17.0">
+      <MenuBar layoutX="614.0" layoutY="2.0">
         <menus>
           <Menu mnemonicParsing="false" text="Perfil">
             <items>
-              <MenuItem fx:id="verPerfilButton" mnemonicParsing="false" text="Ver perfil" />
+              <MenuItem mnemonicParsing="false" text="Ver perfil" />
                 <MenuItem mnemonicParsing="false" text="Cerrar sesión" />
             </items>
           </Menu>

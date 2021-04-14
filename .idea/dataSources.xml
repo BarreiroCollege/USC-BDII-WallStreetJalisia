@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="wallstreet@localhost" uuid="c428c445-f384-48e2-af9e-c62d7524d67b">
+    <data-source source="LOCAL" name="PostgreSQL - wallStreetJalisia@localhost" uuid="c428c445-f384-48e2-af9e-c62d7524d67b">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5432/wallstreet</jdbc-url>
+      <jdbc-url>jdbc:postgresql://localhost:5432/wallStreetJalisia</jdbc-url>
+    </data-source>
+    <data-source source="LOCAL" name="postgres@localhost" uuid="8c286014-dba9-4bb6-a45b-ef79ab9529f5">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5432/postgres</jdbc-url>
     </data-source>
   </component>
 </project>
