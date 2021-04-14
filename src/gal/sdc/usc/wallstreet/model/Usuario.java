@@ -3,7 +3,10 @@ package gal.sdc.usc.wallstreet.model;
 import gal.sdc.usc.wallstreet.model.ddl.Columna;
 import gal.sdc.usc.wallstreet.model.ddl.Entidad;
 import gal.sdc.usc.wallstreet.model.ddl.Tabla;
+import gal.sdc.usc.wallstreet.util.PasswordStorage;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Objects;
 
 @Tabla("usuario")
@@ -27,7 +30,7 @@ public class Usuario extends Entidad {
     private Integer telefono;
 
     @Columna("saldo")
-    private Float saldo;
+    private Float saldo = 0.f;
 
     @Columna("saldo_bloqueado")
     private Float saldoBloqueado = 0.f;
@@ -54,7 +57,11 @@ public class Usuario extends Entidad {
     }
 
     public void setClave(String clave) {
-        this.clave = clave;
+        try {
+            this.clave = PasswordStorage.crearHash(clave);
+        } catch (PasswordStorage.CannotPerformOperationException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     public String getDireccion() {
