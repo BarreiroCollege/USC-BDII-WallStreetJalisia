@@ -15,12 +15,11 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.function.Predicate;
 
 public class CarteraController extends DatabaseLinker {
-    private final ObservableList<Participacion> datosTabla = FXCollections.observableArrayList();
+
     @FXML
     private TableView<Participacion> cartera_tabla;
     @FXML
@@ -35,6 +34,7 @@ public class CarteraController extends DatabaseLinker {
     private TableColumn<Participacion, String> cartera_tabla_pago;
     @FXML
     private Text txt_saldo;
+
 
     // Opciones de filtrado
     @FXML
@@ -52,11 +52,11 @@ public class CarteraController extends DatabaseLinker {
     @FXML
     private DatePicker datepck_antes_pago;
 
-    @FXML
-    private Button cartera_btn_filtrar;
 
+    private final ObservableList<Participacion> datosTabla = FXCollections.observableArrayList();
     private String cbTexto;
     private FilteredList<String> empresas;
+
 
     /**
      * Inicializa la tabla de datos que se muestra en Cartera
@@ -82,7 +82,7 @@ public class CarteraController extends DatabaseLinker {
         for (Participacion part : datosTabla){
             cb_empresa.getItems().add(part.getEmpresa().getNombre());
         }
-        empresas = cb_empresa.getItems().filtered(null);
+        empresas = cb_empresa.getItems().filtered(null);        // Se guardan todas las empresas
 
         // La ComboBox es editable y actualiza sus opciones en función de lo escrito por el usuario.
         cb_empresa.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -92,7 +92,6 @@ public class CarteraController extends DatabaseLinker {
                     // Corrige bug cuando se intentan borrar caracteres
                     return true;
                 }
-                // Una empresa se mantiene como opción si su nombre contiene lo escrito.
                 return empresa.toLowerCase().contains(newValue.toLowerCase());
             });
             cb_empresa.setItems(empresasFiltradas);
@@ -117,14 +116,19 @@ public class CarteraController extends DatabaseLinker {
     /**
      *  Filtra los datos de participaciones mostradas en la tabla en función de:
      *  - Empresa seleccionada en ComboBox
-     *  -
+     *  - Mínimo número de participaciones no bloqueadas
+     *  - Máximo número de participaciones no bloqueadas
+     *  - Mínimo número de participaciones bloqueadas
+     *  - Máximo número de participaciones bloqueadas
+     *  - Límite inferior para la fecha del último pago de la empresa
+     *  - Límite superior para la fecha del último pago de la empresa
      */
     public void filtrarDatos(){
         // Se guardan todas las participaciones en un FilteredList
         FilteredList<Participacion> partFiltradas = new FilteredList<>(datosTabla, p -> true);
 
+        // Solo se aceptan caracteres numéricos
         if(txt_min_part.getText() != null && !txt_min_part.getText().isEmpty()){
-            // Solo se aceptan caracteres numéricos
             if (!txt_min_part.getText().matches("[0-9]+")){
                 // TODO: mostrar error?
                 return;
@@ -132,30 +136,25 @@ public class CarteraController extends DatabaseLinker {
         }
 
         if(txt_max_part.getText() != null && !txt_max_part.getText().isEmpty()){
-            // Solo se aceptan caracteres numéricos
             if (!txt_max_part.getText().matches("[0-9]+")){
-                // TODO: mostrar error?
                 return;
             }
         }
 
         if(txt_min_part_bloq.getText() != null && !txt_min_part_bloq.getText().isEmpty()){
-            // Solo se aceptan caracteres numéricos
             if (!txt_min_part_bloq.getText().matches("[0-9]+")){
-                // TODO: mostrar error?
-                return;
-            }
-        }
-        if(txt_max_part_bloq.getText() != null && !txt_max_part_bloq.getText().isEmpty()){
-            // Solo se aceptan caracteres numéricos
-            if (!txt_max_part_bloq.getText().matches("[0-9]+")){
-                // TODO: mostrar error?
                 return;
             }
         }
 
-        Predicate<Participacion> predicadoTotal = construirPredicadosFiltro();
+        if(txt_max_part_bloq.getText() != null && !txt_max_part_bloq.getText().isEmpty()){
+            if (!txt_max_part_bloq.getText().matches("[0-9]+")){
+                return;
+            }
+        }
+
         // Se eliminan aquellas participaciones no válidas
+        Predicate<Participacion> predicadoTotal = construirPredicadosFiltro();
         partFiltradas.setPredicate(predicadoTotal);
 
         // Una FilteredList no se puede modificar. Se almacena como SortedList para que pueda ser ordenada.
@@ -169,6 +168,7 @@ public class CarteraController extends DatabaseLinker {
     }
 
     private Predicate<Participacion> construirPredicadosFiltro(){
+
         // Predicado correspondiente a la ComboBox
         Predicate<Participacion> predComboBox = participacion -> {
             // Se comprueba si hay algún valor seleccionado o escrito en la ComboBox
@@ -212,7 +212,9 @@ public class CarteraController extends DatabaseLinker {
         // Predicados correspondientes al rango de fechas del último pago
         // Se filtra en función del último pago que realizó la empresa (que el usuario puede no haber recibido)
         Predicate<Participacion> predDespuesFecha = participacion -> {
-            if (datepck_despues_pago.getValue() != null && participacion.getEmpresa().getFechaUltimoPago() != null){
+            if (participacion.getEmpresa().getFechaUltimoPago() == null){
+                return false;
+            } else if (datepck_despues_pago.getValue() != null){
                 return participacion.getEmpresa().getFechaUltimoPago()
                         .compareTo(java.sql.Date.valueOf(datepck_despues_pago.getValue())) >= 0;
             }
@@ -220,7 +222,9 @@ public class CarteraController extends DatabaseLinker {
         };
 
         Predicate<Participacion> predAntesFecha = participacion -> {
-            if (datepck_antes_pago.getValue() != null && participacion.getEmpresa().getFechaUltimoPago() != null){
+            if (participacion.getEmpresa().getFechaUltimoPago() == null){
+                return false;
+            } else if (datepck_antes_pago.getValue() != null){
                 return participacion.getEmpresa().getFechaUltimoPago()
                         .compareTo(java.sql.Date.valueOf(datepck_antes_pago.getValue())) <= 0;
             }
@@ -230,5 +234,4 @@ public class CarteraController extends DatabaseLinker {
         return predComboBox.and(predMinPart).and(predMaxPart).and(predMinPartBloq).and(predMaxPartBloq)
                 .and(predDespuesFecha).and(predAntesFecha);
     }
-
 }
