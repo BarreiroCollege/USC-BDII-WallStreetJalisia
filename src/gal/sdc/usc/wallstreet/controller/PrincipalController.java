@@ -6,6 +6,7 @@ import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Inversor;
 import gal.sdc.usc.wallstreet.model.Participacion;
+import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.Iconos;
 import gal.sdc.usc.wallstreet.util.TipoUsuario;
@@ -16,6 +17,7 @@ import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -26,7 +28,7 @@ import javax.swing.*;
 public class PrincipalController extends DatabaseLinker {
     public static final String VIEW = "principal";
     public static final Integer HEIGHT = 551;
-    public static final Integer WIDTH = 683;
+    public static final Integer WIDTH = 730;
 
     @FXML
     private JFXButton buttonPerfilUsuario;
@@ -38,8 +40,6 @@ public class PrincipalController extends DatabaseLinker {
     private JFXButton buttonComprar;
     @FXML
     private JFXButton buttonVender;
-    @FXML
-    private JFXButton verPerfilButton;
 
     @FXML
     private TableView<Participacion> tablaParticipaciones;
@@ -56,9 +56,14 @@ public class PrincipalController extends DatabaseLinker {
     @FXML
     private Menu buttonEstadisticas;
 
+    @FXML
+    private MenuItem buttonCerrarSesion;
+    @FXML
+    private MenuItem buttonVerPerfil;
 
     Parent principalEmpresa;
     Scene scene;
+    Usuario usuario;
 
     @FXML
     public void initialize(){
@@ -67,31 +72,25 @@ public class PrincipalController extends DatabaseLinker {
         switch (super.getTipoUsuario()) {
             case EMPRESA:
                 Empresa empresa = super.getEmpresa();
+                usuario = empresa.getUsuario();
                 break;
             case INVERSOR:
                 Inversor inversor = super.getInversor();
+                usuario = inversor.getUsuario();
                 break;
         }
         seleccionVentana(super.getTipoUsuario().equals(TipoUsuario.INVERSOR));
         gestionTablaParticipaciones();
-        buttonPerfil.setGraphic(Iconos.icono(FontAwesomeIcon.USER, "2.5em"));
+        buttonPerfil.setGraphic(Iconos.icono(FontAwesomeIcon.USERS, "2.5em"));
+        buttonVerPerfil.setGraphic(Iconos.icono(FontAwesomeIcon.USER));
         buttonEstadisticas.setGraphic(Iconos.icono(FontAwesomeIcon.BAR_CHART, "2.5em"));
-    }
-    /*
-    public void Initialize(){
-        buttonPerfilUsuario.setOnAction(event -> {
-            Parent root;
-            try{
-                root = FXMLLoader.load(Main.class.getResource("view/principal.fxml"));
-                Stage stage = new Stage();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-        seleccionVentana(false);
+        buttonCerrarSesion.setGraphic(Iconos.icono(FontAwesomeIcon.POWER_OFF));
 
+        buttonCerrarSesion.setOnAction(event -> {
+            Main.setScene(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT);
+
+        });
     }
-    */
 
     public void seleccionVentana(boolean empresa){
         if(!empresa){
