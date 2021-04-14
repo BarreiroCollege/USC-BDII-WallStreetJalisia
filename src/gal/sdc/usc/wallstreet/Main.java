@@ -15,7 +15,6 @@ import javafx.util.Duration;
 import java.io.IOException;
 
 public class Main extends Application {
-    private static Parent root;
     private static Stage primaryStage;
 
     private static JFXSnackbar snackbar;
@@ -41,18 +40,24 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         Main.primaryStage = primaryStage;
-        primaryStage.setTitle("Wall Street Jalisia");
         Main.setScene(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT);
-        Main.primaryStage.setResizable(false);
     }
 
     public static void setScene(String view, int width, int height) {
         try {
-            Main.root = FXMLLoader.load(Main.class.getResource("view/" + view + ".fxml"));
-            snackbar = new JFXSnackbar((AnchorPane) Main.root);
-            Main.primaryStage.setScene(new Scene(Main.root, width, height));
-            Main.primaryStage.setWidth(width);
-            Main.primaryStage.setHeight(height);
+            Main.primaryStage.hide();
+
+            Stage stage = new Stage();
+            Parent root = FXMLLoader.load(Main.class.getResource("view/" + view + ".fxml"));
+            snackbar = new JFXSnackbar((AnchorPane) root);
+
+            stage.setScene(new Scene(root, width, height));
+            stage.setWidth(width);
+            stage.setHeight(height);
+            stage.setResizable(false);
+            stage.setTitle("Wall Street Jalisia");
+
+            Main.primaryStage = stage;
             Main.primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
