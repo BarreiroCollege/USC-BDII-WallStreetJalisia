@@ -58,6 +58,7 @@ public class AccesoController extends DatabaseLinker implements Initializable {
 
         // Crear los validadores personalizado
         ErrorValidator usuarioNoExiste = Validadores.personalizado("El usuario no existe");
+        ErrorValidator usuarioNoActivo = Validadores.personalizado("Este usuario no está activo");
         ErrorValidator claveIncorrecta = Validadores.personalizado("La clave no es correcta");
 
         txtUsuario.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -86,6 +87,12 @@ public class AccesoController extends DatabaseLinker implements Initializable {
             Usuario usuario = super.getDAO(UsuarioDAO.class).seleccionar(txtUsuario.getText().toLowerCase());
             if (usuario == null) {
                 if (txtUsuario.getValidators().size() == 1) txtUsuario.getValidators().add(usuarioNoExiste);
+                txtUsuario.validate();
+                return;
+            }
+
+            if (!usuario.getActivo()) {
+                if (txtUsuario.getValidators().size() == 1) txtUsuario.getValidators().add(usuarioNoActivo);
                 txtUsuario.validate();
                 return;
             }
