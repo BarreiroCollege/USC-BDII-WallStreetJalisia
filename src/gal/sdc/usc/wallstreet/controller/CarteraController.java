@@ -1,6 +1,7 @@
 package gal.sdc.usc.wallstreet.controller;
 
 import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.JFXToggleButton;
 import gal.sdc.usc.wallstreet.model.Participacion;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.ParticipacionDAO;
@@ -15,14 +16,15 @@ import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Pane;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.Predicate;
 
 public class CarteraController extends DatabaseLinker {
 
+    // Tabla y columnas de la tabla
     @FXML
     private TableView<Participacion> cartera_tabla;
     @FXML
@@ -35,12 +37,18 @@ public class CarteraController extends DatabaseLinker {
     private TableColumn<Participacion, Integer> cartera_tabla_cant_bloq;
     @FXML
     private TableColumn<Participacion, String> cartera_tabla_pago;
+
+    // Textos de saldo del usuario
     @FXML
     private Label txt_saldo;
     @FXML
     private Label txt_saldo_real;
 
     // Opciones de filtrado
+    @FXML
+    private JFXToggleButton toggle_filtro;
+    @FXML
+    private Pane cartera_filtro;
     @FXML
     private ComboBox<String> cb_empresa;
     @FXML
@@ -56,7 +64,7 @@ public class CarteraController extends DatabaseLinker {
     @FXML
     private DatePicker datepck_antes_pago;
 
-
+    private Alert alerta = new Alert(Alert.AlertType.ERROR);
     private final ObservableList<Participacion> datosTabla = FXCollections.observableArrayList();
     private String cbTexto;
     private FilteredList<String> empresas;
@@ -68,7 +76,8 @@ public class CarteraController extends DatabaseLinker {
      */
     @FXML
     public void initialize(){
-        final DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("d/L/y", new Locale("es","ES")); // Asigna el formato de fecha para la tabla
+        togglePanelFiltro();
+        final DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("d/L/y"); // Asigna el formato de fecha para la tabla
 
         // Establecemos los valores que contendrá cada columna
         cartera_tabla_empresa.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getNombre()));
@@ -77,7 +86,8 @@ public class CarteraController extends DatabaseLinker {
         cartera_tabla_cant_bloq.setCellValueFactory( new PropertyValueFactory<>("cantidadBloqueada") );
         cartera_tabla_pago.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getFechaUltimoPago() == null?
                 "Nunca" : celda.getValue().getEmpresa().getFechaUltimoPago().toLocalDateTime().toLocalDate().format(formatoFecha) ));
-        // TODO: testear filtrado por fecha (meter valores de prueba)
+        cartera_tabla.setPlaceholder( new Label("No se encuentran participaciones") );
+        // TODO: testear filtrado por fecha (meter valores de prueba) [Si ambos filtros de fecha son nulos no muestra todas las acciones]
 
         // Indicamos a la tabla que sus contenidos serán los de la lista datosTabla
         actualizarDatos();
@@ -100,14 +110,35 @@ public class CarteraController extends DatabaseLinker {
                 return empresa.toLowerCase().contains(newValue.toLowerCase());
             });
             cb_empresa.setItems(empresasFiltradas);
-            cbTexto = newValue;     // Se guarda el valor para un posible filtrado (botón)
+            cbTexto = newValue; // Se guarda el valor para un posible filtrado (botón)
         });
+    }
+
+    // Abre o cierra la ventana de filtros de la tabla de participaciones, además de redimensionar la tabla
+    public void togglePanelFiltro(){
+        if ( toggle_filtro.isSelected() ){
+            cartera_filtro.setVisible(true);
+            cartera_tabla.setPrefSize(265,263);
+            cartera_tabla_empresa.setPrefWidth(91.3);
+            cartera_tabla_cif.setPrefWidth(75);
+            cartera_tabla_cant.setPrefWidth(91.2);
+            cartera_tabla_cant_bloq.setPrefWidth(91.2);
+            cartera_tabla_pago.setPrefWidth(91.2);
+        } else {
+            cartera_filtro.setVisible(false);
+            cartera_tabla.setPrefSize(545,263);
+            cartera_tabla_empresa.setPrefWidth(170);
+            cartera_tabla_cif.setPrefWidth(104);
+            cartera_tabla_cant.setPrefWidth(90);
+            cartera_tabla_cant_bloq.setPrefWidth(90);
+            cartera_tabla_pago.setPrefWidth(90);
+        }
     }
 
     public void actualizarDatos() {
 
         // TODO OPERACIONES A TRAVÉS DEL USUARIO CON LOGIN
-        Usuario usuario = super.getDAO(UsuarioDAO.class).getUsuario("Xia");
+        Usuario usuario = super.getDAO(UsuarioDAO.class).getUsuario("iv12");
 
         // Accedemos al DAO de Participaciones para comprobar las participaciones que posea el usuario
         List<Participacion> participaciones = super.getDAO(ParticipacionDAO.class).getParticipaciones(usuario);
@@ -121,6 +152,25 @@ public class CarteraController extends DatabaseLinker {
     }
 
     /**
+     * Comprueba que el campo de texto de entrada sólo contenga caracteres numéricos.
+     * En caso contrario muestra una alerta de lo ocurrido.
+     * @param entrada Campo de texto a verificar
+     * @return resultado de la verificación, una vez el usuario haya cerrado la alerta en el caso de haberla
+     */
+    public boolean regexNumerico(JFXTextField entrada){
+        // Solo se aceptan caracteres numéricos
+        if(entrada.getText() != null && !entrada.getText().isEmpty()){
+            if (!entrada.getText().matches("[0-9]+")){
+                alerta.setHeaderText("El valor introducido no es válido");
+                alerta.setContentText("Has introducido caracteres no numéricos en un campo de entrada numérica.");
+                alerta.showAndWait();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      *  Filtra los datos de participaciones mostradas en la tabla en función de:
      *  - Empresa seleccionada en ComboBox
      *  - Mínimo número de participaciones no bloqueadas
@@ -131,34 +181,16 @@ public class CarteraController extends DatabaseLinker {
      *  - Límite superior para la fecha del último pago de la empresa
      */
     public void filtrarDatos(){
+        // Cambiamos el placeholder de la tabla para indicar que el filtro no obtuvo resultados
+        cartera_tabla.setPlaceholder( new Label("No se encuentran participaciones con los parámetros indicados") );
+
         // Se guardan todas las participaciones en un FilteredList
         FilteredList<Participacion> partFiltradas = new FilteredList<>(datosTabla, p -> true);
 
-        // Solo se aceptan caracteres numéricos
-        if(txt_min_part.getText() != null && !txt_min_part.getText().isEmpty()){
-            if (!txt_min_part.getText().matches("[0-9]+")){
-                // TODO: mostrar error?
-                return;
-            }
-        }
-
-        if(txt_max_part.getText() != null && !txt_max_part.getText().isEmpty()){
-            if (!txt_max_part.getText().matches("[0-9]+")){
-                return;
-            }
-        }
-
-        if(txt_min_part_bloq.getText() != null && !txt_min_part_bloq.getText().isEmpty()){
-            if (!txt_min_part_bloq.getText().matches("[0-9]+")){
-                return;
-            }
-        }
-
-        if(txt_max_part_bloq.getText() != null && !txt_max_part_bloq.getText().isEmpty()){
-            if (!txt_max_part_bloq.getText().matches("[0-9]+")){
-                return;
-            }
-        }
+        if ( !regexNumerico(txt_min_part) ) return;
+        if ( !regexNumerico(txt_max_part) ) return;
+        if ( !regexNumerico(txt_min_part_bloq) ) return;
+        if ( !regexNumerico(txt_max_part_bloq) ) return;
 
         // Se eliminan aquellas participaciones no válidas
         Predicate<Participacion> predicadoTotal = construirPredicadosFiltro();
