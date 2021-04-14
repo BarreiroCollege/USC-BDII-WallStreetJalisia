@@ -17,7 +17,7 @@
             xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="gal.sdc.usc.wallstreet.controller.RegistroController">
     <stylesheets>
-        <URL value="@styles/tabpane.css"/>
+        <URL value="@styles/base.css"/>
     </stylesheets>
 
     <HBox alignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
@@ -95,7 +95,7 @@
                 </font>
             </JFXButton>
             <Label HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-            <JFXButton text="Registrarse" fx:id="btnRegistro">
+            <JFXButton text="Registrarse" fx:id="btnRegistro" buttonType="RAISED" styleClass="btn-primario">
                 <font>
                     <Font name="System Bold" size="20.0"/>
                 </font>
