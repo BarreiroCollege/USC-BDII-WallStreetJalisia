@@ -6,24 +6,26 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="551.0" prefWidth="683.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.PrincipalController">
+<AnchorPane prefHeight="551.0" prefWidth="683.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.PrincipalController">
+
+    <stylesheets>
+        <URL value="@styles/snackbar.css"/>
+    </stylesheets>
     <children>
-        <Line endX="568.5" layoutX="115.0" layoutY="69.0" startX="-115.0" />
-        <Line endX="-17.5" endY="293.5" layoutX="333.0" layoutY="141.0" startX="-17.5" startY="-71.5" />
+        <Line endX="568.5" layoutX="115.0" layoutY="89.0" startX="-115.0" />
+        <Line endX="-17.5" endY="293.5" layoutX="333.0" layoutY="141.0" startX="-17.5" startY="-51.5" />
         <Line endX="568.0" layoutX="115.0" layoutY="435.0" startX="-115.0" />
 
         <TableView layoutX="401.0" layoutY="152.0" prefHeight="200.0" prefWidth="200.0">
         </TableView>
-        <Label layoutX="56.0" layoutY="124.0" text="Participaciones:" />
-        <Label layoutX="14.0" layoutY="69.0" text="Tu cartera:">
+        <Label layoutX="11.0" layoutY="90.0" text="Tu cartera:">
             <font>
                 <Font size="20.0" />
             </font></Label>
-        <Label layoutX="560.0" layoutY="30.0" text="Saldo:">
+        <Label layoutX="548.0" layoutY="50.0" text="Saldo:">
             <font>
                 <Font size="20.0" />
             </font></Label>
-        <Label layoutX="401.0" layoutY="124.0" text="Ofertas de venta:" />
         <JFXButton fx:id="buttonComprar" layoutX="33.0" layoutY="468.0" mnemonicParsing="false" text="Comprar">
             <font>
                 <Font size="18.0" />
@@ -44,9 +46,12 @@
         </JFXButton>
         <JFXButton layoutX="460.0" layoutY="383.0" mnemonicParsing="false" text="Mostrar más">
         </JFXButton>
-      <MenuBar layoutX="614.0" layoutY="2.0">
+      <MenuBar layoutX="550.0" layoutY="2.0">
         <menus>
-          <Menu mnemonicParsing="false" text="Perfil">
+            <Menu fx:id="buttonEstadisticas" mnemonicParsing="false">
+
+            </Menu>
+          <Menu fx:id="buttonPerfil" mnemonicParsing="false">
             <items>
               <MenuItem mnemonicParsing="false" text="Ver perfil" />
                 <MenuItem mnemonicParsing="false" text="Cerrar sesión" />

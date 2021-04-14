@@ -1,10 +1,13 @@
 package gal.sdc.usc.wallstreet.controller;
 
 import com.jfoenix.controls.JFXButton;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Inversor;
 import gal.sdc.usc.wallstreet.model.Participacion;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
+import gal.sdc.usc.wallstreet.util.Iconos;
 import gal.sdc.usc.wallstreet.util.TipoUsuario;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,9 +15,12 @@ import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Menu;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+
+import javax.swing.*;
 
 
 public class PrincipalController extends DatabaseLinker {
@@ -44,6 +50,12 @@ public class PrincipalController extends DatabaseLinker {
     @FXML
     private TableColumn<Participacion, Integer> colCantidad;
 
+    @FXML
+    private Menu buttonPerfil;
+
+    @FXML
+    private Menu buttonEstadisticas;
+
 
     Parent principalEmpresa;
     Scene scene;
@@ -60,8 +72,10 @@ public class PrincipalController extends DatabaseLinker {
                 Inversor inversor = super.getInversor();
                 break;
         }
-        seleccionVentana(super.getTipoUsuario().equals(TipoUsuario.EMPRESA));
+        seleccionVentana(super.getTipoUsuario().equals(TipoUsuario.INVERSOR));
         gestionTablaParticipaciones();
+        buttonPerfil.setGraphic(Iconos.icono(FontAwesomeIcon.USER, "2.5em"));
+        buttonEstadisticas.setGraphic(Iconos.icono(FontAwesomeIcon.BAR_CHART, "2.5em"));
     }
     /*
     public void Initialize(){
@@ -102,7 +116,5 @@ public class PrincipalController extends DatabaseLinker {
         colCantidad.setCellValueFactory(new PropertyValueFactory<Participacion, Integer>("cantidad"));
 
     }
-
-
 
 }
