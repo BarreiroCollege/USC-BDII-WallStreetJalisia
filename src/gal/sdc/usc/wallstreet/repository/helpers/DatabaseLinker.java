@@ -2,12 +2,10 @@ package gal.sdc.usc.wallstreet.repository.helpers;
 
 import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Inversor;
-import gal.sdc.usc.wallstreet.model.TipoUsuario;
-import gal.sdc.usc.wallstreet.model.Usuario;
+import gal.sdc.usc.wallstreet.util.TipoUsuario;
 import gal.sdc.usc.wallstreet.model.ddl.Entidad;
 import gal.sdc.usc.wallstreet.util.PackageScanner;
 
-import javax.xml.crypto.Data;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
