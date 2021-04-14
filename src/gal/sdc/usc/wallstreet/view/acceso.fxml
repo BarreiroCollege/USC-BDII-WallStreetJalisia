@@ -15,7 +15,7 @@
             fx:controller="gal.sdc.usc.wallstreet.controller.AccesoController"
             fx:id="anchor">
     <stylesheets>
-        <URL value="@styles/snackbar.css"/>
+        <URL value="@styles/base.css"/>
     </stylesheets>
 
     <HBox alignment="CENTER" AnchorPane.bottomAnchor="350.0" AnchorPane.leftAnchor="0.0"
@@ -50,7 +50,7 @@
                 </font>
             </JFXButton>
             <Label HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-            <JFXButton text="Acceder" fx:id="btnAcceso">
+            <JFXButton text="Acceder" fx:id="btnAcceso" buttonType="RAISED" styleClass="btn-primario">
                 <font>
                     <Font name="System Bold" size="20.0"/>
                 </font>

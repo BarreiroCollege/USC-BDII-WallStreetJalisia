@@ -162,7 +162,7 @@ public class RegistroController extends DatabaseLinker implements Initializable 
         }
 
         try {
-            Usuario usuario = new Usuario.Builder(txtUsuario.getText())
+            Usuario usuario = new Usuario.Builder(txtUsuario.getText().toLowerCase())
                     .withClave(PasswordStorage.crearHash(txtClave.getText()))
                     .withDireccion(txtDireccion.getText())
                     .withCp(txtCp.getText())
