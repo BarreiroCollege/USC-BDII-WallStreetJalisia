@@ -146,4 +146,30 @@ public class DatabaseLinker {
     public Empresa getEmpresa() {
         return DatabaseLinker.empresa;
     }
+
+    /**
+     * Inicia sesión como inversor
+     * @param inversor usuario
+     */
+    public void setInversor(Inversor inversor) {
+        DatabaseLinker.inversor = inversor;
+        DatabaseLinker.empresa = null;
+    }
+
+    /**
+     * Inicia sesión como inversor
+     * @param empresa usuario
+     */
+    public void setEmpresa(Empresa empresa) {
+        DatabaseLinker.inversor = null;
+        DatabaseLinker.empresa = empresa;
+    }
+
+    /**
+     * Cierra la sesión existente
+     */
+    public void cerrarSesion() {
+        DatabaseLinker.inversor = null;
+        DatabaseLinker.empresa = null;
+    }
 }

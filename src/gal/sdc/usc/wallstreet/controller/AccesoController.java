@@ -104,10 +104,10 @@ public class AccesoController extends DatabaseLinker implements Initializable {
             Inversor inversor = super.getDAO(InversorDAO.class).seleccionar(usuario);
 
             if (inversor != null) {
-                // Mandar inversor
+                super.setInversor(inversor);
             } else {
                 Empresa empresa = super.getDAO(EmpresaDAO.class).seleccionar(usuario);
-                // Mandar empresa
+                super.setEmpresa(empresa);
             }
         });
     }
