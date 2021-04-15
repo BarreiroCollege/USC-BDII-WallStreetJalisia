@@ -1,14 +1,28 @@
+@import "tabpane.css";
+
 .root {
     -fx-base: #f4f4f4;
     -fx-accent: #4059a9;
     -fx-focus-color: #4059a9;
-    -fx-default-button: #000000;
-    -fx-faint-focus-color: #000000;
+    /*-fx-default-button: #000000;*/
+    /*-fx-faint-focus-color: #000000;*/
 }
 
-/*.table-view{
-    -fx-background-color: #717eac;
-}*/
+.jfx-snackbar-content {
+    -fx-background-color: #323232;
+    -fx-padding: 5;
+    -fx-spacing: 5;
+}
+
+.jfx-snackbar-toast {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: BOLD;
+}
+
+.jfx-snackbar-action {
+    -fx-text-fill: #4059a9;
+    -fx-font-weight: BOLD;
+}
 
 .table-view .virtual-flow .scroll-bar:horizontal,
 .table-view .virtual-flow .scroll-bar:horizontal .track,

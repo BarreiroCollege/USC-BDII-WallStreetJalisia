@@ -1,7 +1,10 @@
 package gal.sdc.usc.wallstreet.controller;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXToggleButton;
+import com.jfoenix.validation.IntegerValidator;
+import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.Participacion;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.ParticipacionDAO;
@@ -23,6 +26,10 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class CarteraController extends DatabaseLinker {
+
+    public static final String VIEW = "cartera";
+    public static final Integer HEIGHT = 440;
+    public static final Integer WIDTH = 610;
 
     // Tabla y columnas de la tabla
     @FXML
@@ -64,7 +71,6 @@ public class CarteraController extends DatabaseLinker {
     @FXML
     private DatePicker datepck_antes_pago;
 
-    private Alert alerta = new Alert(Alert.AlertType.ERROR);
     private final ObservableList<Participacion> datosTabla = FXCollections.observableArrayList();
     private String cbTexto;
     private FilteredList<String> empresas;
@@ -89,6 +95,18 @@ public class CarteraController extends DatabaseLinker {
         cartera_tabla.setPlaceholder( new Label("No se encuentran participaciones") );
         // TODO: testear filtrado por fecha (meter valores de prueba) [Si ambos filtros de fecha son nulos no muestra todas las acciones]
 
+        // Validador de entrada numérica
+        IntegerValidator iv = new IntegerValidator("");
+        txt_min_part.getValidators().add(iv);
+        txt_max_part.getValidators().add(iv);
+        txt_max_part_bloq.getValidators().add(iv);
+        txt_min_part_bloq.getValidators().add(iv);
+
+        txt_min_part.textProperty().addListener((observable, oldValue, newValue) -> { txt_min_part.validate(); });
+        txt_max_part.textProperty().addListener((observable, oldValue, newValue) -> { txt_max_part.validate(); });
+        txt_max_part_bloq.textProperty().addListener((observable, oldValue, newValue) -> { txt_max_part_bloq.validate(); });
+        txt_min_part_bloq.textProperty().addListener((observable, oldValue, newValue) -> { txt_min_part_bloq.validate(); });
+
         // Indicamos a la tabla que sus contenidos serán los de la lista datosTabla
         actualizarDatos();
         cartera_tabla.setItems(datosTabla);
@@ -97,7 +115,7 @@ public class CarteraController extends DatabaseLinker {
         for (Participacion part : datosTabla){
             cb_empresa.getItems().add(part.getEmpresa().getNombre());
         }
-        empresas = cb_empresa.getItems().filtered(null);        // Se guardan todas las empresas
+        empresas = cb_empresa.getItems().filtered(null); // Se guardan todas las empresas
 
         // La ComboBox es editable y actualiza sus opciones en función de lo escrito por el usuario.
         cb_empresa.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -127,10 +145,10 @@ public class CarteraController extends DatabaseLinker {
         } else {
             cartera_filtro.setVisible(false);
             cartera_tabla.setPrefSize(545,263);
-            cartera_tabla_empresa.setPrefWidth(170);
-            cartera_tabla_cif.setPrefWidth(104);
-            cartera_tabla_cant.setPrefWidth(90);
-            cartera_tabla_cant_bloq.setPrefWidth(90);
+            cartera_tabla_empresa.setPrefWidth(220);
+            cartera_tabla_cif.setPrefWidth(84);
+            cartera_tabla_cant.setPrefWidth(75);
+            cartera_tabla_cant_bloq.setPrefWidth(75);
             cartera_tabla_pago.setPrefWidth(90);
         }
     }
@@ -161,9 +179,7 @@ public class CarteraController extends DatabaseLinker {
         // Solo se aceptan caracteres numéricos
         if(entrada.getText() != null && !entrada.getText().isEmpty()){
             if (!entrada.getText().matches("[0-9]+")){
-                alerta.setHeaderText("El valor introducido no es válido");
-                alerta.setContentText("Has introducido caracteres no numéricos en un campo de entrada numérica.");
-                alerta.showAndWait();
+                if ( datosTabla.isEmpty() ) Main.mensaje("Introduce un número válido de participaciones",3);
                 return false;
             }
         }
@@ -181,6 +197,7 @@ public class CarteraController extends DatabaseLinker {
      *  - Límite superior para la fecha del último pago de la empresa
      */
     public void filtrarDatos(){
+
         // Cambiamos el placeholder de la tabla para indicar que el filtro no obtuvo resultados
         cartera_tabla.setPlaceholder( new Label("No se encuentran participaciones con los parámetros indicados") );
 
