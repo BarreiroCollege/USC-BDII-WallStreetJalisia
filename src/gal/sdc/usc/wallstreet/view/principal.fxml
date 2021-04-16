@@ -7,7 +7,9 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="551.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.PrincipalController">
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="551.0" prefWidth="750.0"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="gal.sdc.usc.wallstreet.controller.PrincipalController">
 
     <stylesheets>
         <URL value="@styles/base.css" />
