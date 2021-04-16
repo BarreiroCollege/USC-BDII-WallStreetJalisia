@@ -3,13 +3,13 @@ package gal.sdc.usc.wallstreet.controller;
 import com.jfoenix.controls.JFXButton;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import gal.sdc.usc.wallstreet.Main;
-import gal.sdc.usc.wallstreet.model.Empresa;
-import gal.sdc.usc.wallstreet.model.Inversor;
-import gal.sdc.usc.wallstreet.model.Participacion;
-import gal.sdc.usc.wallstreet.model.Usuario;
+import gal.sdc.usc.wallstreet.model.*;
+import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
+import gal.sdc.usc.wallstreet.repository.ParticipacionDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.Iconos;
 import gal.sdc.usc.wallstreet.util.TipoUsuario;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -22,7 +22,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-import javax.swing.*;
+import java.util.List;
 
 
 public class PrincipalController extends DatabaseLinker {
@@ -45,10 +45,24 @@ public class PrincipalController extends DatabaseLinker {
     private TableView<Participacion> tablaParticipaciones;
 
     @FXML
+    private TableView<OfertaVenta> tablaOfertasVenta;
+
+    @FXML
     private TableColumn<Participacion, String> colEmpresa;
 
     @FXML
     private TableColumn<Participacion, Integer> colCantidad;
+
+
+    @FXML
+    private TableColumn<OfertaVenta, String> colEmpresa2;
+
+    @FXML
+    private TableColumn<OfertaVenta, Float> colPrecio;
+
+    @FXML
+    private TableColumn<OfertaVenta, Integer> colNParticipaciones;
+
 
     @FXML
     private Menu buttonPerfil;
@@ -64,6 +78,8 @@ public class PrincipalController extends DatabaseLinker {
     Parent principalEmpresa;
     Scene scene;
     Usuario usuario;
+    List<Participacion> participacionesUsuario;
+    List<OfertaVenta> ofertaVentaUsuario;
 
     @FXML
     public void initialize(){
@@ -80,7 +96,10 @@ public class PrincipalController extends DatabaseLinker {
                 break;
         }
         seleccionVentana(super.getTipoUsuario().equals(TipoUsuario.INVERSOR));
-        gestionTablaParticipaciones();
+        gestionTablaParticipaciones(participacionesUsuario, usuario.getIdentificador());
+        gestionTablaOfertas(ofertaVentaUsuario, usuario.getIdentificador());
+
+
         buttonPerfil.setGraphic(Iconos.icono(FontAwesomeIcon.USERS, "2.5em"));
         buttonVerPerfil.setGraphic(Iconos.icono(FontAwesomeIcon.USER));
         buttonEstadisticas.setGraphic(Iconos.icono(FontAwesomeIcon.BAR_CHART, "2.5em"));
@@ -104,15 +123,29 @@ public class PrincipalController extends DatabaseLinker {
         }
     }
 
-    public void gestionTablaParticipaciones(){
-       ObservableList<Participacion> participaciones = FXCollections.observableArrayList(
-       );
-       tablaParticipaciones.setItems(participaciones);
+    public void gestionTablaParticipaciones(List<Participacion> ofertaParticipaciones, String nombreUsuario){
+        //ofertaParticipaciones = new ArrayList<>();
+        ofertaParticipaciones = super.getDAO(ParticipacionDAO.class).getParticipacionesPorUsuario(nombreUsuario);
+        ObservableList<Participacion> participaciones = FXCollections.observableArrayList(ofertaParticipaciones);
+        tablaParticipaciones.setItems(participaciones);
 
        //Declaramos el nombre de las columnas
-
-        colEmpresa.setCellValueFactory(new PropertyValueFactory<Participacion, String>("empresa"));
+        colEmpresa.setCellValueFactory(cellData -> Bindings.createObjectBinding(() -> cellData.getValue().getEmpresa().getNombre()));
         colCantidad.setCellValueFactory(new PropertyValueFactory<Participacion, Integer>("cantidad"));
+
+    }
+
+    public void gestionTablaOfertas(List<OfertaVenta> ofertaVentaList, String nombreUsuario){
+        //ofertaVentaList = new ArrayList<>();
+        ofertaVentaList = super.getDAO(OfertaVentaDAO.class).getOfertasVentaPorUsuario(nombreUsuario);
+        ObservableList<OfertaVenta> ofertasVenta = FXCollections.observableArrayList(ofertaVentaList);
+        tablaOfertasVenta.setItems(ofertasVenta);
+
+        //Declaramos el nombre de las columnas
+
+        colEmpresa2.setCellValueFactory(cellData -> Bindings.createObjectBinding(() -> cellData.getValue().getEmpresa().getNombre()));
+        colPrecio.setCellValueFactory(new PropertyValueFactory<OfertaVenta, Float>("precioVenta"));
+        colNParticipaciones.setCellValueFactory(new PropertyValueFactory<OfertaVenta, Integer>("numParticipaciones"));
 
     }
 
