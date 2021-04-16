@@ -1,12 +1,14 @@
 package gal.sdc.usc.wallstreet.controller;
 
-import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXTabPane;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXToggleButton;
 import com.jfoenix.validation.IntegerValidator;
 import gal.sdc.usc.wallstreet.Main;
+import gal.sdc.usc.wallstreet.model.OfertaVenta;
 import gal.sdc.usc.wallstreet.model.Participacion;
 import gal.sdc.usc.wallstreet.model.Usuario;
+import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
 import gal.sdc.usc.wallstreet.repository.ParticipacionDAO;
 import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
@@ -27,11 +29,13 @@ import java.util.function.Predicate;
 
 public class CarteraController extends DatabaseLinker {
 
+    // Parámetros de la ventana
     public static final String VIEW = "cartera";
     public static final Integer HEIGHT = 440;
     public static final Integer WIDTH = 610;
 
-    // Tabla y columnas de la tabla
+    //<editor-fold defaultstate="collapsed" desc="Variables desde FXML">
+    // Tabla y columnas de la tabla de participaciones
     @FXML
     private TableView<Participacion> cartera_tabla;
     @FXML
@@ -45,15 +49,34 @@ public class CarteraController extends DatabaseLinker {
     @FXML
     private TableColumn<Participacion, String> cartera_tabla_pago;
 
+    // Tabla y columnas de la tabla de ofertas de venta
+    @FXML
+    private TableView<OfertaVenta> cartera_tablaOferta;
+    @FXML
+    private TableColumn<OfertaVenta, String> cartera_tablaOferta_empresa;
+    @FXML
+    private TableColumn<OfertaVenta, String> cartera_tablaOferta_cif;
+    @FXML
+    private TableColumn<OfertaVenta, Integer> cartera_tablaOferta_fecha;
+    @FXML
+    private TableColumn<OfertaVenta, Integer> cartera_tablaOferta_cant;
+    @FXML
+    private TableColumn<OfertaVenta, String> cartera_tablaOferta_precio;
+
     // Textos de saldo del usuario
     @FXML
     private Label txt_saldo;
     @FXML
     private Label txt_saldo_real;
 
-    // Opciones de filtrado
+    @FXML
+    private JFXTabPane menu_pestanas;
+
+    // Opciones de filtrado de la tabla de participaciones
     @FXML
     private JFXToggleButton toggle_filtro;
+    @FXML
+    private Pane cartera_oferta_filtro;
     @FXML
     private Pane cartera_filtro;
     @FXML
@@ -70,11 +93,12 @@ public class CarteraController extends DatabaseLinker {
     private DatePicker datepck_despues_pago;
     @FXML
     private DatePicker datepck_antes_pago;
+    //</editor-fold>
 
     private final ObservableList<Participacion> datosTabla = FXCollections.observableArrayList();
+    private final ObservableList<OfertaVenta> datosTablaOfertas = FXCollections.observableArrayList();
     private String cbTexto;
     private FilteredList<String> empresas;
-
 
     /**
      * Inicializa la tabla de datos que se muestra en Cartera
@@ -82,20 +106,40 @@ public class CarteraController extends DatabaseLinker {
      */
     @FXML
     public void initialize(){
-        togglePanelFiltro();
+
+        togglePanelFiltro(); // Controla el estado inicial de las tablas y paneles de filtrado
+
         final DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("d/L/y"); // Asigna el formato de fecha para la tabla
 
-        // Establecemos los valores que contendrá cada columna
+        // Establecemos los valores que contendrá cada columna de la tabla de participaciones
         cartera_tabla_empresa.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getNombre()));
         cartera_tabla_cif.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getCif()));
         cartera_tabla_cant.setCellValueFactory( new PropertyValueFactory<>("cantidad") );
         cartera_tabla_cant_bloq.setCellValueFactory( new PropertyValueFactory<>("cantidadBloqueada") );
         cartera_tabla_pago.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getFechaUltimoPago() == null?
                 "Nunca" : celda.getValue().getEmpresa().getFechaUltimoPago().toLocalDateTime().toLocalDate().format(formatoFecha) ));
-        cartera_tabla.setPlaceholder( new Label("No se encuentran participaciones") );
+
+        // Establecemos los valores que contendrá cada columna de la tabla de ofertas de venta
+        cartera_tablaOferta_empresa.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getNombre()) );
+        cartera_tablaOferta_cif.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getCif()) );
+        cartera_tablaOferta_cant.setCellValueFactory( new PropertyValueFactory<>("numParticipaciones") );
+        cartera_tablaOferta_precio.setCellValueFactory( new PropertyValueFactory<>("precioVenta") );
+        cartera_tablaOferta_fecha.setCellValueFactory( new PropertyValueFactory<>("fecha") );
+
+        /*
+         * Cosas pendientes en cuanto a desarrollo de la ventana
+         * TODO cambiar por algo similar a pagos de la otra tabla (Timestamp con formato)
+         * TODO revisar tipo de datos de fechas en ofertas de venta
+         * TODO filtros & validadores de la nueva tabla
+         */
+
+        // Placeholders de las tablas de datos
+        cartera_tabla.setPlaceholder( new Label("No dispones de participaciones") );
+        cartera_tablaOferta.setPlaceholder( new Label("No dispones de ninguna oferta") );
+
         // TODO: testear filtrado por fecha (meter valores de prueba) [Si ambos filtros de fecha son nulos no muestra todas las acciones]
 
-        // Validador de entrada numérica
+        // Validadores de entrada numérica
         IntegerValidator iv = new IntegerValidator("");
         txt_min_part.getValidators().add(iv);
         txt_max_part.getValidators().add(iv);
@@ -110,6 +154,7 @@ public class CarteraController extends DatabaseLinker {
         // Indicamos a la tabla que sus contenidos serán los de la lista datosTabla
         actualizarDatos();
         cartera_tabla.setItems(datosTabla);
+        cartera_tablaOferta.setItems(datosTablaOfertas);
 
         // La ComboBox muestra los nombres de las empresas.
         for (Participacion part : datosTabla){
@@ -130,40 +175,24 @@ public class CarteraController extends DatabaseLinker {
             cb_empresa.setItems(empresasFiltradas);
             cbTexto = newValue; // Se guarda el valor para un posible filtrado (botón)
         });
-    }
-
-    // Abre o cierra la ventana de filtros de la tabla de participaciones, además de redimensionar la tabla
-    public void togglePanelFiltro(){
-        if ( toggle_filtro.isSelected() ){
-            cartera_filtro.setVisible(true);
-            cartera_tabla.setPrefSize(265,263);
-            cartera_tabla_empresa.setPrefWidth(91.3);
-            cartera_tabla_cif.setPrefWidth(75);
-            cartera_tabla_cant.setPrefWidth(91.2);
-            cartera_tabla_cant_bloq.setPrefWidth(91.2);
-            cartera_tabla_pago.setPrefWidth(91.2);
-        } else {
-            cartera_filtro.setVisible(false);
-            cartera_tabla.setPrefSize(545,263);
-            cartera_tabla_empresa.setPrefWidth(220);
-            cartera_tabla_cif.setPrefWidth(84);
-            cartera_tabla_cant.setPrefWidth(75);
-            cartera_tabla_cant_bloq.setPrefWidth(75);
-            cartera_tabla_pago.setPrefWidth(90);
-        }
+        menu_pestanas.getSelectionModel().selectedItemProperty().addListener( (observable,oldValue,newValue) -> {
+            //menu_pestanas.getSelectionModel().getSelectedIndex()
+        });
     }
 
     public void actualizarDatos() {
 
         // TODO OPERACIONES A TRAVÉS DEL USUARIO CON LOGIN
-        Usuario usuario = super.getDAO(UsuarioDAO.class).getUsuario("iv12");
+        Usuario usuario = super.getDAO(UsuarioDAO.class).getUsuario("Xia");
 
-        // Accedemos al DAO de Participaciones para comprobar las participaciones que posea el usuario
+        // Accedemos a los DAOs para obtener los datos del usuario actual
         List<Participacion> participaciones = super.getDAO(ParticipacionDAO.class).getParticipaciones(usuario);
+        List<OfertaVenta> ofertas = super.getDAO(OfertaVentaDAO.class).getOfertasVenta(usuario);
 
         // Introducimos los datos leidos de la bd a nuestra ObservableList
         datosTabla.setAll(participaciones);
-
+        datosTablaOfertas.setAll(ofertas);
+        System.out.println(ofertas);
         // Actualizamos el saldo del usuario consultado
         txt_saldo.setText( usuario.getSaldo()-usuario.getSaldoBloqueado() + " €");
         txt_saldo_real.setText( usuario.getSaldo() + " €");
@@ -289,5 +318,40 @@ public class CarteraController extends DatabaseLinker {
 
         return predComboBox.and(predMinPart).and(predMaxPart).and(predMinPartBloq).and(predMaxPartBloq)
                 .and(predDespuesFecha).and(predAntesFecha);
+    }
+
+    // Abre o cierra las ventanas de filtros, además de redimensionar las tablas
+    public void togglePanelFiltro(){
+        if ( toggle_filtro.isSelected() ){
+            cartera_filtro.setVisible(true);
+            cartera_tabla.setPrefSize(265,263);
+            cartera_tabla_empresa.setPrefWidth(91.3);
+            cartera_tabla_cif.setPrefWidth(75);
+            cartera_tabla_cant.setPrefWidth(91.2);
+            cartera_tabla_cant_bloq.setPrefWidth(91.2);
+            cartera_tabla_pago.setPrefWidth(91.2);
+            cartera_oferta_filtro.setVisible(true);
+            cartera_tablaOferta.setPrefSize(265,263);
+            cartera_tablaOferta_empresa.setPrefWidth(91.3);
+            cartera_tablaOferta_cif.setPrefWidth(75);
+            cartera_tablaOferta_cant.setPrefWidth(91.2);
+            cartera_tablaOferta_fecha.setPrefWidth(91.2);
+            cartera_tablaOferta_precio.setPrefWidth(91.2);
+        } else {
+            cartera_filtro.setVisible(false);
+            cartera_tabla.setPrefSize(545,263);
+            cartera_tabla_empresa.setPrefWidth(220);
+            cartera_tabla_cif.setPrefWidth(84);
+            cartera_tabla_cant.setPrefWidth(75);
+            cartera_tabla_cant_bloq.setPrefWidth(75);
+            cartera_tabla_pago.setPrefWidth(90);
+            cartera_oferta_filtro.setVisible(false);
+            cartera_tablaOferta.setPrefSize(545,263);
+            cartera_tablaOferta_empresa.setPrefWidth(220);
+            cartera_tablaOferta_cif.setPrefWidth(84);
+            cartera_tablaOferta_cant.setPrefWidth(75);
+            cartera_tablaOferta_fecha.setPrefWidth(75);
+            cartera_tablaOferta_precio.setPrefWidth(90);
+        }
     }
 }
