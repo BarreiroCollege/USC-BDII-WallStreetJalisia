@@ -1,9 +1,6 @@
 package gal.sdc.usc.wallstreet.controller;
 
-import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXTabPane;
-import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXToggleButton;
+import com.jfoenix.controls.*;
 import com.jfoenix.validation.IntegerValidator;
 import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.OfertaVenta;
@@ -66,6 +63,8 @@ public class CarteraController extends DatabaseLinker {
     @FXML
     private TableColumn<OfertaVenta, Integer> cartera_tablaOferta_cant;
     @FXML
+    private TableColumn<OfertaVenta, Integer> cartera_tablaOferta_sin_vender;
+    @FXML
     private TableColumn<OfertaVenta, String> cartera_tablaOferta_precio;
 
     // Textos de saldo del usuario
@@ -114,6 +113,10 @@ public class CarteraController extends DatabaseLinker {
     private DatePicker datepck_despues_oferta;
     @FXML
     private DatePicker datepck_antes_oferta;
+
+    // Botón para dar de baja una oferta de venta
+    @FXML
+    private JFXButton cartera_btn_dar_de_baja;
     //</editor-fold>
 
     private final ObservableList<Participacion> datosTabla = FXCollections.observableArrayList();
@@ -127,9 +130,10 @@ public class CarteraController extends DatabaseLinker {
      * Cosas pendientes en cuanto a desarrollo de la ventana
      * TODO validadores para precio en la pestaña de ofertas?
      * TODO revisar tipo de datos de fechas en ofertas de venta
-     * TODO dar de baja ofertas de venta
+     * TODO filtrar ofertas de venta completadas (participaciones sin vender == 0)
      *
      * Completado:
+     * dar de baja ofertas de venta
      * cambiar por algo similar a pagos de la otra tabla (Timestamp con formato)
      * filtros & validadores de la nueva tabla
      */
@@ -142,56 +146,13 @@ public class CarteraController extends DatabaseLinker {
     public void initialize() {
 
         togglePanelFiltro(); // Controla el estado inicial de las tablas y paneles de filtrado
-
-        final DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("d/L/y"); // Asigna el formato de fecha para la tabla de participaciones
-        final DateFormat formatoFechaTabla = new SimpleDateFormat("d/L/y");   // Asigna el formato de fecha para la tabla de ofertas de venta
-
-        // Establecemos los valores que contendrá cada columna de la tabla de participaciones
-        cartera_tabla_empresa.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getNombre()));
-        cartera_tabla_cif.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getCif()));
-        cartera_tabla_cant.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
-        cartera_tabla_cant_bloq.setCellValueFactory(new PropertyValueFactory<>("cantidadBloqueada"));
-        cartera_tabla_pago.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getFechaUltimoPago() == null ?
-                "Nunca" : celda.getValue().getEmpresa().getFechaUltimoPago().toLocalDateTime().toLocalDate().format(formatoFecha)));
-
-        // Establecemos los valores que contendrá cada columna de la tabla de ofertas de venta
-        cartera_tablaOferta_fecha.setCellValueFactory(celda -> new SimpleStringProperty(formatoFechaTabla.format(celda.getValue().getFecha())));
-        cartera_tablaOferta_empresa.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getNombre()));
-        cartera_tablaOferta_cif.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getCif()));
-        cartera_tablaOferta_cant.setCellValueFactory(new PropertyValueFactory<>("numParticipaciones"));
-        cartera_tablaOferta_precio.setCellValueFactory(new PropertyValueFactory<>("precioVenta"));
+        establecerColumnasTablas();
 
         // Placeholders de las tablas de datos
         cartera_tabla.setPlaceholder(new Label("No dispones de participaciones"));
         cartera_tablaOferta.setPlaceholder(new Label("No dispones de ninguna oferta"));
 
-        // Validadores de entrada numérica
-        IntegerValidator iv = new IntegerValidator("");
-        txt_min_part.getValidators().add(iv);
-        txt_max_part.getValidators().add(iv);
-        txt_max_part_bloq.getValidators().add(iv);
-        txt_min_part_bloq.getValidators().add(iv);
-        txt_min_part_ofertas.getValidators().add(iv);
-        txt_max_part_ofertas.getValidators().add(iv);
-
-        txt_min_part.textProperty().addListener((observable, oldValue, newValue) -> {
-            txt_min_part.validate();
-        });
-        txt_max_part.textProperty().addListener((observable, oldValue, newValue) -> {
-            txt_max_part.validate();
-        });
-        txt_max_part_bloq.textProperty().addListener((observable, oldValue, newValue) -> {
-            txt_max_part_bloq.validate();
-        });
-        txt_min_part_bloq.textProperty().addListener((observable, oldValue, newValue) -> {
-            txt_min_part_bloq.validate();
-        });
-        txt_min_part_ofertas.textProperty().addListener((observable, oldValue, newValue) -> {
-            txt_min_part_ofertas.validate();
-        });
-        txt_max_part_ofertas.textProperty().addListener((observable, oldValue, newValue) -> {
-            txt_max_part_ofertas.validate();
-        });
+        addValidadores();
 
         // Indicamos a la tabla que sus contenidos serán los de la lista datosTabla
         actualizarDatos();
@@ -199,47 +160,19 @@ public class CarteraController extends DatabaseLinker {
         cartera_tablaOferta.setItems(datosTablaOfertas);
 
         // Las ComboBox muestran los nombres de las empresas que les correspondan.
-        datosTabla.forEach(part -> cb_empresa.getItems().add(part.getEmpresa().getNombre()));
-        datosTablaOfertas.forEach(oferta -> cb_empresa_ofertas.getItems().add(oferta.getEmpresa().getNombre()));
+        datosTabla.forEach(part -> {
+            if (!cb_empresa.getItems().contains(part.getEmpresa().getNombre()))
+                cb_empresa.getItems().add(part.getEmpresa().getNombre());
+        });
+        datosTablaOfertas.forEach(oferta -> {
+            if (!cb_empresa_ofertas.getItems().contains(oferta.getEmpresa().getNombre()))
+            cb_empresa_ofertas.getItems().add(oferta.getEmpresa().getNombre());
+        });
         // Se guardan todas las empresas de las que hay participaciones
         empresas = cb_empresa.getItems().filtered(null);
         empresasOfertas = cb_empresa_ofertas.getItems().filtered(null);
 
-
-
-        // Las ComboBox son editables y actualizan sus opciones en función de lo escrito por el usuario.
-        cb_empresa.valueProperty().addListener((observable, oldValue, newValue) -> {
-            FilteredList<String> empresasFiltradas = empresas;
-            empresasFiltradas.setPredicate(empresa -> {
-                if (newValue == null || newValue.isEmpty()) {
-                    // Corrige bug cuando se intentan borrar caracteres
-                    return true;
-                }
-                return empresa.toLowerCase().contains(newValue.toLowerCase());
-            });
-            cb_empresa.setItems(empresasFiltradas);
-            cbTexto = newValue; // Se guarda el valor para un posible filtrado (botón)
-        });
-
-        cb_empresa_ofertas.valueProperty().addListener((observable, oldValue, newValue) -> {
-            FilteredList<String> empresasFiltradas = empresasOfertas;
-            empresasFiltradas.setPredicate(empresa -> {
-                if (newValue == null || newValue.isEmpty()) {
-                    // Corrige bug cuando se intentan borrar caracteres
-                    return true;
-                }
-                return empresa.toLowerCase().contains(newValue.toLowerCase());
-            });
-            cb_empresa_ofertas.setItems(empresasFiltradas);
-            cbTextoOfertas = newValue; // Se guarda el valor para un posible filtrado (botón)
-        });
-
-        // Al cambiar de pestaña cambian algunos componentes.
-        // En la pestaña de participaciones, no se muestra txt_min_precio ni txt_max_precio, pero sí
-        // txt_min_part_bloq y txt_max_part_bloq. En la pestaña de ofertas de venta ocurre lo contrario.
-        menu_pestanas.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            cambiarVisibilidadTextos(menu_pestanas.getSelectionModel().isSelected(0));
-        });
+        addListeners();
     }
 
     public void actualizarDatos() {
@@ -250,6 +183,11 @@ public class CarteraController extends DatabaseLinker {
         // Accedemos a los DAOs para obtener los datos del usuario actual
         List<Participacion> participaciones = super.getDAO(ParticipacionDAO.class).getParticipaciones(usuario);
         List<OfertaVenta> ofertas = super.getDAO(OfertaVentaDAO.class).getOfertasVenta(usuario);
+
+        // Se guarda el número de participaciones sin vender para cada oferta
+        ofertas.forEach(oferta -> oferta.setParticipacionesSinVender(
+                super.getDAO(OfertaVentaDAO.class).getNumParticipacionesRestantes(oferta))
+        );
 
         // Introducimos los datos leidos de la bd a nuestra ObservableList
         datosTabla.setAll(participaciones);
@@ -369,6 +307,125 @@ public class CarteraController extends DatabaseLinker {
 
         // Se borra la antigua información de la tabla y se muestra la nueva.
         cartera_tablaOferta.setItems(partOrdenadasOfertas);
+    }
+
+    public void darDeBajaOferta(){
+        // Se borra la oferta de la base de datos
+        super.getDAO(OfertaVentaDAO.class).darDeBajaOferta(cartera_tablaOferta.getSelectionModel().getSelectedItem());
+
+        // Se actualiza la ComboBox. No se puede eliminar la empresa directamente porque puede haber otras ofertas de la misma
+        int i = 0;
+        String empresaAEliminar = cartera_tablaOferta.getSelectionModel().getSelectedItem().getEmpresa().getNombre();
+        for (OfertaVenta oferta : datosTablaOfertas){
+            if (oferta.getEmpresa().getNombre().equals(empresaAEliminar)){
+                i++;
+                if (i == 2) {
+                    break;
+                }
+            }
+        }
+        if (i == 1) cb_empresa_ofertas.getItems().remove(empresaAEliminar);
+
+        // Se elimina la oferta de la tabla
+        datosTablaOfertas.remove(cartera_tablaOferta.getSelectionModel().getSelectedItem());
+        cartera_tablaOferta.refresh();
+    }
+
+    private void establecerColumnasTablas(){
+        final DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("d/L/y"); // Asigna el formato de fecha para la tabla de participaciones
+        final DateFormat formatoFechaTabla = new SimpleDateFormat("d/L/y");   // Asigna el formato de fecha para la tabla de ofertas de venta
+
+        // Establecemos los valores que contendrá cada columna de la tabla de participaciones
+        cartera_tabla_empresa.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getNombre()));
+        cartera_tabla_cif.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getCif()));
+        cartera_tabla_cant.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
+        cartera_tabla_cant_bloq.setCellValueFactory(new PropertyValueFactory<>("cantidadBloqueada"));
+        cartera_tabla_pago.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getFechaUltimoPago() == null ?
+                "Nunca" : celda.getValue().getEmpresa().getFechaUltimoPago().toLocalDateTime().toLocalDate().format(formatoFecha)));
+
+        // Establecemos los valores que contendrá cada columna de la tabla de ofertas de venta
+        cartera_tablaOferta_fecha.setCellValueFactory(celda -> new SimpleStringProperty(formatoFechaTabla.format(celda.getValue().getFecha())));
+        cartera_tablaOferta_empresa.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getNombre()));
+        cartera_tablaOferta_cif.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getCif()));
+        cartera_tablaOferta_cant.setCellValueFactory(new PropertyValueFactory<>("numParticipaciones"));
+        cartera_tablaOferta_sin_vender.setCellValueFactory(new PropertyValueFactory<>("participacionesSinVender"));
+        cartera_tablaOferta_precio.setCellValueFactory(new PropertyValueFactory<>("precioVenta"));
+    }
+
+    private void addValidadores(){
+        // Validadores de entrada numérica
+        IntegerValidator iv = new IntegerValidator("");
+        txt_min_part.getValidators().add(iv);
+        txt_max_part.getValidators().add(iv);
+        txt_max_part_bloq.getValidators().add(iv);
+        txt_min_part_bloq.getValidators().add(iv);
+        txt_min_part_ofertas.getValidators().add(iv);
+        txt_max_part_ofertas.getValidators().add(iv);
+
+        txt_min_part.textProperty().addListener((observable, oldValue, newValue) -> {
+            txt_min_part.validate();
+        });
+        txt_max_part.textProperty().addListener((observable, oldValue, newValue) -> {
+            txt_max_part.validate();
+        });
+        txt_max_part_bloq.textProperty().addListener((observable, oldValue, newValue) -> {
+            txt_max_part_bloq.validate();
+        });
+        txt_min_part_bloq.textProperty().addListener((observable, oldValue, newValue) -> {
+            txt_min_part_bloq.validate();
+        });
+        txt_min_part_ofertas.textProperty().addListener((observable, oldValue, newValue) -> {
+            txt_min_part_ofertas.validate();
+        });
+        txt_max_part_ofertas.textProperty().addListener((observable, oldValue, newValue) -> {
+            txt_max_part_ofertas.validate();
+        });
+    }
+
+    private void addListeners(){
+        // Las ComboBox son editables y actualizan sus opciones en función de lo escrito por el usuario.
+        cb_empresa.valueProperty().addListener((observable, oldValue, newValue) -> {
+            FilteredList<String> empresasFiltradas = empresas;
+            empresasFiltradas.setPredicate(empresa -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    // Corrige bug cuando se intentan borrar caracteres
+                    return true;
+                }
+                return empresa.toLowerCase().contains(newValue.toLowerCase());
+            });
+            cb_empresa.setItems(empresasFiltradas);
+            cbTexto = newValue; // Se guarda el valor para un posible filtrado (botón)
+        });
+
+        cb_empresa_ofertas.valueProperty().addListener((observable, oldValue, newValue) -> {
+            FilteredList<String> empresasFiltradas = empresasOfertas;
+            empresasFiltradas.setPredicate(empresa -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    // Corrige bug cuando se intentan borrar caracteres
+                    return true;
+                }
+                return empresa.toLowerCase().contains(newValue.toLowerCase());
+            });
+            cb_empresa_ofertas.setItems(empresasFiltradas);
+            cbTextoOfertas = newValue; // Se guarda el valor para un posible filtrado (botón)
+        });
+
+        // Al cambiar de pestaña cambian algunos componentes.
+        // En la pestaña de participaciones, no se muestra txt_min_precio ni txt_max_precio, pero sí
+        // txt_min_part_bloq y txt_max_part_bloq. En la pestaña de ofertas de venta ocurre lo contrario.
+        menu_pestanas.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            cambiarVisibilidadTextos(menu_pestanas.getSelectionModel().isSelected(0));
+        });
+
+        // Cuando se selecciona una fila en la tabla de ofertas de venta, si la oferta de venta está activa, se puede dar de baja.
+        cartera_tablaOferta.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldSelection, newSelection) -> {
+                if (newSelection.isOfertaActiva()){
+                    cartera_btn_dar_de_baja.setVisible(true);
+                    return;
+                }
+                cartera_btn_dar_de_baja.setVisible(false);
+                });
     }
 
     /**

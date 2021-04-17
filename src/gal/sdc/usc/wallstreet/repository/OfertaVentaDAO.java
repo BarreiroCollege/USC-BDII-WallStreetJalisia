@@ -6,10 +6,7 @@ import gal.sdc.usc.wallstreet.model.Participacion;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.helpers.DAO;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +36,7 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
         Usuario usuario = new Usuario.Builder(idUsuario).build();
 
         try (PreparedStatement ps = conexion.prepareStatement(
-                "SELECT o.empresa, e.nombre, e.cif, o.num_participaciones, o.precio_venta " +
+                "SELECT o.fecha, o.empresa, e.nombre, e.cif, o.num_participaciones, o.precio_venta " +
                         "FROM oferta_venta o JOIN empresa e ON o.empresa = e.usuario " +
                         "WHERE o.usuario = ?"
         )) {
@@ -47,7 +44,9 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
 
-                OfertaVenta ofertaventa = new OfertaVenta.Builder().withUsuario(usuario)
+                OfertaVenta ofertaventa = new OfertaVenta.Builder()
+                        .withFecha(rs.getDate("fecha"))
+                        .withUsuario(usuario)
                         .withEmpresa(
                                 new Empresa.Builder(
                                         new Usuario.Builder(rs.getString("empresa")).build()
@@ -75,5 +74,47 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
         }
 
         return ofertas;
+    }
+
+    /***
+     * Devuelve el número de participaciones que todavía no han sido vendidas de una oferta de venta determinada.
+     *
+     * @param ov Oferta de venta sobre la que se calculará el total de participaciones restante.
+     * @return Entero con el número de participaciones no vendidas; null en caso de error.
+     */
+    public Integer getNumParticipacionesRestantes(OfertaVenta ov){
+        Integer sinVender = null;
+
+        String sqlCall = "SELECT * FROM participaciones_por_vender (?, ?)";
+        try (PreparedStatement ps = conexion.prepareStatement(sqlCall)){
+            ps.setTimestamp(1, new Timestamp(ov.getFecha().getTime()));
+            ps.setString(2, ov.getUsuario().getIdentificador());
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()){
+                sinVender = rs.getInt(1);
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return sinVender;
+    }
+
+    /***
+     * Elimina una oferta de venta.
+     *
+     * @param ov Oferta de venta a dar de baja.
+     */
+    public void darDeBajaOferta(OfertaVenta ov){
+        try (PreparedStatement ps = conexion.prepareStatement(
+                "DELETE FROM oferta_venta " +
+                        "WHERE fecha = ? and usuario = ?")){
+            ps.setTimestamp(1, new Timestamp(ov.getFecha().getTime()));
+            ps.setString(2, ov.getUsuario().getIdentificador());
+            ps.executeUpdate();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 }

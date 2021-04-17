@@ -144,3 +144,19 @@ alter table compra
     owner to postgres;
 
 
+create or replace function participaciones_por_vender(ofert_ven_fecha timestamp, usuario_oferta varchar(16))
+    returns integer as $restante$
+
+declare restante integer;
+
+begin
+    select (num_participaciones - coalesce(
+            (select sum(cantidad)
+			from compra
+			where ov_fecha = ofert_ven_fecha and ov_usuario = usuario_oferta),0))
+			into restante
+    from oferta_venta
+    where usuario = usuario_oferta and fecha = ofert_ven_fecha;
+    return restante;
+end;
+$restante$ language plpgsql;

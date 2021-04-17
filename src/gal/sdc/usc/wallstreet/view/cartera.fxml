@@ -115,7 +115,8 @@
                               <TableColumn fx:id="cartera_tablaOferta_fecha" editable="false" prefWidth="91.2" text="Fecha" />
                               <TableColumn fx:id="cartera_tablaOferta_empresa" editable="false" prefWidth="91.3" text="Empresa" />
                               <TableColumn fx:id="cartera_tablaOferta_cif" editable="false" prefWidth="75.0" text="CIF" />
-                              <TableColumn fx:id="cartera_tablaOferta_cant" editable="false" prefWidth="91.2" text="Cantidad" />
+                              <TableColumn fx:id="cartera_tablaOferta_cant" editable="false" prefWidth="91.2" text="Cantidad total" />
+                              <TableColumn fx:id="cartera_tablaOferta_sin_vender" editable="false" prefWidth="91.2" text="Sin vender" />
                               <TableColumn fx:id="cartera_tablaOferta_precio" editable="false" prefWidth="91.2" text="Precio venta" />
                            </columns>
                         </TableView>
@@ -164,6 +165,11 @@
                               </JFXTextField>
                               <JFXDatePicker fx:id="datepck_despues_oferta" layoutX="120.0" layoutY="192.0" prefHeight="26.0" prefWidth="138.0" promptText="Posterior al" />
                               <JFXDatePicker fx:id="datepck_antes_oferta" layoutX="121.0" layoutY="160.0" prefHeight="26.0" prefWidth="138.0" promptText="Anterior al" />
+                              <JFXButton fx:id="cartera_btn_dar_de_baja" buttonType="RAISED" layoutX="20.0" layoutY="237.0" mnemonicParsing="false" onAction="#darDeBajaOferta" prefHeight="25.0" prefWidth="120.0" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;" text="Dar de baja" visible="false">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </JFXButton>
                               <JFXButton fx:id="cartera_btn_filtrar_oferta" buttonType="RAISED" layoutX="182.0" layoutY="237.0" mnemonicParsing="false" onAction="#filtrarDatosOfertas" prefHeight="25.0" prefWidth="69.0" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;" text="Filtrar">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
