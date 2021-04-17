@@ -1,5 +1,6 @@
 package gal.sdc.usc.wallstreet.controller;
 
+import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTabPane;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXToggleButton;
@@ -23,6 +24,9 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.function.Predicate;
@@ -33,6 +37,7 @@ public class CarteraController extends DatabaseLinker {
     public static final String VIEW = "cartera";
     public static final Integer HEIGHT = 440;
     public static final Integer WIDTH = 610;
+
 
     //<editor-fold defaultstate="collapsed" desc="Variables desde FXML">
     // Tabla y columnas de la tabla de participaciones
@@ -53,11 +58,11 @@ public class CarteraController extends DatabaseLinker {
     @FXML
     private TableView<OfertaVenta> cartera_tablaOferta;
     @FXML
+    private TableColumn<OfertaVenta, String> cartera_tablaOferta_fecha;
+    @FXML
     private TableColumn<OfertaVenta, String> cartera_tablaOferta_empresa;
     @FXML
     private TableColumn<OfertaVenta, String> cartera_tablaOferta_cif;
-    @FXML
-    private TableColumn<OfertaVenta, Integer> cartera_tablaOferta_fecha;
     @FXML
     private TableColumn<OfertaVenta, Integer> cartera_tablaOferta_cant;
     @FXML
@@ -80,7 +85,7 @@ public class CarteraController extends DatabaseLinker {
     @FXML
     private Pane cartera_filtro;
     @FXML
-    private ComboBox<String> cb_empresa;
+    private JFXComboBox<String> cb_empresa;
     @FXML
     private JFXTextField txt_min_part;
     @FXML
@@ -93,51 +98,72 @@ public class CarteraController extends DatabaseLinker {
     private DatePicker datepck_despues_pago;
     @FXML
     private DatePicker datepck_antes_pago;
+
+    // Opciones de filtrado en la tabla de ofertas de venta
+    @FXML
+    public JFXComboBox<String> cb_empresa_ofertas;
+    @FXML
+    private JFXTextField txt_min_part_ofertas;
+    @FXML
+    private JFXTextField txt_max_part_ofertas;
+    @FXML
+    private JFXTextField txt_min_precio;
+    @FXML
+    private JFXTextField txt_max_precio;
+    @FXML
+    private DatePicker datepck_despues_oferta;
+    @FXML
+    private DatePicker datepck_antes_oferta;
     //</editor-fold>
 
     private final ObservableList<Participacion> datosTabla = FXCollections.observableArrayList();
     private final ObservableList<OfertaVenta> datosTablaOfertas = FXCollections.observableArrayList();
-    private String cbTexto;
+    private String cbTexto;         // Valor seleccionado actualmente en la ComboBox de la pestaña de participaciones
+    private String cbTextoOfertas;  // Valor seleccionado actualmente en la ComboBox de la pestaña de ofertas de venta
     private FilteredList<String> empresas;
+    private FilteredList<String> empresasOfertas;
+
+    /*
+     * Cosas pendientes en cuanto a desarrollo de la ventana
+     * TODO validadores para precio en la pestaña de ofertas?
+     * TODO revisar tipo de datos de fechas en ofertas de venta
+     * TODO dar de baja ofertas de venta
+     *
+     * Completado:
+     * cambiar por algo similar a pagos de la otra tabla (Timestamp con formato)
+     * filtros & validadores de la nueva tabla
+     */
 
     /**
      * Inicializa la tabla de datos que se muestra en Cartera
      * Establece los valores que buscar para cada columna de la tabla
      */
     @FXML
-    public void initialize(){
+    public void initialize() {
 
         togglePanelFiltro(); // Controla el estado inicial de las tablas y paneles de filtrado
 
-        final DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("d/L/y"); // Asigna el formato de fecha para la tabla
+        final DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("d/L/y"); // Asigna el formato de fecha para la tabla de participaciones
+        final DateFormat formatoFechaTabla = new SimpleDateFormat("d/L/y");   // Asigna el formato de fecha para la tabla de ofertas de venta
 
         // Establecemos los valores que contendrá cada columna de la tabla de participaciones
         cartera_tabla_empresa.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getNombre()));
         cartera_tabla_cif.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getCif()));
-        cartera_tabla_cant.setCellValueFactory( new PropertyValueFactory<>("cantidad") );
-        cartera_tabla_cant_bloq.setCellValueFactory( new PropertyValueFactory<>("cantidadBloqueada") );
-        cartera_tabla_pago.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getFechaUltimoPago() == null?
-                "Nunca" : celda.getValue().getEmpresa().getFechaUltimoPago().toLocalDateTime().toLocalDate().format(formatoFecha) ));
+        cartera_tabla_cant.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
+        cartera_tabla_cant_bloq.setCellValueFactory(new PropertyValueFactory<>("cantidadBloqueada"));
+        cartera_tabla_pago.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getFechaUltimoPago() == null ?
+                "Nunca" : celda.getValue().getEmpresa().getFechaUltimoPago().toLocalDateTime().toLocalDate().format(formatoFecha)));
 
         // Establecemos los valores que contendrá cada columna de la tabla de ofertas de venta
-        cartera_tablaOferta_empresa.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getNombre()) );
-        cartera_tablaOferta_cif.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getCif()) );
-        cartera_tablaOferta_cant.setCellValueFactory( new PropertyValueFactory<>("numParticipaciones") );
-        cartera_tablaOferta_precio.setCellValueFactory( new PropertyValueFactory<>("precioVenta") );
-        cartera_tablaOferta_fecha.setCellValueFactory( new PropertyValueFactory<>("fecha") );
-
-        /*
-         * Cosas pendientes en cuanto a desarrollo de la ventana
-         * TODO cambiar por algo similar a pagos de la otra tabla (Timestamp con formato)
-         * TODO revisar tipo de datos de fechas en ofertas de venta
-         * TODO filtros & validadores de la nueva tabla
-         */
+        cartera_tablaOferta_fecha.setCellValueFactory(celda -> new SimpleStringProperty(formatoFechaTabla.format(celda.getValue().getFecha())));
+        cartera_tablaOferta_empresa.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getNombre()));
+        cartera_tablaOferta_cif.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getCif()));
+        cartera_tablaOferta_cant.setCellValueFactory(new PropertyValueFactory<>("numParticipaciones"));
+        cartera_tablaOferta_precio.setCellValueFactory(new PropertyValueFactory<>("precioVenta"));
 
         // Placeholders de las tablas de datos
-        cartera_tabla.setPlaceholder( new Label("No dispones de participaciones") );
-        cartera_tablaOferta.setPlaceholder( new Label("No dispones de ninguna oferta") );
-
-        // TODO: testear filtrado por fecha (meter valores de prueba) [Si ambos filtros de fecha son nulos no muestra todas las acciones]
+        cartera_tabla.setPlaceholder(new Label("No dispones de participaciones"));
+        cartera_tablaOferta.setPlaceholder(new Label("No dispones de ninguna oferta"));
 
         // Validadores de entrada numérica
         IntegerValidator iv = new IntegerValidator("");
@@ -145,28 +171,47 @@ public class CarteraController extends DatabaseLinker {
         txt_max_part.getValidators().add(iv);
         txt_max_part_bloq.getValidators().add(iv);
         txt_min_part_bloq.getValidators().add(iv);
+        txt_min_part_ofertas.getValidators().add(iv);
+        txt_max_part_ofertas.getValidators().add(iv);
 
-        txt_min_part.textProperty().addListener((observable, oldValue, newValue) -> { txt_min_part.validate(); });
-        txt_max_part.textProperty().addListener((observable, oldValue, newValue) -> { txt_max_part.validate(); });
-        txt_max_part_bloq.textProperty().addListener((observable, oldValue, newValue) -> { txt_max_part_bloq.validate(); });
-        txt_min_part_bloq.textProperty().addListener((observable, oldValue, newValue) -> { txt_min_part_bloq.validate(); });
+        txt_min_part.textProperty().addListener((observable, oldValue, newValue) -> {
+            txt_min_part.validate();
+        });
+        txt_max_part.textProperty().addListener((observable, oldValue, newValue) -> {
+            txt_max_part.validate();
+        });
+        txt_max_part_bloq.textProperty().addListener((observable, oldValue, newValue) -> {
+            txt_max_part_bloq.validate();
+        });
+        txt_min_part_bloq.textProperty().addListener((observable, oldValue, newValue) -> {
+            txt_min_part_bloq.validate();
+        });
+        txt_min_part_ofertas.textProperty().addListener((observable, oldValue, newValue) -> {
+            txt_min_part_ofertas.validate();
+        });
+        txt_max_part_ofertas.textProperty().addListener((observable, oldValue, newValue) -> {
+            txt_max_part_ofertas.validate();
+        });
 
         // Indicamos a la tabla que sus contenidos serán los de la lista datosTabla
         actualizarDatos();
         cartera_tabla.setItems(datosTabla);
         cartera_tablaOferta.setItems(datosTablaOfertas);
 
-        // La ComboBox muestra los nombres de las empresas.
-        for (Participacion part : datosTabla){
-            cb_empresa.getItems().add(part.getEmpresa().getNombre());
-        }
-        empresas = cb_empresa.getItems().filtered(null); // Se guardan todas las empresas
+        // Las ComboBox muestran los nombres de las empresas que les correspondan.
+        datosTabla.forEach(part -> cb_empresa.getItems().add(part.getEmpresa().getNombre()));
+        datosTablaOfertas.forEach(oferta -> cb_empresa_ofertas.getItems().add(oferta.getEmpresa().getNombre()));
+        // Se guardan todas las empresas de las que hay participaciones
+        empresas = cb_empresa.getItems().filtered(null);
+        empresasOfertas = cb_empresa_ofertas.getItems().filtered(null);
 
-        // La ComboBox es editable y actualiza sus opciones en función de lo escrito por el usuario.
+
+
+        // Las ComboBox son editables y actualizan sus opciones en función de lo escrito por el usuario.
         cb_empresa.valueProperty().addListener((observable, oldValue, newValue) -> {
             FilteredList<String> empresasFiltradas = empresas;
             empresasFiltradas.setPredicate(empresa -> {
-                if (newValue == null || newValue.isEmpty()){
+                if (newValue == null || newValue.isEmpty()) {
                     // Corrige bug cuando se intentan borrar caracteres
                     return true;
                 }
@@ -175,8 +220,25 @@ public class CarteraController extends DatabaseLinker {
             cb_empresa.setItems(empresasFiltradas);
             cbTexto = newValue; // Se guarda el valor para un posible filtrado (botón)
         });
-        menu_pestanas.getSelectionModel().selectedItemProperty().addListener( (observable,oldValue,newValue) -> {
-            //menu_pestanas.getSelectionModel().getSelectedIndex()
+
+        cb_empresa_ofertas.valueProperty().addListener((observable, oldValue, newValue) -> {
+            FilteredList<String> empresasFiltradas = empresasOfertas;
+            empresasFiltradas.setPredicate(empresa -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    // Corrige bug cuando se intentan borrar caracteres
+                    return true;
+                }
+                return empresa.toLowerCase().contains(newValue.toLowerCase());
+            });
+            cb_empresa_ofertas.setItems(empresasFiltradas);
+            cbTextoOfertas = newValue; // Se guarda el valor para un posible filtrado (botón)
+        });
+
+        // Al cambiar de pestaña cambian algunos componentes.
+        // En la pestaña de participaciones, no se muestra txt_min_precio ni txt_max_precio, pero sí
+        // txt_min_part_bloq y txt_max_part_bloq. En la pestaña de ofertas de venta ocurre lo contrario.
+        menu_pestanas.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            cambiarVisibilidadTextos(menu_pestanas.getSelectionModel().isSelected(0));
         });
     }
 
@@ -201,14 +263,15 @@ public class CarteraController extends DatabaseLinker {
     /**
      * Comprueba que el campo de texto de entrada sólo contenga caracteres numéricos.
      * En caso contrario muestra una alerta de lo ocurrido.
+     *
      * @param entrada Campo de texto a verificar
      * @return resultado de la verificación, una vez el usuario haya cerrado la alerta en el caso de haberla
      */
-    public boolean regexNumerico(JFXTextField entrada){
+    public boolean regexNumerico(JFXTextField entrada) {
         // Solo se aceptan caracteres numéricos
-        if(entrada.getText() != null && !entrada.getText().isEmpty()){
-            if (!entrada.getText().matches("[0-9]+")){
-                if ( datosTabla.isEmpty() ) Main.mensaje("Introduce un número válido de participaciones",3);
+        if (entrada.getText() != null && !entrada.getText().isEmpty()) {
+            if (!entrada.getText().matches("[0-9]+")) {
+                if (datosTabla.isEmpty()) Main.mensaje("Introduce un número válido de participaciones", 3);
                 return false;
             }
         }
@@ -216,30 +279,48 @@ public class CarteraController extends DatabaseLinker {
     }
 
     /**
-     *  Filtra los datos de participaciones mostradas en la tabla en función de:
-     *  - Empresa seleccionada en ComboBox
-     *  - Mínimo número de participaciones no bloqueadas
-     *  - Máximo número de participaciones no bloqueadas
-     *  - Mínimo número de participaciones bloqueadas
-     *  - Máximo número de participaciones bloqueadas
-     *  - Límite inferior para la fecha del último pago de la empresa
-     *  - Límite superior para la fecha del último pago de la empresa
+     * Comprueba qu el campo de texto de entrada sea un precio válido (números seguidos, opcionalmente, por un punto y
+     * hasta 2 decimales).
+     * En caso contrario muestra una alerta de lo ocurrido.
+     *
+     * @param entrada Campo de texto a verificar
+     * @return resultado de la verificación, una vez el usuario haya cerrado la alerta en caso de haberla
      */
-    public void filtrarDatos(){
+    public boolean regexPrecio(JFXTextField entrada){
+        // La entrada acepta uno o más números, que pueden ir seguidos de un punto y hasta 2 números decimales.
+        if (entrada.getText() != null && !entrada.getText().isEmpty()) {
+            if (!entrada.getText().matches("[0-9]+([.][0-9]{1,2})?")) {
+                if (datosTabla.isEmpty()) Main.mensaje("Introduce un precio válido", 3);
+                return false;
+            }
+        }
+        return true;
+    }
 
+    /**
+     * Filtra los datos mostradas en la tabla de participaciones en función de:
+     * - Empresa seleccionada en ComboBox
+     * - Mínimo número de participaciones no bloqueadas
+     * - Máximo número de participaciones no bloqueadas
+     * - Mínimo número de participaciones bloqueadas
+     * - Máximo número de participaciones bloqueadas
+     * - Límite inferior para la fecha del último pago de la empresa
+     * - Límite superior para la fecha del último pago de la empresa
+     */
+    public void filtrarDatosParticipaciones() {
         // Cambiamos el placeholder de la tabla para indicar que el filtro no obtuvo resultados
-        cartera_tabla.setPlaceholder( new Label("No se encuentran participaciones con los parámetros indicados") );
+        cartera_tabla.setPlaceholder(new Label("No se encuentran participaciones con los parámetros indicados"));
 
         // Se guardan todas las participaciones en un FilteredList
         FilteredList<Participacion> partFiltradas = new FilteredList<>(datosTabla, p -> true);
 
-        if ( !regexNumerico(txt_min_part) ) return;
-        if ( !regexNumerico(txt_max_part) ) return;
-        if ( !regexNumerico(txt_min_part_bloq) ) return;
-        if ( !regexNumerico(txt_max_part_bloq) ) return;
+        if (!regexNumerico(txt_min_part)) return;
+        if (!regexNumerico(txt_max_part)) return;
+        if (!regexNumerico(txt_min_part_bloq)) return;
+        if (!regexNumerico(txt_max_part_bloq)) return;
 
         // Se eliminan aquellas participaciones no válidas
-        Predicate<Participacion> predicadoTotal = construirPredicadosFiltro();
+        Predicate<Participacion> predicadoTotal = construirPredicadosFiltroParticipaciones();
         partFiltradas.setPredicate(predicadoTotal);
 
         // Una FilteredList no se puede modificar. Se almacena como SortedList para que pueda ser ordenada.
@@ -252,12 +333,63 @@ public class CarteraController extends DatabaseLinker {
         cartera_tabla.setItems(partOrdenadas);
     }
 
-    private Predicate<Participacion> construirPredicadosFiltro(){
+
+
+    /**
+     * Filtra los datos mostradas en la tabla de ofertas de venta en función de:
+     * - Límite inferior para la fecha del último pago de la empresa
+     * - Límite superior para la fecha del último pago de la empresa
+     * - Empresa seleccionada en ComboBox
+     * - Mínimo número de participaciones puestas en venta
+     * - Máximo número de participaciones puestas en venta
+     * - Mínimo precio de venta
+     * - Máximo precio de venta
+     */
+    public void filtrarDatosOfertas() {
+        // Cambiamos el placeholder de la tabla para indicar que el filtro no obtuvo resultados
+        cartera_tablaOferta.setPlaceholder(new Label("No se encuentran participaciones con los parámetros indicados"));
+
+        // Se guardan todas las ofertas de venta en un FilteredList
+        FilteredList<OfertaVenta> partFiltradasOfertas = new FilteredList<>(datosTablaOfertas, p -> true);
+
+        if (!regexNumerico(txt_min_part)) return;
+        if (!regexNumerico(txt_max_part)) return;
+        if (!regexPrecio(txt_min_precio)) return;
+        if (!regexPrecio(txt_max_precio)) return;
+
+        // Se eliminan aquellas ofertas de venta no válidas
+        Predicate<OfertaVenta> predicadoTotalOfertas = construirPredicadosFiltroOfertas();
+        partFiltradasOfertas.setPredicate(predicadoTotalOfertas);
+
+        // Una FilteredList no se puede modificar. Se almacena como SortedList para que pueda ser ordenada.
+        SortedList<OfertaVenta> partOrdenadasOfertas = new SortedList<>(partFiltradasOfertas);
+
+        // La ordenación de partOrdenadas sigue el criterio de la tabla.
+        partOrdenadasOfertas.comparatorProperty().bind(cartera_tablaOferta.comparatorProperty());
+
+        // Se borra la antigua información de la tabla y se muestra la nueva.
+        cartera_tablaOferta.setItems(partOrdenadasOfertas);
+    }
+
+    /**
+     * Cambia la visibilidad de txt_min_part_bloq, txt_max_part_bloq, txt_min_precio y txt_max_precio en función de
+     * la pestaña.
+     *
+     * @param pestaña true -> pestaña de participaciones. false -> pestaña de ofertas de venta
+     */
+    private void cambiarVisibilidadTextos(boolean pestaña) {
+        txt_min_part_bloq.setVisible(pestaña);
+        txt_max_part_bloq.setVisible(pestaña);
+        txt_min_precio.setVisible(!pestaña);
+        txt_max_precio.setVisible(!pestaña);
+    }
+
+    private Predicate<Participacion> construirPredicadosFiltroParticipaciones() {
 
         // Predicado correspondiente a la ComboBox
         Predicate<Participacion> predComboBox = participacion -> {
             // Se comprueba si hay algún valor seleccionado o escrito en la ComboBox
-            if (cb_empresa.getValue() != null && !cb_empresa.getValue().isEmpty()){
+            if (cb_empresa.getValue() != null && !cb_empresa.getValue().isEmpty()) {
                 // El nombre comercial de la empresa de la participación debe contener la selección
                 return participacion.getEmpresa().getNombre().toLowerCase().contains(cbTexto.toLowerCase());
             }
@@ -266,14 +398,14 @@ public class CarteraController extends DatabaseLinker {
 
         // Predicados correspondientes al rango de participaciones no bloqueadas
         Predicate<Participacion> predMinPart = participacion -> {
-            if (txt_min_part.getText() != null && !txt_min_part.getText().isEmpty()){
+            if (txt_min_part.getText() != null && !txt_min_part.getText().isEmpty()) {
                 return participacion.getCantidad() >= Integer.parseInt(txt_min_part.getText());
             }
             return true;
         };
 
-        Predicate<Participacion> predMaxPart= participacion -> {
-            if (txt_max_part.getText() != null && !txt_max_part.getText().isEmpty()){
+        Predicate<Participacion> predMaxPart = participacion -> {
+            if (txt_max_part.getText() != null && !txt_max_part.getText().isEmpty()) {
                 return participacion.getCantidad() <= Integer.parseInt(txt_max_part.getText());
             }
             return true;
@@ -281,14 +413,14 @@ public class CarteraController extends DatabaseLinker {
 
         // Predicados correspondientes al rango de participaciones bloqueadas
         Predicate<Participacion> predMinPartBloq = participacion -> {
-            if (txt_min_part_bloq.getText() != null && !txt_min_part_bloq.getText().isEmpty()){
+            if (txt_min_part_bloq.getText() != null && !txt_min_part_bloq.getText().isEmpty()) {
                 return participacion.getCantidadBloqueada() >= Integer.parseInt(txt_min_part_bloq.getText());
             }
             return true;
         };
 
         Predicate<Participacion> predMaxPartBloq = participacion -> {
-            if (txt_max_part_bloq.getText() != null && !txt_max_part_bloq.getText().isEmpty()){
+            if (txt_max_part_bloq.getText() != null && !txt_max_part_bloq.getText().isEmpty()) {
                 return participacion.getCantidadBloqueada() <= Integer.parseInt(txt_max_part_bloq.getText());
             }
             return true;
@@ -297,9 +429,10 @@ public class CarteraController extends DatabaseLinker {
         // Predicados correspondientes al rango de fechas del último pago
         // Se filtra en función del último pago que realizó la empresa (que el usuario puede no haber recibido)
         Predicate<Participacion> predDespuesFecha = participacion -> {
-            if (participacion.getEmpresa().getFechaUltimoPago() == null){
-                return false;
-            } else if (datepck_despues_pago.getValue() != null){
+            if (datepck_despues_pago.getValue() != null && !datepck_despues_pago.getValue().toString().isEmpty()) {
+                if (participacion.getEmpresa().getFechaUltimoPago() == null) {
+                    return false;
+                }
                 return participacion.getEmpresa().getFechaUltimoPago()
                         .compareTo(java.sql.Date.valueOf(datepck_despues_pago.getValue())) >= 0;
             }
@@ -307,9 +440,10 @@ public class CarteraController extends DatabaseLinker {
         };
 
         Predicate<Participacion> predAntesFecha = participacion -> {
-            if (participacion.getEmpresa().getFechaUltimoPago() == null){
-                return false;
-            } else if (datepck_antes_pago.getValue() != null){
+            if (datepck_antes_pago.getValue() != null && !datepck_antes_pago.getValue().toString().isEmpty()) {
+                if (participacion.getEmpresa().getFechaUltimoPago() == null) {
+                    return false;
+                }
                 return participacion.getEmpresa().getFechaUltimoPago()
                         .compareTo(java.sql.Date.valueOf(datepck_antes_pago.getValue())) <= 0;
             }
@@ -320,18 +454,79 @@ public class CarteraController extends DatabaseLinker {
                 .and(predDespuesFecha).and(predAntesFecha);
     }
 
+    private Predicate<OfertaVenta> construirPredicadosFiltroOfertas() {
+
+        // Predicados correspondientes al rango de fechas de la oferta de venta
+        Predicate<OfertaVenta> predDespuesFecha = ofertaVenta -> {
+            if (datepck_despues_oferta.getValue() != null && !datepck_despues_oferta.getValue().toString().isEmpty()) {
+                return ofertaVenta.getFecha().after(Date.valueOf(datepck_despues_oferta.getValue()));
+            }
+            return true;
+        };
+
+        Predicate<OfertaVenta> predAntesFecha = ofertaVenta -> {
+            if (datepck_antes_oferta.getValue() != null && !datepck_antes_oferta.getValue().toString().isEmpty()) {
+                return ofertaVenta.getFecha().before(Date.valueOf(datepck_antes_oferta.getValue()));
+            }
+            return true;
+        };
+
+        // Predicado correspondiente a la ComboBox
+        Predicate<OfertaVenta> predComboBox = ofertaVenta -> {
+            // Se comprueba si hay algún valor seleccionado o escrito en la ComboBox
+            if (cb_empresa_ofertas.getValue() != null && !cb_empresa_ofertas.getValue().isEmpty()) {
+                // El nombre comercial de la empresa de la participación debe contener la selección
+                return ofertaVenta.getEmpresa().getNombre().toLowerCase().contains(cbTextoOfertas.toLowerCase());
+            }
+            return true;
+        };
+
+        // Predicados correspondientes al rango de participaciones
+        Predicate<OfertaVenta> predMinPart = ofertaVenta -> {
+            if (txt_min_part_ofertas.getText() != null && !txt_min_part_ofertas.getText().isEmpty()) {
+                return ofertaVenta.getNumParticipaciones() >= Integer.parseInt(txt_min_part_ofertas.getText());
+            }
+            return true;
+        };
+
+        Predicate<OfertaVenta> predMaxPart = ofertaVenta -> {
+            if (txt_max_part_ofertas.getText() != null && !txt_max_part_ofertas.getText().isEmpty()) {
+                return ofertaVenta.getNumParticipaciones() <= Integer.parseInt(txt_max_part_ofertas.getText());
+            }
+            return true;
+        };
+
+        // Predicados correspondientes al rango del precio de venta
+        Predicate<OfertaVenta> predMinPrecio = ofertaVenta -> {
+            if (txt_min_precio.getText() != null && !txt_min_precio.getText().isEmpty()) {
+                return ofertaVenta.getPrecioVenta() >= Float.parseFloat(txt_min_precio.getText());
+            }
+            return true;
+        };
+
+        Predicate<OfertaVenta> predMaxPrecio = ofertaVenta -> {
+            if (txt_max_precio.getText() != null && !txt_max_precio.getText().isEmpty()) {
+                return ofertaVenta.getPrecioVenta() <= Float.parseFloat(txt_max_precio.getText());
+            }
+            return true;
+        };
+
+        return predDespuesFecha.and(predAntesFecha).and(predComboBox).and(predMinPart).and(predMaxPart)
+                .and(predMinPrecio).and(predMaxPrecio);
+    }
+
     // Abre o cierra las ventanas de filtros, además de redimensionar las tablas
-    public void togglePanelFiltro(){
-        if ( toggle_filtro.isSelected() ){
+    public void togglePanelFiltro() {
+        if (toggle_filtro.isSelected()) {
             cartera_filtro.setVisible(true);
-            cartera_tabla.setPrefSize(265,263);
+            cartera_tabla.setPrefSize(265, 263);
             cartera_tabla_empresa.setPrefWidth(91.3);
             cartera_tabla_cif.setPrefWidth(75);
             cartera_tabla_cant.setPrefWidth(91.2);
             cartera_tabla_cant_bloq.setPrefWidth(91.2);
             cartera_tabla_pago.setPrefWidth(91.2);
             cartera_oferta_filtro.setVisible(true);
-            cartera_tablaOferta.setPrefSize(265,263);
+            cartera_tablaOferta.setPrefSize(265, 263);
             cartera_tablaOferta_empresa.setPrefWidth(91.3);
             cartera_tablaOferta_cif.setPrefWidth(75);
             cartera_tablaOferta_cant.setPrefWidth(91.2);
@@ -339,14 +534,14 @@ public class CarteraController extends DatabaseLinker {
             cartera_tablaOferta_precio.setPrefWidth(91.2);
         } else {
             cartera_filtro.setVisible(false);
-            cartera_tabla.setPrefSize(545,263);
+            cartera_tabla.setPrefSize(545, 263);
             cartera_tabla_empresa.setPrefWidth(220);
             cartera_tabla_cif.setPrefWidth(84);
             cartera_tabla_cant.setPrefWidth(75);
             cartera_tabla_cant_bloq.setPrefWidth(75);
             cartera_tabla_pago.setPrefWidth(90);
             cartera_oferta_filtro.setVisible(false);
-            cartera_tablaOferta.setPrefSize(545,263);
+            cartera_tablaOferta.setPrefSize(545, 263);
             cartera_tablaOferta_empresa.setPrefWidth(220);
             cartera_tablaOferta_cif.setPrefWidth(84);
             cartera_tablaOferta_cant.setPrefWidth(75);
