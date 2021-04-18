@@ -22,7 +22,8 @@ public class CompraDAO extends DAO<Compra> {
         List<OfertaVenta> ofertas = new ArrayList<>();
         try (PreparedStatement ps = conexion.prepareStatement(
                 "SELECT * FROM oferta_venta " +
-                        "WHERE confirmado is true and empresa=? and precio_venta<=?"
+                        "WHERE confirmado is true and empresa=? and precio_venta<=?" +
+                        "ORDER BY precio_venta asc"
         )) {
             ps.setString(1,empresa);
             ps.setFloat(2,precioMax);

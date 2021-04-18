@@ -23,11 +23,10 @@
         </columns>
       </TableView>
       <JFXTextField id="CampoPrecio" fx:id="campoPrecio" focusColor="#a6acbf" labelFloat="true" layoutX="466.0" layoutY="67.0" prefHeight="31.0" prefWidth="102.0" promptText="Precio" unFocusColor="#d0caca" />
-      <JFXButton id="BtnComprar" fx:id="btnComprar" layoutX="620.0" layoutY="318.0" onDragDetected="#btnComprarEvent" prefHeight="35.0" prefWidth="102.0" ripplerFill="#838282" style="-fx-background-color: #E9E9E9;" text="Comprar" />
+      <JFXButton id="BtnComprar" fx:id="btnComprar" layoutX="603.0" layoutY="318.0" onAction="#btnComprarEvent" prefHeight="35.0" prefWidth="102.0" ripplerFill="#838282" style="-fx-background-color: #E9E9E9;" text="Comprar" />
       <Text layoutX="57.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Saldo disponible:" textAlignment="RIGHT" wrappingWidth="648.0" />
       <JFXButton fx:id="btnSalir" layoutX="57.0" layoutY="318.0" onAction="#btnSalirEvent" prefHeight="35.0" prefWidth="76.0" style="-fx-background-color: #E9E9E9;" text="Salir" />
       <JFXComboBox fx:id="empresaComboBox" layoutX="57.0" layoutY="67.0" onAction="#empresaSelected" prefHeight="31.0" prefWidth="347.0" promptText="Empresa" visibleRowCount="8" />
-      <JFXTextArea fx:id="textoNumeroParticipacioens" editable="false" layoutX="296.0" layoutY="320.0" prefHeight="31.0" prefWidth="217.0" text="Número de participaciones: " />
-      <JFXTextField fx:id="numeroPar" layoutX="444.0" layoutY="324.0" onAction="#controladorNumeros" prefHeight="31.0" prefWidth="124.0" />
+      <JFXTextField id="CampoPrecio" fx:id="campoNumero" focusColor="#a6acbf" labelFloat="true" layoutX="387.0" layoutY="320.0" prefHeight="31.0" prefWidth="198.0" promptText="Número de participaciones" unFocusColor="#d0caca" />
    </children>
 </AnchorPane>
