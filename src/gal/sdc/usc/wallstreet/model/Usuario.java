@@ -3,10 +3,8 @@ package gal.sdc.usc.wallstreet.model;
 import gal.sdc.usc.wallstreet.model.ddl.Columna;
 import gal.sdc.usc.wallstreet.model.ddl.Entidad;
 import gal.sdc.usc.wallstreet.model.ddl.Tabla;
-import gal.sdc.usc.wallstreet.util.PasswordStorage;
+import gal.sdc.usc.wallstreet.util.auth.PasswordStorage;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Objects;
 
 @Tabla("usuario")
@@ -40,6 +38,9 @@ public class Usuario extends Entidad {
 
     @Columna("baja")
     private Boolean baja = false;
+
+    @Columna("otp")
+    private String otp;
 
     private Usuario() {
     }
@@ -128,6 +129,14 @@ public class Usuario extends Entidad {
         this.baja = baja;
     }
 
+    public String getOtp() {
+        return otp;
+    }
+
+    public void setOtp(String otp) {
+        this.otp = otp;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -154,6 +163,7 @@ public class Usuario extends Entidad {
                 ", saldoBloqueado=" + saldoBloqueado +
                 ", activo=" + activo +
                 ", baja=" + baja +
+                ", otp=" + otp +
                 '}';
     }
 
@@ -214,6 +224,11 @@ public class Usuario extends Entidad {
 
         public Builder withBaja(Boolean baja) {
             usuario.baja = baja;
+            return this;
+        }
+
+        public Builder withOtp(String otp) {
+            usuario.otp = otp;
             return this;
         }
 
