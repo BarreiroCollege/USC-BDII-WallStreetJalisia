@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXCheckBox?>
 <?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXDatePicker?>
 <?import com.jfoenix.controls.JFXTabPane?>
@@ -16,7 +17,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.CarteraController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.281" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.CarteraController">
    <stylesheets> <URL value="@styles/cartera.css" /> </stylesheets>
    <children>
 
@@ -122,49 +123,49 @@
                         </TableView>
                         <Pane fx:id="cartera_oferta_filtro" layoutX="322.0" layoutY="78.0" prefHeight="264.0" prefWidth="258.0">
                            <children>
-                              <JFXComboBox fx:id="cb_empresa_ofertas" editable="true" layoutX="115.0" layoutY="10.0" prefHeight="26.0" prefWidth="138.0" />
-                              <JFXTextField fx:id="txt_min_part_ofertas" labelFloat="true" layoutX="120.0" layoutY="56.0" prefHeight="26.0" prefWidth="54.0" promptText="Mín">
+                              <JFXComboBox fx:id="cb_empresa_ofertas" editable="true" layoutX="115.0" prefHeight="26.0" prefWidth="138.0" />
+                              <JFXTextField fx:id="txt_min_part_ofertas" labelFloat="true" layoutX="120.0" layoutY="44.0" prefHeight="26.0" prefWidth="54.0" promptText="Mín">
                                  <font>
                                     <Font size="11.0" />
                                  </font>
                               </JFXTextField>
-                              <JFXTextField fx:id="txt_max_part_ofertas" labelFloat="true" layoutX="194.0" layoutY="56.0" prefHeight="26.0" prefWidth="59.0" promptText="Máx">
+                              <JFXTextField fx:id="txt_max_part_ofertas" labelFloat="true" layoutX="194.0" layoutY="44.0" prefHeight="26.0" prefWidth="59.0" promptText="Máx">
                                  <font>
                                     <Font size="11.0" />
                                  </font>
                               </JFXTextField>
-                              <Label layoutX="47.0" layoutY="13.0" text="Empresa">
+                              <Label layoutX="47.0" layoutY="3.0" text="Empresa">
                                  <font>
                                     <Font size="11.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="-8.0" layoutY="49.0" prefHeight="51.0" prefWidth="99.0" text="Número de participaciones a la venta" textAlignment="RIGHT" wrapText="true">
+                              <Label layoutX="-8.0" layoutY="37.0" prefHeight="51.0" prefWidth="99.0" text="Número de participaciones a la venta" textAlignment="RIGHT" wrapText="true">
                                  <font>
                                     <Font size="11.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="15.0" layoutY="101.0" prefHeight="51.0" prefWidth="79.0" text="Precio de venta" textAlignment="RIGHT" wrapText="true">
+                              <Label layoutX="15.0" layoutY="79.0" prefHeight="51.0" prefWidth="79.0" text="Precio de venta" textAlignment="RIGHT" wrapText="true">
                                  <font>
                                     <Font size="11.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="6.0" layoutY="168.0" prefHeight="51.0" prefWidth="92.0" text="Fecha de la oferta" textAlignment="RIGHT" wrapText="true">
+                              <Label layoutX="6.0" layoutY="132.0" prefHeight="51.0" prefWidth="92.0" text="Fecha de la oferta" textAlignment="RIGHT" wrapText="true">
                                  <font>
                                     <Font size="11.0" />
                                  </font>
                               </Label>
-                              <JFXTextField fx:id="txt_min_precio" labelFloat="true" layoutX="122.0" layoutY="111.0" prefHeight="26.0" prefWidth="54.0" promptText="Mín">
+                              <JFXTextField fx:id="txt_min_precio" labelFloat="true" layoutX="122.0" layoutY="89.0" prefHeight="26.0" prefWidth="54.0" promptText="Mín">
                                  <font>
                                     <Font size="11.0" />
                                  </font>
                               </JFXTextField>
-                              <JFXTextField fx:id="txt_max_precio" labelFloat="true" layoutX="194.0" layoutY="111.0" prefHeight="26.0" prefWidth="59.0" promptText="Máx">
+                              <JFXTextField fx:id="txt_max_precio" labelFloat="true" layoutX="194.0" layoutY="89.0" prefHeight="26.0" prefWidth="59.0" promptText="Máx">
                                  <font>
                                     <Font size="11.0" />
                                  </font>
                               </JFXTextField>
-                              <JFXDatePicker fx:id="datepck_despues_oferta" layoutX="120.0" layoutY="192.0" prefHeight="26.0" prefWidth="138.0" promptText="Posterior al" />
-                              <JFXDatePicker fx:id="datepck_antes_oferta" layoutX="121.0" layoutY="160.0" prefHeight="26.0" prefWidth="138.0" promptText="Anterior al" />
+                              <JFXDatePicker fx:id="datepck_despues_oferta" layoutX="120.0" layoutY="156.0" prefHeight="26.0" prefWidth="138.0" promptText="Posterior al" />
+                              <JFXDatePicker fx:id="datepck_antes_oferta" layoutX="121.0" layoutY="124.0" prefHeight="26.0" prefWidth="138.0" promptText="Anterior al" />
                               <JFXButton fx:id="cartera_btn_dar_de_baja" buttonType="RAISED" layoutX="20.0" layoutY="237.0" mnemonicParsing="false" onAction="#darDeBajaOferta" prefHeight="25.0" prefWidth="120.0" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;" text="Dar de baja" visible="false">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
@@ -175,6 +176,11 @@
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
                               </JFXButton>
+                              <JFXCheckBox checkedColor="#4059a9" layoutX="8.0" layoutY="201.0" text="Mostrar solo ofertas activas">
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                              </JFXCheckBox>
                            </children>
                         </Pane>
                      </children></AnchorPane>

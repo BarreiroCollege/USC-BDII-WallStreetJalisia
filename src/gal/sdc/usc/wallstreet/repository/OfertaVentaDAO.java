@@ -43,9 +43,8 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
             ps.setString(1, idUsuario);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-
                 OfertaVenta ofertaventa = new OfertaVenta.Builder()
-                        .withFecha(rs.getDate("fecha"))
+                        .withFecha(rs.getTimestamp("fecha"))
                         .withUsuario(usuario)
                         .withEmpresa(
                                 new Empresa.Builder(

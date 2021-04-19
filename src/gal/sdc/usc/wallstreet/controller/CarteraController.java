@@ -35,7 +35,6 @@ public class CarteraController extends DatabaseLinker {
     public static final Integer HEIGHT = 440;
     public static final Integer WIDTH = 610;
 
-
     //<editor-fold defaultstate="collapsed" desc="Variables desde FXML">
     // Tabla y columnas de la tabla de participaciones
     @FXML
@@ -129,11 +128,11 @@ public class CarteraController extends DatabaseLinker {
     /*
      * Cosas pendientes en cuanto a desarrollo de la ventana
      * TODO validadores para precio en la pestaña de ofertas?
-     * TODO revisar tipo de datos de fechas en ofertas de venta
      * TODO filtrar ofertas de venta completadas (participaciones sin vender == 0)
      *
      * Completado:
      * dar de baja ofertas de venta
+     * revisar tipo de datos de fechas en ofertas de venta
      * cambiar por algo similar a pagos de la otra tabla (Timestamp con formato)
      * filtros & validadores de la nueva tabla
      */

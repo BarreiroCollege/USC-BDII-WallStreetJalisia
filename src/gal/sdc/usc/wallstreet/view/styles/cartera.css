@@ -8,6 +8,10 @@
     /*-fx-faint-focus-color: #000000;*/
 }
 
+.jfx.date-picker:editable .date-picker-display-node{
+    -fx-font-size: 11;
+}
+
 .jfx-snackbar-content {
     -fx-background-color: #323232;
     -fx-padding: 5;
