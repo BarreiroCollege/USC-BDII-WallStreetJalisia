@@ -95,41 +95,28 @@ public class VCompraController extends DatabaseLinker {
     }
 
     // Accion de compra
-    /*
     public void btnComprarEvent(ActionEvent event) {
         // Si alguno de los campos necesarios está vacío, no se hace nada
         if (campoPrecio.getText().isEmpty() || campoNumero.getText().isEmpty() || empresaComboBox.getSelectionModel().getSelectedIndex() == -1)
             return;
-        // Se compran de menor a mayor hasta completar o hasta que se quede sin saldo
-        OfertaVenta ofertaMenor;
-        //TODO pasar usuario correspondiente
-        Usuario usuario = super.getDAO(UsuarioDAO.class).getUsuario("nere");
+
+        // Variables de estado
+        Usuario usr;
         double totalprecio = 0;
-        if (usuario.getSaldo() < ((totalprecio = Integer.parseInt(this.campoNumero.getText()) * Double.parseDouble(this.campoPrecio.getText())))) {
+        Integer compradas = 0;
 
-        } else {
-            Empresa empresa = listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex());
-            ArrayList<OfertaVenta> ofertas = new ArrayList<OfertaVenta>();
-            for (OfertaVenta ov : datosTabla) {
-                if (ov.getEmpresa().getCif().equals(empresa.getCif())
-                        && ov.getPrecioVenta() <= Double.parseDouble(this.campoPrecio.getText())) {
-                    ofertas.add(ov);
-                }
-            }
+        if(super.getTipoUsuario().equals(TipoUsuario.EMPRESA)) super.getEmpresa().getUsuario();
+        else super.getEmpresa().getUsuario();
 
-            while (!ofertas.isEmpty() && totalprecio >= 0) {
-                ofertaMenor = ofertas.get(0);
-                if (ofertaMenor.getNumParticipaciones() <=  Integer.parseInt(this.campoNumero.getText())){
-                        getDAO(OfertaVentaDAO.class).cerrarOfertaVenta(ofertaMenor);
-                    actualizarDatosTabla();
-                } else{
-                    ofertaMenor.setNumParticipaciones(ofertaMenor.getNumParticipaciones()-Integer.parseInt(this.campoNumero.getText()));
-                    getDAO(OfertaVentaDAO.class).diminuirParticipaciones(ofertaMenor);
-                }
-            }
+        // Se compran de menor a mayor hasta completar o hasta que se quede sin saldo
+        super.iniciarTransaccion();
+        actualizarDatosTabla(); //Recojemos los datos actualizados
+
+
+        for(OfertaVenta oferta : datosTabla){
+
         }
-    }*/
-
+    }
 
     public void empresaSelected(ActionEvent event) {
         if (!campoPrecio.getText().isEmpty()) actualizarDatosTabla();
