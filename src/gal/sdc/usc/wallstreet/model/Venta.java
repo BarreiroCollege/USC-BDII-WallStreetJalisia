@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.Objects;
 
 @Tabla("compra")
-public class Compra extends Entidad {
+public class Venta extends Entidad {
     @Columna(value = "fecha", pk = true)
     private Date fecha = new Date();
 
@@ -21,7 +21,7 @@ public class Compra extends Entidad {
     @Columna("cantidad")
     private Integer cantidad;
 
-    private Compra() {
+    private Venta() {
     }
 
     public Date getFecha() {
@@ -52,10 +52,10 @@ public class Compra extends Entidad {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Compra compra = (Compra) o;
-        return fecha.equals(compra.fecha) &&
-                ofertaVenta.equals(compra.ofertaVenta) &&
-                usuarioCompra.equals(compra.usuarioCompra);
+        Venta venta = (Venta) o;
+        return fecha.equals(venta.fecha) &&
+                ofertaVenta.equals(venta.ofertaVenta) &&
+                usuarioCompra.equals(venta.usuarioCompra);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class Compra extends Entidad {
 
     @Override
     public String toString() {
-        return "Compra{" +
+        return "Venta{" +
                 "fecha=" + fecha +
                 ", ofertaVenta=" + ofertaVenta +
                 ", usuarioCompra=" + usuarioCompra +
@@ -74,39 +74,39 @@ public class Compra extends Entidad {
     }
 
     public static class Builder {
-        private final Compra compra = new Compra();
+        private final Venta venta = new Venta();
 
         public Builder() {
         }
 
         public Builder(Date fecha, OfertaVenta ofertaVenta, Usuario usuarioCompra) {
-            compra.fecha = fecha;
-            compra.ofertaVenta = ofertaVenta;
-            compra.usuarioCompra = usuarioCompra;
+            venta.fecha = fecha;
+            venta.ofertaVenta = ofertaVenta;
+            venta.usuarioCompra = usuarioCompra;
         }
 
         public Builder withFecha(Date fecha) {
-            compra.fecha = fecha;
+            venta.fecha = fecha;
             return this;
         }
 
         public Builder withOfertaVenta(OfertaVenta ofertaVenta) {
-            compra.ofertaVenta = ofertaVenta;
+            venta.ofertaVenta = ofertaVenta;
             return this;
         }
 
         public Builder withUsuarioCompra(Usuario usuarioCompra) {
-            compra.usuarioCompra = usuarioCompra;
+            venta.usuarioCompra = usuarioCompra;
             return this;
         }
 
         public Builder withCantidad(Integer cantidad) {
-            compra.cantidad = cantidad;
+            venta.cantidad = cantidad;
             return this;
         }
 
-        public Compra build() {
-            return compra;
+        public Venta build() {
+            return venta;
         }
     }
 }

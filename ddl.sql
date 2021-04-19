@@ -127,7 +127,7 @@ create table participacion
 alter table participacion
     owner to postgres;
 
-create table compra
+create table venta
 (
     fecha          timestamp default now() not null,
     ov_fecha       timestamp               not null,
@@ -144,7 +144,7 @@ create table compra
             on update cascade
 );
 
-alter table compra
+alter table venta
     owner to postgres;
 
 
