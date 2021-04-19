@@ -1,0 +1,15 @@
+.jfx-snackbar-content {
+    -fx-background-color: #323232;
+    -fx-padding: 5;
+    -fx-spacing: 5;
+}
+
+.jfx-snackbar-toast {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: BOLD;
+}
+
+.jfx-snackbar-action {
+    -fx-text-fill: #4059a9;
+    -fx-font-weight: BOLD;
+}
