@@ -42,11 +42,27 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
 
 
         try (PreparedStatement ps = conexion.prepareStatement(
-                "update oferta_venta " +
-                        "set confirmado=? " +
-                        "where oferta_venta.empresa=? and oferta_venta.fecha_anuncio= ?"
+                "DELETE FROM oferta_venta where oferta_venta.empresa=? and oferta_venta.fecha=?"
         )) {
-            ps.setBoolean(1, true);
+            ps.setString(1, ofertaVenta.getEmpresa().getCif());
+            ps.setDate(2, (Date) ofertaVenta.getFecha());
+            stmUsuario.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void diminuirParticipaciones(OfertaVenta ofertaVenta) {
+        PreparedStatement stmUsuario = null;
+
+
+        try (PreparedStatement ps = conexion.prepareStatement(
+                "update oferta_venta " +
+                        "set oferta_venta.num_participaciones= ? " +
+                        "where oferta_venta.empresa=? and oferta_venta.fecha= ?"
+        )) {
+            ps.setInt(1, ofertaVenta.getNumParticipaciones());
             ps.setString(2, ofertaVenta.getEmpresa().getCif());
             ps.setDate(3, (Date) ofertaVenta.getFecha());
             stmUsuario.executeUpdate();
@@ -55,3 +71,5 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
         }
     }
 }
+
+

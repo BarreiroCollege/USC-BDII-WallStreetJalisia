@@ -3,6 +3,7 @@ package gal.sdc.usc.wallstreet;
 import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXSnackbarLayout;
 import gal.sdc.usc.wallstreet.controller.AccesoController;
+import gal.sdc.usc.wallstreet.controller.VCompraController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -40,7 +41,8 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         Main.primaryStage = primaryStage;
-        Main.setScene(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT);
+      //  Main.setScene(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT);
+        Main.setScene(VCompraController.VIEW, VCompraController.WIDTH, VCompraController.HEIGHT);
     }
 
     public static void setScene(String view, int width, int height) {
