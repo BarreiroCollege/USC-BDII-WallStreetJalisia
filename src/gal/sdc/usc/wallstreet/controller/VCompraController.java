@@ -90,6 +90,8 @@ public class VCompraController extends DatabaseLinker {
         });
     }
 
+    // Accion de compra
+    /*
     public void btnComprarEvent(ActionEvent event) {
         // Si alguno de los campos necesarios está vacío, no se hace nada
         if (campoPrecio.getText().isEmpty() || campoNumero.getText().isEmpty() || empresaComboBox.getSelectionModel().getSelectedIndex() == -1)
@@ -99,9 +101,10 @@ public class VCompraController extends DatabaseLinker {
         Usuario usr;
         double totalprecio = 0;
         Integer compradas = 0;
-
+        Integer aComprar = Integer.parseInt(campoNumero.getText());
         if(super.getTipoUsuario().equals(TipoUsuario.EMPRESA)) super.getEmpresa().getUsuario();
         else super.getEmpresa().getUsuario();
+
 
         // Se compran de menor a mayor hasta completar o hasta que se quede sin saldo
         super.iniciarTransaccion();
@@ -109,7 +112,7 @@ public class VCompraController extends DatabaseLinker {
 
 
         for(OfertaVenta oferta : datosTabla){
-
+            oferta.getNumParticipaciones()
         }
         while (!datosTabla.isEmpty() && totalprecio >= 0) {
             ofertaMenor = ofertas.get(seleccionar_MenorPrecio(ofertas));
@@ -119,7 +122,7 @@ public class VCompraController extends DatabaseLinker {
 
             }
         }
-    }
+    }*/
 
     // Evento de seleccion de empresa en la comboBox
     public void empresaSelected(ActionEvent event) {
@@ -130,9 +133,12 @@ public class VCompraController extends DatabaseLinker {
     public void actualizarDatosTabla() {
         List<OfertaVenta> ofertas;
         Empresa empresa = listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex());
-        ofertas = getDAO(OfertaVentaDAO.class).getOfertasVenta(empresa.getCif(), Float.parseFloat(campoPrecio.getText()));
+        ofertas = getDAO(OfertaVentaDAO.class).getOfertasVenta(empresa.getUsuario().getIdentificador(), Float.parseFloat(campoPrecio.getText()));
         datosTabla.setAll(ofertas);
     }
+
+    // Carga el saldo disponible del usuario
+
 
     // Boton de salida
     public void btnSalirEvent(ActionEvent event) {
