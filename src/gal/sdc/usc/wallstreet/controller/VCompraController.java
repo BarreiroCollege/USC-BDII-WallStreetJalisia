@@ -13,6 +13,7 @@ import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
+import gal.sdc.usc.wallstreet.util.TipoUsuario;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -92,12 +93,17 @@ public class VCompraController extends DatabaseLinker {
         // Si alguno de los campos necesarios está vacío, no se hace nada
         if (campoPrecio.getText().isEmpty() || campoNumero.getText().isEmpty() || empresaComboBox.getSelectionModel().getSelectedIndex() == -1)
             return;
+
         // Se compran de menor a mayor hasta completar o hasta que se quede sin saldo
+        
+                actualizarDatosTabla();
         OfertaVenta ofertaMenor;
-        //TODO pasar usuario correspondiente
-        Usuario usuario = super.getDAO(UsuarioDAO.class).getUsuario("nere");
+        Usuario usr;
+        if(super.getTipoUsuario().equals(TipoUsuario.EMPRESA)) super.getEmpresa().getUsuario();
+        else super.getEmpresa().getUsuario();
+
         double totalprecio = 0;
-        actualizarDatosTabla();
+
 
         while (!datosTabla.isEmpty() && totalprecio >= 0) {
             ofertaMenor = ofertas.get(seleccionar_MenorPrecio(ofertas));
