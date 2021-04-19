@@ -96,17 +96,20 @@ public class VCompraController extends DatabaseLinker {
 
         // Variables de estado
         Usuario usr;
-
-        // Se compran de menor a mayor hasta completar o hasta que se quede sin saldo
-        super.iniciarTransaccion();
-        actualizarDatosTabla();
+        double totalprecio = 0;
+        Integer compradas = 0;
 
         if(super.getTipoUsuario().equals(TipoUsuario.EMPRESA)) super.getEmpresa().getUsuario();
         else super.getEmpresa().getUsuario();
 
-        double totalprecio = 0;
+        // Se compran de menor a mayor hasta completar o hasta que se quede sin saldo
+        super.iniciarTransaccion();
+        actualizarDatosTabla(); //Recojemos los datos actualizados
 
 
+        for(OfertaVenta oferta : datosTabla){
+
+        }
         while (!datosTabla.isEmpty() && totalprecio >= 0) {
             ofertaMenor = ofertas.get(seleccionar_MenorPrecio(ofertas));
             if (ofertaMenor.getNumParticipaciones() <= Integer.parseInt(this.campoNumero.getText())) {
