@@ -16,7 +16,7 @@ import gal.sdc.usc.wallstreet.repository.InversorDAO;
 import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.ErrorValidator;
-import gal.sdc.usc.wallstreet.util.PasswordStorage;
+import gal.sdc.usc.wallstreet.util.auth.PasswordStorage;
 import gal.sdc.usc.wallstreet.util.Validadores;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

@@ -3,6 +3,7 @@ package gal.sdc.usc.wallstreet;
 import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXSnackbarLayout;
 import gal.sdc.usc.wallstreet.controller.AccesoController;
+import gal.sdc.usc.wallstreet.util.auth.GoogleAuth;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,6 +14,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.util.Date;
 
 public class Main extends Application {
     private static Stage primaryStage;
@@ -65,6 +67,20 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
+        final String secreto = "E2XBG5HA3K3TRKTL6NQEV3T2GJFJBNER";
+
+        /* String clave = GoogleAuth.generarClave();
+        System.out.println(clave); */
+
+        String qr = GoogleAuth.obtenerCodigoQR("diego", "WallStreetJalisia", secreto);
+        System.out.println(qr);
+
+        try {
+            System.out.println(GoogleAuth.validarCodigo(secreto, 45296, new Date().getTime()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         launch(args);
     }
 }

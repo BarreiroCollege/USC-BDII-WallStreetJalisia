@@ -13,8 +13,8 @@ import gal.sdc.usc.wallstreet.repository.InversorDAO;
 import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.ErrorValidator;
-import gal.sdc.usc.wallstreet.util.auth.PasswordStorage;
 import gal.sdc.usc.wallstreet.util.Validadores;
+import gal.sdc.usc.wallstreet.util.auth.PasswordStorage;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
@@ -23,10 +23,10 @@ import javafx.scene.layout.VBox;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class AccesoController extends DatabaseLinker implements Initializable {
-    public static final String VIEW = "acceso";
-    public static final Integer HEIGHT = 500;
-    public static final Integer WIDTH = 400;
+public class OtpController extends DatabaseLinker implements Initializable {
+    public static final String VIEW = "otp";
+    public static final Integer HEIGHT = 150;
+    public static final Integer WIDTH = 425;
 
     @FXML
     public AnchorPane anchor;
@@ -46,7 +46,7 @@ public class AccesoController extends DatabaseLinker implements Initializable {
     @FXML
     private JFXButton btnAcceso;
 
-    public AccesoController() {
+    public OtpController() {
     }
 
     private void acceder() {
