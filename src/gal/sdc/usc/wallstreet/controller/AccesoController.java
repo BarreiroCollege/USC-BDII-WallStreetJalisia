@@ -131,6 +131,7 @@ public class AccesoController extends DatabaseLinker implements Initializable {
     }
 
     @FXML
+    @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Añadir los validadores de requerido
         RequiredFieldValidator rfv = Validadores.requerido();
