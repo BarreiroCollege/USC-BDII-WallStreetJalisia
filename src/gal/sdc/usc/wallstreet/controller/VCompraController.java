@@ -6,6 +6,7 @@ import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.DoubleValidator;
 import com.jfoenix.validation.IntegerValidator;
 import gal.sdc.usc.wallstreet.model.Empresa;
+import gal.sdc.usc.wallstreet.model.Venta;
 import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.model.OfertaVenta;
 import gal.sdc.usc.wallstreet.repository.CompraDAO;
@@ -129,7 +130,7 @@ public class VCompraController extends DatabaseLinker {
     public void actualizarDatosTabla() {
         List<OfertaVenta> ofertas;
         Empresa empresa = listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex());
-        ofertas = getDAO(CompraDAO.class).getOfertasVenta(empresa.getCif(), Float.parseFloat(campoPrecio.getText()));
+        ofertas = getDAO(OfertaVentaDAO.class).getOfertasVenta(empresa.getCif(), Float.parseFloat(campoPrecio.getText()));
         datosTabla.setAll(ofertas);
     }
 
