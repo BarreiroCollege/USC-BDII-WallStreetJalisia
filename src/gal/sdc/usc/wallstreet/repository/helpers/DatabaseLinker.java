@@ -2,9 +2,9 @@ package gal.sdc.usc.wallstreet.repository.helpers;
 
 import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Inversor;
-import gal.sdc.usc.wallstreet.util.TipoUsuario;
 import gal.sdc.usc.wallstreet.model.ddl.Entidad;
 import gal.sdc.usc.wallstreet.util.PackageScanner;
+import gal.sdc.usc.wallstreet.util.TipoUsuario;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -73,6 +73,7 @@ public class DatabaseLinker {
 
     /**
      * Carga todos los DAO en el HashMap
+     *
      * @param conexion conexión con la base de datos
      */
     private void cargarDAOs(Connection conexion) {
@@ -97,8 +98,9 @@ public class DatabaseLinker {
 
     /**
      * Devuelve un DAO que haya sido inicializado
+     *
      * @param clase clase del DAO a buscar
-     * @param <D> DAO de salida
+     * @param <D>   DAO de salida
      * @return DAO instanciado
      */
     public <D extends DAO<? extends Entidad>> D getDAO(Class<D> clase) {
@@ -107,8 +109,9 @@ public class DatabaseLinker {
 
     /**
      * Devuelve un DAO que haya sido inicializado
+     *
      * @param clase clase del DAO a buscar
-     * @param <D> DAO de salida
+     * @param <D>   DAO de salida
      * @return DAO instanciado
      */
     public static <D extends DAO<? extends Entidad>> D getSDAO(Class<D> clase) {
@@ -117,6 +120,7 @@ public class DatabaseLinker {
 
     /**
      * Indica si hay una sesión iniciada
+     *
      * @return true cuando hay un usuario dentro
      */
     public boolean haySesion() {
@@ -125,6 +129,7 @@ public class DatabaseLinker {
 
     /**
      * Indica el tipo de usuario, si es inversor o empresa
+     *
      * @return INVERSOR cuando es inversor, EMPRESA si es empresa, null si no hay sesión
      */
     public TipoUsuario getTipoUsuario() {
@@ -133,6 +138,7 @@ public class DatabaseLinker {
 
     /**
      * Devuelve el usuario inversor si hay sesión
+     *
      * @return Inversor
      */
     public Inversor getInversor() {
@@ -141,6 +147,7 @@ public class DatabaseLinker {
 
     /**
      * Devuelve el usuario empresa si hay sesión
+     *
      * @return Empresa
      */
     public Empresa getEmpresa() {
@@ -149,6 +156,7 @@ public class DatabaseLinker {
 
     /**
      * Inicia sesión como inversor
+     *
      * @param inversor usuario
      */
     public void setInversor(Inversor inversor) {
@@ -158,6 +166,7 @@ public class DatabaseLinker {
 
     /**
      * Inicia sesión como inversor
+     *
      * @param empresa usuario
      */
     public void setEmpresa(Empresa empresa) {
@@ -186,16 +195,14 @@ public class DatabaseLinker {
 
     /**
      * Ejecuta una transacción pendiente
+     *
+     * @throws SQLException error
      */
-    public void ejecutarTransaccion() {
-        try {
-            // Solo ejecutar si es commit manual
-            if (!DatabaseLinker.conexion.getAutoCommit()) {
-                DatabaseLinker.conexion.commit();
-                DatabaseLinker.conexion.setAutoCommit(true);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+    public void ejecutarTransaccion() throws SQLException {
+        // Solo ejecutar si es commit manual
+        if (!DatabaseLinker.conexion.getAutoCommit()) {
+            DatabaseLinker.conexion.commit();
+            DatabaseLinker.conexion.setAutoCommit(true);
         }
     }
 }
