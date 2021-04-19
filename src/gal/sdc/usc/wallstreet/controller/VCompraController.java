@@ -42,6 +42,8 @@ public class VCompraController extends DatabaseLinker {
     @FXML
     private JFXTextField campoNumero;
     @FXML
+    private JFXTextField campoSaldo;
+    @FXML
     private JFXComboBox<String> empresaComboBox;
     @FXML
     private JFXTextField campoPrecio;
@@ -56,6 +58,7 @@ public class VCompraController extends DatabaseLinker {
     @FXML
     private TableColumn<OfertaVenta, Integer> cantidadCol;
 
+    private Usuario usr;
     private List<Empresa> listaEmpresas;
     private ObservableList<OfertaVenta> datosTabla;
 
@@ -64,6 +67,10 @@ public class VCompraController extends DatabaseLinker {
 
         listaEmpresas = new ArrayList<>();
         datosTabla = FXCollections.observableArrayList();
+
+        // Recuperamos el usuario
+        if(super.getTipoUsuario().equals(TipoUsuario.EMPRESA)) super.getEmpresa().getUsuario();
+        else super.getEmpresa().getUsuario();
 
         // Setup de las columnas de la tabla
         nombreCol.setCellValueFactory(new PropertyValueFactory<>("usuario"));
@@ -101,12 +108,8 @@ public class VCompraController extends DatabaseLinker {
             return;
 
         // Variables de estado
-        Usuario usr;
         double totalprecio = 0;
         Integer compradas = 0;
-
-        if(super.getTipoUsuario().equals(TipoUsuario.EMPRESA)) super.getEmpresa().getUsuario();
-        else super.getEmpresa().getUsuario();
 
         // Se compran de menor a mayor hasta completar o hasta que se quede sin saldo
         super.iniciarTransaccion();
@@ -118,6 +121,7 @@ public class VCompraController extends DatabaseLinker {
         }
     }
 
+    // Accion al seleccionar empresa en el comboBox
     public void empresaSelected(ActionEvent event) {
         if (!campoPrecio.getText().isEmpty()) actualizarDatosTabla();
     }
@@ -131,7 +135,9 @@ public class VCompraController extends DatabaseLinker {
     }
 
     // Carga el saldo disponible del usuario
-
+    public void actualizarSaldo(ActionEvent event) {
+        campoSaldo.setText(getDAO(UsuarioDAO.class).getSaldo(usr).toString());
+    }
 
     // Boton de salida
     public void btnSalirEvent(ActionEvent event) {
