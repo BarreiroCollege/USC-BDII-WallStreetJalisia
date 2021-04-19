@@ -94,11 +94,13 @@ public class VCompraController extends DatabaseLinker {
         if (campoPrecio.getText().isEmpty() || campoNumero.getText().isEmpty() || empresaComboBox.getSelectionModel().getSelectedIndex() == -1)
             return;
 
-        // Se compran de menor a mayor hasta completar o hasta que se quede sin saldo
-        
-                actualizarDatosTabla();
-        OfertaVenta ofertaMenor;
+        // Variables de estado
         Usuario usr;
+
+        // Se compran de menor a mayor hasta completar o hasta que se quede sin saldo
+        super.iniciarTransaccion();
+        actualizarDatosTabla();
+
         if(super.getTipoUsuario().equals(TipoUsuario.EMPRESA)) super.getEmpresa().getUsuario();
         else super.getEmpresa().getUsuario();
 
