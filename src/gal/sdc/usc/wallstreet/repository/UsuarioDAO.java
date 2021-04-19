@@ -40,7 +40,7 @@ public class UsuarioDAO extends DAO<Usuario> {
         return getUsuarios().stream().filter( user -> identificador.equals( user.getIdentificador() ) ).findFirst().orElse(null);
     }
 
-    public Float getSaldo(Usuario usr){
+    public Float getSaldoDisponible(Usuario usr){
         Usuario res;
         try (PreparedStatement ps = super.conexion.prepareStatement(
                 "SELECT * FROM usuario WHERE identificador=?"

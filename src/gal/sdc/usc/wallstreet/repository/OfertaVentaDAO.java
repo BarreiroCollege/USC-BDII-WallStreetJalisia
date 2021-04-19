@@ -21,7 +21,7 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
         List<OfertaVenta> ofertas = new ArrayList<>();
         try (PreparedStatement ps = conexion.prepareStatement(
                 "SELECT * FROM oferta_venta " +
-                        "WHERE confirmado is true and empresa=? and precio_venta<=?" +
+                        "WHERE confirmado is true and empresa=? and precio_venta<=? and num_participaciones>0 " +
                         "ORDER BY precio_venta asc"
         )) {
             ps.setString(1,empresa);

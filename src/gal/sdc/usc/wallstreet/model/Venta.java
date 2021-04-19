@@ -7,7 +7,7 @@ import gal.sdc.usc.wallstreet.model.ddl.Tabla;
 import java.util.Date;
 import java.util.Objects;
 
-@Tabla("compra")
+@Tabla("venta")
 public class Venta extends Entidad {
     @Columna(value = "fecha", pk = true)
     private Date fecha = new Date();
@@ -21,7 +21,7 @@ public class Venta extends Entidad {
     @Columna("cantidad")
     private Integer cantidad;
 
-    private Venta() {
+    public Venta() {
     }
 
     public Date getFecha() {

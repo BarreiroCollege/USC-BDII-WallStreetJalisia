@@ -8,4 +8,6 @@ public class VentaDAO extends DAO<Venta> {
     public VentaDAO(Connection conexion) {
         super(conexion, Venta.class);
     }
+
+
 }

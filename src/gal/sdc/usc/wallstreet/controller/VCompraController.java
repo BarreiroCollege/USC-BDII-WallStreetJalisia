@@ -22,6 +22,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -84,6 +85,11 @@ public class VCompraController extends DatabaseLinker {
         listaEmpresas = new ArrayList<>();
         datosTabla = FXCollections.observableArrayList();
 
+        // Recuperamos el usuario
+       /* if(super.getTipoUsuario().equals(TipoUsuario.EMPRESA)) super.getEmpresa().getUsuario();
+        else super.getInversor().getUsuario();*/
+        usr=getDAO(UsuarioDAO.class).getUsuario("nere");
+
         // Setup de las columnas de la tabla
         nombreCol.setCellValueFactory(new PropertyValueFactory<>("usuario"));
         precioCol.setCellValueFactory(new PropertyValueFactory<>("precioVenta"));
@@ -104,7 +110,7 @@ public class VCompraController extends DatabaseLinker {
                 c -> Pattern.matches("\\d*", c.getText()) ? c : null));
 
         // Formato Float para campoPrecio
-        campoPrecio.setTextFormatter(new TextFormatter((UnaryOperator<TextFormatter.Change>) change -> Pattern.compile("\\d*|\\d+.\\d{0,2}").matcher(change.getControlNewText()).matches() ? change : null));
+        campoPrecio.setTextFormatter(new TextFormatter((UnaryOperator<TextFormatter.Change>) change -> Pattern.compile("\\d*|\\d+\\.\\d{0,2}").matcher(change.getControlNewText()).matches() ? change : null));
 
         // Cuando se cambie el precio se actualizan las ofertas en base al nuevo
         campoPrecio.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -112,18 +118,9 @@ public class VCompraController extends DatabaseLinker {
                 actualizarDatosTabla();
         });
 
+        // Cargamos saldo y preparamos boton refresh
         botonRefresh.setGraphic(Iconos.icono(FontAwesomeIcon.REFRESH, "1em"));
-
-       /* Callback
-        Callback<TableView<OfertaVenta>, TableRow<OfertaVenta>> factory = lv -> new TableRow<OfertaVenta>() {
-            @Override
-            protected void updateItem(OfertaVenta item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty ? "" : item.getEmpresa().getNombre());
-            }
-        };
-
-        tablaOfertas.setRowFactory(factory);*/
+        actualizarSaldo(new ActionEvent());
 
         nombreCol.setCellValueFactory((Callback<TableColumn.CellDataFeatures<OfertaVenta, String>, ObservableValue<String>>) p -> {
             if (p.getValue() != null) {
@@ -140,18 +137,18 @@ public class VCompraController extends DatabaseLinker {
         if (campoPrecio.getText().isEmpty() || campoNumero.getText().isEmpty() || empresaComboBox.getSelectionModel().getSelectedIndex() == -1) return;
 
         // Variables de estado
-        double totalprecio = 0;
-
-        double saldo=Double.parseDouble(campoSaldo.getText());
-        Integer compradas = 0;
-        ArrayList<OfertaVenta> ofModificadas=new ArrayList<>();
+        Float saldo;
         final Integer acomprar=Integer.parseInt(campoNumero.getText());
-
+        Integer compradas = 0;
+        Venta ventaHecha;
 
         // Se compran de menor a mayor hasta completar o hasta que se quede sin saldo
         super.iniciarTransaccion();
-        actualizarDatosTabla(); //Recojemos los datos actualizados
+        //Recojemos los datos actualizados
+        actualizarDatosTabla();
+        actualizarSaldo(new ActionEvent());
 
+        saldo=Float.parseFloat(campoSaldo.getText());
         Integer partPosibles;
         for(OfertaVenta oferta : datosTabla){
             if(acomprar-compradas==0) break;//si se compraron todas las pedidas por usuario
@@ -159,14 +156,23 @@ public class VCompraController extends DatabaseLinker {
             partPosibles = Math.min(partPosibles,acomprar-compradas);
             partPosibles=Math.min(partPosibles, oferta.getNumParticipaciones());
 
-
             oferta.setNumParticipaciones(oferta.getNumParticipaciones()-partPosibles);
             compradas+=partPosibles;
-            ofModificadas.add(oferta);
+            saldo -= partPosibles*oferta.getPrecioVenta();
+
+            ventaHecha = new Venta.Builder().withCantidad(partPosibles)
+                    .withOfertaVenta(oferta)
+                    .withFecha(new Date(System.currentTimeMillis()))
+                    .withUsuarioCompra(usr)
+                    .build();
+            getDAO(VentaDAO.class).insertar(ventaHecha);
+            getDAO(OfertaVentaDAO.class).actualizar(ventaHecha.getOfertaVenta());
         }
-        // Registrar transacciones
-        getDAO(VentaDAO.class)
-        // Actualizar ofertas
+        // Actualizamos saldo y elementos gráficos
+        usr.setSaldo(saldo);
+        getDAO(UsuarioDAO.class).actualizar(usr);
+        actualizarDatosTabla();
+        actualizarSaldo(new ActionEvent());
 
         try{
             super.ejecutarTransaccion();
@@ -189,8 +195,7 @@ public class VCompraController extends DatabaseLinker {
 
     // Carga el saldo disponible del usuario
     public void actualizarSaldo(ActionEvent event) {
-        usr= super.getDAO(UsuarioDAO.class).getUsuario("nere");
-        campoSaldo.setText(getDAO(UsuarioDAO.class).getSaldo(usr).toString());
+        campoSaldo.setText(getDAO(UsuarioDAO.class).getSaldoDisponible(usr).toString());
     }
 
 
