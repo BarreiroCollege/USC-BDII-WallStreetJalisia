@@ -172,4 +172,30 @@ public class DatabaseLinker {
         DatabaseLinker.inversor = null;
         DatabaseLinker.empresa = null;
     }
+
+    /**
+     * Inicia una nueva transacción, deshabilitando el autocommit
+     */
+    public void iniciarTransaccion() {
+        try {
+            DatabaseLinker.conexion.setAutoCommit(false);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Ejecuta una transacción pendiente
+     */
+    public void ejecutarTransaccion() {
+        try {
+            // Solo ejecutar si es commit manual
+            if (!DatabaseLinker.conexion.getAutoCommit()) {
+                DatabaseLinker.conexion.commit();
+                DatabaseLinker.conexion.setAutoCommit(true);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
