@@ -27,6 +27,7 @@ public class AccesoController extends DatabaseLinker implements Initializable {
     public static final String VIEW = "acceso";
     public static final Integer HEIGHT = 500;
     public static final Integer WIDTH = 400;
+    public static final String TITULO = "Acceso";
 
     @FXML
     public AnchorPane anchor;
@@ -46,7 +47,13 @@ public class AccesoController extends DatabaseLinker implements Initializable {
     @FXML
     private JFXButton btnAcceso;
 
+    private Usuario usuario;
+
     public AccesoController() {
+    }
+
+    public Usuario getUsuario() {
+        return this.usuario;
     }
 
     private void acceder() {
@@ -80,12 +87,25 @@ public class AccesoController extends DatabaseLinker implements Initializable {
             System.err.println(ex.getMessage());
         }
 
-        boolean ok = false;
+        this.usuario = usuario;
         if (usuario.getOtp() != null) {
-
+            OtpController.setAccesoController(this);
+            Main.dialogo(OtpController.VIEW, OtpController.WIDTH, OtpController.HEIGHT, OtpController.TITULO);
+        } else {
+            this.autenticar();
         }
+    }
 
-        // TODO: Usuario correcto, abrir ventana principal
+    public void confirmarOtp() {
+        this.autenticar();
+    }
+
+    public void cancelarOtp() {
+        txtUsuario.setText("");
+        txtClave.setText("");
+    }
+
+    private void autenticar() {
         Inversor inversor = super.getDAO(InversorDAO.class).seleccionar(usuario);
 
         if (inversor != null) {
@@ -94,6 +114,8 @@ public class AccesoController extends DatabaseLinker implements Initializable {
             Empresa empresa = super.getDAO(EmpresaDAO.class).seleccionar(usuario);
             super.setEmpresa(empresa);
         }
+        
+        // TODO: Usuario correcto, abrir ventana principal
     }
 
     @FXML
@@ -121,8 +143,9 @@ public class AccesoController extends DatabaseLinker implements Initializable {
             }
         });
 
-        btnRegistro.setOnAction(e -> Main.setScene(RegistroController.VIEW, RegistroController.WIDTH, RegistroController.HEIGHT));
-
+        btnRegistro.setOnAction(e -> Main.ventana(
+                RegistroController.VIEW, RegistroController.WIDTH, RegistroController.HEIGHT, RegistroController.TITULO
+        ));
         btnAcceso.setOnAction(e -> this.acceder());
     }
 }

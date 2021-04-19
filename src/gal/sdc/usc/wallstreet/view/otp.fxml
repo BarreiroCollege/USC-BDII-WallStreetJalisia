@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXPasswordField?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
@@ -10,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import java.net.URL?>
-<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0"
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="500.0"
             xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="gal.sdc.usc.wallstreet.controller.OtpController"
             fx:id="anchor">
@@ -18,41 +17,46 @@
         <URL value="@styles/base.css"/>
     </stylesheets>
 
-    <HBox alignment="CENTER" AnchorPane.bottomAnchor="350.0" AnchorPane.leftAnchor="0.0"
-          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" prefHeight="150.0">
-        <Label text="Wall Street Jalisia">
-            <font>
-                <Font name="System Bold" size="36.0"/>
-            </font>
-        </Label>
+    <HBox alignment="CENTER" AnchorPane.bottomAnchor="175.0" AnchorPane.leftAnchor="0.0"
+          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" prefHeight="75.0">
+        <VBox prefHeight="75.0" alignment="CENTER" HBox.hgrow="ALWAYS">
+            <Label text="Introduce el código de verificación en dos pasos">
+                <font>
+                    <Font name="System Bold" size="18.0"/>
+                </font>
+            </Label>
+        </VBox>
     </HBox>
 
-    <VBox AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-          AnchorPane.topAnchor="150.0" alignment="CENTER" prefHeight="250.0">
-        <VBox prefHeight="250.0" alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
+    <VBox AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="75.0" alignment="CENTER" prefHeight="125.0">
+        <HBox prefHeight="125.0" alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
             <VBox.margin>
-                <Insets left="25.0" right="25.0" top="40.0"/>
+                <Insets left="25.0" right="25.0" bottom="15.0"/>
             </VBox.margin>
-            <JFXTextField alignment="CENTER" promptText="Nombre de usuario" labelFloat="true" fx:id="txtUsuario"/>
-            <Label minHeight="60.0"/>
-            <JFXPasswordField alignment="CENTER" promptText="Contraseña" labelFloat="true" fx:id="txtClave"/>
-        </VBox>
-    </VBox>
-    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-          AnchorPane.topAnchor="400.0" alignment="BOTTOM_CENTER" prefHeight="100.0">
-        <HBox prefHeight="100.0" alignment="BOTTOM_CENTER">
-            <VBox.margin>
-                <Insets left="25.0" right="25.0" bottom="50.0"/>
-            </VBox.margin>
-            <JFXButton text="Registrarse" fx:id="btnRegistro">
+            <JFXTextField alignment="CENTER" promptText="X X X X X X" labelFloat="false" fx:id="txtOtp">
                 <font>
-                    <Font size="20.0"/>
+                    <Font size="18.0"/>
+                </font>
+            </JFXTextField>
+        </HBox>
+    </VBox>
+
+    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="200.0" alignment="BOTTOM_CENTER" prefHeight="50.0">
+        <HBox prefHeight="50.0" alignment="BOTTOM_CENTER">
+            <VBox.margin>
+                <Insets left="25.0" right="25.0" bottom="25.0"/>
+            </VBox.margin>
+            <JFXButton text="Cancelar" fx:id="btnCancelar">
+                <font>
+                    <Font size="16.0"/>
                 </font>
             </JFXButton>
             <Label HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-            <JFXButton text="Acceder" fx:id="btnAcceso" buttonType="RAISED" styleClass="btn-primario">
+            <JFXButton text="Confirmar" fx:id="btnConfirmar" buttonType="RAISED" styleClass="btn-primario">
                 <font>
-                    <Font name="System Bold" size="20.0"/>
+                    <Font name="System Bold" size="16.0"/>
                 </font>
             </JFXButton>
         </HBox>

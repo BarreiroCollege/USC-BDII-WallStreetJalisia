@@ -29,6 +29,7 @@ public class RegistroController extends DatabaseLinker implements Initializable 
     public static final String VIEW = "registro";
     public static final Integer HEIGHT = 700;
     public static final Integer WIDTH = 600;
+    public static final String TITULO = "Registro";
 
     @FXML
     private JFXTextField txtUsuario;
@@ -125,7 +126,7 @@ public class RegistroController extends DatabaseLinker implements Initializable 
             }
         });
 
-        btnAcceso.setOnAction(e -> Main.setScene(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT));
+        btnAcceso.setOnAction(e -> Main.ventana(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT, AccesoController.TITULO));
         btnRegistro.setOnAction(this::registrar);
 
         this.usuarioNoValido = Validadores.personalizado("Sólo puede tener numeros y letras");
@@ -187,7 +188,7 @@ public class RegistroController extends DatabaseLinker implements Initializable 
             }
 
             if (ok) {
-                Main.setScene(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT);
+                Main.ventana(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT, AccesoController.TITULO);
                 Main.mensaje("Se ha creado la cuenta con éxito", 5);
             } else {
                 Main.mensaje("Error creando la cuenta");

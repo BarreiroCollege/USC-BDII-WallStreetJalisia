@@ -9,6 +9,7 @@ import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class GoogleAuth {
@@ -57,9 +58,9 @@ public class GoogleAuth {
      * @throws NoSuchAlgorithmException error
      * @throws InvalidKeyException      error
      */
-    public static boolean validarCodigo(String secret, long code, long t)
+    public static boolean validarCodigo(String secret, long code)
             throws NoSuchAlgorithmException, InvalidKeyException {
-        t = t / TimeUnit.SECONDS.toMillis(30);
+        long t = new Date().getTime() / TimeUnit.SECONDS.toMillis(30);
 
         Base32 codec = new Base32();
         byte[] decodedKey = codec.decode(secret);
@@ -69,7 +70,6 @@ public class GoogleAuth {
         int window = 1;
         for (int i = -window; i <= window; ++i) {
             long hash = verificarCodigo(decodedKey, t + i);
-            System.out.println(hash);
 
             if (hash == code) {
                 return true;
