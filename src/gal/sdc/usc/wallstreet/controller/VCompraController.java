@@ -5,6 +5,7 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.DoubleValidator;
 import com.jfoenix.validation.IntegerValidator;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Venta;
 import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
@@ -14,16 +15,18 @@ import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
+import gal.sdc.usc.wallstreet.util.Iconos;
 import gal.sdc.usc.wallstreet.util.TipoUsuario;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextFormatter;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import javafx.util.converter.IntegerStringConverter;
 
 import java.util.ArrayList;
@@ -57,6 +60,8 @@ public class VCompraController extends DatabaseLinker {
     private TableColumn<OfertaVenta, Date> fechaCol;
     @FXML
     private TableColumn<OfertaVenta, Integer> cantidadCol;
+    @FXML
+    private JFXButton botonRefresh;
 
     private Usuario usr;
     private List<Empresa> listaEmpresas;
@@ -68,15 +73,11 @@ public class VCompraController extends DatabaseLinker {
         listaEmpresas = new ArrayList<>();
         datosTabla = FXCollections.observableArrayList();
 
-        // Recuperamos el usuario
-        if(super.getTipoUsuario().equals(TipoUsuario.EMPRESA)) super.getEmpresa().getUsuario();
-        else super.getEmpresa().getUsuario();
-
         // Setup de las columnas de la tabla
         nombreCol.setCellValueFactory(new PropertyValueFactory<>("usuario"));
-        precioCol.setCellValueFactory(new PropertyValueFactory<>("precio_venta"));
+        precioCol.setCellValueFactory(new PropertyValueFactory<>("precioVenta"));
         fechaCol.setCellValueFactory(new PropertyValueFactory<>("fecha"));
-        cantidadCol.setCellValueFactory(new PropertyValueFactory<>("num_participaciones"));
+        cantidadCol.setCellValueFactory(new PropertyValueFactory<>("numParticipaciones"));
         tablaOfertas.setItems(datosTabla);
 
         // Llenamos la lista de empresas y el ComboBox
@@ -99,29 +100,66 @@ public class VCompraController extends DatabaseLinker {
             if (!newValue.isEmpty() && empresaComboBox.getSelectionModel().getSelectedIndex() != -1)
                 actualizarDatosTabla();
         });
+
+        botonRefresh.setGraphic(Iconos.icono(FontAwesomeIcon.REFRESH, "1em"));
+
+       /* Callback
+        Callback<TableView<OfertaVenta>, TableRow<OfertaVenta>> factory = lv -> new TableRow<OfertaVenta>() {
+            @Override
+            protected void updateItem(OfertaVenta item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty ? "" : item.getEmpresa().getNombre());
+            }
+        };
+
+        tablaOfertas.setRowFactory(factory);*/
+
+        nombreCol.setCellValueFactory((Callback<TableColumn.CellDataFeatures<OfertaVenta, String>, ObservableValue<String>>) p -> {
+            if (p.getValue() != null) {
+                return new SimpleStringProperty(p.getValue().getUsuario().getIdentificador());
+            } else {
+                return new SimpleStringProperty("<no name>");
+            }
+        });
     }
 
     // Accion de compra
+
     public void btnComprarEvent(ActionEvent event) {
         // Si alguno de los campos necesarios está vacío, no se hace nada
         if (campoPrecio.getText().isEmpty() || campoNumero.getText().isEmpty() || empresaComboBox.getSelectionModel().getSelectedIndex() == -1)
             return;
-
-        // Variables de estado
-        double totalprecio = 0;
-        Integer compradas = 0;
-
         // Se compran de menor a mayor hasta completar o hasta que se quede sin saldo
-        super.iniciarTransaccion();
-        actualizarDatosTabla(); //Recojemos los datos actualizados
+        OfertaVenta ofertaMenor;
+        //TODO pasar usuario correspondiente
+        Usuario usuario = super.getDAO(UsuarioDAO.class).getUsuario("nere");
+        double totalprecio = 0;
+        if (usuario.getSaldo() < ((totalprecio = Integer.parseInt(this.campoNumero.getText()) * Double.parseDouble(this.campoPrecio.getText())))) {
 
+        } else {
+            Empresa empresa = listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex());
+            ArrayList<OfertaVenta> ofertas = new ArrayList<OfertaVenta>();
+            for (OfertaVenta ov : datosTabla) {
+                if (ov.getEmpresa().getCif().equals(empresa.getCif())
+                        && ov.getPrecioVenta() <= Double.parseDouble(this.campoPrecio.getText())) {
+                    ofertas.add(ov);
+                }
+            }
 
-        for(OfertaVenta oferta : datosTabla){
-
+            while (!ofertas.isEmpty() && totalprecio >= 0) {
+                ofertaMenor = ofertas.get(0);
+                if (ofertaMenor.getNumParticipaciones() <=  Integer.parseInt(this.campoNumero.getText())){
+                        getDAO(OfertaVentaDAO.class).cerrarOfertaVenta(ofertaMenor);
+                    actualizarDatosTabla();
+                } else{
+                    ofertaMenor.setNumParticipaciones(ofertaMenor.getNumParticipaciones()-Integer.parseInt(this.campoNumero.getText()));
+                    getDAO(OfertaVentaDAO.class).diminuirParticipaciones(ofertaMenor);
+                }
+            }
         }
     }
 
-    // Accion al seleccionar empresa en el comboBox
+
     public void empresaSelected(ActionEvent event) {
         if (!campoPrecio.getText().isEmpty()) actualizarDatosTabla();
     }
@@ -136,8 +174,10 @@ public class VCompraController extends DatabaseLinker {
 
     // Carga el saldo disponible del usuario
     public void actualizarSaldo(ActionEvent event) {
+        usr= super.getDAO(UsuarioDAO.class).getUsuario("nere");
         campoSaldo.setText(getDAO(UsuarioDAO.class).getSaldo(usr).toString());
     }
+
 
     // Boton de salida
     public void btnSalirEvent(ActionEvent event) {
