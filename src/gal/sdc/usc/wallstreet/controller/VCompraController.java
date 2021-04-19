@@ -9,7 +9,7 @@ import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Venta;
 import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.model.OfertaVenta;
-import gal.sdc.usc.wallstreet.repository.CompraDAO;
+import gal.sdc.usc.wallstreet.repository.VentaDAO;
 import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
@@ -33,6 +33,10 @@ import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
 public class VCompraController extends DatabaseLinker {
+    public static final String VIEW = "VCompra";
+    public static final Integer HEIGHT =400;
+    public static final Integer WIDTH =  761;
+
     @FXML
     private JFXButton btnSalir;
     @FXML
@@ -96,35 +100,37 @@ public class VCompraController extends DatabaseLinker {
         // Si alguno de los campos necesarios está vacío, no se hace nada
         if (campoPrecio.getText().isEmpty() || campoNumero.getText().isEmpty() || empresaComboBox.getSelectionModel().getSelectedIndex() == -1)
             return;
-
-        // Variables de estado
-        Usuario usr;
-        double totalprecio = 0;
-        Integer compradas = 0;
-        Integer aComprar = Integer.parseInt(campoNumero.getText());
-        if(super.getTipoUsuario().equals(TipoUsuario.EMPRESA)) super.getEmpresa().getUsuario();
-        else super.getEmpresa().getUsuario();
-
-
         // Se compran de menor a mayor hasta completar o hasta que se quede sin saldo
-        super.iniciarTransaccion();
-        actualizarDatosTabla(); //Recojemos los datos actualizados
+        OfertaVenta ofertaMenor;
+        //TODO pasar usuario correspondiente
+        Usuario usuario = super.getDAO(UsuarioDAO.class).getUsuario("nere");
+        double totalprecio = 0;
+        if (usuario.getSaldo() < ((totalprecio = Integer.parseInt(this.campoNumero.getText()) * Double.parseDouble(this.campoPrecio.getText())))) {
 
+        } else {
+            Empresa empresa = listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex());
+            ArrayList<OfertaVenta> ofertas = new ArrayList<OfertaVenta>();
+            for (OfertaVenta ov : datosTabla) {
+                if (ov.getEmpresa().getCif().equals(empresa.getCif())
+                        && ov.getPrecioVenta() <= Double.parseDouble(this.campoPrecio.getText())) {
+                    ofertas.add(ov);
+                }
+            }
 
-        for(OfertaVenta oferta : datosTabla){
-            oferta.getNumParticipaciones()
-        }
-        while (!datosTabla.isEmpty() && totalprecio >= 0) {
-            ofertaMenor = ofertas.get(seleccionar_MenorPrecio(ofertas));
-            if (ofertaMenor.getNumParticipaciones() <= Integer.parseInt(this.campoNumero.getText())) {
-                getDAO(OfertaVentaDAO.class).cerrarOfertaVenta(ofertaMenor);
-            } else {
-
+            while (!ofertas.isEmpty() && totalprecio >= 0) {
+                ofertaMenor = ofertas.get(0);
+                if (ofertaMenor.getNumParticipaciones() <=  Integer.parseInt(this.campoNumero.getText())){
+                        getDAO(OfertaVentaDAO.class).cerrarOfertaVenta(ofertaMenor);
+                    actualizarDatosTabla();
+                } else{
+                    ofertaMenor.setNumParticipaciones(ofertaMenor.getNumParticipaciones()-Integer.parseInt(this.campoNumero.getText()));
+                    getDAO(OfertaVentaDAO.class).diminuirParticipaciones(ofertaMenor);
+                }
             }
         }
     }*/
 
-    // Evento de seleccion de empresa en la comboBox
+
     public void empresaSelected(ActionEvent event) {
         if (!campoPrecio.getText().isEmpty()) actualizarDatosTabla();
     }
