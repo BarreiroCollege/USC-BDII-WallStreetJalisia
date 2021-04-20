@@ -7,13 +7,30 @@ insert into usuario (identificador, clave, direccion, cp, localidad, telefono, s
 insert into inversor (usuario, dni, nombre, apellidos) 
 	values ('marcos', '47157847C', 'Marcos', 'Vázquez García');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, activo, baja)
+	values ('sara', 'sha1:64000:18:7Vjvu9VX0GGKPBVgQ/LuhGiKAw8dtY6p:7qV7nXM1IIn5oA49kmN0x/Wt', 'Calle del Palomar, 31', '15701', 'Santiago de Compostela', 615237989, 513.15, 0.0, true, false);
+insert into inversor (usuario, dni, nombre, apellidos)
+	values ('sara', '20416592K', 'Sara', 'Sousa Álvarez')
+insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, activo, baja)
+	values ('eva', 'sha1:64000:18:fRyIy2KpkOhXIkFl9+OCu6BPq32xY2+Y:d5j3M7amOsYqisxLDk6VbSL3', 'Calle del mar, 78', '15701', 'Santiago de Compostela', 678910344, 1485.30, 0.0, true, false);
+insert into inversor (usuario, dni, nombre, apellidos)
+	values ('eva', '10024875E', 'Eva', 'Doural Méndez');
+
+insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, activo, baja)
 	values ('teceric', 'sha1:64000:18:0WoocFp8pqjWuMP/72KFmGE62xjlBsP6:MEB75nM5A3WfLS10Bj5DTu6A', 'Calle 10 de Marzo', '36210', 'Vigo', 986331724, 7012.0, 0.0, true, false);
 insert into empresa (usuario, cif, nombre) 
 	values ('teceric', 'B-76365789', 'Teclados Eric');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, activo, baja)
-	values ('garcables', 'sha1:64000:18:0cUa4PNwAG+HJvz3JD5Zg4Ru08Bo0J/Y:djo94B5Vc1r5gPasgWM6B88K', 'Avenida Ramón y Cajal, 79', '28016', 'Madrid', 677100888, 0.0, 0.0, true, false);
+	values ('garcables', 'sha1:64000:18:0cUa4PNwAG+HJvz3JD5Zg4Ru08Bo0J/Y:djo94B5Vc1r5gPasgWM6B88K', 'Avenida Ramón y Cajal, 79', '28016', 'Madrid', 677100888, 2410.0, 0.0, true, false);
 insert into empresa (usuario, cif, nombre) 
 	values ('garcables', 'A-70012249', 'Garaje de cables');
+insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, activo, baja)
+	values ('fruluis', 'sha1:64000:18:lNI/FgENoXpD23en+RSumH2ZkdBeC+ga:Xb5ptBI+UaD7VdLBiG0GU25E', 'Camino sombrío, 14', '39212', 'Fontecha', 147025316, 1000.0, 0.0, true, false);
+insert into empresa (usuario, cif, nombre)
+	values ('fruluis', 'A-48216592', 'Frutas Luis');
+insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, activo, baja)
+	values ('libjaim', 'sha1:64000:18:0krmbeQFU13IagFzaqTMnsU+gBUchFH6:GyWDhmCGNAmArXe7PyP9uZlW', 'Calle Baja, 14', '15701', 'Santiago de Compostela', 648572333, 200.0, true, false);
+insert into empresa (usuario, cif, nombre)
+	values ('libjaim', 'P-19752648', 'Libros Jaime');
 
 
 insert into participacion (usuario, empresa, cantidad, cantidad_bloqueada) 
