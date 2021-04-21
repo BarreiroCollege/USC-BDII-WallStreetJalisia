@@ -17,8 +17,11 @@ import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.ErrorValidator;
 import gal.sdc.usc.wallstreet.util.auth.PasswordStorage;
 import gal.sdc.usc.wallstreet.util.Validadores;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
@@ -150,6 +153,14 @@ public class AccesoController extends DatabaseLinker implements Initializable {
                 txtClave.getValidators().remove(1);
                 txtClave.validate();
             }
+        });
+
+        txtUsuario.setOnKeyPressed(ke -> {
+            if (ke.getCode().equals(KeyCode.ENTER)) txtClave.requestFocus();
+        });
+
+        txtClave.setOnKeyPressed(ke -> {
+            if (ke.getCode().equals(KeyCode.ENTER)) this.acceder();
         });
 
         btnRegistro.setOnAction(e -> Main.ventana(

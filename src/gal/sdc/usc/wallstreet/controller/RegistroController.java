@@ -111,6 +111,11 @@ public class RegistroController extends DatabaseLinker implements Initializable 
         });
 
         txtUsuario.textProperty().addListener((observable, oldValue, newValue) -> {
+            // Limitar a 16 caracteres
+            if (!newValue.matches("\\d{0,16}")) {
+                txtUsuario.setText(oldValue);
+            }
+            
             // Si hay más de un validador, es porque se ha insertado el "forzado" para mostrar error de
             // usuario ya existe, y por ello, se ha de eliminar cuando se actualice el campo
             if (txtUsuario.getValidators().size() > 1) {
