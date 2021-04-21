@@ -8,7 +8,7 @@ import java.util.Objects;
 
 @Tabla("sociedad")
 public class Sociedad extends Entidad {
-    @Columna(value = "identificador" ,pk = true)
+    @Columna(value = "identificador", pk = true)
     private SuperUsuario identificador;
 
     @Columna("saldo_comuna")
