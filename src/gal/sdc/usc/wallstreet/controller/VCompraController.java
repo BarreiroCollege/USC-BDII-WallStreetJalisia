@@ -14,7 +14,6 @@ import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.Iconos;
-import gal.sdc.usc.wallstreet.util.TipoUsuario;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,7 +24,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.util.converter.IntegerStringConverter;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -153,7 +151,7 @@ public class VCompraController extends DatabaseLinker {
             ventaHecha = new Venta.Builder().withCantidad(partPosibles)
                     .withOfertaVenta(oferta)
                     .withFecha(new Date(System.currentTimeMillis()))
-                    .withUsuarioCompra(usr)
+                    .withUsuarioCompra(usr.getSuperUsuario())
                     .build();
             getDAO(VentaDAO.class).insertar(ventaHecha);
             getDAO(OfertaVentaDAO.class).actualizar(ventaHecha.getOfertaVenta());
@@ -165,9 +163,7 @@ public class VCompraController extends DatabaseLinker {
         actualizarSaldo(new ActionEvent());
 
         // Tratamos de comprometer la transacción
-        try {
-            super.ejecutarTransaccion();
-        } catch (SQLException e) {
+        if (!super.ejecutarTransaccion()) {
             // TODO Mostramos el error al usuario
         }
     }
@@ -181,13 +177,13 @@ public class VCompraController extends DatabaseLinker {
     public void actualizarDatosTabla(ActionEvent event) {
         if (campoPrecio.getText().isEmpty() || empresaComboBox.getSelectionModel().getSelectedIndex() == -1)
             return;
-        String identificador = listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getUsuario().getIdentificador();
+        String identificador = listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getUsuario().getSuperUsuario().getIdentificador();
         datosTabla.setAll(getDAO(OfertaVentaDAO.class).getOfertasVenta(identificador, Float.parseFloat(campoPrecio.getText())));
     }
 
     // Carga el saldo disponible del usuario
     public void actualizarSaldo(ActionEvent event) {
-        usr = getDAO(UsuarioDAO.class).getUsuario(usr.getIdentificador());
+        usr = getDAO(UsuarioDAO.class).getUsuario(usr.getSuperUsuario().getIdentificador());
         campoSaldo.setText(String.valueOf(usr.getSaldo()-usr.getSaldoBloqueado()));
     }
 

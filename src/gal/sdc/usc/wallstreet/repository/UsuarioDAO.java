@@ -13,12 +13,7 @@ import java.util.List;
 
 public class UsuarioDAO extends DAO<Usuario> {
     public UsuarioDAO(Connection conexion) {
-
         super(conexion, Usuario.class);
-        System.out.println("UsuarioDAO instanciado");
-        // jola
-
-        //super(conexion, Usuario.class);
     }
 
     public List<Usuario> getUsuarios() {
@@ -36,8 +31,9 @@ public class UsuarioDAO extends DAO<Usuario> {
         return usuarios;
 
     }
-    public Usuario getUsuario(String identificador){
-        return getUsuarios().stream().filter( user -> identificador.equals( user.getIdentificador() ) ).findFirst().orElse(null);
+
+    public Usuario getUsuario(String identificador) {
+        return getUsuarios().stream().filter(user -> identificador.equals(user.getSuperUsuario().getIdentificador())).findFirst().orElse(null);
     }
 
 }

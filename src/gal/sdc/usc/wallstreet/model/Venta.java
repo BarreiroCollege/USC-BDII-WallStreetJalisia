@@ -21,7 +21,7 @@ public class Venta extends Entidad {
     @Columna("cantidad")
     private Integer cantidad;
 
-    public Venta() {
+    private Venta() {
     }
 
     public Date getFecha() {
