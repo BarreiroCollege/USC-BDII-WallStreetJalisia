@@ -33,12 +33,8 @@ public class UsuarioDAO extends DAO<Usuario> {
 
     }
 
-    /**
-     * Busca un usuario concreto en la base de datos a partir de su identificador
-     * @param identificador Identificador único del usuario dentro de la base de datos
-     * @return Usuario con el identificador correcto, null en caso de no existir
-     */
-    public Usuario getUsuario(String identificador){
-        return getUsuarios().stream().filter( user -> identificador.equals( user.getIdentificador() ) ).findFirst().orElse(null);
+    public Usuario getUsuario(String identificador) {
+        return getUsuarios().stream().filter(user -> identificador.equals(user.getSuperUsuario().getIdentificador())).findFirst().orElse(null);
     }
+
 }

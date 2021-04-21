@@ -3,13 +3,14 @@ package gal.sdc.usc.wallstreet.model;
 import gal.sdc.usc.wallstreet.model.ddl.Columna;
 import gal.sdc.usc.wallstreet.model.ddl.Entidad;
 import gal.sdc.usc.wallstreet.model.ddl.Tabla;
+import gal.sdc.usc.wallstreet.util.auth.PasswordStorage;
 
 import java.util.Objects;
 
 @Tabla("usuario")
 public class Usuario extends Entidad {
     @Columna(value = "identificador", pk = true)
-    private String identificador;
+    private SuperUsuario superUsuario;
 
     @Columna("clave")
     private String clave;
@@ -27,7 +28,7 @@ public class Usuario extends Entidad {
     private Integer telefono;
 
     @Columna("saldo")
-    private Float saldo;
+    private Float saldo = 0.f;
 
     @Columna("saldo_bloqueado")
     private Float saldoBloqueado = 0.f;
@@ -38,15 +39,24 @@ public class Usuario extends Entidad {
     @Columna("baja")
     private Boolean baja = false;
 
+    @Columna("otp")
+    private String otp;
+
+    @Columna("sociedad")
+    private Sociedad sociedad;
+
+    @Columna("lider")
+    private Boolean lider;
+
     private Usuario() {
     }
 
-    public String getIdentificador() {
-        return identificador;
+    public SuperUsuario getSuperUsuario() {
+        return superUsuario;
     }
 
-    public void setIdentificador(String identificador) {
-        this.identificador = identificador;
+    public void setSuperUsuario(SuperUsuario superUsuario) {
+        this.superUsuario = superUsuario;
     }
 
     public String getClave() {
@@ -54,7 +64,11 @@ public class Usuario extends Entidad {
     }
 
     public void setClave(String clave) {
-        this.clave = clave;
+        try {
+            this.clave = PasswordStorage.crearHash(clave);
+        } catch (PasswordStorage.CannotPerformOperationException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     public String getDireccion() {
@@ -121,23 +135,47 @@ public class Usuario extends Entidad {
         this.baja = baja;
     }
 
+    public String getOtp() {
+        return otp;
+    }
+
+    public void setOtp(String otp) {
+        this.otp = otp;
+    }
+
+    public Sociedad getSociedad() {
+        return sociedad;
+    }
+
+    public void setSociedad(Sociedad sociedad) {
+        this.sociedad = sociedad;
+    }
+
+    public Boolean getLider() {
+        return lider;
+    }
+
+    public void setLider(Boolean lider) {
+        this.lider = lider;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Usuario usuario = (Usuario) o;
-        return identificador.equals(usuario.identificador);
+        return superUsuario.equals(usuario.superUsuario);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(identificador);
+        return Objects.hash(superUsuario);
     }
 
     @Override
     public String toString() {
         return "Usuario{" +
-                "identificador='" + identificador + '\'' +
+                "superUsuario='" + superUsuario + '\'' +
                 ", clave='" + clave + '\'' +
                 ", direccion='" + direccion + '\'' +
                 ", cp='" + cp + '\'' +
@@ -147,6 +185,9 @@ public class Usuario extends Entidad {
                 ", saldoBloqueado=" + saldoBloqueado +
                 ", activo=" + activo +
                 ", baja=" + baja +
+                ", otp=" + otp +
+                ", sociedad=" + sociedad +
+                ", lider=" + lider +
                 '}';
     }
 
@@ -156,12 +197,12 @@ public class Usuario extends Entidad {
         public Builder() {
         }
 
-        public Builder(String identificador) {
-            usuario.identificador = identificador;
+        public Builder(SuperUsuario superUsuario) {
+            usuario.superUsuario = superUsuario;
         }
 
-        public Builder withIdentificador(String identificador) {
-            usuario.identificador = identificador;
+        public Builder withSuperUsuario(SuperUsuario superUsuario) {
+            usuario.superUsuario = superUsuario;
             return this;
         }
 
@@ -207,6 +248,21 @@ public class Usuario extends Entidad {
 
         public Builder withBaja(Boolean baja) {
             usuario.baja = baja;
+            return this;
+        }
+
+        public Builder withOtp(String otp) {
+            usuario.otp = otp;
+            return this;
+        }
+
+        public Builder withSociedad(Sociedad sociedad) {
+            usuario.sociedad = sociedad;
+            return this;
+        }
+
+        public Builder withLider(Boolean lider) {
+            usuario.lider = lider;
             return this;
         }
 

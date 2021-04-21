@@ -1,9 +1,11 @@
 package gal.sdc.usc.wallstreet.repository.helpers;
 
+import gal.sdc.usc.wallstreet.model.Empresa;
+import gal.sdc.usc.wallstreet.model.Inversor;
+import gal.sdc.usc.wallstreet.util.TipoUsuario;
 import gal.sdc.usc.wallstreet.model.ddl.Entidad;
 import gal.sdc.usc.wallstreet.util.PackageScanner;
 
-import javax.xml.crypto.Data;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -19,9 +21,12 @@ import java.util.Properties;
  */
 public class DatabaseLinker {
     // Indica que la conexión se ha inicializado
-    private static boolean cargado = false;
+    private static Connection conexion;
     // Lista de DAOs disponibles
     private static HashMap<Class<? extends DAO<? extends Entidad>>, DAO<? extends Entidad>> daos;
+
+    private static Inversor inversor;
+    private static Empresa empresa;
 
     public static boolean DEBUG = false;
 
@@ -31,7 +36,7 @@ public class DatabaseLinker {
     }
 
     public DatabaseLinker() {
-        if (!DatabaseLinker.cargado) cargarLinker();
+        if (conexion == null) cargarLinker();
     }
 
     /**
@@ -60,7 +65,7 @@ public class DatabaseLinker {
             // Inicializar todos los DAOs
             cargarDAOs(conexion);
             // Marcar como ya inicializado
-            DatabaseLinker.cargado = true;
+            DatabaseLinker.conexion = conexion;
         } catch (IOException | SQLException f) {
             f.printStackTrace();
         }
@@ -108,5 +113,100 @@ public class DatabaseLinker {
      */
     public static <D extends DAO<? extends Entidad>> D getSDAO(Class<D> clase) {
         return (D) DatabaseLinker.daos.get(clase);
+    }
+
+    /**
+     * Indica si hay una sesión iniciada
+     * @return true cuando hay un usuario dentro
+     */
+    public boolean haySesion() {
+        return inversor != null || empresa != null;
+    }
+
+    /**
+     * Indica el tipo de usuario, si es inversor o empresa
+     * @return INVERSOR cuando es inversor, EMPRESA si es empresa, null si no hay sesión
+     */
+    public TipoUsuario getTipoUsuario() {
+        return haySesion() ? (DatabaseLinker.inversor != null ? TipoUsuario.INVERSOR : TipoUsuario.EMPRESA) : null;
+    }
+
+    /**
+     * Devuelve el usuario inversor si hay sesión
+     * @return Inversor
+     */
+    public Inversor getInversor() {
+        return DatabaseLinker.inversor;
+    }
+
+    /**
+     * Devuelve el usuario empresa si hay sesión
+     * @return Empresa
+     */
+    public Empresa getEmpresa() {
+        return DatabaseLinker.empresa;
+    }
+
+    /**
+     * Inicia sesión como inversor
+     * @param inversor usuario
+     */
+    public void setInversor(Inversor inversor) {
+        DatabaseLinker.inversor = inversor;
+        DatabaseLinker.empresa = null;
+    }
+
+    /**
+     * Inicia sesión como inversor
+     * @param empresa usuario
+     */
+    public void setEmpresa(Empresa empresa) {
+        DatabaseLinker.inversor = null;
+        DatabaseLinker.empresa = empresa;
+    }
+
+    /**
+     * Cierra la sesión existente
+     */
+    public void cerrarSesion() {
+        DatabaseLinker.inversor = null;
+        DatabaseLinker.empresa = null;
+    }
+
+    /**
+     * Inicia una nueva transacción, deshabilitando el autocommit
+     */
+    public void iniciarTransaccion() {
+        try {
+            DatabaseLinker.conexion.setAutoCommit(false);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Ejecuta una transacción pendiente
+     * @return true cuando se ejecuta correctamente, false en caso contrario (rollback)
+     */
+    public boolean ejecutarTransaccion() {
+        try {
+            // Solo ejecutar si es commit manual
+            if (!DatabaseLinker.conexion.getAutoCommit()) {
+                DatabaseLinker.conexion.commit();
+                DatabaseLinker.conexion.setAutoCommit(true);
+
+                return true;
+            }
+        } catch (SQLException e) {
+            try {
+                System.err.println(e.getMessage());
+                DatabaseLinker.conexion.rollback();
+                DatabaseLinker.conexion.setAutoCommit(true);
+            } catch (SQLException e2) {
+                System.err.println(e2.getMessage());
+            }
+        }
+
+        return false;
     }
 }

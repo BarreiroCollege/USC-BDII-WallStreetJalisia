@@ -13,7 +13,7 @@ public class OfertaVenta extends Entidad {
     private Date fecha = new Date();
 
     @Columna(value = "usuario", pk = true)
-    private Usuario usuario;
+    private SuperUsuario usuario;
 
     @Columna("empresa")
     private Empresa empresa;
@@ -39,7 +39,7 @@ public class OfertaVenta extends Entidad {
         return fecha;
     }
 
-    public Usuario getUsuario() {
+    public SuperUsuario getUsuario() {
         return usuario;
     }
 
@@ -135,7 +135,7 @@ public class OfertaVenta extends Entidad {
         public Builder() {
         }
 
-        public Builder(Date fecha, Usuario usuario) {
+        public Builder(Date fecha, SuperUsuario usuario) {
             ofertaVenta.fecha = fecha;
             ofertaVenta.usuario = usuario;
         }
@@ -145,7 +145,7 @@ public class OfertaVenta extends Entidad {
             return this;
         }
 
-        public Builder withUsuario(Usuario usuario) {
+        public Builder withUsuario(SuperUsuario usuario) {
             ofertaVenta.usuario = usuario;
             return this;
         }

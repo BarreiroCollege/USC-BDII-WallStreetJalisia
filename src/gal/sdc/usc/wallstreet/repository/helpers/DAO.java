@@ -55,6 +55,8 @@ public abstract class DAO<E extends Entidad> {
     private HashMap<String, Object> resolverPksForaneas(String nombre, Entidad e, String subNombre) {
         HashMap<String, Object> paresPk = new HashMap<>();
 
+        if (e == null) return paresPk;
+
         // Iterar sobre los atributos de la entidad
         for (Field field : e.getClass().getDeclaredFields()) {
             Class<?> type = field.getType();
@@ -276,7 +278,7 @@ public abstract class DAO<E extends Entidad> {
         // Resolver a pares cada valor dado con su respectivo nombre de columna
         HashMap<String, Object> paresPk = emparejarColumnas(TipoAtributo.PK, valores);
         // Si no hay paresPk es porque algo ha pasado
-        if (paresPk == null) return null;
+        if (paresPk == null || paresPk.size() == 0) return null;
 
         // Para cada elemento en los pares, encadenar como nuevo elemento del WHERE
         Iterator<Map.Entry<String, Object>> itMapKey = paresPk.entrySet().iterator();

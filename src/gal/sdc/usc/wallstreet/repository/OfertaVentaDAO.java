@@ -5,12 +5,18 @@ import gal.sdc.usc.wallstreet.model.OfertaVenta;
 import gal.sdc.usc.wallstreet.model.Participacion;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.helpers.DAO;
+import gal.sdc.usc.wallstreet.util.Mapeador;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class OfertaVentaDAO extends DAO<OfertaVenta> {
+
+
     public OfertaVentaDAO(Connection conexion) {
         super(conexion, OfertaVenta.class);
     }
@@ -117,3 +123,5 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
         }
     }
 }
+
+

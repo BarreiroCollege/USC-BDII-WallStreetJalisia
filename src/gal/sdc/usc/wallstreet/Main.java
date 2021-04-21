@@ -2,13 +2,13 @@ package gal.sdc.usc.wallstreet;
 
 import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXSnackbarLayout;
-import gal.sdc.usc.wallstreet.controller.CarteraController;
+import gal.sdc.usc.wallstreet.controller.AccesoController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -16,7 +16,6 @@ import java.io.IOException;
 
 public class Main extends Application {
     private static Stage primaryStage;
-
     private static JFXSnackbar snackbar;
 
     public static void mensaje(String mensaje) {
@@ -36,29 +35,42 @@ public class Main extends Application {
         }
     }
 
-
     @Override
     public void start(Stage primaryStage) {
         Main.primaryStage = primaryStage;
-        Main.setScene(CarteraController.VIEW, CarteraController.WIDTH, CarteraController.HEIGHT);
+        Main.ventana(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT, AccesoController.TITULO);
     }
 
-    public static void setScene(String view, int width, int height) {
-        try {
-            Main.primaryStage.hide();
+    public static void dialogo(String view, int width, int height, String titulo) {
+        Main.setScene(view, width, height, titulo, true);
+    }
 
+    public static void ventana(String view, int width, int height, String titulo) {
+        Main.setScene(view, width, height, titulo, false);
+    }
+
+    private static void setScene(String view, int width, int height, String titulo, boolean modal) {
+        try {
             Stage stage = new Stage();
             Parent root = FXMLLoader.load(Main.class.getResource("view/" + view + ".fxml"));
-            snackbar = new JFXSnackbar((AnchorPane) root);
 
             stage.setScene(new Scene(root, width, height));
             stage.setWidth(width);
             stage.setHeight(height);
             stage.setResizable(false);
-            stage.setTitle("Wall Street Jalisia");
+            stage.setTitle(titulo + " | Wall Street Jalisia");
 
-            Main.primaryStage = stage;
-            Main.primaryStage.show();
+            if (modal) {
+                stage.initOwner(Main.primaryStage);
+                stage.initModality(Modality.WINDOW_MODAL);
+                stage.showAndWait();
+            } else {
+                Main.primaryStage.hide();
+                Main.snackbar = new JFXSnackbar((AnchorPane) root);
+
+                Main.primaryStage = stage;
+                Main.primaryStage.show();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
