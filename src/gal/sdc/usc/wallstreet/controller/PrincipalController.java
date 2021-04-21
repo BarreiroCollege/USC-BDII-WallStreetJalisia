@@ -100,8 +100,8 @@ public class PrincipalController extends DatabaseLinker {
                 usuario = inversor.getUsuario();
                 break;
         }
-        ofertaVentaUsuario = super.getDAO(OfertaVentaDAO.class).getOfertasVentaPorUsuario(usuario.getIdentificador().getIdentificador());
-        participacionesUsuario = super.getDAO(ParticipacionDAO.class).getParticipacionesPorUsuario(usuario.getIdentificador().getIdentificador());
+        ofertaVentaUsuario = super.getDAO(OfertaVentaDAO.class).getOfertasVentaPorUsuario(usuario.getSuperUsuario().getIdentificador());
+        participacionesUsuario = super.getDAO(ParticipacionDAO.class).getParticipacionesPorUsuario(usuario.getSuperUsuario().getIdentificador());
 
         seleccionVentana(super.getTipoUsuario().equals(TipoUsuario.INVERSOR));
         gestionTablaParticipaciones(participacionesUsuario);
