@@ -112,7 +112,7 @@ public class RegistroController extends DatabaseLinker implements Initializable 
 
         txtUsuario.textProperty().addListener((observable, oldValue, newValue) -> {
             // Limitar a 16 caracteres
-            if (!newValue.matches("\\d{0,16}")) {
+            if (!newValue.matches("[a-zA-Z0-9_]{0,16}")) {
                 txtUsuario.setText(oldValue);
             }
             
