@@ -55,7 +55,7 @@ hs_err_pid*
 
 # Gradle
 .idea/**/gradle.xml
-.idea/**/libraries
+.idea/**/libraries/*
 !.idea/**/libraries/*.xml
 
 # Gradle and Maven with auto-import
