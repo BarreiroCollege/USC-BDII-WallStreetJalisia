@@ -8,6 +8,7 @@ import gal.sdc.usc.wallstreet.util.Validadores;
 import gal.sdc.usc.wallstreet.util.auth.GoogleAuth;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 
 import java.net.URL;
@@ -42,6 +43,30 @@ public class OtpController extends DatabaseLinker implements Initializable {
     public OtpController() {
     }
 
+    private void confirmar() {
+        ErrorValidator faltanDigitos = Validadores.personalizado("Se necesitan 6 dígitos");
+        ErrorValidator codigoIncorrecto = Validadores.personalizado("El código es incorrecto");
+
+        if (txtOtp.getText().length() != 6) {
+            if (txtOtp.getValidators().size() == 0) txtOtp.getValidators().add(faltanDigitos);
+            txtOtp.validate();
+            return;
+        }
+
+        try {
+            if (!GoogleAuth.validarCodigo(accesoController.getUsuario().getOtp(), Long.parseLong(txtOtp.getText()))) {
+                if (txtOtp.getValidators().size() == 0) txtOtp.getValidators().add(codigoIncorrecto);
+                txtOtp.validate();
+                return;
+            }
+
+            accesoController.confirmarOtp();
+            anchor.getScene().getWindow().hide();
+        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
     @FXML
     public void initialize(URL url, ResourceBundle rb) {
         txtOtp.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -60,28 +85,10 @@ public class OtpController extends DatabaseLinker implements Initializable {
             anchor.getScene().getWindow().hide();
         });
 
-        ErrorValidator faltanDigitos = Validadores.personalizado("Se necesitan 6 dígitos");
-        ErrorValidator codigoIncorrecto = Validadores.personalizado("El código es incorrecto");
+        btnConfirmar.setOnAction(event -> this.confirmar());
 
-        btnConfirmar.setOnAction(event -> {
-            if (txtOtp.getText().length() != 6) {
-                if (txtOtp.getValidators().size() == 0) txtOtp.getValidators().add(faltanDigitos);
-                txtOtp.validate();
-                return;
-            }
-
-            try {
-                if (!GoogleAuth.validarCodigo(accesoController.getUsuario().getOtp(), Long.parseLong(txtOtp.getText()))) {
-                    if (txtOtp.getValidators().size() == 0) txtOtp.getValidators().add(codigoIncorrecto);
-                    txtOtp.validate();
-                    return;
-                }
-
-                accesoController.confirmarOtp();
-                anchor.getScene().getWindow().hide();
-            } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-                System.err.println(e.getMessage());
-            }
+        txtOtp.setOnKeyPressed(ke -> {
+            if (ke.getCode().equals(KeyCode.ENTER)) this.confirmar();
         });
     }
 }
