@@ -7,9 +7,11 @@ import com.jfoenix.validation.RequiredFieldValidator;
 import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Inversor;
+import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
 import gal.sdc.usc.wallstreet.repository.InversorDAO;
+import gal.sdc.usc.wallstreet.repository.SuperUsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.ErrorValidator;
@@ -64,7 +66,14 @@ public class AccesoController extends DatabaseLinker implements Initializable {
         ErrorValidator usuarioNoActivo = Validadores.personalizado("Este usuario no está activo");
         ErrorValidator claveIncorrecta = Validadores.personalizado("La clave no es correcta");
 
-        Usuario usuario = super.getDAO(UsuarioDAO.class).seleccionar(txtUsuario.getText().toLowerCase());
+        SuperUsuario superUsuario = super.getDAO(SuperUsuarioDAO.class).seleccionar(txtUsuario.getText().toLowerCase());
+        if (superUsuario == null) {
+            if (txtUsuario.getValidators().size() == 1) txtUsuario.getValidators().add(usuarioNoExiste);
+            txtUsuario.validate();
+            return;
+        }
+
+        Usuario usuario = super.getDAO(UsuarioDAO.class).seleccionar(superUsuario);
         if (usuario == null) {
             if (txtUsuario.getValidators().size() == 1) txtUsuario.getValidators().add(usuarioNoExiste);
             txtUsuario.validate();

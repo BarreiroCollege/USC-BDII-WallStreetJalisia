@@ -10,9 +10,11 @@ import com.jfoenix.validation.RequiredFieldValidator;
 import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Inversor;
+import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
 import gal.sdc.usc.wallstreet.repository.InversorDAO;
+import gal.sdc.usc.wallstreet.repository.SuperUsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.ErrorValidator;
@@ -150,7 +152,7 @@ public class RegistroController extends DatabaseLinker implements Initializable 
             return;
         }
 
-        if (super.getDAO(UsuarioDAO.class).seleccionar(txtUsuario.getText().toLowerCase()) != null) {
+        if (super.getDAO(SuperUsuarioDAO.class).seleccionar(txtUsuario.getText().toLowerCase()) != null) {
             if (txtUsuario.getValidators().size() == 1) txtUsuario.getValidators().add(usuarioYaExiste);
             txtUsuario.validate();
             return;
@@ -163,7 +165,11 @@ public class RegistroController extends DatabaseLinker implements Initializable 
         }
 
         try {
-            Usuario usuario = new Usuario.Builder(txtUsuario.getText().toLowerCase())
+            SuperUsuario superUsuario = new SuperUsuario.Builder()
+                    .withIdentificador(txtUsuario.getText().toLowerCase())
+                    .build();
+
+            Usuario usuario = new Usuario.Builder(superUsuario)
                     .withClave(PasswordStorage.crearHash(txtClave.getText()))
                     .withDireccion(txtDireccion.getText())
                     .withCp(txtCp.getText())
