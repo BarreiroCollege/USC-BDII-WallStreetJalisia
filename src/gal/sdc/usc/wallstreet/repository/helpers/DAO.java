@@ -213,7 +213,7 @@ public abstract class DAO<E extends Entidad> {
                 Object o = LectorDinamico.llamarGetter(name, e);
 
                 // Si el atributo es una entidad, analizar recursivamente
-                if (Entidad.class.isAssignableFrom(field.getType())) {
+                if (Entidad.class.isAssignableFrom(field.getType()) && o != null) {
                     Entidad subEntidad = (Entidad) o;
 
                     // Extraer el DAO de la subentidad
