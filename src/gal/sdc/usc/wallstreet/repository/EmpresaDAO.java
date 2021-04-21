@@ -1,7 +1,7 @@
 package gal.sdc.usc.wallstreet.repository;
 
 import gal.sdc.usc.wallstreet.model.Empresa;
-import gal.sdc.usc.wallstreet.model.Usuario;
+import gal.sdc.usc.wallstreet.model.OfertaVenta;
 import gal.sdc.usc.wallstreet.repository.helpers.DAO;
 import gal.sdc.usc.wallstreet.util.Mapeador;
 
@@ -17,19 +17,20 @@ public class EmpresaDAO extends DAO<Empresa> {
         super(conexion, Empresa.class);
     }
 
-    public List<Empresa> getEmpresas() {
+    public List<Empresa> getEmpresas(){
         List<Empresa> empresas = new ArrayList<>();
-        try (PreparedStatement ps = super.conexion.prepareStatement(
-                "SELECT * FROM empresa"
+        try (PreparedStatement ps = conexion.prepareStatement(
+                "SELECT e.* FROM empresa as e join usuario as u ON(e.usuario=u.identificador) WHERE activo is true"
         )) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                empresas.add(Mapeador.map(rs, Empresa.class));
+                Empresa empresa = Mapeador.map(rs, Empresa.class);
+                empresas.add(empresa);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return empresas;
 
+        return empresas;
     }
 }
