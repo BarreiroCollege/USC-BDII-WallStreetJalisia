@@ -46,7 +46,7 @@ public class Usuario extends Entidad {
     private Sociedad sociedad;
 
     @Columna("lider")
-    private Boolean lider;
+    private Boolean lider = false;
 
     private Usuario() {
     }
