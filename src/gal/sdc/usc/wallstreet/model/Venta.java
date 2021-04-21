@@ -16,7 +16,7 @@ public class Venta extends Entidad {
     private OfertaVenta ofertaVenta;
 
     @Columna(value = "usuario_compra", pk = true)
-    private Usuario usuarioCompra;
+    private SuperUsuario usuarioCompra;
 
     @Columna("cantidad")
     private Integer cantidad;
@@ -32,7 +32,7 @@ public class Venta extends Entidad {
         return ofertaVenta;
     }
 
-    public Usuario getUsuarioCompra() {
+    public SuperUsuario getUsuarioCompra() {
         return usuarioCompra;
     }
 
@@ -79,7 +79,7 @@ public class Venta extends Entidad {
         public Builder() {
         }
 
-        public Builder(Date fecha, OfertaVenta ofertaVenta, Usuario usuarioCompra) {
+        public Builder(Date fecha, OfertaVenta ofertaVenta, SuperUsuario usuarioCompra) {
             venta.fecha = fecha;
             venta.ofertaVenta = ofertaVenta;
             venta.usuarioCompra = usuarioCompra;
@@ -95,7 +95,7 @@ public class Venta extends Entidad {
             return this;
         }
 
-        public Builder withUsuarioCompra(Usuario usuarioCompra) {
+        public Builder withUsuarioCompra(SuperUsuario usuarioCompra) {
             venta.usuarioCompra = usuarioCompra;
             return this;
         }
