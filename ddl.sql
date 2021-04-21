@@ -1,8 +1,36 @@
+create table superusuario
+(
+    identificador varchar(16) not null
+        constraint superusuario_pk
+            primary key
+);
+
+alter table superusuario
+    owner to postgres;
+
+create table sociedad
+(
+    identificador varchar(16)                not null
+        constraint sociedad_pk
+            primary key
+        constraint sociedad_superusuario_identificador_fk
+            references superusuario
+            on update cascade,
+    saldo_comunal double precision default 0 not null,
+    tolerancia    integer          default 0 not null
+);
+
+alter table sociedad
+    owner to postgres;
+
 create table usuario
 (
     identificador   varchar(16)                    not null
         constraint usuario_pk
-            primary key,
+            primary key
+        constraint usuario_superusuario_identificador_fk
+            references superusuario
+            on update cascade,
     clave           varchar(128)                   not null,
     direccion       varchar(64),
     cp              varchar(10),
@@ -11,7 +39,13 @@ create table usuario
     saldo           double precision default 0     not null,
     saldo_bloqueado double precision default 0     not null,
     activo          boolean          default false not null,
-    baja            boolean          default false not null
+    baja            boolean          default false not null,
+    otp             varchar(32)      default NULL::character varying,
+    sociedad        varchar(16)      default NULL::character varying
+        constraint usuario_sociedad_identificador_fk
+            references sociedad
+            on update cascade,
+    lider           boolean          default false not null
 );
 
 alter table usuario
@@ -70,8 +104,8 @@ alter table pago
 create table pago_usuario
 (
     usuario             varchar(16) not null
-        constraint pago_usuario_usuario_identificador_fk
-            references usuario
+        constraint pago_usuario_superusuario_identificador_fk
+            references superusuario
             on update cascade,
     pago_fecha          timestamp   not null,
     pago_empresa        varchar(16) not null,
@@ -94,8 +128,8 @@ create table oferta_venta
             references empresa
             on update cascade,
     usuario             varchar(16)                    not null
-        constraint oferta_venta_usuario_identificador_fk
-            references usuario
+        constraint oferta_venta_superusuario_identificador_fk
+            references superusuario
             on update cascade,
     num_participaciones integer                        not null,
     precio_venta        double precision               not null,
@@ -112,7 +146,7 @@ create table participacion
 (
     usuario            varchar(16)       not null
         constraint poseer_participacion_usuario_identificador_fk
-            references usuario
+            references superusuario
             on update cascade,
     empresa            varchar(16)       not null
         constraint poseer_participacion_empresa_identificador_fk
@@ -134,7 +168,7 @@ create table venta
     ov_usuario     varchar(16)             not null,
     usuario_compra varchar(16)             not null
         constraint comprar_usuario_identificador_fk
-            references usuario
+            references superusuario
             on update cascade,
     cantidad       integer                 not null,
     constraint comprar_pk
@@ -146,3 +180,25 @@ create table venta
 
 alter table venta
     owner to postgres;
+
+create table propuesta_compra
+(
+    sociedad     varchar(16)             not null
+        constraint propuesta_compra_sociedad_identificador_fk
+            references sociedad
+            on update cascade,
+    fecha_inicio timestamp default now() not null,
+    cantidad     integer                 not null,
+    precio_max   double precision,
+    empresa      varchar(16)             not null
+        constraint propuesta_compra_empresa_usuario_fk
+            references empresa
+            on update cascade,
+    constraint propuesta_compra_pk
+        primary key (sociedad, fecha_inicio)
+);
+
+alter table propuesta_compra
+    owner to postgres;
+
+

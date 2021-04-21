@@ -9,7 +9,7 @@ import java.util.Objects;
 @Tabla("pago_usuario")
 public class PagoUsuario extends Entidad {
     @Columna(value = "usuario", pk = true)
-    private Usuario usuario;
+    private SuperUsuario usuario;
 
     @Columna(value = "pago", pk = true)
     private Pago pago;
@@ -20,7 +20,7 @@ public class PagoUsuario extends Entidad {
     private PagoUsuario() {
     }
 
-    public Usuario getUsuario() {
+    public SuperUsuario getUsuario() {
         return usuario;
     }
 
@@ -73,12 +73,12 @@ public class PagoUsuario extends Entidad {
         public Builder() {
         }
 
-        public Builder(Usuario usuario, Pago pago) {
+        public Builder(SuperUsuario usuario, Pago pago) {
             pagoUsuario.usuario = usuario;
             pagoUsuario.pago = pago;
         }
 
-        public Builder withUsuario(Usuario usuario) {
+        public Builder withUsuario(SuperUsuario usuario) {
             pagoUsuario.usuario = usuario;
             return this;
         }

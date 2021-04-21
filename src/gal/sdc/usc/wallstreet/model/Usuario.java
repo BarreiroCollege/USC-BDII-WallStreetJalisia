@@ -3,16 +3,14 @@ package gal.sdc.usc.wallstreet.model;
 import gal.sdc.usc.wallstreet.model.ddl.Columna;
 import gal.sdc.usc.wallstreet.model.ddl.Entidad;
 import gal.sdc.usc.wallstreet.model.ddl.Tabla;
-import gal.sdc.usc.wallstreet.util.PasswordStorage;
+import gal.sdc.usc.wallstreet.util.auth.PasswordStorage;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Objects;
 
 @Tabla("usuario")
 public class Usuario extends Entidad {
     @Columna(value = "identificador", pk = true)
-    private String identificador;
+    private SuperUsuario identificador;
 
     @Columna("clave")
     private String clave;
@@ -41,14 +39,23 @@ public class Usuario extends Entidad {
     @Columna("baja")
     private Boolean baja = false;
 
+    @Columna("otp")
+    private String otp;
+
+    @Columna("sociedad")
+    private Sociedad sociedad;
+
+    @Columna("lider")
+    private Boolean lider;
+
     private Usuario() {
     }
 
-    public String getIdentificador() {
+    public SuperUsuario getIdentificador() {
         return identificador;
     }
 
-    public void setIdentificador(String identificador) {
+    public void setIdentificador(SuperUsuario identificador) {
         this.identificador = identificador;
     }
 
@@ -128,6 +135,30 @@ public class Usuario extends Entidad {
         this.baja = baja;
     }
 
+    public String getOtp() {
+        return otp;
+    }
+
+    public void setOtp(String otp) {
+        this.otp = otp;
+    }
+
+    public Sociedad getSociedad() {
+        return sociedad;
+    }
+
+    public void setSociedad(Sociedad sociedad) {
+        this.sociedad = sociedad;
+    }
+
+    public Boolean getLider() {
+        return lider;
+    }
+
+    public void setLider(Boolean lider) {
+        this.lider = lider;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -154,6 +185,9 @@ public class Usuario extends Entidad {
                 ", saldoBloqueado=" + saldoBloqueado +
                 ", activo=" + activo +
                 ", baja=" + baja +
+                ", otp=" + otp +
+                ", sociedad=" + sociedad +
+                ", lider=" + lider +
                 '}';
     }
 
@@ -163,11 +197,11 @@ public class Usuario extends Entidad {
         public Builder() {
         }
 
-        public Builder(String identificador) {
+        public Builder(SuperUsuario identificador) {
             usuario.identificador = identificador;
         }
 
-        public Builder withIdentificador(String identificador) {
+        public Builder withIdentificador(SuperUsuario identificador) {
             usuario.identificador = identificador;
             return this;
         }
@@ -214,6 +248,21 @@ public class Usuario extends Entidad {
 
         public Builder withBaja(Boolean baja) {
             usuario.baja = baja;
+            return this;
+        }
+
+        public Builder withOtp(String otp) {
+            usuario.otp = otp;
+            return this;
+        }
+
+        public Builder withSociedad(Sociedad sociedad) {
+            usuario.sociedad = sociedad;
+            return this;
+        }
+
+        public Builder withLider(Boolean lider) {
+            usuario.lider = lider;
             return this;
         }
 
