@@ -14,7 +14,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -40,6 +39,12 @@ public class PrincipalController extends DatabaseLinker {
     private JFXButton buttonComprar;
     @FXML
     private JFXButton buttonVender;
+
+    @FXML
+    private JFXButton buttonMostrarMasParticipaciones;
+
+    @FXML
+    private JFXButton buttonMostrarMasOfertas;
 
     @FXML
     private TableView<Participacion> tablaParticipaciones;
@@ -75,7 +80,7 @@ public class PrincipalController extends DatabaseLinker {
     @FXML
     private MenuItem buttonVerPerfil;
 
-    Parent principalEmpresa;
+
     Scene scene;
     Usuario usuario;
     List<Participacion> participacionesUsuario;
@@ -95,9 +100,12 @@ public class PrincipalController extends DatabaseLinker {
                 usuario = inversor.getUsuario();
                 break;
         }
+        ofertaVentaUsuario = super.getDAO(OfertaVentaDAO.class).getOfertasVentaPorUsuario(usuario.getIdentificador());
+        participacionesUsuario = super.getDAO(ParticipacionDAO.class).getParticipacionesPorUsuario(usuario.getIdentificador());
+
         seleccionVentana(super.getTipoUsuario().equals(TipoUsuario.INVERSOR));
-        gestionTablaParticipaciones(participacionesUsuario, usuario.getIdentificador());
-        gestionTablaOfertas(ofertaVentaUsuario, usuario.getIdentificador());
+        gestionTablaParticipaciones(participacionesUsuario);
+        gestionTablaOfertas(ofertaVentaUsuario);
 
 
         buttonPerfil.setGraphic(Iconos.icono(FontAwesomeIcon.USERS, "2.5em"));
@@ -109,7 +117,12 @@ public class PrincipalController extends DatabaseLinker {
             Main.setScene(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT);
 
         });
+        /*
+        buttonMostrarMasParticipaciones.setOnAction(e -> Main.setScene(MMParticipacionesController.VIEW, MMParticipacionesController.WIDTH, MMParticipacionesController.HEIGHT));
+        buttonMostrarMasOfertas.setOnAction(e -> Main.setScene(MMOfertasVentaController.VIEW, MMOfertasVentaController.WIDTH, MMOfertasVentaController.HEIGHT));
+         */
     }
+
 
     public void seleccionVentana(boolean empresa){
         if(!empresa){
@@ -123,9 +136,9 @@ public class PrincipalController extends DatabaseLinker {
         }
     }
 
-    public void gestionTablaParticipaciones(List<Participacion> ofertaParticipaciones, String nombreUsuario){
+    public void gestionTablaParticipaciones(List<Participacion> ofertaParticipaciones){
         //ofertaParticipaciones = new ArrayList<>();
-        ofertaParticipaciones = super.getDAO(ParticipacionDAO.class).getParticipacionesPorUsuario(nombreUsuario);
+
         ObservableList<Participacion> participaciones = FXCollections.observableArrayList(ofertaParticipaciones);
         tablaParticipaciones.setItems(participaciones);
 
@@ -135,9 +148,9 @@ public class PrincipalController extends DatabaseLinker {
 
     }
 
-    public void gestionTablaOfertas(List<OfertaVenta> ofertaVentaList, String nombreUsuario){
+    public void gestionTablaOfertas(List<OfertaVenta> ofertaVentaList){
         //ofertaVentaList = new ArrayList<>();
-        ofertaVentaList = super.getDAO(OfertaVentaDAO.class).getOfertasVentaPorUsuario(nombreUsuario);
+
         ObservableList<OfertaVenta> ofertasVenta = FXCollections.observableArrayList(ofertaVentaList);
         tablaOfertasVenta.setItems(ofertasVenta);
 

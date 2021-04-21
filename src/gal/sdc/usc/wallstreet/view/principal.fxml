@@ -14,7 +14,6 @@
     </stylesheets>
     <children>
         <Line endX="635.0" layoutX="115.0" layoutY="89.0" startX="-115.0" />
-        <Line endX="-17.5" endY="293.5" layoutX="382.0" layoutY="142.0" startX="-17.5" startY="-51.5" />
         <Line endX="635.5" layoutX="115.0" layoutY="435.0" startX="-115.0" />
 
         <TableView fx:id="tablaOfertasVenta" layoutX="400.0" layoutY="152.0" prefHeight="200.0" prefWidth="325.0">
@@ -64,9 +63,7 @@
             <font>
                 <Font size="18.0" />
             </font></JFXButton>
-        <JFXButton layoutX="115.0" layoutY="383.0" mnemonicParsing="false" text="Mostrar más">
-        </JFXButton>
-        <JFXButton layoutX="534.0" layoutY="383.0" mnemonicParsing="false" text="Mostrar más">
+        <JFXButton fx:id="buttonMostrarMasParticipaciones" layoutX="334.0" layoutY="387.0" mnemonicParsing="false" text="Mostrar más">
         </JFXButton>
       <MenuBar layoutX="550.0" layoutY="2.0">
         <menus>
@@ -80,7 +77,5 @@
           </Menu>
         </menus>
       </MenuBar>
-
-
     </children>
 </AnchorPane>
