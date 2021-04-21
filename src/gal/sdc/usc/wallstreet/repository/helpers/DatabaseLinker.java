@@ -172,4 +172,41 @@ public class DatabaseLinker {
         DatabaseLinker.inversor = null;
         DatabaseLinker.empresa = null;
     }
+
+    /**
+     * Inicia una nueva transacción, deshabilitando el autocommit
+     */
+    public void iniciarTransaccion() {
+        try {
+            DatabaseLinker.conexion.setAutoCommit(false);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Ejecuta una transacción pendiente
+     * @return true cuando se ejecuta correctamente, false en caso contrario (rollback)
+     */
+    public boolean ejecutarTransaccion() {
+        try {
+            // Solo ejecutar si es commit manual
+            if (!DatabaseLinker.conexion.getAutoCommit()) {
+                DatabaseLinker.conexion.commit();
+                DatabaseLinker.conexion.setAutoCommit(true);
+
+                return true;
+            }
+        } catch (SQLException e) {
+            try {
+                System.err.println(e.getMessage());
+                DatabaseLinker.conexion.rollback();
+                DatabaseLinker.conexion.setAutoCommit(true);
+            } catch (SQLException e2) {
+                System.err.println(e2.getMessage());
+            }
+        }
+
+        return false;
+    }
 }

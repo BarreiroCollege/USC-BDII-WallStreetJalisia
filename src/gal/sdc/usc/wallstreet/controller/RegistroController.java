@@ -10,13 +10,15 @@ import com.jfoenix.validation.RequiredFieldValidator;
 import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Inversor;
+import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
 import gal.sdc.usc.wallstreet.repository.InversorDAO;
+import gal.sdc.usc.wallstreet.repository.SuperUsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.ErrorValidator;
-import gal.sdc.usc.wallstreet.util.PasswordStorage;
+import gal.sdc.usc.wallstreet.util.auth.PasswordStorage;
 import gal.sdc.usc.wallstreet.util.Validadores;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -29,6 +31,7 @@ public class RegistroController extends DatabaseLinker implements Initializable 
     public static final String VIEW = "registro";
     public static final Integer HEIGHT = 700;
     public static final Integer WIDTH = 600;
+    public static final String TITULO = "Registro";
 
     @FXML
     private JFXTextField txtUsuario;
@@ -125,7 +128,7 @@ public class RegistroController extends DatabaseLinker implements Initializable 
             }
         });
 
-        btnAcceso.setOnAction(e -> Main.setScene(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT));
+        btnAcceso.setOnAction(e -> Main.ventana(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT, AccesoController.TITULO));
         btnRegistro.setOnAction(this::registrar);
 
         this.usuarioNoValido = Validadores.personalizado("Sólo puede tener numeros y letras");
@@ -149,7 +152,7 @@ public class RegistroController extends DatabaseLinker implements Initializable 
             return;
         }
 
-        if (super.getDAO(UsuarioDAO.class).seleccionar(txtUsuario.getText().toLowerCase()) != null) {
+        if (super.getDAO(SuperUsuarioDAO.class).seleccionar(txtUsuario.getText().toLowerCase()) != null) {
             if (txtUsuario.getValidators().size() == 1) txtUsuario.getValidators().add(usuarioYaExiste);
             txtUsuario.validate();
             return;
@@ -162,7 +165,11 @@ public class RegistroController extends DatabaseLinker implements Initializable 
         }
 
         try {
-            Usuario usuario = new Usuario.Builder(txtUsuario.getText().toLowerCase())
+            SuperUsuario superUsuario = new SuperUsuario.Builder()
+                    .withIdentificador(txtUsuario.getText().toLowerCase())
+                    .build();
+
+            Usuario usuario = new Usuario.Builder(superUsuario)
                     .withClave(PasswordStorage.crearHash(txtClave.getText()))
                     .withDireccion(txtDireccion.getText())
                     .withCp(txtCp.getText())
@@ -187,7 +194,7 @@ public class RegistroController extends DatabaseLinker implements Initializable 
             }
 
             if (ok) {
-                Main.setScene(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT);
+                Main.ventana(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT, AccesoController.TITULO);
                 Main.mensaje("Se ha creado la cuenta con éxito", 5);
             } else {
                 Main.mensaje("Error creando la cuenta");

@@ -1,4 +1,4 @@
-package gal.sdc.usc.wallstreet.util;
+package gal.sdc.usc.wallstreet.util.auth;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
