@@ -2,6 +2,7 @@ package gal.sdc.usc.wallstreet.repository;
 
 import gal.sdc.usc.wallstreet.model.OfertaVenta;
 import gal.sdc.usc.wallstreet.model.Participacion;
+import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.repository.helpers.DAO;
 import gal.sdc.usc.wallstreet.util.Mapeador;
 

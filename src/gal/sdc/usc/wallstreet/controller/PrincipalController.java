@@ -100,8 +100,8 @@ public class PrincipalController extends DatabaseLinker {
                 usuario = inversor.getUsuario();
                 break;
         }
-        ofertaVentaUsuario = super.getDAO(OfertaVentaDAO.class).getOfertasVentaPorUsuario(usuario.getIdentificador());
-        participacionesUsuario = super.getDAO(ParticipacionDAO.class).getParticipacionesPorUsuario(usuario.getIdentificador());
+        ofertaVentaUsuario = super.getDAO(OfertaVentaDAO.class).getOfertasVentaPorUsuario(usuario.getIdentificador().getIdentificador());
+        participacionesUsuario = super.getDAO(ParticipacionDAO.class).getParticipacionesPorUsuario(usuario.getIdentificador().getIdentificador());
 
         seleccionVentana(super.getTipoUsuario().equals(TipoUsuario.INVERSOR));
         gestionTablaParticipaciones(participacionesUsuario);
@@ -114,13 +114,9 @@ public class PrincipalController extends DatabaseLinker {
         buttonCerrarSesion.setGraphic(Iconos.icono(FontAwesomeIcon.POWER_OFF));
 
         buttonCerrarSesion.setOnAction(event -> {
-            Main.setScene(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT);
+            Main.ventana(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT, AccesoController.TITULO);
 
         });
-        /*
-        buttonMostrarMasParticipaciones.setOnAction(e -> Main.setScene(MMParticipacionesController.VIEW, MMParticipacionesController.WIDTH, MMParticipacionesController.HEIGHT));
-        buttonMostrarMasOfertas.setOnAction(e -> Main.setScene(MMOfertasVentaController.VIEW, MMOfertasVentaController.WIDTH, MMOfertasVentaController.HEIGHT));
-         */
     }
 
 
