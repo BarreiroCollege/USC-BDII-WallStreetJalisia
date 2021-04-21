@@ -34,7 +34,7 @@ create table usuario
     clave           varchar(128)                   not null,
     direccion       varchar(64),
     cp              varchar(10),
-    localidad       varchar(16),
+    localidad       varchar(32),
     telefono        integer,
     saldo           double precision default 0     not null,
     saldo_bloqueado double precision default 0     not null,
