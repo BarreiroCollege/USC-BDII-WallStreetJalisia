@@ -10,7 +10,7 @@ import java.util.Objects;
 @Tabla("usuario")
 public class Usuario extends Entidad {
     @Columna(value = "identificador", pk = true)
-    private SuperUsuario identificador;
+    private SuperUsuario superUsuario;
 
     @Columna("clave")
     private String clave;
@@ -51,12 +51,12 @@ public class Usuario extends Entidad {
     private Usuario() {
     }
 
-    public SuperUsuario getIdentificador() {
-        return identificador;
+    public SuperUsuario getSuperUsuario() {
+        return superUsuario;
     }
 
-    public void setIdentificador(SuperUsuario identificador) {
-        this.identificador = identificador;
+    public void setSuperUsuario(SuperUsuario superUsuario) {
+        this.superUsuario = superUsuario;
     }
 
     public String getClave() {
@@ -164,18 +164,18 @@ public class Usuario extends Entidad {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Usuario usuario = (Usuario) o;
-        return identificador.equals(usuario.identificador);
+        return superUsuario.equals(usuario.superUsuario);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(identificador);
+        return Objects.hash(superUsuario);
     }
 
     @Override
     public String toString() {
         return "Usuario{" +
-                "identificador='" + identificador + '\'' +
+                "superUsuario='" + superUsuario + '\'' +
                 ", clave='" + clave + '\'' +
                 ", direccion='" + direccion + '\'' +
                 ", cp='" + cp + '\'' +
@@ -197,12 +197,12 @@ public class Usuario extends Entidad {
         public Builder() {
         }
 
-        public Builder(SuperUsuario identificador) {
-            usuario.identificador = identificador;
+        public Builder(SuperUsuario superUsuario) {
+            usuario.superUsuario = superUsuario;
         }
 
-        public Builder withIdentificador(SuperUsuario identificador) {
-            usuario.identificador = identificador;
+        public Builder withSuperUsuario(SuperUsuario superUsuario) {
+            usuario.superUsuario = superUsuario;
             return this;
         }
 
