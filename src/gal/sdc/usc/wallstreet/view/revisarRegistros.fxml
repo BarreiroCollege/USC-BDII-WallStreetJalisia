@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.RevisarRegistros">
+   <children>
+      <Button fx:id="btn_aceptar" layoutX="117.0" layoutY="325.0" mnemonicParsing="false" text="Aceptar" />
+      <Button fx:id="btn_rechazar" layoutX="410.0" layoutY="325.0" mnemonicParsing="false" text="Rechazar" />
+      <Button fx:id="btn_siguiente" layoutX="500.0" layoutY="52.0" mnemonicParsing="false" onAction="#siguiente" text="Siguiente" />
+      <Button fx:id="btn_anterior" layoutX="65.0" layoutY="52.0" mnemonicParsing="false" onAction="#anterior" text="Anterior" />
+      <Label layoutX="260.0" layoutY="56.0" text="Solicitudes" />
+      <Label layoutX="117.0" layoutY="111.0" text="ID:" />
+      <Label layoutX="111.0" layoutY="144.0" text="Dirección:" />
+      <Label layoutX="118.0" layoutY="176.0" text="CP:" />
+      <Label layoutX="112.0" layoutY="207.0" text="Localidad:" />
+      <Label layoutX="108.0" layoutY="246.0" text="Teléfono:" />
+      <Label fx:id="txt_id" layoutX="191.0" layoutY="111.0" text="id" />
+      <Label fx:id="txt_direccion" layoutX="182.0" layoutY="144.0" text="Label" />
+      <Label fx:id="txt_cp" layoutX="177.0" layoutY="176.0" text="Label" />
+      <Label fx:id="txt_localidad" layoutX="182.0" layoutY="207.0" text="Label" />
+      <Label fx:id="txt_tlf" layoutX="182.0" layoutY="246.0" text="Label" />
+      <Label fx:id="txt_subusuario" layoutX="382.0" layoutY="111.0" text="Empresa/Inversor" />
+      <Label fx:id="txt_titulo_id_subclase" layoutX="359.0" layoutY="153.0" text="DNI:" />
+      <Label layoutX="359.0" layoutY="199.0" text="Nombre:" />
+      <Label layoutX="356.0" layoutY="255.0" text="Apellidos:" />
+      <Label fx:id="txt_id_subclase" layoutX="442.0" layoutY="153.0" text="dni" />
+      <Label fx:id="txt_nombre" layoutX="437.0" layoutY="199.0" text="nombre" />
+      <Label fx:id="txt_apellidos" layoutX="434.0" layoutY="255.0" text="apellidos" />
+   </children>
+</AnchorPane>

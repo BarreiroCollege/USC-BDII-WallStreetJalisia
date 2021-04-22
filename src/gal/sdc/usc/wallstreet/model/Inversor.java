@@ -7,7 +7,7 @@ import gal.sdc.usc.wallstreet.model.ddl.Tabla;
 import java.util.Objects;
 
 @Tabla("inversor")
-public class Inversor extends Entidad {
+public class Inversor extends Usuario {
     @Columna(value = "usuario", pk = true)
     private Usuario usuario;
 

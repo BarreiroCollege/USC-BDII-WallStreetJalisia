@@ -1,7 +1,9 @@
 package gal.sdc.usc.wallstreet.repository;
 
 import gal.sdc.usc.wallstreet.model.Empresa;
+import gal.sdc.usc.wallstreet.model.Inversor;
 import gal.sdc.usc.wallstreet.model.OfertaVenta;
+import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.helpers.DAO;
 import gal.sdc.usc.wallstreet.util.Mapeador;
 
@@ -32,5 +34,31 @@ public class EmpresaDAO extends DAO<Empresa> {
         }
 
         return empresas;
+    }
+
+    /***
+     *
+     * @return Devuelve una lista con los datos de todas aquellos empresas con solicitudes de registro pendientes
+     */
+    public List<Usuario> getEmpresasPendientes() {
+        List<Usuario> pendientes = new ArrayList<>();
+
+        try (PreparedStatement ps = super.conexion.prepareStatement(
+                "SELECT * " +
+                        "FROM usuario u JOIN identificador i ON u.identificador = i.usuario " +
+                        "WHERE u.activo is false"
+        )) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                Usuario usuario = Mapeador.map(rs, Usuario.class);
+                Empresa empresa = new Empresa.Builder().withUsuario(usuario).withCif(rs.getString("cif"))
+                        .withNombre(rs.getString("nombre")).build();
+                pendientes.add(empresa);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return pendientes;
     }
 }

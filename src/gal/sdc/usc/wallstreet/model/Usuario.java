@@ -48,7 +48,7 @@ public class Usuario extends Entidad {
     @Columna("lider")
     private Boolean lider = false;
 
-    private Usuario() {
+    protected Usuario() {
     }
 
     public SuperUsuario getSuperUsuario() {

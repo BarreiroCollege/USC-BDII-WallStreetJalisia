@@ -38,7 +38,23 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
         return ofertas;
     }
 
+    public Integer getNumOfertasPendientes(){
+        Integer ofertasPendientes = null;
+        try (PreparedStatement ps = conexion.prepareStatement(
+                "SELECT count(*) as pendientes " +
+                        "FROM oferta_venta " +
+                        "WHERE confirmado is false"
+        )) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                ofertasPendientes = rs.getInt("pendientes");
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
 
+        return ofertasPendientes;
+    }
 }
 
 

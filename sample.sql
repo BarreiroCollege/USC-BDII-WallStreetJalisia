@@ -38,7 +38,7 @@ values ('marcos', '47157847C', 'Marcos', 'Vázquez García');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, activo, baja, otp, sociedad, lider)
 values ('sara', 'sha1:64000:18:7Vjvu9VX0GGKPBVgQ/LuhGiKAw8dtY6p:7qV7nXM1IIn5oA49kmN0x/Wt', 'Calle del Palomar, 31', '15701', 'Santiago de Compostela', 615237989, 513.15, 0.0, true, false,'OJEAZFGLPKOAOHTM5ILNRTTQOL6DS6YP','urrs', false);
 insert into inversor (usuario, dni, nombre, apellidos)
-values ('sara', '20416592K', 'Sara', 'Sousa Álvarez')
+values ('sara', '20416592K', 'Sara', 'Sousa Álvarez');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, activo, baja, otp, sociedad, lider)
 values ('eva', 'sha1:64000:18:fRyIy2KpkOhXIkFl9+OCu6BPq32xY2+Y:d5j3M7amOsYqisxLDk6VbSL3', 'Calle del mar, 78', '15701', 'Santiago de Compostela', 678910344, 1485.30, 0.0, true, false,'SEBID4GBR4WBHL5TMS2KYQRZ735UECJS','hampa', true);
 insert into inversor (usuario, dni, nombre, apellidos)

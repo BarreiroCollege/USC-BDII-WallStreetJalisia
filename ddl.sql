@@ -201,4 +201,3 @@ create table propuesta_compra
 alter table propuesta_compra
     owner to postgres;
 
-

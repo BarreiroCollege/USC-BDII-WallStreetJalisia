@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="gal.sdc.usc.wallstreet.view.Regulador"
-            prefHeight="400.0" prefWidth="600.0">
-
+<?import com.jfoenix.controls.JFXButton?>
+<AnchorPane prefHeight="400.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.ReguladorController">
+   <children>
+      <JFXButton fx:id="btn_actualizar_datos" layoutX="215.0" layoutY="251.0" mnemonicParsing="false" onAction="#actualizarDatos" text="Actualizar avisos" textAlignment="CENTER" />
+      <Label layoutX="62.0" layoutY="124.0" text="Solicitudes de registro:" />
+      <Label layoutX="77.0" layoutY="160.0" text="Solicitudes de baja:" />
+      <Label layoutX="83.0" layoutY="201.0" text="Ofertas de venta:" />
+      <Label layoutX="240.0" layoutY="82.0" text="Pendiente" />
+      <Label fx:id="txt_solicitudes_registro" layoutX="244.0" layoutY="124.0" text="numReg" />
+      <Label fx:id="txt_solicitudes_baja" layoutX="240.0" layoutY="160.0" text="numBajas" />
+      <Label fx:id="txt_solicitudes_oferta" layoutX="235.0" layoutY="201.0" text="numOfertas" />
+      <Label layoutX="85.0" layoutY="334.0" text="Saldo:" />
+      <Label fx:id="txt_saldo" layoutX="132.0" layoutY="334.0" text="saldo" />
+      <JFXButton fx:id="btn_ver_registros" layoutX="353.0" layoutY="120.0" mnemonicParsing="false" onAction="#revisarRegistros" text="Revisar registros" />
+      <JFXButton fx:id="btn_ver_bajas" layoutX="362.0" layoutY="156.0" mnemonicParsing="false" onAction="#revisarBajas" text="Revisar bajas" />
+      <JFXButton fx:id="btn_ver_ofertas" layoutX="333.0" layoutY="197.0" mnemonicParsing="false" onAction="#revisarOfertas" text="Revisar ofertas de venta" />
+   </children>
 </AnchorPane>
