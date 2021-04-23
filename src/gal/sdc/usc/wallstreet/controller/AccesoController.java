@@ -127,7 +127,7 @@ public class AccesoController extends DatabaseLinker implements Initializable {
             super.setEmpresa(empresa);
         }
         
-        // TODO: Usuario correcto, abrir ventana principal
+        Main.ventana(PrincipalController.VIEW, PrincipalController.WIDTH, PrincipalController.HEIGHT, PrincipalController.TITULO);
     }
 
     @FXML

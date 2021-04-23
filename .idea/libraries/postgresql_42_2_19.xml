@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="postgresql-42.2.19">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/postgresql-42.2.19.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jfxrt.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/fontawesomefx-8.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-codec-1.15.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jfoenix-8.0.10.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -28,6 +28,7 @@ public class PrincipalController extends DatabaseLinker {
     public static final String VIEW = "principal";
     public static final Integer HEIGHT = 551;
     public static final Integer WIDTH = 730;
+    public static final String TITULO = "Ventana principal";
 
     @FXML
     private JFXButton buttonPerfilUsuario;
@@ -115,7 +116,6 @@ public class PrincipalController extends DatabaseLinker {
 
         buttonCerrarSesion.setOnAction(event -> {
             Main.ventana(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT, AccesoController.TITULO);
-
         });
     }
 
