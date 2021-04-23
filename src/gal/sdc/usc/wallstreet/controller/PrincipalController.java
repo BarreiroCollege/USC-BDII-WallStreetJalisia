@@ -27,7 +27,7 @@ import java.util.List;
 public class PrincipalController extends DatabaseLinker {
     public static final String VIEW = "principal";
     public static final Integer HEIGHT = 551;
-    public static final Integer WIDTH = 730;
+    public static final Integer WIDTH = 768;
     public static final String TITULO = "Ventana principal";
 
     @FXML
@@ -42,7 +42,7 @@ public class PrincipalController extends DatabaseLinker {
     private JFXButton buttonVender;
 
     @FXML
-    private JFXButton buttonMostrarMasParticipaciones;
+    private JFXButton buttonMostrarMas;
 
     @FXML
     private JFXButton buttonMostrarMasOfertas;
@@ -117,6 +117,10 @@ public class PrincipalController extends DatabaseLinker {
         buttonCerrarSesion.setOnAction(event -> {
             Main.ventana(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT, AccesoController.TITULO);
         });
+
+        buttonMostrarMas.setOnAction(event -> {
+            // TODO: mostrar la ventana con las tablas más completas
+        });
     }
 
 
@@ -135,19 +139,18 @@ public class PrincipalController extends DatabaseLinker {
     public void gestionTablaParticipaciones(List<Participacion> ofertaParticipaciones){
         //ofertaParticipaciones = new ArrayList<>();
 
-        ObservableList<Participacion> participaciones = FXCollections.observableArrayList(ofertaParticipaciones);
+        ObservableList<Participacion> participaciones = FXCollections.observableArrayList(ofertaParticipaciones.subList(0, ofertaParticipaciones.size() >= 6 ? 6 : ofertaParticipaciones.size()));
         tablaParticipaciones.setItems(participaciones);
 
        //Declaramos el nombre de las columnas
         colEmpresa.setCellValueFactory(cellData -> Bindings.createObjectBinding(() -> cellData.getValue().getEmpresa().getNombre()));
         colCantidad.setCellValueFactory(new PropertyValueFactory<Participacion, Integer>("cantidad"));
-
     }
 
     public void gestionTablaOfertas(List<OfertaVenta> ofertaVentaList){
         //ofertaVentaList = new ArrayList<>();
 
-        ObservableList<OfertaVenta> ofertasVenta = FXCollections.observableArrayList(ofertaVentaList);
+        ObservableList<OfertaVenta> ofertasVenta = FXCollections.observableArrayList(ofertaVentaList.subList(0, ofertaVentaList.size() >= 6 ? 6 : ofertaVentaList.size()));
         tablaOfertasVenta.setItems(ofertasVenta);
 
         //Declaramos el nombre de las columnas
