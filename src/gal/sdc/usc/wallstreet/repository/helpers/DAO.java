@@ -284,7 +284,11 @@ public abstract class DAO<E extends Entidad> {
         Iterator<Map.Entry<String, Object>> itMapKey = paresPk.entrySet().iterator();
         while (itMapKey.hasNext()) {
             Map.Entry<String, Object> entry = itMapKey.next();
-            SQL.append(entry.getKey()).append("=?");
+            if (entry.getValue() == null) {
+                SQL.append(entry.getKey()).append(" is ?");
+            } else {
+                SQL.append(entry.getKey()).append("=?");
+            }
             if (itMapKey.hasNext()) {
                 SQL.append(" AND ");
             }

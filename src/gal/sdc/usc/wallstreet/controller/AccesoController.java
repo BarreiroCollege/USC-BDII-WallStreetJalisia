@@ -121,10 +121,10 @@ public class AccesoController extends DatabaseLinker implements Initializable {
         Inversor inversor = super.getDAO(InversorDAO.class).seleccionar(usuario);
 
         if (inversor != null) {
-            super.setInversor(inversor);
+            super.setUsuario(inversor);
         } else {
             Empresa empresa = super.getDAO(EmpresaDAO.class).seleccionar(usuario);
-            super.setEmpresa(empresa);
+            super.setUsuario(empresa);
         }
         
         // TODO: Usuario correcto, abrir ventana principal

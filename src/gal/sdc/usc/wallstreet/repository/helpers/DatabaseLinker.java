@@ -1,10 +1,10 @@
 package gal.sdc.usc.wallstreet.repository.helpers;
 
-import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Inversor;
-import gal.sdc.usc.wallstreet.util.TipoUsuario;
+import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.model.ddl.Entidad;
 import gal.sdc.usc.wallstreet.util.PackageScanner;
+import gal.sdc.usc.wallstreet.util.TipoUsuario;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -25,8 +25,7 @@ public class DatabaseLinker {
     // Lista de DAOs disponibles
     private static HashMap<Class<? extends DAO<? extends Entidad>>, DAO<? extends Entidad>> daos;
 
-    private static Inversor inversor;
-    private static Empresa empresa;
+    private static Usuario usuario;
 
     public static boolean DEBUG = false;
 
@@ -120,7 +119,7 @@ public class DatabaseLinker {
      * @return true cuando hay un usuario dentro
      */
     public boolean haySesion() {
-        return inversor != null || empresa != null;
+        return usuario != null;
     }
 
     /**
@@ -128,49 +127,30 @@ public class DatabaseLinker {
      * @return INVERSOR cuando es inversor, EMPRESA si es empresa, null si no hay sesión
      */
     public TipoUsuario getTipoUsuario() {
-        return haySesion() ? (DatabaseLinker.inversor != null ? TipoUsuario.INVERSOR : TipoUsuario.EMPRESA) : null;
+        return haySesion() ? (usuario instanceof Inversor ? TipoUsuario.INVERSOR : TipoUsuario.EMPRESA) : null;
     }
 
     /**
-     * Devuelve el usuario inversor si hay sesión
-     * @return Inversor
+     * Devuelve el usuario si hay sesión
+     * @return Usuario
      */
-    public Inversor getInversor() {
-        return DatabaseLinker.inversor;
+    public Usuario getUsuario() {
+        return DatabaseLinker.usuario;
     }
 
     /**
-     * Devuelve el usuario empresa si hay sesión
-     * @return Empresa
+     * Inicia sesión
+     * @param usuario usuario
      */
-    public Empresa getEmpresa() {
-        return DatabaseLinker.empresa;
-    }
-
-    /**
-     * Inicia sesión como inversor
-     * @param inversor usuario
-     */
-    public void setInversor(Inversor inversor) {
-        DatabaseLinker.inversor = inversor;
-        DatabaseLinker.empresa = null;
-    }
-
-    /**
-     * Inicia sesión como inversor
-     * @param empresa usuario
-     */
-    public void setEmpresa(Empresa empresa) {
-        DatabaseLinker.inversor = null;
-        DatabaseLinker.empresa = empresa;
+    public void setUsuario(Usuario usuario) {
+        DatabaseLinker.usuario = usuario;
     }
 
     /**
      * Cierra la sesión existente
      */
     public void cerrarSesion() {
-        DatabaseLinker.inversor = null;
-        DatabaseLinker.empresa = null;
+        DatabaseLinker.usuario = null;
     }
 
     /**

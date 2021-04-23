@@ -1,13 +1,12 @@
 package gal.sdc.usc.wallstreet.model;
 
 import gal.sdc.usc.wallstreet.model.ddl.Columna;
-import gal.sdc.usc.wallstreet.model.ddl.Entidad;
 import gal.sdc.usc.wallstreet.model.ddl.Tabla;
 
 import java.util.Objects;
 
 @Tabla("sociedad")
-public class Sociedad extends Entidad {
+public class Sociedad extends SuperUsuario {
     @Columna(value = "identificador", pk = true)
     private SuperUsuario identificador;
 
@@ -18,6 +17,10 @@ public class Sociedad extends Entidad {
     private Integer tolerancia = 0;
 
     private Sociedad() {
+    }
+
+    protected SuperUsuario getSuper() {
+        return super.getThis();
     }
 
     @Override
@@ -50,10 +53,12 @@ public class Sociedad extends Entidad {
 
         public Builder(SuperUsuario identificador) {
             sociedad.identificador = identificador;
+            sociedad.getSuper().set(identificador);
         }
 
         public Builder withIdentificador(SuperUsuario identificador) {
             sociedad.identificador = identificador;
+            sociedad.getSuper().set(identificador);
             return this;
         }
 
