@@ -2,6 +2,7 @@ package gal.sdc.usc.wallstreet.controller;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXTextField;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import gal.sdc.usc.wallstreet.model.Empresa;
@@ -21,7 +22,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import javafx.util.converter.IntegerStringConverter;
 
 import java.util.ArrayList;
@@ -34,6 +37,7 @@ public class VCompraController extends DatabaseLinker {
     public static final String VIEW = "VCompra";
     public static final Integer HEIGHT = 425;
     public static final Integer WIDTH = 760;
+    public static final String TITULO = "Compra de participaciones";
 
     @FXML
     private JFXButton btnSalir;
@@ -58,7 +62,7 @@ public class VCompraController extends DatabaseLinker {
     @FXML
     private JFXButton botonRefresh;
     @FXML
-    private JFXButton botonRefresh2;
+    private JFXSnackbar notificationBar;
 
     private Usuario usr;
     private List<Empresa> listaEmpresas;
@@ -73,7 +77,7 @@ public class VCompraController extends DatabaseLinker {
         // Recuperamos el usuario
        /* if(super.getTipoUsuario().equals(TipoUsuario.EMPRESA)) super.getEmpresa().getUsuario();
         else super.getInversor().getUsuario();*/
-        usr = getDAO(UsuarioDAO.class).getUsuario("manuel");
+        usr = getDAO(UsuarioDAO.class).getUsuario("eva");
 
         // Setup de las columnas de la tabla
         nombreCol.setCellValueFactory(new PropertyValueFactory<>("usuario"));
@@ -91,12 +95,6 @@ public class VCompraController extends DatabaseLinker {
             }
         });
 
-        // Llenamos la lista de empresas y el ComboBox
-        for (Empresa e : getDAO(EmpresaDAO.class).getEmpresas()) {
-            listaEmpresas.add(e);
-            empresaComboBox.getItems().add(e.getNombre() + " || " + e.getCif());
-        }
-
         // Formato Integer para campoNumero y Float para campoPrecio
         campoNumero.setTextFormatter(new TextFormatter<>(
                 new IntegerStringConverter(),
@@ -106,23 +104,55 @@ public class VCompraController extends DatabaseLinker {
 
         // Cuando se cambie el precio se actualizan las ofertas en base al nuevo
         campoPrecio.textProperty().addListener((observable, oldValue, newValue) -> {
-                actualizarDatosTabla(new ActionEvent());
+                actualizarDatosTabla();
         });
 
         // Cargamos saldo y preparamos botones de refresh
         botonRefresh.setGraphic(Iconos.icono(FontAwesomeIcon.REFRESH, "1em"));
-        botonRefresh2.setGraphic(Iconos.icono(FontAwesomeIcon.REFRESH, "1em"));
-        actualizarSaldo(new ActionEvent());
+
+        actualizarVentana();
     }
 
-    // Accion de compra
-    public void btnComprarEvent(ActionEvent event) {
+    // FUNCIONALIDADES //
+
+    public void actualizarSaldo() {
+        usr = getDAO(UsuarioDAO.class).getUsuario(usr.getSuperUsuario().getIdentificador());
+        campoSaldo.setText(String.valueOf(usr.getSaldo()-usr.getSaldoBloqueado()));
+    }
+
+    public void actualizarListaEmpresas(){
+        // Se carga la nueva lista
+        listaEmpresas = getDAO(EmpresaDAO.class).getEmpresas();
+        // Se limpia la comboBox y se vuelve a llenar
+        empresaComboBox.getItems().clear();
+        for (Empresa e : listaEmpresas) {
+            empresaComboBox.getItems().add(e.getNombre() + " || " + e.getCif());
+        }
+    }
+
+    public void actualizarDatosTabla() {
+        // Si falta alguno de los campos necesarios, se limpia la tabla
+        if (campoPrecio.getText().isEmpty() || empresaComboBox.getSelectionModel().getSelectedIndex() == -1) {
+            datosTabla.clear();
+            return;
+        }
+        String identificador = listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getUsuario().getSuperUsuario().getIdentificador();
+        datosTabla.setAll(getDAO(OfertaVentaDAO.class).getOfertasVenta(identificador, Float.parseFloat(campoPrecio.getText())));
+    }
+
+    public void actualizarVentana(){
+        actualizarSaldo();
+        actualizarListaEmpresas();
+        actualizarDatosTabla();
+    }
+
+    public void comprar(){
         // Si alguno de los campos necesarios está vacío, no se hace nada
         if (campoPrecio.getText().isEmpty() || campoNumero.getText().isEmpty() || empresaComboBox.getSelectionModel().getSelectedIndex() == -1)
             return;
 
         // Variables de estado
-        Float saldo;
+        float saldo;
         Integer acomprar = Integer.parseInt(campoNumero.getText());
         Integer compradas = 0;
         Venta ventaHecha;
@@ -131,8 +161,8 @@ public class VCompraController extends DatabaseLinker {
         // INICIAMOS TRANSACCION
         super.iniciarTransaccion();
         //Recojemos los datos actualizados
-        actualizarDatosTabla(new ActionEvent());
-        actualizarSaldo(new ActionEvent());
+        actualizarDatosTabla();
+        actualizarSaldo();
         saldo = Float.parseFloat(campoSaldo.getText());
 
         // Compramos de las ofertas de más baratas a más caras
@@ -154,42 +184,42 @@ public class VCompraController extends DatabaseLinker {
                     .withUsuarioCompra(usr.getSuperUsuario())
                     .build();
             getDAO(VentaDAO.class).insertar(ventaHecha);
-            getDAO(OfertaVentaDAO.class).actualizar(ventaHecha.getOfertaVenta());
+            getDAO(OfertaVentaDAO.class).actualizar(oferta);
         }
         // Actualizamos saldo y elementos gráficos
         usr.setSaldo(saldo+usr.getSaldoBloqueado());
         getDAO(UsuarioDAO.class).actualizar(usr);
-        actualizarDatosTabla(new ActionEvent());
-        actualizarSaldo(new ActionEvent());
+        actualizarDatosTabla();
+        actualizarSaldo();
 
         // Tratamos de comprometer la transacción
         if (!super.ejecutarTransaccion()) {
-            // TODO Mostramos el error al usuario
+            notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label("Compra realizada con éxito!"), Duration.seconds(3.0), null));
+        }else{
+            notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label("Compra fallida!"), Duration.seconds(3.0), null));
         }
     }
 
-    // Empresa seleccionada en comboBox
-    public void empresaSelected(ActionEvent event) {
-        actualizarDatosTabla(new ActionEvent());
-    }
+    // BOTONES //
 
-    // Carga las ofertas de venta para esa empresa de igual o menor precio
-    public void actualizarDatosTabla(ActionEvent event) {
-        if (campoPrecio.getText().isEmpty() || empresaComboBox.getSelectionModel().getSelectedIndex() == -1)
-            return;
-        String identificador = listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getUsuario().getSuperUsuario().getIdentificador();
-        datosTabla.setAll(getDAO(OfertaVentaDAO.class).getOfertasVenta(identificador, Float.parseFloat(campoPrecio.getText())));
-    }
-
-    // Carga el saldo disponible del usuario
-    public void actualizarSaldo(ActionEvent event) {
-        usr = getDAO(UsuarioDAO.class).getUsuario(usr.getSuperUsuario().getIdentificador());
-        campoSaldo.setText(String.valueOf(usr.getSaldo()-usr.getSaldoBloqueado()));
-    }
-
-    // Boton de salida
+    // Boton de salir
     public void btnSalirEvent(ActionEvent event) {
         ((Stage) btnSalir.getScene().getWindow()).close();
+    }
+
+    // Nueva empresa seleccionada
+    public void btnEmpresaEvent(ActionEvent event) {
+        actualizarDatosTabla();
+    }
+
+    // Boton de comprar
+    public void btnComprarEvent(ActionEvent event) {
+        comprar();
+    }
+
+    // Boton de refresco
+    public void btnRefreshEvent(ActionEvent event){
+        actualizarVentana();
     }
 
 
