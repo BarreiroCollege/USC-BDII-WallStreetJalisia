@@ -1,14 +1,13 @@
 package gal.sdc.usc.wallstreet.model;
 
 import gal.sdc.usc.wallstreet.model.ddl.Columna;
-import gal.sdc.usc.wallstreet.model.ddl.Entidad;
 import gal.sdc.usc.wallstreet.model.ddl.Tabla;
 import gal.sdc.usc.wallstreet.util.auth.PasswordStorage;
 
 import java.util.Objects;
 
 @Tabla("usuario")
-public class Usuario extends Entidad {
+public class Usuario extends SuperUsuario {
     @Columna(value = "identificador", pk = true)
     private SuperUsuario superUsuario;
 
@@ -48,7 +47,35 @@ public class Usuario extends Entidad {
     @Columna("lider")
     private Boolean lider = false;
 
+    // Ha de ser protected para permitir crear la jerarquía
     protected Usuario() {
+    }
+
+    protected Usuario getThis() {
+        return this;
+    }
+
+    protected SuperUsuario getSuper() {
+        return super.getThis();
+    }
+
+    // Para poner desde jerarquía
+    protected void set(Usuario usuario) {
+        this.superUsuario = usuario.superUsuario;
+        this.getSuper().set(usuario.superUsuario);
+
+        this.clave = usuario.clave;
+        this.direccion = usuario.direccion;
+        this.cp = usuario.cp;
+        this.localidad = usuario.localidad;
+        this.telefono = usuario.telefono;
+        this.saldo = usuario.saldo;
+        this.saldoBloqueado = usuario.saldoBloqueado;
+        this.activo = usuario.activo;
+        this.baja = usuario.baja;
+        this.otp = usuario.otp;
+        this.sociedad = usuario.sociedad;
+        this.lider = usuario.lider;
     }
 
     public SuperUsuario getSuperUsuario() {
@@ -199,10 +226,12 @@ public class Usuario extends Entidad {
 
         public Builder(SuperUsuario superUsuario) {
             usuario.superUsuario = superUsuario;
+            usuario.getSuper().set(superUsuario);
         }
 
         public Builder withSuperUsuario(SuperUsuario superUsuario) {
             usuario.superUsuario = superUsuario;
+            usuario.getSuper().set(superUsuario);
             return this;
         }
 

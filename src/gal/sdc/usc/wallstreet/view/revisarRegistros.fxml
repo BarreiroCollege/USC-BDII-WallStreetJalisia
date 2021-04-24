@@ -4,10 +4,10 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.RevisarRegistros">
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.RevisarRegistrosController">
    <children>
-      <Button fx:id="btn_aceptar" layoutX="117.0" layoutY="325.0" mnemonicParsing="false" text="Aceptar" />
-      <Button fx:id="btn_rechazar" layoutX="410.0" layoutY="325.0" mnemonicParsing="false" text="Rechazar" />
+      <Button fx:id="btn_aceptar" layoutX="117.0" layoutY="325.0" mnemonicParsing="false" onAction="#aceptar" text="Aceptar" />
+      <Button fx:id="btn_rechazar" layoutX="410.0" layoutY="325.0" mnemonicParsing="false" onAction="#rechazar" text="Rechazar" />
       <Button fx:id="btn_siguiente" layoutX="500.0" layoutY="52.0" mnemonicParsing="false" onAction="#siguiente" text="Siguiente" />
       <Button fx:id="btn_anterior" layoutX="65.0" layoutY="52.0" mnemonicParsing="false" onAction="#anterior" text="Anterior" />
       <Label layoutX="260.0" layoutY="56.0" text="Solicitudes" />

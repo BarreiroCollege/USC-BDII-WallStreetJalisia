@@ -40,12 +40,12 @@ public class EmpresaDAO extends DAO<Empresa> {
      *
      * @return Devuelve una lista con los datos de todas aquellos empresas con solicitudes de registro pendientes
      */
-    public List<Usuario> getEmpresasPendientes() {
+    public List<Usuario> getEmpresasRegistrosPendientes() {
         List<Usuario> pendientes = new ArrayList<>();
 
         try (PreparedStatement ps = super.conexion.prepareStatement(
                 "SELECT * " +
-                        "FROM usuario u JOIN identificador i ON u.identificador = i.usuario " +
+                        "FROM usuario u JOIN empresa e ON u.identificador = e.usuario " +
                         "WHERE u.activo is false"
         )) {
             ResultSet rs = ps.executeQuery();
@@ -60,5 +60,27 @@ public class EmpresaDAO extends DAO<Empresa> {
         }
 
         return pendientes;
+    }
+
+    public List<Usuario> getEmpresasBajasPendientes(){
+        List<Usuario> bajas = new ArrayList<>();
+
+        try (PreparedStatement ps = super.conexion.prepareStatement(
+                "SELECT * " +
+                        "FROM usuario u JOIN empresa e ON u.identificador = e.usuario " +
+                        "WHERE u.baja is true"
+        )){
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                Usuario usuario = Mapeador.map(rs, Usuario.class);
+                Empresa empresa = new Empresa.Builder().withUsuario(usuario).withCif(rs.getString("cif"))
+                        .withNombre(rs.getString("nombre")).build();
+                bajas.add(empresa);
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return bajas;
     }
 }

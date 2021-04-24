@@ -44,7 +44,7 @@ public class UsuarioDAO extends DAO<Usuario> {
     public Integer getNumInactivos(){
         Integer inactivos = null;
         try (PreparedStatement ps = super.conexion.prepareStatement(
-                "SELECT count(*) as inactivos" +
+                "SELECT count(*) as inactivos " +
                         "FROM usuario " +
                         "WHERE activo is false"
         )) {
@@ -97,6 +97,19 @@ public class UsuarioDAO extends DAO<Usuario> {
             ps.setString(2, id);
             ps.executeUpdate();
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void rechazarBaja(String id){
+        try (PreparedStatement ps = conexion.prepareStatement(
+                "UPDATE usuario " +
+                        "SET baja = ? " +
+                        "WHERE identificador is false"
+        )){
+            ps.setString(1, id);
+            ps.executeUpdate();
+        } catch (SQLException e){
             e.printStackTrace();
         }
     }

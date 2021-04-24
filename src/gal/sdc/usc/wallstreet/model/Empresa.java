@@ -1,7 +1,6 @@
 package gal.sdc.usc.wallstreet.model;
 
 import gal.sdc.usc.wallstreet.model.ddl.Columna;
-import gal.sdc.usc.wallstreet.model.ddl.Entidad;
 import gal.sdc.usc.wallstreet.model.ddl.Tabla;
 
 import java.util.Objects;
@@ -18,6 +17,10 @@ public class Empresa extends Usuario {
     private String nombre;
 
     private Empresa() {
+    }
+
+    protected Usuario getSuper() {
+        return super.getThis();
     }
 
     public Usuario getUsuario() {
@@ -70,10 +73,12 @@ public class Empresa extends Usuario {
 
         public Builder(Usuario usuario) {
             empresa.usuario = usuario;
+            empresa.getSuper().set(usuario);
         }
 
         public Builder withUsuario(Usuario usuario) {
             empresa.usuario = usuario;
+            empresa.getSuper().set(usuario);
             return this;
         }
 

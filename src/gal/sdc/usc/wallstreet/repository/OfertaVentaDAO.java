@@ -55,6 +55,25 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
 
         return ofertasPendientes;
     }
+
+    public List<OfertaVenta> getOfertasPendientes(){
+        List<OfertaVenta> ofertasPendientes = new ArrayList<>();
+
+        try (PreparedStatement ps = conexion.prepareStatement(
+                "SELECT * " +
+                        "FROM oferta_venta" +
+                        "WHERE confirmado is true"
+        )){
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                ofertasPendientes.add(Mapeador.map(rs, OfertaVenta.class));
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return ofertasPendientes;
+    }
 }
 
 
