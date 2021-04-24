@@ -14,14 +14,13 @@ import gal.sdc.usc.wallstreet.repository.InversorDAO;
 import gal.sdc.usc.wallstreet.repository.SuperUsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
+import gal.sdc.usc.wallstreet.util.Comunicador;
 import gal.sdc.usc.wallstreet.util.ErrorValidator;
-import gal.sdc.usc.wallstreet.util.auth.PasswordStorage;
 import gal.sdc.usc.wallstreet.util.Validadores;
-import javafx.event.EventHandler;
+import gal.sdc.usc.wallstreet.util.auth.PasswordStorage;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
@@ -52,13 +51,7 @@ public class AccesoController extends DatabaseLinker implements Initializable {
     @FXML
     private JFXButton btnAcceso;
 
-    private Usuario usuario;
-
     public AccesoController() {
-    }
-
-    public Usuario getUsuario() {
-        return this.usuario;
     }
 
     private void acceder() {
@@ -99,25 +92,32 @@ public class AccesoController extends DatabaseLinker implements Initializable {
             System.err.println(ex.getMessage());
         }
 
-        this.usuario = usuario;
         if (usuario.getOtp() != null) {
-            OtpController.setAccesoController(this);
+            Comunicador callback = new Comunicador() {
+                @Override
+                public Object getData() {
+                    return usuario;
+                }
+
+                @Override
+                public void onSuccess() {
+                    autenticar(usuario);
+                }
+
+                @Override
+                public void onFailure() {
+                    txtUsuario.setText("");
+                    txtClave.setText("");
+                }
+            };
+            OtpController.setComunicador(callback);
             Main.dialogo(OtpController.VIEW, OtpController.WIDTH, OtpController.HEIGHT, OtpController.TITULO);
         } else {
-            this.autenticar();
+            this.autenticar(usuario);
         }
     }
 
-    public void confirmarOtp() {
-        this.autenticar();
-    }
-
-    public void cancelarOtp() {
-        txtUsuario.setText("");
-        txtClave.setText("");
-    }
-
-    private void autenticar() {
+    private void autenticar(Usuario usuario) {
         Inversor inversor = super.getDAO(InversorDAO.class).seleccionar(usuario);
 
         if (inversor != null) {
@@ -126,8 +126,9 @@ public class AccesoController extends DatabaseLinker implements Initializable {
             Empresa empresa = super.getDAO(EmpresaDAO.class).seleccionar(usuario);
             super.setUsuario(empresa);
         }
-        
+
         // TODO: Usuario correcto, abrir ventana principal
+        Main.ventana(PerfilController.VIEW, PerfilController.WIDTH, PerfilController.HEIGHT, PerfilController.TITULO);
     }
 
     @FXML

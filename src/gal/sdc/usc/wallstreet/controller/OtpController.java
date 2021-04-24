@@ -2,7 +2,9 @@ package gal.sdc.usc.wallstreet.controller;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
+import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
+import gal.sdc.usc.wallstreet.util.Comunicador;
 import gal.sdc.usc.wallstreet.util.ErrorValidator;
 import gal.sdc.usc.wallstreet.util.Validadores;
 import gal.sdc.usc.wallstreet.util.auth.GoogleAuth;
@@ -22,10 +24,10 @@ public class OtpController extends DatabaseLinker implements Initializable {
     public static final Integer WIDTH = 500;
     public static final String TITULO = "Verificación";
 
-    private static AccesoController accesoController;
+    private static Comunicador comunicador;
 
-    public static void setAccesoController(AccesoController accesoController) {
-        OtpController.accesoController = accesoController;
+    public static void setComunicador(Comunicador comunicador) {
+        OtpController.comunicador = comunicador;
     }
 
     @FXML
@@ -54,13 +56,13 @@ public class OtpController extends DatabaseLinker implements Initializable {
         }
 
         try {
-            if (!GoogleAuth.validarCodigo(accesoController.getUsuario().getOtp(), Long.parseLong(txtOtp.getText()))) {
+            if (!GoogleAuth.validarCodigo(((Usuario) comunicador.getData()).getOtp(), Long.parseLong(txtOtp.getText()))) {
                 if (txtOtp.getValidators().size() == 0) txtOtp.getValidators().add(codigoIncorrecto);
                 txtOtp.validate();
                 return;
             }
 
-            accesoController.confirmarOtp();
+            comunicador.onSuccess();
             anchor.getScene().getWindow().hide();
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
             System.err.println(e.getMessage());
@@ -81,7 +83,8 @@ public class OtpController extends DatabaseLinker implements Initializable {
         });
 
         btnCancelar.setOnAction(event -> {
-            accesoController.cancelarOtp();
+            comunicador.onFailure();
+            comunicador = null;
             anchor.getScene().getWindow().hide();
         });
 
