@@ -61,8 +61,8 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
 
         try (PreparedStatement ps = conexion.prepareStatement(
                 "SELECT * " +
-                        "FROM oferta_venta" +
-                        "WHERE confirmado is true"
+                        "FROM oferta_venta " +
+                        "WHERE confirmado is false"
         )){
             ResultSet rs = ps.executeQuery();
             while (rs.next()){

@@ -6,11 +6,16 @@ import gal.sdc.usc.wallstreet.repository.InversorDAO;
 import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
 import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -20,27 +25,28 @@ import java.util.stream.Collectors;
 public class RevisarOfertasVentaController extends DatabaseLinker {
 
     @FXML
-    public Button btn_aceptar;
+    private Button btn_aceptar;
     @FXML
-    public Button btn_rechazar;
+    private Button btn_rechazar;
     @FXML
-    public Button btn_siguiente;
+    private Button btn_siguiente;
     @FXML
-    public Button btn_anterior;
+    private Button btn_anterior;
     @FXML
-    public Label txt_fecha;
+    private Label txt_fecha;
     @FXML
-    public Label txt_empresa;
+    private Label txt_empresa;
     @FXML
-    public Label txt_usuario;
+    private Label txt_usuario;
     @FXML
-    public Label txt_num_part;
+    private Label txt_num_part;
     @FXML
-    public Label txt_precio_venta;
+    private Label txt_precio_venta;
     @FXML
-    public Button btn_ver_empresa;
+    private Button btn_ver_empresa;
     @FXML
-    public Button btn_ver_usuario;
+    private Button btn_ver_usuario;
+
 
     public List<OfertaVenta> ofertasPendientes;
     public OfertaVenta ofertaActual;
@@ -59,34 +65,37 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
 
     public void obtenerDatos() {
         ofertasPendientes = super.getDAO(OfertaVentaDAO.class).getOfertasPendientes();
-        //TODO: ordenar
     }
 
     public void anterior() {
         ofertaActual = ofertasPendientes.get(ofertasPendientes.indexOf(ofertaActual) - 1);
         mostrarDatos();
-        //controlarVisibilidadesAnteriorPosterior();
+        controlarVisibilidadesAnteriorPosterior();
     }
 
     public void siguiente() {
         ofertaActual = ofertasPendientes.get(ofertasPendientes.indexOf(ofertaActual) + 1);
         mostrarDatos();
-        //controlarVisibilidadesAnteriorPosterior();
+        controlarVisibilidadesAnteriorPosterior();
     }
 
-//    public void aceptar() {
-//        super.getDAO(UsuarioDAO.class).aceptarUsuario(ofertaActual.getSuperUsuario().getIdentificador());
-//        //TODO: borrar usuario
-//        if (usuariosBajas.indexOf(usuarioActual) != usuariosBajas.size() - 1){
-//            siguiente();
-//            usuariosBajas.remove(usuariosBajas.get(usuariosBajas.indexOf(usuarioActual) - 1));
-//        } else if (usuariosBajas.indexOf(usuarioActual) != 0){
-//            anterior();
-//            usuariosBajas.remove(usuariosBajas.get(usuariosBajas.indexOf(usuarioActual) + 1));
-//        } else {
-//            cerrarVentana();
-//        }
-//    }
+    public void aceptar(){}
+
+    public void rechazar(){}
+
+/*    public void aceptar() {
+        super.getDAO(OfertaVentaDAO.class).aceptarOfertaVet(ofertaActual.getSuperUsuario().getIdentificador());
+        //TODO: borrar usuario
+        if (usuariosBajas.indexOf(usuarioActual) != usuariosBajas.size() - 1){
+            siguiente();
+            usuariosBajas.remove(usuariosBajas.get(usuariosBajas.indexOf(usuarioActual) - 1));
+        } else if (usuariosBajas.indexOf(usuarioActual) != 0){
+            anterior();
+            usuariosBajas.remove(usuariosBajas.get(usuariosBajas.indexOf(usuarioActual) + 1));
+        } else {
+            cerrarVentana();
+        }
+    }*/
 
     public void mostrarDatos() {
         txt_fecha.setText(ofertaActual.getFecha().toString());
@@ -107,7 +116,7 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
         opciones.add("Número de participaciones");
         opciones.add("Precio de venta");
 
-        ChoiceDialog<String> dialog = new ChoiceDialog<>();
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(opciones.get(0), opciones);
         dialog.setTitle("Orden");
         dialog.setHeaderText("¿En qué orden se deben mostrar las ofertas de venta?");
         dialog.setContentText("Elegir opción:");

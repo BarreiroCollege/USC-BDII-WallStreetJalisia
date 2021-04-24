@@ -2,6 +2,7 @@ package gal.sdc.usc.wallstreet.controller;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXSnackbar;
+import com.jfoenix.controls.JFXSnackbarLayout;
 import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.repository.*;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
@@ -13,28 +14,38 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class ReguladorController extends DatabaseLinker {
     @FXML
-    public Label txt_solicitudes_registro;
+    private Label txt_solicitudes_registro;
     @FXML
-    public Label txt_solicitudes_baja;
+    private Label txt_solicitudes_baja;
     @FXML
-    public Label txt_solicitudes_oferta;
+    private Label txt_solicitudes_oferta;
     @FXML
-    public Label txt_saldo;
+    private Label txt_saldo;
     @FXML
-    public JFXButton btn_ver_registros;
+    private JFXButton btn_ver_registros;
     @FXML
-    public JFXButton btn_ver_bajas;
+    private JFXButton btn_ver_bajas;
     @FXML
-    public JFXButton btn_ver_ofertas;
+    private JFXButton btn_ver_ofertas;
     @FXML
-    public JFXButton btn_actualizar_datos;
+    private JFXButton btn_actualizar_datos;
+    @FXML
+    private JFXButton btn_aceptar_todo_registros;
+    @FXML
+    private JFXButton btn_aceptar_todo_bajas;
+    @FXML
+    private JFXButton btn_aceptar_todo_ofertas;
 
     private final String error = "error";
+    private static JFXSnackbar snackbar;
+
 
     @FXML
     public void initialize() {
@@ -43,28 +54,76 @@ public class ReguladorController extends DatabaseLinker {
     }
 
     public void actualizarDatos() {
-        // Consultas en la base de datos
+        actualizarRegistrosPendientes();
+        actualizarBajasPendientes();
+        actualizarOfertasPendientes();
+        actualizarSaldo();
+    }
+
+    public void actualizarRegistrosPendientes(){
         // Número de usuarios que han solicitado registrarse y están pendientes de ser revisados
         Integer registrosPendientes = super.getDAO(UsuarioDAO.class).getNumInactivos();
-        // Número de usuarios que han solicitado darse de baja y están pendientes de ser revisados
-        Integer bajasPendientes = super.getDAO(UsuarioDAO.class).getNumSolicitudesBaja();
-        // Número de ofertas de venta que no han sido aprobadas
-        Integer ofertasPendientes = super.getDAO(OfertaVentaDAO.class).getNumOfertasPendientes();
-
         // Se muestra dicha información si no ha habido un error
         txt_solicitudes_registro.setText(registrosPendientes == null ? error : registrosPendientes.toString());
+        // Se muestran los botones de revisión y aceptar si no ha habido un error y hay registros pendientes
+        btn_ver_registros.setVisible(registrosPendientes != null && !registrosPendientes.equals(0));
+        btn_aceptar_todo_registros.setVisible(registrosPendientes != null && !registrosPendientes.equals(0));
+    }
+
+    public void actualizarBajasPendientes(){
+        // Número de usuarios que han solicitado darse de baja y están pendientes de ser revisados
+        Integer bajasPendientes = super.getDAO(UsuarioDAO.class).getNumSolicitudesBaja();
+        // Se muestra dicha información si no ha habido un error
         txt_solicitudes_baja.setText(bajasPendientes == null ? error : bajasPendientes.toString());
-        txt_solicitudes_oferta.setText(ofertasPendientes == null ? error : ofertasPendientes.toString());
-
-        btn_ver_registros.setVisible(registrosPendientes != null && !registrosPendientes.equals(10));
+        // Se muestran los botones de revisión y aceptar si no ha habido un error y hay bajas pendientes
         btn_ver_bajas.setVisible(bajasPendientes != null && !bajasPendientes.equals(0));
-        btn_ver_ofertas.setVisible(ofertasPendientes != null && !ofertasPendientes.equals(0));
+        btn_aceptar_todo_bajas.setVisible(bajasPendientes != null && !bajasPendientes.equals(0));
+    }
 
-        actualizarSaldo();
+    public void actualizarOfertasPendientes(){
+        // Número de ofertas de venta que no han sido aprobadas
+        Integer ofertasPendientes = super.getDAO(OfertaVentaDAO.class).getNumOfertasPendientes();
+        // Se muestra dicha información si no ha habido un error
+        txt_solicitudes_oferta.setText(ofertasPendientes == null ? error : ofertasPendientes.toString());
+        // Se muestran los botones de revisión y aceptar si no ha habido un error y hay ofertas pendientes
+        btn_ver_ofertas.setVisible(ofertasPendientes != null && !ofertasPendientes.equals(0));
+        btn_aceptar_todo_ofertas.setVisible(ofertasPendientes != null && !ofertasPendientes.equals(0));
     }
 
     public void actualizarSaldo() {
 
+    }
+
+    public void aceptarTodoRegistros(){
+        //TODO: transacción?
+        //super.iniciarTransaccion();
+        super.getDAO(UsuarioDAO.class).aceptarUsuariosTodos();
+        //super.ejecutarTransaccion();
+        actualizarRegistrosPendientes();
+    }
+
+    public void aceptarTodoBajas(){
+        actualizarBajasPendientes();
+    }
+
+/*    public void aceptarTodoBajas(){
+        super.iniciarTransaccion();
+        Boolean sinRechazos = super.getDAO(UsuarioDAO.class).aceptarBajasTodas(
+                super.getDAO(EmpresaDAO.class).getEmpresasBajasPendientes(),
+                super.getDAO(InversorDAO.class).getInversoresBajasPendientes()
+        );
+        if (super.ejecutarTransaccion()){
+            if (Boolean.FALSE.equals(sinRechazos)) {
+                mensaje("Las bajas de cuentas con participaciones se han rechazado.", 5);
+            }
+            actualizarDatos();
+        } else  {
+            mensaje("Error en la gestión de bajas", 5);
+        }
+    }*/
+
+    public void aceptarTodoOfertas(){
+        actualizarOfertasPendientes();
     }
 
     public void mostrarRevisarRegistros() {
@@ -74,13 +133,60 @@ public class ReguladorController extends DatabaseLinker {
             stage.setTitle("Peticiones de registro");
             stage.setResizable(false);
             stage.setScene(new Scene(root, 600, 400));
+            // La ventana del regulador es la ventana padre. Queda visible, pero desactivada.
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(btn_aceptar_todo_bajas.getScene().getWindow());
+            stage.setOnCloseRequest(event -> actualizarRegistrosPendientes());
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void mostrarRevisarBajas(){}
+    public void mostrarRevisarBajas(){
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("../view/revisarBajas.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Peticiones de baja");
+            stage.setResizable(false);
+            stage.setScene(new Scene(root, 600, 400));
+            // La ventana del regulador es la ventana padre. Queda visible, pero desactivada.
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(btn_aceptar_todo_bajas.getScene().getWindow());
+            stage.setOnCloseRequest(event -> actualizarBajasPendientes());
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-    public void mostrarRevisarOfertasVenta(){}
+    public void mostrarRevisarOfertasVenta(){
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("../view/revisarOfertasVenta.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Ofertas de venta no confirmadas");
+            stage.setResizable(false);
+            stage.setScene(new Scene(root, 550, 350));
+            // La ventana del regulador es la ventana padre. Queda visible, pero desactivada.
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(btn_aceptar_todo_bajas.getScene().getWindow());
+            stage.setOnCloseRequest(event -> actualizarOfertasPendientes());
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void mensaje(String mensaje, Integer duracion) {
+        mensaje(new JFXSnackbarLayout(mensaje), duracion);
+    }
+
+    private static void mensaje(JFXSnackbarLayout layout, Integer duracion) {
+        JFXSnackbarLayout finalLayout = new JFXSnackbarLayout(layout.getToast(), "Cerrar", e -> snackbar.close());
+        if (duracion != null) {
+            snackbar.enqueue(new JFXSnackbar.SnackbarEvent(finalLayout, Duration.seconds(duracion)));
+        } else {
+            snackbar.enqueue(new JFXSnackbar.SnackbarEvent(finalLayout));
+        }
+    }
 }

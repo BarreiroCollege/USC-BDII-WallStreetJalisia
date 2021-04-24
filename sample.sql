@@ -3,6 +3,8 @@ insert into superusuario(identificador) values('marcos');
 insert into superusuario(identificador) values('sara');
 insert into superusuario(identificador) values('eva');
 insert into superusuario(identificador) values('pepe');
+insert into superusuario(identificador) values('alex');
+insert into superusuario(identificador) values('sherlock');
 
 insert into superusuario(identificador) values('teceric');
 insert into superusuario(identificador) values('garcables');
@@ -47,7 +49,14 @@ insert into usuario (identificador, clave, direccion, cp, localidad, telefono, s
 values ('pepe', 'sha1:64000:18:fRyIy2KpkOhXIkFl9+OCu6BPq32xY2+Y:d5j3M7amOsYqisxLDk6VbSL3', 'Calle del mar, 78', '15701', 'Santiago de Compostela', 678910344, 1485.30, 0.0, true, false,'U4NREHH3F4LJONAIBGOD3YT66CHVZFKR','urrs', true);
 insert into inversor (usuario, dni, nombre, apellidos)
 values ('pepe', '10024875E', 'Eva', 'Doural Méndez');
-
+insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, activo, baja, otp, sociedad, lider)
+values ('alex', 'sha1:64000:18:X3VP9nH9e1I22k867DfORqwyZbkAcbGc:auveQ6rmVBCsYT/tsEFaB8d7', 'Gran Vía, 15', '15701', 'Santiago de Compostela', 648512326, 0.0, 0.0, false, false, null, null, false);
+insert into inversor (usuario, dni, nombre, apellidos)
+values ('alex', '95214724B', 'Álex', 'Castro Pérez');
+insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, activo, baja, otp, sociedad, lider)
+values ('sherlock', 'sha1:64000:18:BOmExqs4iWQxxY5mB4ogKoCaai4l8D1F:bmBSjmSzez/Ml7CNDmFhPuJF', 'Baker Street 221B', 'NW1', 'Londres', null, 0.0, 0.0, false, false, null, null, false);
+insert into inversor (usuario, dni, nombre, apellidos)
+values ('sherlock', '10011001S', 'Shelock', 'Holmes');
 
 
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, activo, baja, otp, sociedad, lider)
@@ -82,6 +91,8 @@ insert into participacion (usuario, empresa, cantidad, cantidad_bloqueada)
 values ('marcos', 'garcables', 500, 60);
 insert into participacion (usuario, empresa, cantidad, cantidad_bloqueada)
 values ('manuel', 'teceric', 320, 60);
+insert into participacion (usuario, empresa, cantidad, cantidad_bloqueada)
+values ('eva', 'libjaim', 150, 0);
 
 
 insert into oferta_venta (fecha, empresa, usuario, num_participaciones, precio_venta, confirmado, comision)
@@ -94,6 +105,8 @@ insert into oferta_venta (fecha, empresa, usuario, num_participaciones, precio_v
 values ('2021-03-14 14:16:10', 'teceric', 'manuel', 70, 15, true, 0.05);
 insert into oferta_venta (fecha, empresa, usuario, num_participaciones, precio_venta, confirmado, comision)
 values ('2021-03-20 12:16:31', 'garcables', 'marcos', 80, 25, true, 0.1);
+insert into oferta_venta (fecha, empresa, usuario, num_participaciones, precio_venta, confirmado, comision)
+values ('2021-03-10', 'libjaim', 'eva', 20, 10, false, 0.05);
 
 
 insert into venta (fecha, ov_fecha, ov_usuario, usuario_compra, cantidad)

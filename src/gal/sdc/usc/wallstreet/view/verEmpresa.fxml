@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="404.0" prefWidth="314.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.VerEmpresaController">
+   <children>
+      <Label fx:id="txt_nombre_empresa" alignment="CENTER" layoutY="34.0" prefHeight="17.0" prefWidth="321.0" text="Nombre empresa" />
+      <Label layoutX="42.0" layoutY="85.0" text="Identificador:" />
+      <Label layoutX="51.0" layoutY="168.0" text="Dirección:" />
+      <Label layoutX="39.0" layoutY="214.0" text="Código postal:" />
+      <Label layoutX="51.0" layoutY="257.0" text="Localidad:" />
+      <Label layoutX="53.0" layoutY="301.0" text="Teléfono:" />
+      <Label layoutX="63.0" layoutY="128.0" text="CIF:" />
+      <Label fx:id="txt_id" layoutX="180.0" layoutY="85.0" text="id" />
+      <Label fx:id="txt_cif" layoutX="176.0" layoutY="128.0" text="cif" />
+      <Label fx:id="txt_direccion" layoutX="176.0" layoutY="168.0" text="dirección" />
+      <Label fx:id="txt_cp" layoutX="171.0" layoutY="214.0" text="cp" />
+      <Label fx:id="txt_localidad" layoutX="176.0" layoutY="257.0" text="localidad" />
+      <Label fx:id="txt_tlf" layoutX="176.0" layoutY="301.0" text="tlf" />
+   </children>
+</AnchorPane>

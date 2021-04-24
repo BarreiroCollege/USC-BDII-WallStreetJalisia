@@ -1,5 +1,7 @@
 package gal.sdc.usc.wallstreet.repository;
 
+import gal.sdc.usc.wallstreet.model.Empresa;
+import gal.sdc.usc.wallstreet.model.Inversor;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.helpers.DAO;
 import gal.sdc.usc.wallstreet.util.Mapeador;
@@ -90,13 +92,24 @@ public class UsuarioDAO extends DAO<Usuario> {
     public void aceptarUsuario(String id){
         try (PreparedStatement ps = conexion.prepareStatement(
                 "UPDATE usuario " +
-                        "SET activo = ? " +
+                        "SET activo = true " +
                         "WHERE identificador = ?"
         )) {
-            ps.setBoolean(1, true);
-            ps.setString(2, id);
+            ps.setString(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void aceptarUsuariosTodos(){
+        try (PreparedStatement ps = conexion.prepareStatement(
+                "UPDATE usuario " +
+                        "SET activo = true " +
+                        "WHERE activo = false "
+        )) {
+            ps.executeUpdate();
+        } catch (SQLException e){
             e.printStackTrace();
         }
     }
@@ -104,8 +117,8 @@ public class UsuarioDAO extends DAO<Usuario> {
     public void rechazarBaja(String id){
         try (PreparedStatement ps = conexion.prepareStatement(
                 "UPDATE usuario " +
-                        "SET baja = ? " +
-                        "WHERE identificador is false"
+                        "SET baja = false " +
+                        "WHERE identificador = ?"
         )){
             ps.setString(1, id);
             ps.executeUpdate();
@@ -113,4 +126,25 @@ public class UsuarioDAO extends DAO<Usuario> {
             e.printStackTrace();
         }
     }
+
+/*    public Boolean aceptarBajasTodas(List<Usuario> empresasBaja, List<Usuario> inversoresBaja) {
+        Boolean hayBajasRechazadas = null;
+
+*//*        empresasBaja.forEach(empresa -> {
+            try (PreparedStatement ps = conexion.prepareStatement(
+                    "SELECT FROM participacion "
+            ))
+        });*//*
+
+        inversoresBaja.forEach(inversor -> {
+            try (PreparedStatement ps = conexion.prepareStatement(
+                    ""
+            ))
+        });
+
+        try (PreparedStatement ps = conexion.prepareStatement(
+                "DELETE FROM usuario " +
+                        "WHERE baja is true"
+        ))
+    }*/
 }
