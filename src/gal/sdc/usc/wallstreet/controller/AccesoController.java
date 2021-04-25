@@ -128,7 +128,6 @@ public class AccesoController extends DatabaseLinker implements Initializable {
         }
 
         // TODO: Usuario correcto, abrir ventana principal
-        Main.ventana(PerfilController.VIEW, PerfilController.WIDTH, PerfilController.HEIGHT, PerfilController.TITULO);
     }
 
     @FXML

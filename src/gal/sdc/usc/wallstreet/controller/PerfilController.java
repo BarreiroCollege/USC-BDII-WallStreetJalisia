@@ -348,24 +348,24 @@ public class PerfilController extends DatabaseLinker implements Initializable {
                     .withLider(u.getLider())
                     .build();
 
+            UsuarioSesion us;
             if (super.getTipoUsuario().equals(TipoUsuario.INVERSOR)) {
-                Inversor inversor = new Inversor.Builder(usuario)
+                us = new Inversor.Builder(usuario)
                         .withNombre(txtNombre.getText())
                         .withApellidos(txtApellidos.getText())
                         .withDni(txtDni.getText())
                         .build();
-                super.getDAO(InversorDAO.class).actualizar(inversor);
-                super.setUsuarioSesion(inversor);
+                super.getDAO(InversorDAO.class).actualizar((Inversor) us);
             } else {
-                Empresa empresa = new Empresa.Builder(usuario)
+                us = new Empresa.Builder(usuario)
                         .withNombre(txtEmpresa.getText())
                         .withCif(txtCif.getText())
                         .build();
-                super.getDAO(EmpresaDAO.class).actualizar(empresa);
-                super.setUsuarioSesion(empresa);
+                super.getDAO(EmpresaDAO.class).actualizar((Empresa) us);
             }
 
             if (super.ejecutarTransaccion()) {
+                super.setUsuarioSesion(us);
                 editando.setValue(false);
                 btnEditar.setText("Editar");
                 btnVolver.setText("Volver");
