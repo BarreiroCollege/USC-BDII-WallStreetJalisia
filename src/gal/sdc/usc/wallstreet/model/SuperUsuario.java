@@ -11,16 +11,7 @@ public class SuperUsuario extends Entidad {
     @Columna(value = "identificador", pk = true)
     private String identificador;
 
-    // Para mantener la jerarquía
-    protected SuperUsuario() {
-    }
-
-    protected SuperUsuario getThis() {
-        return this;
-    }
-
-    protected void set(SuperUsuario superUsuario) {
-        this.identificador = superUsuario.identificador;
+    private SuperUsuario() {
     }
 
     public String getIdentificador() {

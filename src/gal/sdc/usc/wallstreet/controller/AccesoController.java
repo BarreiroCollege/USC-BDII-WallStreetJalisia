@@ -95,8 +95,8 @@ public class AccesoController extends DatabaseLinker implements Initializable {
         if (usuario.getOtp() != null) {
             Comunicador callback = new Comunicador() {
                 @Override
-                public Object getData() {
-                    return usuario;
+                public Object[] getData() {
+                    return new Object[]{usuario};
                 }
 
                 @Override
@@ -121,10 +121,10 @@ public class AccesoController extends DatabaseLinker implements Initializable {
         Inversor inversor = super.getDAO(InversorDAO.class).seleccionar(usuario);
 
         if (inversor != null) {
-            super.setUsuario(inversor);
+            super.setUsuarioSesion(inversor);
         } else {
             Empresa empresa = super.getDAO(EmpresaDAO.class).seleccionar(usuario);
-            super.setUsuario(empresa);
+            super.setUsuarioSesion(empresa);
         }
 
         // TODO: Usuario correcto, abrir ventana principal

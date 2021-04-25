@@ -55,7 +55,10 @@ public abstract class DAO<E extends Entidad> {
     private HashMap<String, Object> resolverPksForaneas(String nombre, Entidad e, String subNombre) {
         HashMap<String, Object> paresPk = new HashMap<>();
 
-        if (e == null) return paresPk;
+        if (e == null) {
+            paresPk.put(nombre, null);
+            return paresPk;
+        }
 
         // Iterar sobre los atributos de la entidad
         for (Field field : e.getClass().getDeclaredFields()) {

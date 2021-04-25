@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.security.InvalidKeyException;
@@ -56,14 +57,14 @@ public class OtpController extends DatabaseLinker implements Initializable {
         }
 
         try {
-            if (!GoogleAuth.validarCodigo(((Usuario) comunicador.getData()).getOtp(), Long.parseLong(txtOtp.getText()))) {
+            if (!GoogleAuth.validarCodigo(((Usuario) comunicador.getData()[0]).getOtp(), Long.parseLong(txtOtp.getText()))) {
                 if (txtOtp.getValidators().size() == 0) txtOtp.getValidators().add(codigoIncorrecto);
                 txtOtp.validate();
                 return;
             }
 
+            ((Stage) anchor.getScene().getWindow()).close();
             comunicador.onSuccess();
-            anchor.getScene().getWindow().hide();
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
             System.err.println(e.getMessage());
         }
@@ -83,13 +84,14 @@ public class OtpController extends DatabaseLinker implements Initializable {
         });
 
         btnCancelar.setOnAction(event -> {
+            ((Stage) anchor.getScene().getWindow()).close();
             comunicador.onFailure();
             comunicador = null;
-            anchor.getScene().getWindow().hide();
         });
 
         btnConfirmar.setOnAction(event -> this.confirmar());
 
+        txtOtp.requestFocus();
         txtOtp.setOnKeyPressed(ke -> {
             if (ke.getCode().equals(KeyCode.ENTER)) this.confirmar();
         });

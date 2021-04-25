@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import java.net.URL?>
-<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="600.0"
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0"
             xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="gal.sdc.usc.wallstreet.controller.PerfilController">
     <stylesheets>
@@ -21,10 +21,10 @@
     </stylesheets>
 
     <VBox AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-          AnchorPane.topAnchor="150.0" AnchorPane.bottomAnchor="100.0" alignment="CENTER" prefHeight="450.0">
+          AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="100.0" alignment="CENTER" prefHeight="450.0">
         <VBox prefHeight="250.0" alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
             <VBox.margin>
-                <Insets left="25.0" right="25.0" top="25.0"/>
+                <Insets top="75.0" left="25.0" right="25.0"/>
             </VBox.margin>
             <HBox>
                 <JFXTextField promptText="Nombre de usuario" labelFloat="true" fx:id="txtUsuario"
@@ -45,32 +45,27 @@
             <Label minHeight="40.0"/>
             <JFXTextField promptText="Teléfono de contacto" labelFloat="true" fx:id="txtTelefono"/>
             <Label minHeight="40.0"/>
-            <JFXTabPane VBox.vgrow="ALWAYS" maxHeight="Infinity" minHeight="190.0" fx:id="tabTipo">
-                <Tab text="Inversor">
-                    <VBox alignment="TOP_CENTER">
-                        <Label minHeight="25.0"/>
-                        <HBox>
-                            <JFXTextField promptText="Nombre" labelFloat="true" fx:id="txtNombre"/>
-                            <Label minWidth="10.0"/>
-                            <JFXTextField promptText="Apellidos" labelFloat="true" fx:id="txtApellidos"
-                                              HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-                        </HBox>
-                        <Label minHeight="40.0"/>
-                        <JFXTextField promptText="DNI/NIF" labelFloat="true" fx:id="txtDni"/>
-                    </VBox>
-                </Tab>
-                <Tab text="Empresa">
-                    <VBox alignment="TOP_CENTER">
-                        <Label minHeight="25.0"/>
-                        <HBox VBox.vgrow="ALWAYS">
-                            <JFXTextField promptText="Nombre de empresa" labelFloat="true" fx:id="txtEmpresa"
-                                          HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-                            <Label minWidth="10.0"/>
-                            <JFXTextField promptText="CIF" labelFloat="true" fx:id="txtCif"/>
-                        </HBox>
-                    </VBox>
-                </Tab>
-            </JFXTabPane>
+            <VBox alignment="TOP_CENTER" fx:id="divInversor">
+                <Label minHeight="25.0"/>
+                <HBox>
+                    <JFXTextField promptText="Nombre" labelFloat="true" fx:id="txtNombre"/>
+                    <Label minWidth="10.0"/>
+                    <JFXTextField promptText="Apellidos" labelFloat="true" fx:id="txtApellidos"
+                                  HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                </HBox>
+                <Label minHeight="40.0"/>
+                <JFXTextField promptText="DNI/NIF" labelFloat="true" fx:id="txtDni" disable="true"/>
+            </VBox>
+
+            <VBox alignment="TOP_CENTER" fx:id="divEmpresa">
+                <Label minHeight="25.0"/>
+                <HBox VBox.vgrow="ALWAYS">
+                    <JFXTextField promptText="Nombre de empresa" labelFloat="true" fx:id="txtEmpresa"
+                                  HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    <Label minWidth="10.0"/>
+                    <JFXTextField promptText="CIF" labelFloat="true" fx:id="txtCif" disable="true"/>
+                </HBox>
+            </VBox>
         </VBox>
     </VBox>
 
@@ -80,15 +75,21 @@
             <VBox.margin>
                 <Insets left="25.0" right="25.0" bottom="50.0"/>
             </VBox.margin>
-            <JFXButton text="Acceder" fx:id="btnAcceso">
+            <JFXButton text="Volver" fx:id="btnVolver">
                 <font>
-                    <Font size="20.0"/>
+                    <Font size="18.0"/>
                 </font>
             </JFXButton>
             <Label HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-            <JFXButton text="Registrarse" fx:id="btnRegistro" buttonType="RAISED" styleClass="btn-primario">
+            <JFXButton text="Activar 2FA" fx:id="btnOtp" buttonType="RAISED">
                 <font>
-                    <Font name="System Bold" size="20.0"/>
+                    <Font name="System Bold" size="18.0"/>
+                </font>
+            </JFXButton>
+            <Label minWidth="20.0"/>
+            <JFXButton text="Editar" fx:id="btnEditar" buttonType="RAISED" styleClass="btn-primario">
+                <font>
+                    <Font name="System Bold" size="18.0"/>
                 </font>
             </JFXButton>
         </HBox>

@@ -2,6 +2,7 @@ package gal.sdc.usc.wallstreet.repository.helpers;
 
 import gal.sdc.usc.wallstreet.model.Inversor;
 import gal.sdc.usc.wallstreet.model.Usuario;
+import gal.sdc.usc.wallstreet.model.UsuarioSesion;
 import gal.sdc.usc.wallstreet.model.ddl.Entidad;
 import gal.sdc.usc.wallstreet.util.PackageScanner;
 import gal.sdc.usc.wallstreet.util.TipoUsuario;
@@ -25,7 +26,7 @@ public class DatabaseLinker {
     // Lista de DAOs disponibles
     private static HashMap<Class<? extends DAO<? extends Entidad>>, DAO<? extends Entidad>> daos;
 
-    private static Usuario usuario;
+    private static UsuarioSesion usuario;
 
     public static boolean DEBUG = false;
 
@@ -134,7 +135,7 @@ public class DatabaseLinker {
      * Devuelve el usuario si hay sesión
      * @return Usuario
      */
-    public Usuario getUsuario() {
+    public UsuarioSesion getUsuarioSesion() {
         return DatabaseLinker.usuario;
     }
 
@@ -142,7 +143,7 @@ public class DatabaseLinker {
      * Inicia sesión
      * @param usuario usuario
      */
-    public void setUsuario(Usuario usuario) {
+    public void setUsuarioSesion(UsuarioSesion usuario) {
         DatabaseLinker.usuario = usuario;
     }
 

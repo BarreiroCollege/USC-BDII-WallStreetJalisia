@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import java.net.URL?>
+<?import com.jfoenix.controls.JFXTextField?>
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="350.0"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="gal.sdc.usc.wallstreet.controller.OtpQrController"
+            fx:id="anchor">
+    <stylesheets>
+        <URL value="@styles/base.css"/>
+    </stylesheets>
+
+    <VBox alignment="CENTER" AnchorPane.bottomAnchor="500.0" AnchorPane.leftAnchor="0.0"
+          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" prefHeight="100.0">
+        <VBox prefHeight="100.0" alignment="CENTER" HBox.hgrow="ALWAYS">
+            <VBox.margin>
+                <Insets left="25.0" right="25.0"/>
+            </VBox.margin>
+            <Label text="Escanea este código con Google" wrapText="true">
+                <font>
+                    <Font name="System Bold" size="18.0"/>
+                </font>
+            </Label>
+            <Label text="Authenticator" wrapText="true">
+                <font>
+                    <Font name="System Bold" size="18.0"/>
+                </font>
+            </Label>
+        </VBox>
+    </VBox>
+
+    <VBox AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="100.0" alignment="CENTER" prefHeight="450.0">
+        <VBox prefHeight="325.0" alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
+            <VBox.margin>
+                <Insets left="25.0" right="25.0"/>
+            </VBox.margin>
+            <ImageView VBox.vgrow="ALWAYS" fx:id="imgQr"/>
+            <Label minHeight="40.0"/>
+            <Label text="Si el código no funciona, escribe este manualmente:">
+                <font>
+                    <Font name="System Bold"/>
+                </font>
+            </Label>
+            <Label minHeight="10.0"/>
+            <JFXTextField fx:id="txtClavePrivada" alignment="CENTER"/>
+        </VBox>
+    </VBox>
+
+    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="450.0" alignment="BOTTOM_CENTER" prefHeight="100.0">
+        <HBox prefHeight="50.0" alignment="BOTTOM_CENTER">
+            <VBox.margin>
+                <Insets left="25.0" right="25.0" bottom="25.0" top="50.0"/>
+            </VBox.margin>
+            <JFXButton text="Cancelar" fx:id="btnCancelar">
+                <font>
+                    <Font size="16.0"/>
+                </font>
+            </JFXButton>
+            <Label HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            <JFXButton text="Siguiente" fx:id="btnSiguiente" buttonType="RAISED" styleClass="btn-primario">
+                <font>
+                    <Font name="System Bold" size="16.0"/>
+                </font>
+            </JFXButton>
+        </HBox>
+    </VBox>
+</AnchorPane>
