@@ -135,6 +135,7 @@ create table oferta_venta
     precio_venta        double precision               not null,
     confirmado          boolean          default false not null,
     comision            double precision default 0.05  not null,
+    restantes           integer                        not null,
     constraint oferta_venta_pk
         primary key (fecha, usuario)
 );
