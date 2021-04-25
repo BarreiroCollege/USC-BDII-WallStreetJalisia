@@ -1,17 +1,25 @@
 package gal.sdc.usc.wallstreet.controller;
 
+import gal.sdc.usc.wallstreet.model.Inversor;
 import gal.sdc.usc.wallstreet.model.OfertaVenta;
+import gal.sdc.usc.wallstreet.model.SuperUsuario;
+import gal.sdc.usc.wallstreet.model.Usuario;
+import gal.sdc.usc.wallstreet.model.ddl.Entidad;
 import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
 import gal.sdc.usc.wallstreet.repository.InversorDAO;
 import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
 import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
+import gal.sdc.usc.wallstreet.util.Comunicador;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -133,6 +141,62 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
             ofertasPendientes.sort(Comparator.comparing(OfertaVenta::getNumParticipaciones));
         } else {
             ofertasPendientes.sort(Comparator.comparing(OfertaVenta::getPrecioVenta));
+        }
+    }
+
+    public void mostrarEmpresa(){
+        Comunicador comunicador = new Comunicador() {
+            @Override
+            public Object[] getData() {
+                return new Object[]{ofertaActual.getEmpresa()};
+            }
+        };
+        VerUsuarioController.setComunicador(comunicador);
+
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("../view/verUsuario.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Empresa de la oferta de venta");
+            stage.setResizable(false);
+            stage.setScene(new Scene(root, 350, 500));
+            // La ventana de ofertas de venta es la ventana padre. Queda visible, pero desactivada.
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(btn_aceptar.getScene().getWindow());
+            stage.show();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void mostrarUsuario(){
+        SuperUsuario superUsuarioOferta = ofertaActual.getUsuario();
+        Entidad usuario = super.getDAO(InversorDAO.class).getInversor(superUsuarioOferta.getIdentificador());
+        if (usuario == null) {
+            usuario = super.getDAO(EmpresaDAO.class).getEmpresa(superUsuarioOferta.getIdentificador());
+        }
+
+        // Entidad final (necesaria para la interfaz)
+        Entidad finalUsuario = usuario;
+        Comunicador comunicador = new Comunicador() {
+            @Override
+            public Object[] getData() {
+                return new Object[]{finalUsuario};
+            }
+        };
+        VerUsuarioController.setComunicador(comunicador);
+
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("../view/verUsuario.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Usuario creador de la oferta de venta");
+            stage.setResizable(false);
+            stage.setScene(new Scene(root, 350, 500));
+            // La ventana de ofertas de venta es la ventana padre. Queda visible, pero desactivada.
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(btn_aceptar.getScene().getWindow());
+            stage.show();
+        } catch (Exception e){
+            e.printStackTrace();
         }
     }
 }

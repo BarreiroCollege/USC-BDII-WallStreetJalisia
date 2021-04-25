@@ -26,8 +26,8 @@
         <Label fx:id="txt_precio_venta" layoutX="190.0" layoutY="288.0" text="Label" />
       <Label layoutX="334.0" layoutY="140.0" text="Comisión:" />
       <TextField layoutX="410.0" layoutY="135.0" prefHeight="26.0" prefWidth="74.0" text="0.05" />
-      <Button fx:id="btn_ver_empresa" layoutX="238.0" layoutY="153.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="34.0" text="Ver" />
-      <Button fx:id="btn_ver_usuario" layoutX="238.0" layoutY="193.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="34.0" text="Ver" />
+      <Button fx:id="btn_ver_empresa" layoutX="238.0" layoutY="153.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="34.0" onAction="#mostrarEmpresa" text="Ver" />
+      <Button fx:id="btn_ver_usuario" layoutX="238.0" layoutY="193.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="34.0" onAction="#mostrarUsuario" text="Ver" />
     </children>
 
 </AnchorPane>

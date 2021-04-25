@@ -36,6 +36,24 @@ public class EmpresaDAO extends DAO<Empresa> {
         return empresas;
     }
 
+    public Empresa getEmpresa(String identificador){
+        try (PreparedStatement ps = conexion.prepareStatement(
+                "SELECT * " +
+                        "FROM empresa e JOIN usuario u ON e.usuario = u.identificador " +
+                        "WHERE e.usuario = ?"
+        )){
+            ps.setString(1, identificador);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()){
+                return Mapeador.map(rs, Empresa.class);
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     /***
      *
      * @return Devuelve una lista con los datos de todas aquellos empresas con solicitudes de registro pendientes

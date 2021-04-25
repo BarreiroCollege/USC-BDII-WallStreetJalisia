@@ -1,5 +1,6 @@
 package gal.sdc.usc.wallstreet.repository;
 
+import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Inversor;
 import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.model.Usuario;
@@ -43,6 +44,24 @@ public class InversorDAO extends DAO<Inversor> {
         }
 
         return pendientes;
+    }
+
+    public Inversor getInversor(String identificador){
+        try (PreparedStatement ps = conexion.prepareStatement(
+                "SELECT * " +
+                        "FROM inversor i JOIN usuario u ON i.usuario = u.identificador " +
+                        "WHERE i.usuario = ?"
+        )){
+            ps.setString(1, identificador);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()){
+                return Mapeador.map(rs, Inversor.class);
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public List<Usuario> getInversoresBajasPendientes(){
