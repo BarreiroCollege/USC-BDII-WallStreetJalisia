@@ -11,7 +11,7 @@ public class Sociedad extends Entidad {
     @Columna(value = "identificador", pk = true)
     private SuperUsuario identificador;
 
-    @Columna("saldo_comuna")
+    @Columna("saldo_comunal")
     private Float saldoComunal = 0.0f;
 
     @Columna("tolerancia")
