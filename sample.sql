@@ -38,7 +38,7 @@ values ('marcos', '47157847C', 'Marcos', 'Vázquez García');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, activo, baja, otp, sociedad, lider)
 values ('sara', 'sha1:64000:18:7Vjvu9VX0GGKPBVgQ/LuhGiKAw8dtY6p:7qV7nXM1IIn5oA49kmN0x/Wt', 'Calle del Palomar, 31', '15701', 'Santiago de Compostela', 615237989, 513.15, 0.0, true, false,'OJEAZFGLPKOAOHTM5ILNRTTQOL6DS6YP','urrs', false);
 insert into inversor (usuario, dni, nombre, apellidos)
-values ('sara', '20416592K', 'Sara', 'Sousa Álvarez')
+values ('sara', '20416592K', 'Sara', 'Sousa Álvarez');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, activo, baja, otp, sociedad, lider)
 values ('eva', 'sha1:64000:18:fRyIy2KpkOhXIkFl9+OCu6BPq32xY2+Y:d5j3M7amOsYqisxLDk6VbSL3', 'Calle del mar, 78', '15701', 'Santiago de Compostela', 678910344, 1485.30, 0.0, true, false,'SEBID4GBR4WBHL5TMS2KYQRZ735UECJS','hampa', true);
 insert into inversor (usuario, dni, nombre, apellidos)
@@ -97,11 +97,11 @@ values ('2021-03-20 12:16:31', 'garcables', 'marcos', 80, 25, true, 0.1);
 
 
 insert into venta (fecha, ov_fecha, ov_usuario, usuario_compra, cantidad)
-values ('2021-02-02 17:32:41', '2021-01-30 19:52:33', 'marcos', 'manuel', 60);
+values ('2021-02-02 17:32:41', '2021-01-30 19:52:33', 'marcos', 'manuel', 30);
 insert into venta (fecha, ov_fecha, ov_usuario, usuario_compra, cantidad)
-values ('2021-02-17 11:15:03', '2021-02-16 16:48:02', 'marcos', 'manuel', 100);
+values ('2021-02-17 11:15:03', '2021-02-16 16:48:02', 'marcos', 'manuel', 30);
 insert into venta (fecha, ov_fecha, ov_usuario, usuario_compra, cantidad)
-values ('2021-02-18 19:10:44', '2021-02-18 18:55:54', 'garcables', 'manuel', 50);
+values ('2021-02-18 19:10:44', '2021-02-18 18:55:54', 'garcables', 'manuel', 30);
 insert into venta (fecha, ov_fecha, ov_usuario, usuario_compra, cantidad)
 values ('2021-03-24 12:01:50', '2021-03-14 14:16:10', 'manuel', 'marcos', 10);
 insert into venta (fecha, ov_fecha, ov_usuario, usuario_compra, cantidad)

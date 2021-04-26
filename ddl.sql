@@ -205,32 +205,32 @@ alter table propuesta_compra
 -- Función asociada al trigger actualizarNumParticipaciones.
 -- Disminuye restantes según el número de participaciones
 -- de la venta.
-create or replace function participaciones_restantes() returns trigger as $trigger$
+create or replace function actualizar_participaciones_restantes() returns trigger language plpgsql as $trigger$
 begin
 	update oferta_venta
 	set restantes = restantes - NEW.cantidad
 	where fecha = NEW.ov_fecha and usuario = NEW.ov_usuario;
 	return new;
 end;
-$trigger$ language plpgsql;
+$trigger$;
 
 
 -- Trigger que se activa al insertar una nueva venta y actualiza oferta_venta
-create trigger actualizarNumParticipaciones before insert on venta
-for each row execute procedure participaciones_restantes();
+create trigger actualizarRestantes after insert on venta
+for each row execute procedure actualizar_participaciones_restantes();
 
  -- =================================================================================================
 
 -- Función asociada al trigger actualizarNumParticipaciones.
 -- Disminuye restantes según el número de participaciones
 -- de la venta.
-create or replace function insertar_participaciones_restantes() returns trigger language plpgsql as $$
+create or replace function insertar_participaciones_restantes() returns trigger language plpgsql as $trigger$
 begin
     NEW.restantes := NEW.num_participaciones;
     return new;
 end;
-$$;
+$trigger$;
 
 -- Trigger que se activa al insertar una nueva venta y actualiza oferta_venta
-create trigger insertarNumParticipaciones before insert on oferta_venta
+create trigger insertarRestantes before insert on oferta_venta
     for each row execute procedure insertar_participaciones_restantes();

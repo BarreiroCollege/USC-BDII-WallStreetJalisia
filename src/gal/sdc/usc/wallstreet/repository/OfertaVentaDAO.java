@@ -22,8 +22,8 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
         try{
             String statement = "SELECT * FROM oferta_venta " +
                                 "WHERE confirmado is true and empresa=? ";
-            if(precioMax.equals(0f)) statement += "and precio_venta<=? ";
-            statement += "ORDER BY precio_venta asc";
+            if(!precioMax.equals(0f)) statement += "and precio_venta<=? ";
+            statement += "and restantes>0 ORDER BY precio_venta asc";
 
             PreparedStatement ps = conexion.prepareStatement(statement);
             ps.setString(1,empresa);
