@@ -175,9 +175,7 @@ public class CarteraController extends DatabaseLinker {
     }
 
     public void actualizarDatos() {
-
-        // TODO OPERACIONES A TRAVÉS DEL USUARIO CON LOGIN
-        Usuario usuario = super.getDAO(UsuarioDAO.class).getUsuario("Xia");
+        Usuario usuario = super.getUsuarioSesion().getUsuario();
 
         // Accedemos a los DAOs para obtener los datos del usuario actual
         List<Participacion> participaciones = super.getDAO(ParticipacionDAO.class).getParticipaciones(usuario);

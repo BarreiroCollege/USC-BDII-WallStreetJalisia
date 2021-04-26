@@ -2,6 +2,7 @@ package gal.sdc.usc.wallstreet.repository;
 
 import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Participacion;
+import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.helpers.DAO;
 
@@ -24,7 +25,7 @@ public class ParticipacionDAO extends DAO<Participacion> {
      * @return List<Participacion> con las participaciones correspondientes
      */
     public List<Participacion> getParticipaciones(Usuario u) {
-        return getParticipaciones(u.getIdentificador());
+        return getParticipaciones(u.getSuperUsuario().getIdentificador());
     }
 
     /**
@@ -35,7 +36,7 @@ public class ParticipacionDAO extends DAO<Participacion> {
      */
     public List<Participacion> getParticipaciones(String idUsuario) {
         List<Participacion> participaciones = new ArrayList<>();
-        Usuario usuario = new Usuario.Builder(idUsuario).build();
+        Usuario usuario = new Usuario.Builder(new SuperUsuario.Builder(idUsuario).build()).build();
 
         try (PreparedStatement ps = conexion.prepareStatement(
                 "SELECT p.empresa, e.nombre, e.cif, p.cantidad, p.cantidad_bloqueada " +
@@ -49,7 +50,7 @@ public class ParticipacionDAO extends DAO<Participacion> {
                 Participacion participacion = new Participacion.Builder().withUsuario(usuario)
                         .withEmpresa(
                                 new Empresa.Builder(
-                                        new Usuario.Builder(rs.getString("empresa")).build()
+                                        new Usuario.Builder(new SuperUsuario.Builder(rs.getString("empresa")).build()).build()
                                 )
                                         .withCif(rs.getString("cif"))
                                         .withNombre(rs.getString("nombre")).build()
@@ -60,7 +61,7 @@ public class ParticipacionDAO extends DAO<Participacion> {
                 try (PreparedStatement psFecha = conexion.prepareStatement(
                         "SELECT max(fecha) FROM pago WHERE empresa = ?"
                 )) {
-                    psFecha.setString(1, participacion.getEmpresa().getUsuario().getIdentificador());
+                    psFecha.setString(1, participacion.getEmpresa().getUsuario().getSuperUsuario().getIdentificador());
                     ResultSet rsFecha = psFecha.executeQuery();
                     if (rsFecha.next()) {
                         participacion.getEmpresa().setFechaUltimoPago(rsFecha.getTimestamp(1));

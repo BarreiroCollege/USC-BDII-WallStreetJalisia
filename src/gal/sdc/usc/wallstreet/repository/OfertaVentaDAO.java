@@ -3,6 +3,7 @@ package gal.sdc.usc.wallstreet.repository;
 import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.OfertaVenta;
 import gal.sdc.usc.wallstreet.model.Participacion;
+import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.helpers.DAO;
 import gal.sdc.usc.wallstreet.util.Mapeador;
@@ -21,6 +22,27 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
         super(conexion, OfertaVenta.class);
     }
 
+    public List<OfertaVenta> getOfertasVenta(String empresa, Float precioMax){
+        List<OfertaVenta> ofertas = new ArrayList<>();
+        try (PreparedStatement ps = conexion.prepareStatement(
+                "SELECT * FROM oferta_venta " +
+                        "WHERE confirmado is true and empresa=? and precio_venta<=? and num_participaciones>0 " +
+                        "ORDER BY precio_venta asc"
+        )) {
+            ps.setString(1,empresa);
+            ps.setFloat(2,precioMax);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                OfertaVenta oferta = Mapeador.map(rs, OfertaVenta.class);
+                ofertas.add(oferta);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return ofertas;
+    }
+
     /**
      * Devuelve todas las ofertas de venta de un usuario indicado.
      *
@@ -28,7 +50,7 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
      * @return List<OfertaVenta> con las ofertas correspondientes
      */
     public List<OfertaVenta> getOfertasVenta(Usuario u) {
-        return getOfertasVenta(u.getIdentificador());
+        return getOfertasVenta(u.getSuperUsuario().getIdentificador());
     }
 
     /**
@@ -39,7 +61,7 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
      */
     public List<OfertaVenta> getOfertasVenta(String idUsuario) {
         List<OfertaVenta> ofertas = new ArrayList<>();
-        Usuario usuario = new Usuario.Builder(idUsuario).build();
+        Usuario usuario = new Usuario.Builder(new SuperUsuario.Builder(idUsuario).build()).build();
 
         try (PreparedStatement ps = conexion.prepareStatement(
                 "SELECT o.fecha, o.empresa, e.nombre, e.cif, o.num_participaciones, o.precio_venta " +
@@ -51,10 +73,10 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
             while (rs.next()) {
                 OfertaVenta ofertaventa = new OfertaVenta.Builder()
                         .withFecha(rs.getTimestamp("fecha"))
-                        .withUsuario(usuario)
+                        .withUsuario(usuario.getSuperUsuario())
                         .withEmpresa(
                                 new Empresa.Builder(
-                                        new Usuario.Builder(rs.getString("empresa")).build()
+                                        new Usuario.Builder(new SuperUsuario.Builder(rs.getString("empresa")).build()).build()
                                 )
                                         .withCif(rs.getString("cif"))
                                         .withNombre(rs.getString("nombre")).build()
@@ -65,7 +87,7 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
                 try (PreparedStatement psFecha = conexion.prepareStatement(
                         "SELECT max(fecha) FROM oferta_venta WHERE empresa = ?"
                 )) {
-                    psFecha.setString(1, ofertaventa.getEmpresa().getUsuario().getIdentificador() );
+                    psFecha.setString(1, ofertaventa.getEmpresa().getUsuario().getSuperUsuario().getIdentificador() );
                     ResultSet rsFecha = psFecha.executeQuery();
                     if (rsFecha.next()) {
                         ofertaventa.getEmpresa().setFechaUltimoPago(rsFecha.getTimestamp(1));
@@ -90,7 +112,8 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
     public Integer getNumParticipacionesRestantes(OfertaVenta ov){
         Integer sinVender = null;
 
-        String sqlCall = "SELECT * FROM participaciones_por_vender (?, ?)";
+        // TODO: restantes
+        /* String sqlCall = "SELECT * FROM participaciones_por_vender (?, ?)";
         try (PreparedStatement ps = conexion.prepareStatement(sqlCall)){
             ps.setTimestamp(1, new Timestamp(ov.getFecha().getTime()));
             ps.setString(2, ov.getUsuario().getIdentificador());
@@ -101,7 +124,7 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
             }
         } catch (SQLException e){
             e.printStackTrace();
-        }
+        } */
 
         return sinVender;
     }
