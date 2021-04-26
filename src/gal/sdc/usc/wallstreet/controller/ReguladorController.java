@@ -3,23 +3,40 @@ package gal.sdc.usc.wallstreet.controller;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXSnackbarLayout;
-import gal.sdc.usc.wallstreet.Main;
+import com.jfoenix.controls.JFXTextField;
+import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.*;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 public class ReguladorController extends DatabaseLinker {
+    @FXML
+    private TableColumn<Usuario, String> columnaId;
+    @FXML
+    private TableColumn<Usuario, String> columnaSaldo;
+    @FXML
+    private ChoiceBox cbTipo;
+    @FXML
+    private JFXTextField txtId;
+    @FXML
+    private JFXTextField DniCif;
+    @FXML
+    private JFXTextField Nombre;
+    @FXML
+    private JFXTextField Apellidos;
     @FXML
     private Label txt_solicitudes_registro;
     @FXML
@@ -42,6 +59,8 @@ public class ReguladorController extends DatabaseLinker {
     private JFXButton btn_aceptar_todo_bajas;
     @FXML
     private JFXButton btn_aceptar_todo_ofertas;
+    @FXML
+    private TableView tablaUsuarios;
 
     private final String error = "error";
     private static JFXSnackbar snackbar;
@@ -51,6 +70,7 @@ public class ReguladorController extends DatabaseLinker {
     public void initialize() {
         actualizarDatos();
         //actualizarSaldo();
+        cargarDatosTabla();
     }
 
     public void actualizarDatos() {
@@ -60,7 +80,17 @@ public class ReguladorController extends DatabaseLinker {
         actualizarSaldo();
     }
 
-    public void actualizarRegistrosPendientes(){
+    public void cargarDatosTabla() {
+        establecerColumnas();
+    }
+
+    public void establecerColumnas() {
+        // Establecemos los valores que contendrá cada columna de la tabla de participaciones
+        columnaId.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getIdentificador()));
+        columnaSaldo.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getSaldo().toString()));
+    }
+
+    public void actualizarRegistrosPendientes() {
         // Número de usuarios que han solicitado registrarse y están pendientes de ser revisados
         Integer registrosPendientes = super.getDAO(UsuarioDAO.class).getNumInactivos();
         // Se muestra dicha información si no ha habido un error
@@ -70,7 +100,7 @@ public class ReguladorController extends DatabaseLinker {
         btn_aceptar_todo_registros.setVisible(registrosPendientes != null && !registrosPendientes.equals(0));
     }
 
-    public void actualizarBajasPendientes(){
+    public void actualizarBajasPendientes() {
         // Número de usuarios que han solicitado darse de baja y están pendientes de ser revisados
         Integer bajasPendientes = super.getDAO(UsuarioDAO.class).getNumSolicitudesBaja();
         // Se muestra dicha información si no ha habido un error
@@ -80,7 +110,7 @@ public class ReguladorController extends DatabaseLinker {
         btn_aceptar_todo_bajas.setVisible(bajasPendientes != null && !bajasPendientes.equals(0));
     }
 
-    public void actualizarOfertasPendientes(){
+    public void actualizarOfertasPendientes() {
         // Número de ofertas de venta que no han sido aprobadas
         Integer ofertasPendientes = super.getDAO(OfertaVentaDAO.class).getNumOfertasPendientes();
         // Se muestra dicha información si no ha habido un error
@@ -94,7 +124,7 @@ public class ReguladorController extends DatabaseLinker {
 
     }
 
-    public void aceptarTodoRegistros(){
+    public void aceptarTodoRegistros() {
         //TODO: transacción?
         //super.iniciarTransaccion();
         super.getDAO(UsuarioDAO.class).aceptarUsuariosTodos();
@@ -102,7 +132,7 @@ public class ReguladorController extends DatabaseLinker {
         actualizarRegistrosPendientes();
     }
 
-    public void aceptarTodoBajas(){
+    public void aceptarTodoBajas() {
         actualizarBajasPendientes();
     }
 
@@ -122,7 +152,7 @@ public class ReguladorController extends DatabaseLinker {
         }
     }*/
 
-    public void aceptarTodoOfertas(){
+    public void aceptarTodoOfertas() {
         actualizarOfertasPendientes();
     }
 
@@ -143,7 +173,7 @@ public class ReguladorController extends DatabaseLinker {
         }
     }
 
-    public void mostrarRevisarBajas(){
+    public void mostrarRevisarBajas() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("../view/revisarBajas.fxml"));
             Stage stage = new Stage();
@@ -160,7 +190,7 @@ public class ReguladorController extends DatabaseLinker {
         }
     }
 
-    public void mostrarRevisarOfertasVenta(){
+    public void mostrarRevisarOfertasVenta() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("../view/revisarOfertasVenta.fxml"));
             Stage stage = new Stage();
