@@ -91,16 +91,7 @@ public class PrincipalController extends DatabaseLinker {
     public void initialize(){
         Group root = new Group();
         scene = new Scene(root, WIDTH, HEIGHT);
-        switch (super.getTipoUsuario()) {
-            case EMPRESA:
-                Empresa empresa = super.getEmpresa();
-                usuario = empresa.getUsuario();
-                break;
-            case INVERSOR:
-                Inversor inversor = super.getInversor();
-                usuario = inversor.getUsuario();
-                break;
-        }
+        usuario = super.getUsuarioSesion().getUsuario();
         ofertaVentaUsuario = super.getDAO(OfertaVentaDAO.class).getOfertasVentaPorUsuario(usuario.getSuperUsuario().getIdentificador(), 6);
         participacionesUsuario = super.getDAO(ParticipacionDAO.class).getParticipacionesPorUsuario(usuario.getSuperUsuario().getIdentificador(), 6);
 
@@ -163,8 +154,7 @@ public class PrincipalController extends DatabaseLinker {
 
     }
     public void mostrarSaldo(){
-        double saldo = super.getDAO(UsuarioDAO.class).getSaldoUsuario(usuario.getSuperUsuario().getIdentificador());
-        txtSaldo.setText(Double.toString(saldo) + " €");
+        txtSaldo.setText(usuario.getSaldo() + " €");
     }
 
 
