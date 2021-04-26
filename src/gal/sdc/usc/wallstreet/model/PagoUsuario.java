@@ -36,11 +36,11 @@ public class PagoUsuario extends Entidad {
         this.numParticipaciones = numParticipaciones;
     }
 
-    public Float beneficioRecibir() {
+    public Float getBeneficioRecibir() {
         return numParticipaciones * pago.getPorcentajeBeneficio() * pago.getBeneficioPorParticipacion();
     }
 
-    public Float participacionesRecibir() {
+    public Float getParticipacionesRecibir() {
         return (float) Math.floor(numParticipaciones * pago.getPorcentajeParticipacion() * pago.getParticipacionPorParticipacion());
     }
 

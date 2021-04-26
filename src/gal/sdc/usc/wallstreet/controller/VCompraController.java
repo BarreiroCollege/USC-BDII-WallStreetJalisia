@@ -30,13 +30,13 @@ import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
 public class VCompraController extends DatabaseLinker {
-    public static final String VIEW = "VCompra";
+    public static final String VIEW = "vcompra";
     public static final Integer HEIGHT = 425;
     public static final Integer WIDTH = 760;
-    public static final String TITULO = "Compra de participaciones";
+    public static final String TITULO = "Comprar";
 
     @FXML
-    private JFXButton btnSalir;
+    private JFXButton btnVentana;
     @FXML
     private JFXTextField campoNumero;
     @FXML
@@ -73,8 +73,7 @@ public class VCompraController extends DatabaseLinker {
         // Recuperamos el usuario
        /* if(super.getTipoUsuario().equals(TipoUsuario.EMPRESA)) super.getEmpresa().getUsuario();
         else super.getInversor().getUsuario();*/
-        //usr = getDAO(UsuarioDAO.class).seleccionar(new Usuario.Builder(new SuperUsuario.Builder("eva").build()));
-        usr = super.getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder("eva").build());
+        usr = super.getUsuarioSesion().getUsuario();
 
         // Setup de las columnas de la tabla
         nombreCol.setCellValueFactory(new PropertyValueFactory<>("usuario"));

@@ -64,9 +64,9 @@ public class Main extends Application {
             if (modal) {
                 stage.initOwner(Main.primaryStage);
                 stage.initModality(Modality.WINDOW_MODAL);
-                stage.showAndWait();
+                stage.show();
             } else {
-                Main.primaryStage.hide();
+                Main.primaryStage.close();
                 Main.snackbar = new JFXSnackbar((AnchorPane) root);
 
                 Main.primaryStage = stage;

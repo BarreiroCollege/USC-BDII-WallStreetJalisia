@@ -2,7 +2,9 @@ package gal.sdc.usc.wallstreet.controller;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
+import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
+import gal.sdc.usc.wallstreet.util.Comunicador;
 import gal.sdc.usc.wallstreet.util.ErrorValidator;
 import gal.sdc.usc.wallstreet.util.Validadores;
 import gal.sdc.usc.wallstreet.util.auth.GoogleAuth;
@@ -10,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.security.InvalidKeyException;
@@ -22,10 +25,10 @@ public class OtpController extends DatabaseLinker implements Initializable {
     public static final Integer WIDTH = 500;
     public static final String TITULO = "Verificación";
 
-    private static AccesoController accesoController;
+    private static Comunicador comunicador;
 
-    public static void setAccesoController(AccesoController accesoController) {
-        OtpController.accesoController = accesoController;
+    public static void setComunicador(Comunicador comunicador) {
+        OtpController.comunicador = comunicador;
     }
 
     @FXML
@@ -54,14 +57,14 @@ public class OtpController extends DatabaseLinker implements Initializable {
         }
 
         try {
-            if (!GoogleAuth.validarCodigo(accesoController.getUsuario().getOtp(), Long.parseLong(txtOtp.getText()))) {
+            if (!GoogleAuth.validarCodigo(((Usuario) comunicador.getData()[0]).getOtp(), Long.parseLong(txtOtp.getText()))) {
                 if (txtOtp.getValidators().size() == 0) txtOtp.getValidators().add(codigoIncorrecto);
                 txtOtp.validate();
                 return;
             }
 
-            accesoController.confirmarOtp();
-            anchor.getScene().getWindow().hide();
+            ((Stage) anchor.getScene().getWindow()).close();
+            comunicador.onSuccess();
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
             System.err.println(e.getMessage());
         }
@@ -81,12 +84,14 @@ public class OtpController extends DatabaseLinker implements Initializable {
         });
 
         btnCancelar.setOnAction(event -> {
-            accesoController.cancelarOtp();
-            anchor.getScene().getWindow().hide();
+            ((Stage) anchor.getScene().getWindow()).close();
+            comunicador.onFailure();
+            comunicador = null;
         });
 
         btnConfirmar.setOnAction(event -> this.confirmar());
 
+        txtOtp.requestFocus();
         txtOtp.setOnKeyPressed(ke -> {
             if (ke.getCode().equals(KeyCode.ENTER)) this.confirmar();
         });

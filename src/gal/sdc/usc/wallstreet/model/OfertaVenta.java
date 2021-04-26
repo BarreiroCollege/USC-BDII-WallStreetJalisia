@@ -33,6 +33,8 @@ public class OfertaVenta extends Entidad {
     @Columna("restantes")
     private Integer restantes = numParticipaciones;
 
+    private Integer participacionesSinVender;
+
     private OfertaVenta() {
     }
 
@@ -90,6 +92,25 @@ public class OfertaVenta extends Entidad {
 
     public void setRestantes(Integer restantes) {
         this.restantes = restantes;
+    }
+
+    public Integer getParticipacionesSinVender() {
+        return participacionesSinVender;
+    }
+
+    public void setParticipacionesSinVender(Integer participacionesSinVender) {
+        this.participacionesSinVender = participacionesSinVender;
+    }
+
+    /***
+     * Indica si una oferta de venta sigue disponible (todavía no se han vendido todas sus participaciones) o si ya se
+     * ha completado.
+     *
+     * @return true, si la oferta no se ha completado; false, si ya no está activa; null, en caso de error.
+     */
+    public Boolean isOfertaActiva(){
+        if (participacionesSinVender == null) return null;
+        return !participacionesSinVender.equals(0);
     }
 
     @Override
@@ -168,6 +189,11 @@ public class OfertaVenta extends Entidad {
 
         public Builder withRestantes(Integer restantes) {
             ofertaVenta.restantes = restantes;
+            return this;
+        }
+
+        public Builder withParticipacionesSinVender(Integer participacionesSinVender){
+            ofertaVenta.participacionesSinVender = participacionesSinVender;
             return this;
         }
 
