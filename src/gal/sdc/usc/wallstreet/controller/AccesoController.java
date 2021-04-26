@@ -9,6 +9,7 @@ import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Inversor;
 import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.model.Usuario;
+import gal.sdc.usc.wallstreet.model.UsuarioSesion;
 import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
 import gal.sdc.usc.wallstreet.repository.InversorDAO;
 import gal.sdc.usc.wallstreet.repository.SuperUsuarioDAO;
@@ -118,14 +119,9 @@ public class AccesoController extends DatabaseLinker implements Initializable {
     }
 
     private void autenticar(Usuario usuario) {
-        Inversor inversor = super.getDAO(InversorDAO.class).seleccionar(usuario);
-
-        if (inversor != null) {
-            super.setUsuarioSesion(inversor);
-        } else {
-            Empresa empresa = super.getDAO(EmpresaDAO.class).seleccionar(usuario);
-            super.setUsuarioSesion(empresa);
-        }
+        UsuarioSesion us = super.getDAO(InversorDAO.class).seleccionar(usuario);
+        if (us == null) us = super.getDAO(EmpresaDAO.class).seleccionar(usuario);
+        super.setUsuarioSesion(us);
 
         // TODO: Usuario correcto, abrir ventana principal
     }
