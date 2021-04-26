@@ -18,7 +18,10 @@
 <?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.281" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.CarteraController">
-   <stylesheets> <URL value="@styles/cartera.css" /> </stylesheets>
+   <stylesheets>
+      <URL value="@styles/base.css" />
+      <URL value="@styles/cartera.css" />
+   </stylesheets>
    <children>
 
       <Label layoutX="154.0" layoutY="58.0" text="Saldo real" />
