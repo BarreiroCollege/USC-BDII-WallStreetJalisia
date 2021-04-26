@@ -34,6 +34,7 @@ public class CarteraController extends DatabaseLinker {
     public static final String VIEW = "cartera";
     public static final Integer HEIGHT = 440;
     public static final Integer WIDTH = 610;
+    public static final String TITULO = "Cartera";
 
     //<editor-fold defaultstate="collapsed" desc="Variables desde FXML">
     // Tabla y columnas de la tabla de participaciones

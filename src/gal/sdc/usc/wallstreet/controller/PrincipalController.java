@@ -3,10 +3,11 @@ package gal.sdc.usc.wallstreet.controller;
 import com.jfoenix.controls.JFXButton;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import gal.sdc.usc.wallstreet.Main;
-import gal.sdc.usc.wallstreet.model.*;
+import gal.sdc.usc.wallstreet.model.OfertaVenta;
+import gal.sdc.usc.wallstreet.model.Participacion;
+import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
 import gal.sdc.usc.wallstreet.repository.ParticipacionDAO;
-import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.Iconos;
 import gal.sdc.usc.wallstreet.util.TipoUsuario;
@@ -16,7 +17,11 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.util.List;
@@ -88,10 +93,11 @@ public class PrincipalController extends DatabaseLinker {
     List<OfertaVenta> ofertaVentaUsuario;
 
     @FXML
-    public void initialize(){
+    public void initialize() {
         Group root = new Group();
         scene = new Scene(root, WIDTH, HEIGHT);
         usuario = super.getUsuarioSesion().getUsuario();
+        System.out.println(usuario);
         ofertaVentaUsuario = super.getDAO(OfertaVentaDAO.class).getOfertasVentaPorUsuario(usuario.getSuperUsuario().getIdentificador(), 6);
         participacionesUsuario = super.getDAO(ParticipacionDAO.class).getParticipacionesPorUsuario(usuario.getSuperUsuario().getIdentificador(), 6);
 
@@ -104,21 +110,29 @@ public class PrincipalController extends DatabaseLinker {
 
         buttonPerfil.setGraphic(Iconos.icono(FontAwesomeIcon.USERS, "2.5em"));
         buttonVerPerfil.setGraphic(Iconos.icono(FontAwesomeIcon.USER));
+        buttonVerPerfil.setOnAction(e -> {
+            Main.ventana(PerfilController.VIEW, PerfilController.WIDTH, PerfilController.HEIGHT, PerfilController.TITULO);
+        });
         buttonEstadisticas.setGraphic(Iconos.icono(FontAwesomeIcon.BAR_CHART, "2.5em"));
         buttonCerrarSesion.setGraphic(Iconos.icono(FontAwesomeIcon.POWER_OFF));
 
         buttonCerrarSesion.setOnAction(event -> {
+            super.cerrarSesion();
             Main.ventana(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT, AccesoController.TITULO);
         });
 
+        buttonComprar.setOnAction(e -> {
+            Main.ventana(VCompraController.VIEW, VCompraController.WIDTH, VCompraController.HEIGHT, VCompraController.TITULO);
+        });
+
         buttonMostrarMas.setOnAction(event -> {
-            // TODO: mostrar la ventana con las tablas más completas
+            Main.ventana(CarteraController.VIEW, CarteraController.WIDTH, CarteraController.HEIGHT, CarteraController.TITULO);
         });
     }
 
 
-    public void seleccionVentana(boolean empresa){
-        if(!empresa){
+    public void seleccionVentana(boolean empresa) {
+        if (!empresa) {
             buttonPagos.setVisible(false);
             buttonParticipaciones.setVisible(false);
             buttonParticipaciones.setDisable(false);
@@ -129,18 +143,18 @@ public class PrincipalController extends DatabaseLinker {
         }
     }
 
-    public void gestionTablaParticipaciones(List<Participacion> ofertaParticipaciones){
+    public void gestionTablaParticipaciones(List<Participacion> ofertaParticipaciones) {
         //ofertaParticipaciones = new ArrayList<>();
 
         ObservableList<Participacion> participaciones = FXCollections.observableArrayList(ofertaParticipaciones);
         tablaParticipaciones.setItems(participaciones);
 
-       //Declaramos el nombre de las columnas
+        //Declaramos el nombre de las columnas
         colEmpresa.setCellValueFactory(cellData -> Bindings.createObjectBinding(() -> cellData.getValue().getEmpresa().getNombre()));
         colCantidad.setCellValueFactory(new PropertyValueFactory<Participacion, Integer>("cantidad"));
     }
 
-    public void gestionTablaOfertas(List<OfertaVenta> ofertaVentaList){
+    public void gestionTablaOfertas(List<OfertaVenta> ofertaVentaList) {
         //ofertaVentaList = new ArrayList<>();
 
         ObservableList<OfertaVenta> ofertasVenta = FXCollections.observableArrayList(ofertaVentaList);
@@ -153,7 +167,8 @@ public class PrincipalController extends DatabaseLinker {
         colNParticipaciones.setCellValueFactory(new PropertyValueFactory<OfertaVenta, Integer>("numParticipaciones"));
 
     }
-    public void mostrarSaldo(){
+
+    public void mostrarSaldo() {
         txtSaldo.setText(usuario.getSaldo() + " €");
     }
 

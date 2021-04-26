@@ -31,9 +31,10 @@ import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
 public class VCompraController extends DatabaseLinker {
-    public static final String VIEW = "VCompra";
+    public static final String VIEW = "vcompra";
     public static final Integer HEIGHT = 425;
     public static final Integer WIDTH = 760;
+    public static final String TITULO = "Comprar";
 
     @FXML
     private JFXButton btnSalir;

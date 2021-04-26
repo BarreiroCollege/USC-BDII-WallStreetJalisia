@@ -171,7 +171,7 @@ public class PerfilController extends DatabaseLinker implements Initializable {
 
     private void onBtnVolver(ActionEvent e) {
         if (!editando.get()) {
-            // TODO: Mandar a Principal
+            Main.ventana(PrincipalController.VIEW, PrincipalController.WIDTH, PrincipalController.HEIGHT, PrincipalController.TITULO);
         } else {
             this.asignarValores();
             editando.setValue(false);

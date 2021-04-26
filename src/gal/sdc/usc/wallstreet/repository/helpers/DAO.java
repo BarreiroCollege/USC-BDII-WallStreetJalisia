@@ -114,6 +114,7 @@ public abstract class DAO<E extends Entidad> {
 
             // Dependiendo del tipo de clave, decidir si saltar o no
             Columna columna = field.getDeclaredAnnotation(Columna.class);
+            if (columna == null) continue;
             if (ta.equals(TipoAtributo.PK) && !columna.pk()) continue;
             else if (ta.equals(TipoAtributo.NO_PK) && columna.pk()) continue;
 
