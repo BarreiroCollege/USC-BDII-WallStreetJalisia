@@ -8,6 +8,8 @@ import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.*;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -61,18 +63,18 @@ public class ReguladorController extends DatabaseLinker {
     @FXML
     private JFXButton btn_aceptar_todo_ofertas;
     @FXML
-    private TableView tablaUsuarios;
+    private TableView<Usuario> tablaUsuarios;
 
     private final String error = "error";
     private static JFXSnackbar snackbar;
-    private List<Usuario> usuarios;
+    private final ObservableList<Usuario> datosTabla = FXCollections.observableArrayList();
 
 
     @FXML
     public void initialize() {
         actualizarDatos();
         //actualizarSaldo();
-        obtenerDatos();
+        registrarDatos();
         establecerColumnasTabla();
     }
 
@@ -83,9 +85,10 @@ public class ReguladorController extends DatabaseLinker {
         actualizarSaldo();
     }
 
-    public void obtenerDatos(){
-        usuarios = super.getDAO(UsuarioDAO.class).getUsuarios();
-        
+    public void registrarDatos(){
+        List<Usuario> usuarios = super.getDAO(UsuarioDAO.class).getUsuariosActivos();
+        datosTabla.setAll(usuarios);
+        tablaUsuarios.setItems(datosTabla);
     }
 
     public void establecerColumnasTabla() {
