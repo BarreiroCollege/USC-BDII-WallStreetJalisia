@@ -26,8 +26,8 @@ import java.util.List;
 
 public class PrincipalController extends DatabaseLinker {
     public static final String VIEW = "principal";
-    public static final Integer HEIGHT = 551;
-    public static final Integer WIDTH = 768;
+    public static final Integer HEIGHT = 555;
+    public static final Integer WIDTH = 867;
     public static final String TITULO = "Ventana principal";
 
     @FXML
@@ -90,7 +90,7 @@ public class PrincipalController extends DatabaseLinker {
     @FXML
     public void initialize(){
         Group root = new Group();
-        scene = new Scene(root, 683, 551);
+        scene = new Scene(root, WIDTH, HEIGHT);
         switch (super.getTipoUsuario()) {
             case EMPRESA:
                 Empresa empresa = super.getEmpresa();
@@ -101,10 +101,11 @@ public class PrincipalController extends DatabaseLinker {
                 usuario = inversor.getUsuario();
                 break;
         }
-        ofertaVentaUsuario = super.getDAO(OfertaVentaDAO.class).getOfertasVentaPorUsuario(usuario.getSuperUsuario().getIdentificador());
-        participacionesUsuario = super.getDAO(ParticipacionDAO.class).getParticipacionesPorUsuario(usuario.getSuperUsuario().getIdentificador());
+        ofertaVentaUsuario = super.getDAO(OfertaVentaDAO.class).getOfertasVentaPorUsuario(usuario.getSuperUsuario().getIdentificador(), 6);
+        participacionesUsuario = super.getDAO(ParticipacionDAO.class).getParticipacionesPorUsuario(usuario.getSuperUsuario().getIdentificador(), 6);
 
-        seleccionVentana(super.getTipoUsuario().equals(TipoUsuario.INVERSOR));
+        seleccionVentana(super.getTipoUsuario().equals(TipoUsuario.EMPRESA));
+
         gestionTablaParticipaciones(participacionesUsuario);
         gestionTablaOfertas(ofertaVentaUsuario);
 

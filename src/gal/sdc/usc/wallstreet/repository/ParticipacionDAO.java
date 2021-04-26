@@ -18,12 +18,14 @@ public class ParticipacionDAO extends DAO<Participacion> {
         super(conexion, Participacion.class);
     }
 
-    public List<Participacion> getParticipacionesPorUsuario(String nombreUsuario) {
+    public List<Participacion> getParticipacionesPorUsuario(String nombreUsuario, int numero) {
         List<Participacion> participaciones = new ArrayList<>();
+        int limit = numero;
         try (PreparedStatement ps = super.conexion.prepareStatement(
-                "SELECT * FROM participacion where usuario = ?"
+                "SELECT * FROM participacion where usuario = ? limit ?"
         )) {
             ps.setString(1, nombreUsuario);
+            ps.setInt(2, limit);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 participaciones.add(Mapeador.map(rs, Participacion.class));

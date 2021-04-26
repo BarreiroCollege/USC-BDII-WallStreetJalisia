@@ -48,12 +48,14 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
 
 
 
-    public List<OfertaVenta> getOfertasVentaPorUsuario(String nombreUsuario) {
+    public List<OfertaVenta> getOfertasVentaPorUsuario(String nombreUsuario, int numero) {
         List<OfertaVenta> ofertaVenta = new ArrayList<>();
+        int limit = numero;
         try (PreparedStatement ps = super.conexion.prepareStatement(
-                "SELECT * FROM oferta_venta where usuario = ?"
+                "SELECT * FROM oferta_venta where usuario = ? limit ?"
         )) {
             ps.setString(1, nombreUsuario);
+            ps.setInt(2, limit);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 ofertaVenta.add(Mapeador.map(rs, OfertaVenta.class));
