@@ -30,7 +30,7 @@ import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
 public class VVentaController extends DatabaseLinker {
-
+    /*
     public static final String VIEW = "VVenta";
     public static final Integer HEIGHT = 425;
     public static final Integer WIDTH = 760;

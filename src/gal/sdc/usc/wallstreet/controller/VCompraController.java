@@ -37,8 +37,6 @@ public class VCompraController extends DatabaseLinker {
     public static final String TITULO = "Comprar";
 
     @FXML
-    private JFXButton btnVentana;
-    @FXML
     private JFXTextField campoNumero;
     @FXML
     private JFXTextField campoSaldo;
@@ -120,7 +118,7 @@ public class VCompraController extends DatabaseLinker {
 
     public void actualizarListaEmpresas(){
         // Se carga la nueva lista
-        listaEmpresas = getDAO(EmpresaDAO.class).getEmpresas();
+        listaEmpresas = super.getDAO(EmpresaDAO.class).getEmpresas();
         // Se limpia la comboBox y se vuelve a llenar
         empresaComboBox.getItems().clear();
         for (Empresa e : listaEmpresas) {
@@ -135,7 +133,6 @@ public class VCompraController extends DatabaseLinker {
             return;
         }
         String identificador = listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getUsuario().getSuperUsuario().getIdentificador();
-        System.out.println(identificador);
         datosTabla.setAll(getDAO(OfertaVentaDAO.class).getOfertasVenta(identificador, campoPrecio.getText().isEmpty()? 0f : Float.parseFloat(campoPrecio.getText())));
     }
 
@@ -177,7 +174,6 @@ public class VCompraController extends DatabaseLinker {
 
             compradas += partPosibles;
             saldo -= partPosibles * oferta.getPrecioVenta();
-
             ventaHecha = new Venta.Builder().withCantidad(partPosibles)
                     .withOfertaVenta(oferta)
                     .withFecha(new Date(System.currentTimeMillis()))
