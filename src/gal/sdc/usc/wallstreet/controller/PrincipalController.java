@@ -122,7 +122,11 @@ public class PrincipalController extends DatabaseLinker {
         });
 
         buttonComprar.setOnAction(e -> {
-            Main.ventana(VCompraController.VIEW, VCompraController.WIDTH, VCompraController.HEIGHT, VCompraController.TITULO);
+                    Main.ventana(VCompraController.VIEW, VCompraController.WIDTH, VCompraController.HEIGHT, VCompraController.TITULO);
+        });
+        buttonPagos.setOnAction(event -> {
+            Main.ventana(PagosController.VIEW, PagosController.WIDTH, PagosController.HEIGHT, PagosController.TITULO);
+
         });
 
         buttonMostrarMas.setOnAction(event -> {
