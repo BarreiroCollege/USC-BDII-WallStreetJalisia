@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class GoogleAuth {
+    private final static String HOST = "Wall Street Jalisia";
+
     /**
      * Genera una clave secreta para usar como OTP
      *
@@ -30,16 +32,15 @@ public class GoogleAuth {
      * Genera una URL para ser mostrada como imagen con un codigo QR
      *
      * @param user   usuario
-     * @param host   página web
      * @param secret clave secreta
      * @return url de imagen
      */
-    public static String obtenerCodigoQR(String user, String host, String secret) {
+    public static String obtenerCodigoQR(String user, String secret) {
         try {
             String otpauth = "otpauth://totp/"
-                    + URLEncoder.encode(host + " (" + user + ")", "UTF-8").replace("+", "%20")
+                    + URLEncoder.encode(HOST + " (" + user + ")", "UTF-8").replace("+", "%20")
                     + "?secret=" + URLEncoder.encode(secret, "UTF-8").replace("+", "%20")
-                    + "&issuer=" + URLEncoder.encode(host, "UTF-8").replace("+", "%20");
+                    + "&issuer=" + URLEncoder.encode(HOST, "UTF-8").replace("+", "%20");
             return "https://www.google.com/chart?chs=512x512&chld=M%%7C0&cht=qr&chl="
                     + otpauth;
         } catch (UnsupportedEncodingException e) {
@@ -53,7 +54,6 @@ public class GoogleAuth {
      *
      * @param secret clave secreta
      * @param code   codigo temporal
-     * @param t      tiempo
      * @return true cuando es valido, false en caso contrario
      * @throws NoSuchAlgorithmException error
      * @throws InvalidKeyException      error

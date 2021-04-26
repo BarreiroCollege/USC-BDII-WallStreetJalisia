@@ -1,13 +1,97 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-
-<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0"
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXPasswordField?>
+<?import com.jfoenix.controls.JFXTabPane?>
+<?import com.jfoenix.controls.JFXTextArea?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import java.net.URL?>
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0"
             xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="gal.sdc.usc.wallstreet.controller.PerfilController">
+    <stylesheets>
+        <URL value="@styles/base.css"/>
+    </stylesheets>
 
+    <VBox AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="100.0" alignment="CENTER" prefHeight="450.0">
+        <VBox prefHeight="250.0" alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
+            <VBox.margin>
+                <Insets top="75.0" left="25.0" right="25.0"/>
+            </VBox.margin>
+            <HBox>
+                <JFXTextField promptText="Nombre de usuario" labelFloat="true" fx:id="txtUsuario"
+                              HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                <Label minWidth="10.0"/>
+                <JFXPasswordField promptText="Contraseña" labelFloat="true" fx:id="txtClave"
+                                  HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            </HBox>
+            <Label minHeight="40.0"/>
+            <JFXTextArea promptText="Dirección" labelFloat="true" fx:id="txtDireccion"/>
+            <Label minHeight="40.0"/>
+            <HBox>
+                <JFXTextField promptText="Código postal" labelFloat="true" fx:id="txtCp"/>
+                <Label minWidth="10.0"/>
+                <JFXTextField promptText="Localidad" labelFloat="true" fx:id="txtLocalidad"
+                              HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            </HBox>
+            <Label minHeight="40.0"/>
+            <JFXTextField promptText="Teléfono de contacto" labelFloat="true" fx:id="txtTelefono"/>
+            <Label minHeight="40.0"/>
+            <VBox alignment="TOP_CENTER" fx:id="divInversor">
+                <Label minHeight="25.0"/>
+                <HBox>
+                    <JFXTextField promptText="Nombre" labelFloat="true" fx:id="txtNombre"/>
+                    <Label minWidth="10.0"/>
+                    <JFXTextField promptText="Apellidos" labelFloat="true" fx:id="txtApellidos"
+                                  HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                </HBox>
+                <Label minHeight="40.0"/>
+                <JFXTextField promptText="DNI/NIF" labelFloat="true" fx:id="txtDni" disable="true"/>
+            </VBox>
+
+            <VBox alignment="TOP_CENTER" fx:id="divEmpresa">
+                <Label minHeight="25.0"/>
+                <HBox VBox.vgrow="ALWAYS">
+                    <JFXTextField promptText="Nombre de empresa" labelFloat="true" fx:id="txtEmpresa"
+                                  HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    <Label minWidth="10.0"/>
+                    <JFXTextField promptText="CIF" labelFloat="true" fx:id="txtCif" disable="true"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </VBox>
+
+    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          alignment="BOTTOM_CENTER" prefHeight="100.0" maxHeight="100.0" minHeight="100.0">
+        <HBox prefHeight="100.0" alignment="BOTTOM_CENTER">
+            <VBox.margin>
+                <Insets left="25.0" right="25.0" bottom="50.0"/>
+            </VBox.margin>
+            <JFXButton text="Volver" fx:id="btnVolver">
+                <font>
+                    <Font size="18.0"/>
+                </font>
+            </JFXButton>
+            <Label HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            <JFXButton text="Activar 2FA" fx:id="btnOtp" buttonType="RAISED">
+                <font>
+                    <Font name="System Bold" size="18.0"/>
+                </font>
+            </JFXButton>
+            <Label minWidth="20.0"/>
+            <JFXButton text="Editar" fx:id="btnEditar" buttonType="RAISED" styleClass="btn-primario">
+                <font>
+                    <Font name="System Bold" size="18.0"/>
+                </font>
+            </JFXButton>
+        </HBox>
+    </VBox>
 </AnchorPane>

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UsuarioDAO extends DAO<Usuario> {
+
     public UsuarioDAO(Connection conexion) {
         super(conexion, Usuario.class);
     }
