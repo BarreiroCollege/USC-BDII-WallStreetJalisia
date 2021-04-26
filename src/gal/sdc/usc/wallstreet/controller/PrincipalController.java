@@ -6,6 +6,7 @@ import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.*;
 import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
 import gal.sdc.usc.wallstreet.repository.ParticipacionDAO;
+import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.Iconos;
 import gal.sdc.usc.wallstreet.util.TipoUsuario;
@@ -15,10 +16,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.util.List;
@@ -69,6 +67,8 @@ public class PrincipalController extends DatabaseLinker {
     @FXML
     private TableColumn<OfertaVenta, Integer> colNParticipaciones;
 
+    @FXML
+    private Label txtSaldo;
 
     @FXML
     private Menu buttonPerfil;
@@ -105,6 +105,7 @@ public class PrincipalController extends DatabaseLinker {
         participacionesUsuario = super.getDAO(ParticipacionDAO.class).getParticipacionesPorUsuario(usuario.getSuperUsuario().getIdentificador(), 6);
 
         seleccionVentana(super.getTipoUsuario().equals(TipoUsuario.EMPRESA));
+        mostrarSaldo();
 
         gestionTablaParticipaciones(participacionesUsuario);
         gestionTablaOfertas(ofertaVentaUsuario);
@@ -140,7 +141,7 @@ public class PrincipalController extends DatabaseLinker {
     public void gestionTablaParticipaciones(List<Participacion> ofertaParticipaciones){
         //ofertaParticipaciones = new ArrayList<>();
 
-        ObservableList<Participacion> participaciones = FXCollections.observableArrayList(ofertaParticipaciones.subList(0, ofertaParticipaciones.size() >= 6 ? 6 : ofertaParticipaciones.size()));
+        ObservableList<Participacion> participaciones = FXCollections.observableArrayList(ofertaParticipaciones);
         tablaParticipaciones.setItems(participaciones);
 
        //Declaramos el nombre de las columnas
@@ -151,7 +152,7 @@ public class PrincipalController extends DatabaseLinker {
     public void gestionTablaOfertas(List<OfertaVenta> ofertaVentaList){
         //ofertaVentaList = new ArrayList<>();
 
-        ObservableList<OfertaVenta> ofertasVenta = FXCollections.observableArrayList(ofertaVentaList.subList(0, ofertaVentaList.size() >= 6 ? 6 : ofertaVentaList.size()));
+        ObservableList<OfertaVenta> ofertasVenta = FXCollections.observableArrayList(ofertaVentaList);
         tablaOfertasVenta.setItems(ofertasVenta);
 
         //Declaramos el nombre de las columnas
@@ -161,5 +162,10 @@ public class PrincipalController extends DatabaseLinker {
         colNParticipaciones.setCellValueFactory(new PropertyValueFactory<OfertaVenta, Integer>("numParticipaciones"));
 
     }
+    public void mostrarSaldo(){
+        double saldo = super.getDAO(UsuarioDAO.class).getSaldoUsuario(usuario.getSuperUsuario().getIdentificador());
+        txtSaldo.setText(Double.toString(saldo) + " €");
+    }
+
 
 }

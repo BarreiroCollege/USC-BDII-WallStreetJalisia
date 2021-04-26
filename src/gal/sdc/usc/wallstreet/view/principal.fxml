@@ -43,7 +43,7 @@
             <font>
                 <Font size="20.0" />
             </font></Label>
-        <Label layoutX="727.0" layoutY="47.0" text="Saldo:">
+        <Label fx:id="txtSaldo" layoutX="727.0" layoutY="47.0" text="Saldo:">
             <font>
                 <Font size="20.0" />
             </font></Label>
