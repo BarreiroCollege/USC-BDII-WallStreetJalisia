@@ -20,6 +20,26 @@ public class Sociedad extends Entidad {
     private Sociedad() {
     }
 
+    public SuperUsuario getIdentificador() {
+        return identificador;
+    }
+
+    public Float getSaldoComunal() {
+        return saldoComunal;
+    }
+
+    public void setSaldoComunal(Float saldoComunal) {
+        this.saldoComunal = saldoComunal;
+    }
+
+    public Integer getTolerancia() {
+        return tolerancia;
+    }
+
+    public void setTolerancia(Integer tolerancia) {
+        this.tolerancia = tolerancia;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
