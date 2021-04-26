@@ -72,6 +72,7 @@
           <Menu fx:id="buttonPerfil" mnemonicParsing="false">
             <items>
               <MenuItem fx:id="buttonVerPerfil" mnemonicParsing="false" text="Ver perfil" />
+                <MenuItem fx:id="buttonVerSociedad" mnemonicParsing="false" text="Ver sociedad" />
                 <MenuItem fx:id="buttonCerrarSesion" mnemonicParsing="false" text="Cerrar sesión" />
             </items>
           </Menu>

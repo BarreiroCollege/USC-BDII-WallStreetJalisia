@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.cells.editors.base.JFXTreeTableCell?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTabPane?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXTreeTableRow?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import java.net.URL?>
+<?import com.jfoenix.controls.JFXTreeTableView?>
+<?import javafx.scene.control.TableView?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="gal.sdc.usc.wallstreet.controller.SociedadController">
+    <stylesheets>
+        <URL value="@styles/base.css"/>
+    </stylesheets>
+
+    <VBox AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="100.0" alignment="CENTER" prefHeight="450.0">
+        <VBox prefHeight="450.0" alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
+            <VBox.margin>
+                <Insets top="4.0" left="25.0" right="25.0"/>
+            </VBox.margin>
+            <JFXTabPane VBox.vgrow="ALWAYS" maxHeight="Infinity" minHeight="190.0" fx:id="tabVentana">
+                <Tab text="Sociedad">
+                    <VBox alignment="TOP_CENTER">
+                        <Label minHeight="25.0"/>
+                        <JFXTextField promptText="Identificador" labelFloat="true" fx:id="txtIdentificador"/>
+                        <Label minHeight="40.0"/>
+                        <HBox>
+                            <JFXTextField promptText="Saldo" labelFloat="true" fx:id="txtSaldoComunal" maxWidth="Infinity"/>
+                            <Label minWidth="10.0"/>
+                            <HBox HBox.hgrow="ALWAYS">
+                                <JFXTextField promptText="Tolerancia" labelFloat="true" fx:id="txtTolerancia"
+                                              HBox.hgrow="ALWAYS"/>
+                                <Label minWidth="10.0"/>
+                                <JFXComboBox fx:id="cmbToleranciaUnidad"/>
+                            </HBox>
+                        </HBox>
+                    </VBox>
+                </Tab>
+                <Tab text="Propuestas">
+                    <VBox alignment="TOP_CENTER">
+                        <Label minHeight="15.0"/>
+                        <TableView fx:id="tblPropuestas"/>
+                    </VBox>
+                </Tab>
+            </JFXTabPane>
+        </VBox>
+    </VBox>
+
+    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          alignment="BOTTOM_CENTER" prefHeight="100.0" maxHeight="100.0" minHeight="100.0">
+        <HBox prefHeight="100.0" alignment="BOTTOM_CENTER">
+            <VBox.margin>
+                <Insets left="25.0" right="25.0" bottom="50.0"/>
+            </VBox.margin>
+            <JFXButton text="Volver" fx:id="btnVolver">
+                <font>
+                    <Font size="18.0"/>
+                </font>
+            </JFXButton>
+            <Label HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            <JFXButton text="Editar" fx:id="btnEditar" buttonType="RAISED" styleClass="btn-primario">
+                <font>
+                    <Font name="System Bold" size="18.0"/>
+                </font>
+            </JFXButton>
+        </HBox>
+    </VBox>
+</AnchorPane>

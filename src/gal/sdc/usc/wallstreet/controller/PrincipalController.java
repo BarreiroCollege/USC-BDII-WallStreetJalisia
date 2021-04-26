@@ -85,6 +85,8 @@ public class PrincipalController extends DatabaseLinker {
     private MenuItem buttonCerrarSesion;
     @FXML
     private MenuItem buttonVerPerfil;
+    @FXML
+    private MenuItem buttonVerSociedad;
 
 
     Scene scene;
@@ -107,6 +109,9 @@ public class PrincipalController extends DatabaseLinker {
         gestionTablaParticipaciones(participacionesUsuario);
         gestionTablaOfertas(ofertaVentaUsuario);
 
+        if (usuario.getSociedad() == null) {
+            buttonVerSociedad.setVisible(false);
+        }
 
         buttonPerfil.setGraphic(Iconos.icono(FontAwesomeIcon.USERS, "2.5em"));
         buttonVerPerfil.setGraphic(Iconos.icono(FontAwesomeIcon.USER));
@@ -115,6 +120,7 @@ public class PrincipalController extends DatabaseLinker {
         });
         buttonEstadisticas.setGraphic(Iconos.icono(FontAwesomeIcon.BAR_CHART, "2.5em"));
         buttonCerrarSesion.setGraphic(Iconos.icono(FontAwesomeIcon.POWER_OFF));
+        buttonVerSociedad.setGraphic(Iconos.icono(FontAwesomeIcon.SHARE_ALT));
 
         buttonCerrarSesion.setOnAction(event -> {
             super.cerrarSesion();
@@ -127,6 +133,10 @@ public class PrincipalController extends DatabaseLinker {
 
         buttonMostrarMas.setOnAction(event -> {
             Main.ventana(CarteraController.VIEW, CarteraController.WIDTH, CarteraController.HEIGHT, CarteraController.TITULO);
+        });
+
+        buttonVerSociedad.setOnAction(e -> {
+            Main.ventana(SociedadController.VIEW, SociedadController.WIDTH, SociedadController.HEIGHT, SociedadController.TITULO);
         });
     }
 

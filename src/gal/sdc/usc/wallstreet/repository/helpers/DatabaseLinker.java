@@ -20,7 +20,7 @@ import java.util.Properties;
  * Clase que actúa de enlace con la base de datos. Puede ser extendida por cualquier
  * clase al usar variables estáticas.
  */
-public class DatabaseLinker {
+public abstract class DatabaseLinker {
     // Indica que la conexión se ha inicializado
     private static Connection conexion;
     // Lista de DAOs disponibles
