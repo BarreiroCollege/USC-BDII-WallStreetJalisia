@@ -6,6 +6,7 @@ import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXTextField;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import gal.sdc.usc.wallstreet.model.*;
+import gal.sdc.usc.wallstreet.repository.SuperUsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.VentaDAO;
 import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
@@ -46,6 +47,8 @@ public class VCompraController extends DatabaseLinker {
     @FXML
     private JFXTextField campoPrecio;
     @FXML
+    private JFXButton btnVolver;
+    @FXML
     private TableView<OfertaVenta> tablaOfertas;
     @FXML
     private TableColumn<OfertaVenta, String> nombreCol;
@@ -71,9 +74,8 @@ public class VCompraController extends DatabaseLinker {
         datosTabla = FXCollections.observableArrayList();
 
         // Recuperamos el usuario
-       /* if(super.getTipoUsuario().equals(TipoUsuario.EMPRESA)) super.getEmpresa().getUsuario();
-        else super.getInversor().getUsuario();*/
-        usr = super.getUsuarioSesion().getUsuario();
+        usr = super.getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder("diego").build());
+        System.out.println(usr);
 
         // Setup de las columnas de la tabla
         nombreCol.setCellValueFactory(new PropertyValueFactory<>("usuario"));
@@ -112,7 +114,7 @@ public class VCompraController extends DatabaseLinker {
     // FUNCIONALIDADES //
 
     public void actualizarSaldo() {
-        usr = getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder(usr.getIdentificador()).build());
+        usr = getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder(usr.getSuperUsuario().getIdentificador()).build());
         campoSaldo.setText(String.valueOf(usr.getSaldo()-usr.getSaldoBloqueado()));
     }
 
@@ -132,7 +134,7 @@ public class VCompraController extends DatabaseLinker {
             datosTabla.clear();
             return;
         }
-        String identificador = listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getUsuario().getIdentificador();
+        String identificador = listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getUsuario().getSuperUsuario().getIdentificador();
         datosTabla.setAll(getDAO(OfertaVentaDAO.class).getOfertasVenta(identificador, campoPrecio.getText().isEmpty()? Float.parseFloat(campoPrecio.getText()) : 0f));
     }
 
@@ -198,8 +200,8 @@ public class VCompraController extends DatabaseLinker {
     // BOTONES //
 
     // Boton de salir
-    public void btnSalirEvent(ActionEvent event) {
-        ((Stage) btnSalir.getScene().getWindow()).close();
+    public void btnVolverEvent(ActionEvent event) {
+        ((Stage) btnVolver.getScene().getWindow()).close();
     }
 
     // Nueva empresa seleccionada
