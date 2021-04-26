@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.util.List;
 
 public class ReguladorController extends DatabaseLinker {
     @FXML
@@ -64,13 +65,15 @@ public class ReguladorController extends DatabaseLinker {
 
     private final String error = "error";
     private static JFXSnackbar snackbar;
+    private List<Usuario> usuarios;
 
 
     @FXML
     public void initialize() {
         actualizarDatos();
         //actualizarSaldo();
-        cargarDatosTabla();
+        obtenerDatos();
+        establecerColumnasTabla();
     }
 
     public void actualizarDatos() {
@@ -80,11 +83,12 @@ public class ReguladorController extends DatabaseLinker {
         actualizarSaldo();
     }
 
-    public void cargarDatosTabla() {
-        establecerColumnas();
+    public void obtenerDatos(){
+        usuarios = super.getDAO(UsuarioDAO.class).getUsuarios();
+        
     }
 
-    public void establecerColumnas() {
+    public void establecerColumnasTabla() {
         // Establecemos los valores que contendrá cada columna de la tabla de participaciones
         columnaId.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getIdentificador()));
         columnaSaldo.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getSaldo().toString()));
