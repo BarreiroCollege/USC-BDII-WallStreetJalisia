@@ -32,6 +32,7 @@ import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
 public class VVentaController {
+    /*
     public static final String VIEW = "VVenta";
     public static final Integer HEIGHT = 425;
     public static final Integer WIDTH = 760;
@@ -49,8 +50,8 @@ public class VVentaController {
         datosTabla = FXCollections.observableArrayList();
 
         // Recuperamos el usuario
-       /* if(super.getTipoUsuario().equals(TipoUsuario.EMPRESA)) super.getEmpresa().getUsuario();
-        else super.getInversor().getUsuario();*/
+        if(super.getTipoUsuario().equals(TipoUsuario.EMPRESA)) super.getEmpresa().getUsuario();
+        else super.getInversor().getUsuario();
         usr = getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder("eva").build());
 
         // Setup de las columnas de la tabla
@@ -144,5 +145,5 @@ public class VVentaController {
         actualizarVentana();
     }
 
-
+    */
 }

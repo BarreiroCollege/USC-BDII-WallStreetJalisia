@@ -73,7 +73,8 @@ public class VCompraController extends DatabaseLinker {
         // Recuperamos el usuario
        /* if(super.getTipoUsuario().equals(TipoUsuario.EMPRESA)) super.getEmpresa().getUsuario();
         else super.getInversor().getUsuario();*/
-        usr = getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder("eva").build());
+        //usr = getDAO(UsuarioDAO.class).seleccionar(new Usuario.Builder(new SuperUsuario.Builder("eva").build()));
+        usr = super.getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder("eva").build());
 
         // Setup de las columnas de la tabla
         nombreCol.setCellValueFactory(new PropertyValueFactory<>("usuario"));
@@ -172,7 +173,6 @@ public class VCompraController extends DatabaseLinker {
             partPosibles = Math.min(partPosibles, acomprar - compradas);
             partPosibles = Math.min(partPosibles, oferta.getNumParticipaciones());
 
-            oferta.setNumParticipaciones(oferta.getNumParticipaciones() - partPosibles);
             compradas += partPosibles;
             saldo -= partPosibles * oferta.getPrecioVenta();
 
@@ -182,7 +182,6 @@ public class VCompraController extends DatabaseLinker {
                     .withUsuarioCompra(usr.getSuperUsuario())
                     .build();
             getDAO(VentaDAO.class).insertar(ventaHecha);
-            getDAO(OfertaVentaDAO.class).actualizar(oferta);
         }
         // Actualizamos saldo y elementos gráficos
         usr.setSaldo(saldo+usr.getSaldoBloqueado());
