@@ -135,7 +135,7 @@ create table oferta_venta
     precio_venta        double precision               not null,
     confirmado          boolean          default false not null,
     comision            double precision default 0.05  not null,
-    restantes           integer                        not null,
+    restantes           integer          default -1,
     constraint oferta_venta_pk
         primary key (fecha, usuario)
 );
@@ -202,4 +202,38 @@ create table propuesta_compra
 alter table propuesta_compra
     owner to postgres;
 
+-- Función asociada al trigger actualizarNumParticipaciones.
+-- Disminuye restantes según el número de participaciones
+-- de la venta.
+create or replace function participaciones_restantes() returns trigger language plpgsql as $$
+begin
+	update oferta_venta
+	set restantes = restantes - NEW.cantidad
+	where fecha = NEW.ov_fecha and usuario = NEW.ov_usuario;
+	return new;
+end;
+$$;
 
+
+-- Trigger que se activa al insertar una nueva venta y actualiza oferta_venta
+create trigger actualizarNumParticipaciones after insert on venta
+for each row execute procedure participaciones_restantes();
+
+ -- =================================================================================================
+
+-- Función asociada al trigger actualizarNumParticipaciones.
+-- Disminuye restantes según el número de participaciones
+-- de la venta.
+create or replace function insertar_participaciones_restantes() returns trigger language plpgsql as $$
+begin isolation level SERIALIZABLE READ WRITE;
+    update oferta_venta
+    set restantes = num_participaciones
+    where fecha = NEW.fecha and usuario = NEW.usuario and restantes = -1;
+    commit;
+    return new;
+end;
+$$;
+
+-- Trigger que se activa al insertar una nueva venta y actualiza oferta_venta
+create trigger insertarNumParticipaciones after insert on oferta_venta
+    for each row execute procedure insertar_participaciones_restantes();

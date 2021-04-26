@@ -17,15 +17,17 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
         super(conexion, OfertaVenta.class);
     }
 
-    public List<OfertaVenta> getOfertasVenta(String empresa, Float precioMax){
+    public List<OfertaVenta> getOfertasVenta(String empresa, Float precioMax) {
         List<OfertaVenta> ofertas = new ArrayList<>();
-        try (PreparedStatement ps = conexion.prepareStatement(
-                "SELECT * FROM oferta_venta " +
-                        "WHERE confirmado is true and empresa=? and precio_venta<=? and num_participaciones>0 " +
-                        "ORDER BY precio_venta asc"
-        )) {
+        try{
+            String statement = "SELECT * FROM oferta_venta " +
+                                "WHERE confirmado is true and empresa=? ";
+            if(precioMax.equals(0f)) statement += "and precio_venta<=? ";
+            statement += "ORDER BY precio_venta asc";
+
+            PreparedStatement ps = conexion.prepareStatement(statement);
             ps.setString(1,empresa);
-            ps.setFloat(2,precioMax);
+            if(precioMax.equals(0f)) ps.setFloat(2,precioMax);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 OfertaVenta oferta = Mapeador.map(rs, OfertaVenta.class);

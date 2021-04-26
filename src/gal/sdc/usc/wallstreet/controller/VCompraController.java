@@ -5,13 +5,10 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXTextField;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import gal.sdc.usc.wallstreet.model.Empresa;
-import gal.sdc.usc.wallstreet.model.Venta;
+import gal.sdc.usc.wallstreet.model.*;
 import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
-import gal.sdc.usc.wallstreet.model.OfertaVenta;
 import gal.sdc.usc.wallstreet.repository.VentaDAO;
 import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
-import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.Iconos;
@@ -77,7 +74,7 @@ public class VCompraController extends DatabaseLinker {
         // Recuperamos el usuario
        /* if(super.getTipoUsuario().equals(TipoUsuario.EMPRESA)) super.getEmpresa().getUsuario();
         else super.getInversor().getUsuario();*/
-        usr = getDAO(UsuarioDAO.class).getUsuario("eva");
+        usr = getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder("eva").build());
 
         // Setup de las columnas de la tabla
         nombreCol.setCellValueFactory(new PropertyValueFactory<>("usuario"));
@@ -116,7 +113,7 @@ public class VCompraController extends DatabaseLinker {
     // FUNCIONALIDADES //
 
     public void actualizarSaldo() {
-        usr = getDAO(UsuarioDAO.class).getUsuario(usr.getSuperUsuario().getIdentificador());
+        usr = getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder(usr.getIdentificador()).build());
         campoSaldo.setText(String.valueOf(usr.getSaldo()-usr.getSaldoBloqueado()));
     }
 
@@ -131,19 +128,21 @@ public class VCompraController extends DatabaseLinker {
     }
 
     public void actualizarDatosTabla() {
-        // Si falta alguno de los campos necesarios, se limpia la tabla
-        if (campoPrecio.getText().isEmpty() || empresaComboBox.getSelectionModel().getSelectedIndex() == -1) {
+        // Si no hay ninguna empresa seleccionada, se limpia la tabla
+        if (empresaComboBox.getSelectionModel().getSelectedIndex() == -1) {
             datosTabla.clear();
             return;
         }
-        String identificador = listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getUsuario().getSuperUsuario().getIdentificador();
-        datosTabla.setAll(getDAO(OfertaVentaDAO.class).getOfertasVenta(identificador, Float.parseFloat(campoPrecio.getText())));
+        String identificador = listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getUsuario().getIdentificador();
+        datosTabla.setAll(getDAO(OfertaVentaDAO.class).getOfertasVenta(identificador, campoPrecio.getText().isEmpty()? Float.parseFloat(campoPrecio.getText()) : 0f));
     }
 
     public void actualizarVentana(){
         actualizarSaldo();
         actualizarListaEmpresas();
         actualizarDatosTabla();
+        campoNumero.setText("");
+        campoPrecio.setText("");
     }
 
     public void comprar(){
@@ -168,7 +167,7 @@ public class VCompraController extends DatabaseLinker {
         // Compramos de las ofertas de más baratas a más caras
         for (OfertaVenta oferta : datosTabla) {
             // Si se compraron las solicitadas o no hay dinero para más se para el bucle
-            if (acomprar - compradas == 0) break; //
+            if (acomprar.equals(compradas)) break; //
             if ((partPosibles = (int) Math.floor(saldo / oferta.getPrecioVenta())) == 0) break;
 
             partPosibles = Math.min(partPosibles, acomprar - compradas);
@@ -189,8 +188,7 @@ public class VCompraController extends DatabaseLinker {
         // Actualizamos saldo y elementos gráficos
         usr.setSaldo(saldo+usr.getSaldoBloqueado());
         getDAO(UsuarioDAO.class).actualizar(usr);
-        actualizarDatosTabla();
-        actualizarSaldo();
+        actualizarVentana();
 
         // Tratamos de comprometer la transacción
         if (!super.ejecutarTransaccion()) {
