@@ -74,14 +74,14 @@ public class VCompraController extends DatabaseLinker {
         datosTabla = FXCollections.observableArrayList();
 
         // Recuperamos el usuario
-        usr = super.getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder("diego").build());
-        System.out.println(usr);
+        // TODO Recoger el usuario de la sesion
+        usr = super.getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder("eva").build());
 
         // Setup de las columnas de la tabla
-        nombreCol.setCellValueFactory(new PropertyValueFactory<>("usuario"));
+        //nombreCol.setCellValueFactory(new PropertyValueFactory<>("usuario"));
         precioCol.setCellValueFactory(new PropertyValueFactory<>("precioVenta"));
         fechaCol.setCellValueFactory(new PropertyValueFactory<>("fecha"));
-        cantidadCol.setCellValueFactory(new PropertyValueFactory<>("numParticipaciones"));
+        cantidadCol.setCellValueFactory(new PropertyValueFactory<>("restantes"));
         tablaOfertas.setItems(datosTabla);
         tablaOfertas.setSelectionModel(null); // Evitamos que se seleccionen filas (estético)
         tablaOfertas.setPlaceholder(new Label("")); // Eliminamos el texto por defecto (estético)
@@ -114,7 +114,7 @@ public class VCompraController extends DatabaseLinker {
     // FUNCIONALIDADES //
 
     public void actualizarSaldo() {
-        usr = getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder(usr.getSuperUsuario().getIdentificador()).build());
+        usr = super.getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder("eva").build());
         campoSaldo.setText(String.valueOf(usr.getSaldo()-usr.getSaldoBloqueado()));
     }
 
@@ -135,7 +135,8 @@ public class VCompraController extends DatabaseLinker {
             return;
         }
         String identificador = listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getUsuario().getSuperUsuario().getIdentificador();
-        datosTabla.setAll(getDAO(OfertaVentaDAO.class).getOfertasVenta(identificador, campoPrecio.getText().isEmpty()? Float.parseFloat(campoPrecio.getText()) : 0f));
+        System.out.println(identificador);
+        datosTabla.setAll(getDAO(OfertaVentaDAO.class).getOfertasVenta(identificador, campoPrecio.getText().isEmpty()? 0f : Float.parseFloat(campoPrecio.getText())));
     }
 
     public void actualizarVentana(){
@@ -154,9 +155,9 @@ public class VCompraController extends DatabaseLinker {
         // Variables de estado
         float saldo;
         Integer acomprar = Integer.parseInt(campoNumero.getText());
-        Integer compradas = 0;
+        int compradas = 0;
         Venta ventaHecha;
-        Integer partPosibles;
+        int partPosibles;
 
         // INICIAMOS TRANSACCION
         super.iniciarTransaccion();
@@ -187,7 +188,6 @@ public class VCompraController extends DatabaseLinker {
         // Actualizamos saldo y elementos gráficos
         usr.setSaldo(saldo+usr.getSaldoBloqueado());
         getDAO(UsuarioDAO.class).actualizar(usr);
-        actualizarVentana();
 
         // Tratamos de comprometer la transacción
         if (!super.ejecutarTransaccion()) {
@@ -195,6 +195,7 @@ public class VCompraController extends DatabaseLinker {
         }else{
             notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label("Compra fallida!"), Duration.seconds(3.0), null));
         }
+        actualizarVentana();
     }
 
     // BOTONES //

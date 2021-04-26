@@ -40,7 +40,7 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
 
             PreparedStatement ps = conexion.prepareStatement(statement);
             ps.setString(1,empresa);
-            if(precioMax.equals(0f)) ps.setFloat(2,precioMax);
+            if(!precioMax.equals(0f)) ps.setFloat(2,precioMax);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 OfertaVenta oferta = Mapeador.map(rs, OfertaVenta.class);

@@ -10,16 +10,14 @@ import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
 import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
 import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.VentaDAO;
+import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.Iconos;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextFormatter;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -31,18 +29,42 @@ import java.util.List;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
-public class VVentaController {
-    /*
+public class VVentaController extends DatabaseLinker {
+
     public static final String VIEW = "VVenta";
     public static final Integer HEIGHT = 425;
     public static final Integer WIDTH = 760;
-    public static final String TITULO = "Venta de participaciones";
-
-    @FXML
-    private JFXButton btnSalir;
+    public static final String TITULO = "Venta";
 
     private Usuario usr;
     private ObservableList<OfertaVenta> datosTabla;
+
+    @FXML
+    private JFXButton btnVolver;
+    @FXML
+    private TableView<OfertaVenta> tablaOfertas;
+    @FXML
+    private TableColumn<OfertaVenta,String> empresaCol;
+    @FXML
+    private TableColumn<OfertaVenta,Integer> ofertadasCol;
+    @FXML
+    private TableColumn<OfertaVenta,Integer> restantesCol;
+    @FXML
+    private TableColumn<OfertaVenta,Float> precioCol;
+    @FXML
+    private TableColumn<OfertaVenta,Date> fechaCol;
+    @FXML
+    private JFXTextField campoNumero;
+    @FXML
+    private JFXTextField campoPrecio;
+    @FXML
+    private JFXTextField campoParticipaciones;
+    @FXML
+    private JFXButton botonRefresh;
+    @FXML
+    private JFXSnackbar notificationBar;
+    @FXML
+    private JFXComboBox<String> empresaComboBox;
 
     @FXML
     public void initialize() {
@@ -50,21 +72,20 @@ public class VVentaController {
         datosTabla = FXCollections.observableArrayList();
 
         // Recuperamos el usuario
-        if(super.getTipoUsuario().equals(TipoUsuario.EMPRESA)) super.getEmpresa().getUsuario();
-        else super.getInversor().getUsuario();
-        usr = getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder("eva").build());
+        usr = super.getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder("eva").build());
 
         // Setup de las columnas de la tabla
-        nombreCol.setCellValueFactory(new PropertyValueFactory<>("usuario"));
+        ofertadasCol.setCellValueFactory(new PropertyValueFactory<>("numParticipaciones"));
+        restantesCol.setCellValueFactory(new PropertyValueFactory<>("restantes"));
         precioCol.setCellValueFactory(new PropertyValueFactory<>("precioVenta"));
         fechaCol.setCellValueFactory(new PropertyValueFactory<>("fecha"));
-        cantidadCol.setCellValueFactory(new PropertyValueFactory<>("numParticipaciones"));
         tablaOfertas.setItems(datosTabla);
+
         tablaOfertas.setSelectionModel(null); // Evitamos que se seleccionen filas (estético)
         tablaOfertas.setPlaceholder(new Label("")); // Eliminamos el texto por defecto (estético)
-        nombreCol.setCellValueFactory(p -> {
+        empresaCol.setCellValueFactory(p -> {
             if (p.getValue() != null) {
-                return new SimpleStringProperty(p.getValue().getUsuario().getIdentificador());
+                return new SimpleStringProperty(p.getValue().getEmpresa().getNombre());
             } else {
                 return new SimpleStringProperty("<no name>");
             }
@@ -77,19 +98,14 @@ public class VVentaController {
                 c -> Pattern.matches("\\d*", c.getText()) ? c : null));
         campoPrecio.setTextFormatter(new TextFormatter((UnaryOperator<TextFormatter.Change>) change -> Pattern.compile("\\d*|\\d+\\.\\d{0,2}").matcher(change.getControlNewText()).matches() ? change : null));
 
-        // Cuando se cambie el precio se actualizan las ofertas en base al nuevo
-        campoPrecio.textProperty().addListener((observable, oldValue, newValue) -> {
-            actualizarDatosTabla();
-        });
-
         // Cargamos saldo y preparamos botones de refresh
         botonRefresh.setGraphic(Iconos.icono(FontAwesomeIcon.REFRESH, "1em"));
 
-        actualizarVentana();
+        //actualizarVentana();
     }
 
     // FUNCIONALIDADES //
-
+    /*
     public void actualizarSaldo() {
         usr = getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder(usr.getIdentificador()).build());
         campoSaldo.setText(String.valueOf(usr.getSaldo()-usr.getSaldoBloqueado()));
@@ -143,7 +159,5 @@ public class VVentaController {
     // Boton de refresco
     public void btnRefreshEvent(ActionEvent event){
         actualizarVentana();
-    }
-
-    */
+    }*/
 }
