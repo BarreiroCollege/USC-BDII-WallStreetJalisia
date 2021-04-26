@@ -4,6 +4,7 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Venta;
 import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
@@ -37,7 +38,7 @@ public class VCompraController extends DatabaseLinker {
     public static final String TITULO = "Comprar";
 
     @FXML
-    private JFXButton btnSalir;
+    private JFXButton btnVentana;
     @FXML
     private JFXTextField campoNumero;
     @FXML
@@ -74,7 +75,7 @@ public class VCompraController extends DatabaseLinker {
         // Recuperamos el usuario
        /* if(super.getTipoUsuario().equals(TipoUsuario.EMPRESA)) super.getEmpresa().getUsuario();
         else super.getInversor().getUsuario();*/
-        usr = getDAO(UsuarioDAO.class).getUsuario("manuel");
+        usr = super.getUsuarioSesion().getUsuario();
 
         // Setup de las columnas de la tabla
         nombreCol.setCellValueFactory(new PropertyValueFactory<>("usuario"));
@@ -189,8 +190,8 @@ public class VCompraController extends DatabaseLinker {
     }
 
     // Boton de salida
-    public void btnSalirEvent(ActionEvent event) {
-        ((Stage) btnSalir.getScene().getWindow()).close();
+    public void btnVolverEvent(ActionEvent event) {
+        Main.ventana(PrincipalController.TITULO, PrincipalController.WIDTH, PrincipalController.HEIGHT,PrincipalController.TITULO);
     }
 
 
