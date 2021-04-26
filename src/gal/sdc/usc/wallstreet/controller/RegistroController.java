@@ -23,8 +23,12 @@ import gal.sdc.usc.wallstreet.util.Validadores;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
 
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class RegistroController extends DatabaseLinker implements Initializable {
@@ -71,6 +75,33 @@ public class RegistroController extends DatabaseLinker implements Initializable 
     private ErrorValidator claveDebil;
 
     public RegistroController() {
+    }
+
+    private void limitarCaracteres() {
+        txtDireccion.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() > 64) txtDireccion.setText(oldValue);
+        });
+        txtCp.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() > 10) txtCp.setText(oldValue);
+        });
+        txtLocalidad.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() > 32) txtLocalidad.setText(oldValue);
+        });
+        txtDni.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() > 16) txtDni.setText(oldValue);
+        });
+        txtNombre.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() > 16) txtNombre.setText(oldValue);
+        });
+        txtApellidos.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() > 32) txtApellidos.setText(oldValue);
+        });
+        txtCif.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() > 16) txtCif.setText(oldValue);
+        });
+        txtEmpresa.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() > 32) txtEmpresa.setText(oldValue);
+        });
     }
 
     @FXML
@@ -132,6 +163,8 @@ public class RegistroController extends DatabaseLinker implements Initializable 
                 txtClave.validate();
             }
         });
+
+        limitarCaracteres();
 
         btnAcceso.setOnAction(e -> Main.ventana(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT, AccesoController.TITULO));
         btnRegistro.setOnAction(this::registrar);
