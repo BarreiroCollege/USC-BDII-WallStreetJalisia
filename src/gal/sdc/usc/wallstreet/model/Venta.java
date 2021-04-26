@@ -44,7 +44,7 @@ public class Venta extends Entidad {
         this.cantidad = cantidad;
     }
 
-    public Float beneficio() {
+    public Float getBeneficio() {
         return (1 - ofertaVenta.getComision()) * cantidad * ofertaVenta.getPrecioVenta();
     }
 

@@ -5,6 +5,7 @@ import gal.sdc.usc.wallstreet.model.Participacion;
 import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.helpers.DAO;
+import gal.sdc.usc.wallstreet.util.Mapeador;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -74,6 +75,24 @@ public class ParticipacionDAO extends DAO<Participacion> {
             e.printStackTrace();
         }
 
+        return participaciones;
+    }
+
+    public List<Participacion> getParticipacionesPorUsuario(String nombreUsuario, int numero) {
+        List<Participacion> participaciones = new ArrayList<>();
+        int limit = numero;
+        try (PreparedStatement ps = super.conexion.prepareStatement(
+                "SELECT * FROM participacion where usuario = ? limit ?"
+        )) {
+            ps.setString(1, nombreUsuario);
+            ps.setInt(2, limit);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                participaciones.add(Mapeador.map(rs, Participacion.class));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return participaciones;
     }
 }

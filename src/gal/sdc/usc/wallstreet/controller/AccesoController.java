@@ -123,7 +123,7 @@ public class AccesoController extends DatabaseLinker implements Initializable {
         if (us == null) us = super.getDAO(EmpresaDAO.class).seleccionar(usuario);
         super.setUsuarioSesion(us);
 
-        // TODO: Usuario correcto, abrir ventana principal
+        Main.ventana(PrincipalController.VIEW, PrincipalController.WIDTH, PrincipalController.HEIGHT, PrincipalController.TITULO);
     }
 
     @FXML
