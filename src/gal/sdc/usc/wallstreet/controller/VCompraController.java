@@ -145,28 +145,28 @@ public class VCompraController extends DatabaseLinker {
     }
 
     public void comprar(){
-        // Si alguno de los campos necesarios está vacío, no se hace nada
-        if (campoPrecio.getText().isEmpty() || campoNumero.getText().isEmpty() || empresaComboBox.getSelectionModel().getSelectedIndex() == -1)
+        // Si alguno de los campos necesarios está vacío o es 0 no se hace nada
+        if (campoPrecio.getText().isEmpty() || Float.parseFloat(campoPrecio.getText())==0 || campoNumero.getText().isEmpty() || Integer.parseInt(campoNumero.getText())==0 || empresaComboBox.getSelectionModel().getSelectedIndex() == -1)
             return;
 
         // Variables de estado
-        float saldo;
-        Integer acomprar = Integer.parseInt(campoNumero.getText());
-        int compradas = 0;
-        Venta ventaHecha;
-        int partPosibles;
+        float saldo, saldoInicial;
+        int acomprar,partPosibles,compradas = 0;
 
         // INICIAMOS TRANSACCION
         super.iniciarTransaccion();
+
         //Recojemos los datos actualizados
         actualizarDatosTabla();
         actualizarSaldo();
         saldo = Float.parseFloat(campoSaldo.getText());
+        saldoInicial = saldo;
+        acomprar = Integer.parseInt(campoNumero.getText());
 
-        // Compramos de las ofertas de más baratas a más caras
+        // Compramos de las ofertas de más baratas a las más caras, ya ordenadas en la tabla
         for (OfertaVenta oferta : datosTabla) {
             // Si se compraron las solicitadas o no hay dinero para más se para el bucle
-            if (acomprar.equals(compradas)) break; //
+            if (acomprar == compradas) break;
             if ((partPosibles = (int) Math.floor(saldo / oferta.getPrecioVenta())) == 0) break;
 
             partPosibles = Math.min(partPosibles, acomprar - compradas);
@@ -174,23 +174,28 @@ public class VCompraController extends DatabaseLinker {
 
             compradas += partPosibles;
             saldo -= partPosibles * oferta.getPrecioVenta();
-            ventaHecha = new Venta.Builder().withCantidad(partPosibles)
-                    .withOfertaVenta(oferta)
-                    .withFecha(new Date(System.currentTimeMillis()))
-                    .withUsuarioCompra(usr.getSuperUsuario())
-                    .build();
-            getDAO(VentaDAO.class).insertar(ventaHecha);
+
+            getDAO(VentaDAO.class).insertar(new Venta.Builder().withCantidad(partPosibles)
+                                            .withOfertaVenta(oferta)
+                                            .withFecha(new Date(System.currentTimeMillis()))
+                                            .withUsuarioCompra(usr.getSuperUsuario())
+                                            .build());
         }
-        // Actualizamos saldo y elementos gráficos
+
+        // Actualizamos saldo
         usr.setSaldo(saldo+usr.getSaldoBloqueado());
         getDAO(UsuarioDAO.class).actualizar(usr);
 
-        // Tratamos de comprometer la transacción
+        // Tratamos de comprometer la transacción e informamos al usuario
+        String mensaje;
         if (super.ejecutarTransaccion()) {
-            notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label("Compra realizada con éxito!"), Duration.seconds(3.0), null));
+            mensaje = "Éxito. Se compraron "+ compradas + " participaciones a una media de " + (saldoInicial-saldo)/compradas + " €/participacion";
         }else{
-            notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label("Compra fallida!"), Duration.seconds(3.0), null));
+            mensaje = "Compra fallida!";
         }
+
+        // Actualizamos los elementos gráficos
+        notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label(mensaje), Duration.seconds(3.0), null));
         actualizarVentana();
     }
 
