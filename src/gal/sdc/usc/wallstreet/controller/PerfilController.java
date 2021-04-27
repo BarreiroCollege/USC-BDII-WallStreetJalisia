@@ -19,7 +19,7 @@ import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.Comunicador;
 import gal.sdc.usc.wallstreet.util.ErrorValidator;
-import gal.sdc.usc.wallstreet.util.TipoUsuario;
+import gal.sdc.usc.wallstreet.model.UsuarioTipo;
 import gal.sdc.usc.wallstreet.util.Validadores;
 import gal.sdc.usc.wallstreet.util.auth.GoogleAuth;
 import gal.sdc.usc.wallstreet.util.auth.PasswordStorage;
@@ -191,7 +191,7 @@ public class PerfilController extends DatabaseLinker implements Initializable {
         txtCp.setText(u.getCp());
         txtTelefono.setText(u.getTelefono().toString());
 
-        if (super.getTipoUsuario().equals(TipoUsuario.INVERSOR)) {
+        if (super.getTipoUsuario().equals(UsuarioTipo.INVERSOR)) {
             Inversor i = (Inversor) us;
             txtNombre.setText(i.getNombre());
             txtApellidos.setText(i.getApellidos());
@@ -288,7 +288,7 @@ public class PerfilController extends DatabaseLinker implements Initializable {
         if (!txtUsuario.validate() || !txtClave.validate() || !txtDireccion.validate() || !txtCp.validate()
                 || !txtLocalidad.validate() || !txtTelefono.validate()) return;
 
-        if (super.getTipoUsuario().equals(TipoUsuario.INVERSOR)) {
+        if (super.getTipoUsuario().equals(UsuarioTipo.INVERSOR)) {
             if (!txtNombre.validate() || !txtApellidos.validate() || !txtDni.validate()) return;
         } else {
             if (!txtEmpresa.validate() || !txtCif.validate()) return;
@@ -341,7 +341,7 @@ public class PerfilController extends DatabaseLinker implements Initializable {
                     .withTelefono(Integer.parseInt(txtTelefono.getText()))
                     .withSaldo(u.getSaldo())
                     .withSaldoBloqueado(u.getSaldoBloqueado())
-                    .withActivo(u.getActivo())
+                    .withAlta(u.getAlta())
                     .withBaja(u.getBaja())
                     .withOtp(u.getOtp())
                     .withSociedad(u.getSociedad())
@@ -349,7 +349,7 @@ public class PerfilController extends DatabaseLinker implements Initializable {
                     .build();
 
             UsuarioSesion us;
-            if (super.getTipoUsuario().equals(TipoUsuario.INVERSOR)) {
+            if (super.getTipoUsuario().equals(UsuarioTipo.INVERSOR)) {
                 us = new Inversor.Builder(usuario)
                         .withNombre(txtNombre.getText())
                         .withApellidos(txtApellidos.getText())

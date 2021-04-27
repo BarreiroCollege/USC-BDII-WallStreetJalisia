@@ -1,11 +1,10 @@
 package gal.sdc.usc.wallstreet.repository.helpers;
 
 import gal.sdc.usc.wallstreet.model.Inversor;
-import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.model.UsuarioSesion;
 import gal.sdc.usc.wallstreet.model.ddl.Entidad;
 import gal.sdc.usc.wallstreet.util.PackageScanner;
-import gal.sdc.usc.wallstreet.util.TipoUsuario;
+import gal.sdc.usc.wallstreet.model.UsuarioTipo;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -127,8 +126,8 @@ public class DatabaseLinker {
      * Indica el tipo de usuario, si es inversor o empresa
      * @return INVERSOR cuando es inversor, EMPRESA si es empresa, null si no hay sesión
      */
-    public TipoUsuario getTipoUsuario() {
-        return haySesion() ? (usuario instanceof Inversor ? TipoUsuario.INVERSOR : TipoUsuario.EMPRESA) : null;
+    public UsuarioTipo getTipoUsuario() {
+        return haySesion() ? (usuario instanceof Inversor ? UsuarioTipo.INVERSOR : UsuarioTipo.EMPRESA) : null;
     }
 
     /**
