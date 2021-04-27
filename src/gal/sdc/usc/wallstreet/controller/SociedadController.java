@@ -4,23 +4,27 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTabPane;
 import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+import com.jfoenix.validation.RegexValidator;
+import com.jfoenix.validation.RequiredFieldValidator;
 import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.PropuestaCompra;
 import gal.sdc.usc.wallstreet.model.Sociedad;
+import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.model.UsuarioSesion;
 import gal.sdc.usc.wallstreet.repository.PropuestaCompraDAO;
+import gal.sdc.usc.wallstreet.repository.SociedadDAO;
+import gal.sdc.usc.wallstreet.repository.SuperUsuarioDAO;
+import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
+import gal.sdc.usc.wallstreet.util.Comunicador;
+import gal.sdc.usc.wallstreet.util.ErrorValidator;
+import gal.sdc.usc.wallstreet.util.Validadores;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -29,8 +33,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -62,7 +64,11 @@ public class SociedadController extends DatabaseLinker implements Initializable 
     @FXML
     private JFXButton btnVolver;
     @FXML
+    private JFXButton btnAbandonar;
+    @FXML
     private JFXButton btnEditar;
+
+    private ErrorValidator usuarioYaExiste;
 
     public SociedadController() {
     }
@@ -72,20 +78,98 @@ public class SociedadController extends DatabaseLinker implements Initializable 
         Usuario u = us.getUsuario();
         Sociedad s = u.getSociedad();
 
+        int tolerancia = s.getTolerancia();
+        String valor = String.valueOf(tolerancia);
+        cmbToleranciaUnidad.getSelectionModel().select(0);
+        if (tolerancia % 60 * 24 == 0) {
+            valor = String.valueOf(tolerancia / (60 * 24));
+            cmbToleranciaUnidad.getSelectionModel().select(2);
+        } else if (tolerancia % 60 == 0) {
+            valor = String.valueOf(tolerancia / 60);
+            cmbToleranciaUnidad.getSelectionModel().select(1);
+        }
+
         txtIdentificador.setText(s.getIdentificador().getIdentificador());
-        txtTolerancia.setText(s.getTolerancia().toString());
+        txtTolerancia.setText(valor);
         txtSaldoComunal.setText(s.getSaldoComunal().toString());
     }
 
-    private void onBtnEditar(ActionEvent e) {
+    private Integer generarTolerancia() {
+        String tipo = cmbToleranciaUnidad.getSelectionModel().getSelectedItem().getId();
+
+        int valor = Integer.parseInt(txtTolerancia.getText());
+        if (tipo.equals("hora")) {
+            valor = valor * 60;
+        } else if (tipo.equals("dia")) {
+            valor = valor * 60 * 24;
+        }
+
+        return valor;
+    }
+
+    private void onBtnEditarGuardar(ActionEvent e) {
         if (!editando.get()) {
             btnEditar.setText("Guardar");
             btnVolver.setText("Cancelar");
             editando.setValue(true);
             tabVentana.setDisable(true);
         } else {
-            // TODO: Guardar
-            tabVentana.setDisable(false);
+            if (!txtIdentificador.validate() || !txtTolerancia.validate()) return;
+            Usuario u = super.getUsuarioSesion().getUsuario();
+
+            if (!u.getSociedad().getIdentificador().getIdentificador().equals(txtIdentificador.getText().toLowerCase())
+                    && super.getDAO(SuperUsuarioDAO.class).seleccionar(txtIdentificador.getText().toLowerCase()) != null) {
+                if (txtIdentificador.getValidators().size() == 1) txtIdentificador.getValidators().add(usuarioYaExiste);
+                txtIdentificador.validate();
+                return;
+            }
+
+            super.iniciarTransaccion();
+
+            if (!txtIdentificador.getText().toLowerCase()
+                    .equals(u.getSuperUsuario().getIdentificador())) {
+                super.getDAO(SuperUsuarioDAO.class).actualizarIdentificador(
+                        u.getSuperUsuario().getIdentificador(),
+                        txtIdentificador.getText().toLowerCase()
+                );
+            }
+
+            SuperUsuario superUsuario = new SuperUsuario.Builder()
+                    .withIdentificador(txtIdentificador.getText().toLowerCase())
+                    .build();
+
+            Sociedad s = new Sociedad.Builder(superUsuario)
+                    .withSaldoComunal(u.getSociedad().getSaldoComunal())
+                    .withTolerancia(generarTolerancia())
+                    .build();
+
+            super.getDAO(SociedadDAO.class).actualizar(s);
+
+            if (super.ejecutarTransaccion()) {
+                btnEditar.setText("Editar");
+                btnVolver.setText("Volver");
+                editando.setValue(false);
+                tabVentana.setDisable(false);
+                u.setSociedad(s);
+                Main.mensaje("Se han actualizado los datos de la sociedad");
+            } else {
+                Main.mensaje("Error actualizando los datos");
+            }
+        }
+    }
+
+    private void onBtnEditarNueva(ActionEvent e) {
+
+    }
+
+    private void onBtnEditar(ActionEvent e) {
+        switch (tabVentana.getSelectionModel().getSelectedIndex()) {
+            case 0:
+                onBtnEditarGuardar(e);
+                break;
+            case 1:
+                onBtnEditarNueva(e);
+                break;
         }
     }
 
@@ -101,6 +185,41 @@ public class SociedadController extends DatabaseLinker implements Initializable 
         }
     }
 
+    private void onBtnAbandonar(ActionEvent e) {
+        ConfirmacionController.setComunicador(new Comunicador() {
+            @Override
+            public Object[] getData() {
+                return new Object[]{"¿Estás seguro de abandonar la sociedad?"};
+            }
+
+            @Override
+            public void onSuccess() {
+                Usuario usuario = SociedadController.super.getUsuarioSesion().getUsuario();
+                usuario.setSociedad(null);
+                if (SociedadController.super.getDAO(UsuarioDAO.class).actualizar(usuario)) {
+                    Main.ventana(PrincipalController.TITULO, PrincipalController.WIDTH, PrincipalController.HEIGHT, PrincipalController.TITULO);
+                    Main.mensaje("Se ha solicitado la baja en el sistema");
+                } else {
+                    Main.mensaje("Hubo un error solicitando la baja");
+                }
+            }
+        });
+        Main.dialogo(ConfirmacionController.VIEW, ConfirmacionController.WIDTH, ConfirmacionController.HEIGHT, ConfirmacionController.TITULO);
+    }
+
+    private void actualizarVentana() {
+        switch (tabVentana.getSelectionModel().getSelectedIndex()) {
+            case 0:
+                btnEditar.setText("Editar");
+                btnAbandonar.setVisible(true);
+                break;
+            case 1:
+                btnEditar.setText("Nueva");
+                btnAbandonar.setVisible(false);
+                break;
+        }
+    }
+
     @FXML
     public void initialize(URL location, ResourceBundle resources) {
         if (super.getUsuarioSesion().getUsuario().getSociedad() == null) {
@@ -113,18 +232,42 @@ public class SociedadController extends DatabaseLinker implements Initializable 
 
         if (!u.getLider()) {
             btnEditar.setDisable(true);
+        } else {
+            btnAbandonar.setDisable(true);
         }
 
-        tabVentana.getSelectionModel().selectedItemProperty().addListener(listener -> {
-            switch (tabVentana.getSelectionModel().getSelectedIndex()) {
-                case 0:
-                    btnEditar.setVisible(true);
-                    break;
-                case 1:
-                    btnEditar.setVisible(false);
-                    break;
+        this.usuarioYaExiste = Validadores.personalizado("Este usuario ya existe");
+
+        RequiredFieldValidator rfv = Validadores.requerido();
+        txtIdentificador.getValidators().add(rfv);
+        txtTolerancia.getValidators().add(rfv);
+        cmbToleranciaUnidad.getValidators().add(rfv);
+
+        RegexValidator rgx = new RegexValidator("Introduce un número válido");
+        // rgx.setRegexPattern("^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$");
+        rgx.setRegexPattern("^[-0-9]*$");
+        txtTolerancia.getValidators().add(rgx);
+
+        txtIdentificador.disableProperty().bind(editando.not());
+        txtTolerancia.disableProperty().bind(editando.not());
+        cmbToleranciaUnidad.disableProperty().bind(editando.not());
+
+        txtIdentificador.textProperty().addListener((observable, oldValue, newValue) -> {
+            // Limitar a 16 caracteres
+            if (!newValue.matches("[a-zA-Z0-9_]{0,16}")) {
+                txtIdentificador.setText(oldValue);
+            }
+
+            // Si hay más de un validador, es porque se ha insertado el "forzado" para mostrar error de
+            // usuario ya existe, y por ello, se ha de eliminar cuando se actualice el campo
+            if (txtIdentificador.getValidators().size() > 1) {
+                txtIdentificador.getValidators().remove(1);
+                txtIdentificador.validate();
             }
         });
+
+        cmbToleranciaUnidad.getSelectionModel().selectFirst();
+        tabVentana.getSelectionModel().selectedItemProperty().addListener(listener -> actualizarVentana());
 
         TableColumn<PropuestaCompra, String> colFecha = new TableColumn<>("Fecha");
         colFecha.setPrefWidth(150);
@@ -163,8 +306,9 @@ public class SociedadController extends DatabaseLinker implements Initializable 
         tblPropuestas.getColumns().addAll(Arrays.asList(colFecha, colCantidad, colPrecioMax, colEmpresa));
         tblPropuestas.setItems(pcs);
 
-        btnEditar.setOnAction(this::onBtnEditar);
         btnVolver.setOnAction(this::onBtnVolver);
+        btnAbandonar.setOnAction(this::onBtnAbandonar);
+        btnEditar.setOnAction(this::onBtnEditar);
 
         this.asignarValores();
     }
