@@ -9,6 +9,7 @@ import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Inversor;
 import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.model.Usuario;
+import gal.sdc.usc.wallstreet.model.UsuarioEstado;
 import gal.sdc.usc.wallstreet.model.UsuarioSesion;
 import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
 import gal.sdc.usc.wallstreet.repository.InversorDAO;
@@ -77,7 +78,8 @@ public class AccesoController extends DatabaseLinker implements Initializable {
             return;
         }
 
-        if (!usuario.getActivo()) {
+        if (usuario.getEstado().equals(UsuarioEstado.BAJA)
+                || usuario.getEstado().equals(UsuarioEstado.PENDIENTE_ALTA)) {
             if (txtUsuario.getValidators().size() == 1) txtUsuario.getValidators().add(usuarioNoActivo);
             txtUsuario.validate();
             return;

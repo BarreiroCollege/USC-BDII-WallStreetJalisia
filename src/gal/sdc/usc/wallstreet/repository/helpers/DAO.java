@@ -67,7 +67,7 @@ public abstract class DAO<E extends Entidad> {
 
             // Si no es clave primaria, saltar
             Columna columna = field.getDeclaredAnnotation(Columna.class);
-            if (!columna.pk()) continue;
+            if (columna == null || !columna.pk()) continue;
 
             // Llamar al getter del atributo para recuperar el valor al ser privado
             Object valor = LectorDinamico.llamarGetter(name, e);
