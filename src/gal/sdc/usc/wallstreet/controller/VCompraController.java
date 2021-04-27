@@ -186,7 +186,7 @@ public class VCompraController extends DatabaseLinker {
         getDAO(UsuarioDAO.class).actualizar(usr);
 
         // Tratamos de comprometer la transacción
-        if (!super.ejecutarTransaccion()) {
+        if (super.ejecutarTransaccion()) {
             notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label("Compra realizada con éxito!"), Duration.seconds(3.0), null));
         }else{
             notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label("Compra fallida!"), Duration.seconds(3.0), null));
