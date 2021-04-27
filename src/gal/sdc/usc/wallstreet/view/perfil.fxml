@@ -78,6 +78,12 @@
                     <Font size="18.0"/>
                 </font>
             </JFXButton>
+            <JFXButton text="Solicitar Baja" fx:id="btnBaja">
+                <font>
+                    <Font size="18.0"/>
+                </font>
+            </JFXButton>
+            <Label minWidth="20.0"/>
             <Label HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
             <JFXButton text="Activar 2FA" fx:id="btnOtp" buttonType="RAISED">
                 <font>
