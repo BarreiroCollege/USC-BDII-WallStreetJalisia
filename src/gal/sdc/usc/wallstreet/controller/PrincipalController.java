@@ -34,8 +34,6 @@ public class PrincipalController extends DatabaseLinker {
     public static final String TITULO = "Ventana principal";
 
     @FXML
-    private JFXButton buttonPerfilUsuario;
-    @FXML
     private JFXButton buttonParticipaciones;
     @FXML
     private JFXButton buttonPagos;
@@ -46,9 +44,6 @@ public class PrincipalController extends DatabaseLinker {
 
     @FXML
     private JFXButton buttonMostrarMas;
-
-    @FXML
-    private JFXButton buttonMostrarMasOfertas;
 
     @FXML
     private TableView<Participacion> tablaParticipaciones;

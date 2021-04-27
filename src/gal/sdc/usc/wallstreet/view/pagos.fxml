@@ -75,7 +75,7 @@
                                     </font>
                                 </Label>
                                 <JFXDatePicker fx:id="txtAntesDe" layoutX="650.0" layoutY="290.0" prefHeight="12.0" prefWidth="90.0"/>
-                                <Label fx:id="lblDespuesDe" layoutX="550.0" layoutY="350.0" text="Despues de:">
+                                <Label fx:id="lblDespuesDe" layoutX="550.0" layoutY="350.0" text="Después de:">
                                     <font>
                                         <Font size="15.0" />
                                     </font>
@@ -88,7 +88,13 @@
                                     </font>
                                 </JFXButton>
 
-                                <JFXButton fx:id="buttonEliminarAnuncioPago" layoutX="120.0" layoutY="395.0" mnemonicParsing="false" text="Eliminar Anuncio Pago">
+                                <JFXButton fx:id="buttonEliminarAnuncioPago" layoutX="320.0" layoutY="395.0" mnemonicParsing="false" text="Eliminar Anuncio Pago">
+                                    <font>
+                                        <Font size="18.0" />
+                                    </font>
+                                </JFXButton>
+
+                                <JFXButton fx:id="buttonVolver" layoutX="120.0" layoutY="395.0" mnemonicParsing="false" text="Volver">
                                     <font>
                                         <Font size="18.0" />
                                     </font>
