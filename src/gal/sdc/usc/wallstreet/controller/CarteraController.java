@@ -8,7 +8,6 @@ import gal.sdc.usc.wallstreet.model.Participacion;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
 import gal.sdc.usc.wallstreet.repository.ParticipacionDAO;
-import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -176,11 +175,6 @@ public class CarteraController extends DatabaseLinker {
         List<Participacion> participaciones = super.getDAO(ParticipacionDAO.class).getParticipaciones(usuario);
         List<OfertaVenta> ofertas = super.getDAO(OfertaVentaDAO.class).getOfertasVenta(usuario);
 
-        // Se guarda el número de participaciones sin vender para cada oferta
-        ofertas.forEach(oferta -> oferta.setParticipacionesSinVender(
-                super.getDAO(OfertaVentaDAO.class).getNumParticipacionesRestantes(oferta))
-        );
-
         // Introducimos los datos leidos de la bd a nuestra ObservableList
         datosTabla.setAll(participaciones);
         datosTablaOfertas.setAll(ofertas);
@@ -340,7 +334,7 @@ public class CarteraController extends DatabaseLinker {
         cartera_tablaOferta_empresa.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getNombre()));
         cartera_tablaOferta_cif.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getCif()));
         cartera_tablaOferta_cant.setCellValueFactory(new PropertyValueFactory<>("numParticipaciones"));
-        cartera_tablaOferta_sin_vender.setCellValueFactory(new PropertyValueFactory<>("participacionesSinVender"));
+        cartera_tablaOferta_sin_vender.setCellValueFactory(new PropertyValueFactory<>("restantes"));
         cartera_tablaOferta_precio.setCellValueFactory(new PropertyValueFactory<>("precioVenta"));
     }
 
@@ -410,7 +404,6 @@ public class CarteraController extends DatabaseLinker {
         });
 
         // Cuando se selecciona una fila en la tabla de ofertas de venta, si la oferta de venta está activa, se puede dar de baja.
-        // TODO Arreglar método OfertaVentaDAO.getNumParticipacionesRestantes() para solucionar NullPointer en este método
         cartera_tablaOferta.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldSelection, newSelection) -> {
                 if (newSelection.isOfertaActiva()){
