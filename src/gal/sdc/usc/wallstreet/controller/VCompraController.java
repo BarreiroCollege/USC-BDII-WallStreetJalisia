@@ -169,8 +169,10 @@ public class VCompraController extends DatabaseLinker {
             if (acomprar == compradas) break;
             if ((partPosibles = (int) Math.floor(saldo / oferta.getPrecioVenta())) == 0) break;
 
+            // Se elige el minimo entre las restantes en la oferta, las que quedan por comprar para cubrir el cupo
+            // y las que se pueden comprar con el saldo actual
             partPosibles = Math.min(partPosibles, acomprar - compradas);
-            partPosibles = Math.min(partPosibles, oferta.getNumParticipaciones());
+            partPosibles = Math.min(partPosibles, oferta.getRestantes());
 
             compradas += partPosibles;
             saldo -= partPosibles * oferta.getPrecioVenta();
@@ -182,7 +184,7 @@ public class VCompraController extends DatabaseLinker {
                                             .build());
         }
 
-        // Actualizamos saldo
+        // Actualizamos el saldo en la BD
         usr.setSaldo(saldo+usr.getSaldoBloqueado());
         getDAO(UsuarioDAO.class).actualizar(usr);
 
