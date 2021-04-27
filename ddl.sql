@@ -38,8 +38,8 @@ create table usuario
     telefono        integer,
     saldo           double precision default 0     not null,
     saldo_bloqueado double precision default 0     not null,
-    activo          boolean          default false not null,
-    baja            boolean          default false not null,
+    alta            timestamp,
+    baja            timestamp,
     otp             varchar(32)      default NULL::character varying,
     sociedad        varchar(16)      default NULL::character varying
         constraint usuario_sociedad_identificador_fk
