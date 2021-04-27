@@ -11,6 +11,7 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import javafx.scene.text.Font?>
 <?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXDatePicker?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="gal.sdc.usc.wallstreet.controller.PagosController"
@@ -23,7 +24,7 @@
     <children>
         <JFXTabPane fx:id="menu_pagos" layoutX="-1.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="555.0" prefWidth="867.0" tabClosingPolicy="UNAVAILABLE">
             <tabs>
-                <Tab text="Pagos programados">
+                <Tab text="Pagos programados ">
                     <content>
                         <AnchorPane prefHeight="180.0" prefWidth="200.0">
                             <children>
@@ -73,15 +74,13 @@
                                         <Font size="15.0" />
                                     </font>
                                 </Label>
-                                <JFXTextField fx:id="txtAntesDe" layoutX="650.0" layoutY="290.0" prefHeight="12.0" prefWidth="90.0">
-                                </JFXTextField>
+                                <JFXDatePicker fx:id="txtAntesDe" layoutX="650.0" layoutY="290.0" prefHeight="12.0" prefWidth="90.0"/>
                                 <Label fx:id="lblDespuesDe" layoutX="550.0" layoutY="350.0" text="Despues de:">
                                     <font>
                                         <Font size="15.0" />
                                     </font>
                                 </Label>
-                                <JFXTextField fx:id="txtDespuesDe" layoutX="650.0" layoutY="340.0" prefHeight="12.0" prefWidth="90.0">
-                                </JFXTextField>
+                                <JFXDatePicker fx:id="txtDespuesDe" layoutX="650.0" layoutY="340.0" prefHeight="12.0" prefWidth="90.0"/>
 
                                 <JFXButton fx:id="buttonBuscar" layoutX="620.0" layoutY="395.0" mnemonicParsing="false" text="Buscar">
                                     <font>
