@@ -84,16 +84,16 @@ insert into participacion (usuario, empresa, cantidad, cantidad_bloqueada)
 values ('manuel', 'teceric', 320, 60);
 
 
-insert into oferta_venta (fecha, empresa, usuario, num_participaciones, precio_venta, confirmado, comision)
-values ('2021-01-30 19:52:33', 'teceric', 'marcos', 60, 15, true, 0.05);
-insert into oferta_venta (fecha, empresa, usuario, num_participaciones, precio_venta, confirmado, comision)
-values ('2021-02-16 16:48:02', 'teceric', 'marcos', 100, 20, true, 0.05);
-insert into oferta_venta (fecha, empresa, usuario, num_participaciones, precio_venta, confirmado, comision)
-values ('2021-02-18 18:55:54', 'garcables', 'garcables', 50, 10, true, 0.05);
-insert into oferta_venta (fecha, empresa, usuario, num_participaciones, precio_venta, confirmado, comision)
-values ('2021-03-14 14:16:10', 'teceric', 'manuel', 70, 15, true, 0.05);
-insert into oferta_venta (fecha, empresa, usuario, num_participaciones, precio_venta, confirmado, comision)
-values ('2021-03-20 12:16:31', 'garcables', 'marcos', 80, 25, true, 0.1);
+insert into oferta_venta (fecha, empresa, usuario, num_participaciones, precio_venta, confirmado, comision, restantes)
+values ('2021-01-30 19:52:33', 'teceric', 'marcos', 60, 15, true, 0.05, 0);
+insert into oferta_venta (fecha, empresa, usuario, num_participaciones, precio_venta, confirmado, comision, restantes)
+values ('2021-02-16 16:48:02', 'teceric', 'marcos', 100, 20, true, 0.05, 0);
+insert into oferta_venta (fecha, empresa, usuario, num_participaciones, precio_venta, confirmado, comision, restantes)
+values ('2021-02-18 18:55:54', 'garcables', 'garcables', 50, 10, true, 0.05, 0);
+insert into oferta_venta (fecha, empresa, usuario, num_participaciones, precio_venta, confirmado, comision, restantes)
+values ('2021-03-14 14:16:10', 'teceric', 'manuel', 70, 15, true, 0.05, 0);
+insert into oferta_venta (fecha, empresa, usuario, num_participaciones, precio_venta, confirmado, comision, restantes)
+values ('2021-03-20 12:16:31', 'garcables', 'marcos', 80, 25, true, 0.1, 0);
 
 
 insert into venta (fecha, ov_fecha, ov_usuario, usuario_compra, cantidad)
