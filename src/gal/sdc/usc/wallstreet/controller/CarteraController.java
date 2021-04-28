@@ -166,7 +166,7 @@ public class CarteraController extends DatabaseLinker {
         });
         datosTablaOfertas.forEach(oferta -> {
             if (!cb_empresa_ofertas.getItems().contains(oferta.getEmpresa().getNombre()))
-                cb_empresa_ofertas.getItems().add(oferta.getEmpresa().getNombre());
+            cb_empresa_ofertas.getItems().add(oferta.getEmpresa().getNombre());
         });
         // Se guardan todas las empresas de las que hay participaciones
         empresas = cb_empresa.getItems().filtered(null);
@@ -418,11 +418,11 @@ public class CarteraController extends DatabaseLinker {
         // Cuando se selecciona una fila en la tabla de ofertas de venta, si la oferta de venta está activa, se puede dar de baja.
         cartera_tablaOferta.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldSelection, newSelection) -> {
-                    if (newSelection.isOfertaActiva()){
-                        cartera_btn_dar_de_baja.setVisible(true);
-                        return;
-                    }
-                    cartera_btn_dar_de_baja.setVisible(false);
+                if (newSelection.isOfertaActiva()){
+                    cartera_btn_dar_de_baja.setVisible(true);
+                    return;
+                }
+                cartera_btn_dar_de_baja.setVisible(false);
                 });
     }
 

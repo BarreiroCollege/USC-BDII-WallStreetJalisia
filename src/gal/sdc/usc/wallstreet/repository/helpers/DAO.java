@@ -291,7 +291,7 @@ public abstract class DAO<E extends Entidad> {
             // if (entry.getValue() == null) {
             //     SQL.append(entry.getKey()).append(" is ?");
             // } else {
-            SQL.append(entry.getKey()).append("=?");
+                SQL.append(entry.getKey()).append("=?");
             // }
             if (itMapKey.hasNext()) {
                 SQL.append(" AND ");

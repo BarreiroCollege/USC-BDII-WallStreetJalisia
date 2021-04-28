@@ -11,13 +11,33 @@ public class Sociedad extends Entidad {
     @Columna(value = "identificador", pk = true)
     private SuperUsuario identificador;
 
-    @Columna("saldo_comuna")
+    @Columna("saldo_comunal")
     private Float saldoComunal = 0.0f;
 
     @Columna("tolerancia")
     private Integer tolerancia = 0;
 
     private Sociedad() {
+    }
+
+    public SuperUsuario getIdentificador() {
+        return identificador;
+    }
+
+    public Float getSaldoComunal() {
+        return saldoComunal;
+    }
+
+    public void setSaldoComunal(Float saldoComunal) {
+        this.saldoComunal = saldoComunal;
+    }
+
+    public Integer getTolerancia() {
+        return tolerancia;
+    }
+
+    public void setTolerancia(Integer tolerancia) {
+        this.tolerancia = tolerancia;
     }
 
     @Override

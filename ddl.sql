@@ -204,14 +204,16 @@ alter table propuesta_compra
 
 create table regulador
 (
-    identificador varchar(16)                   not null
+    usuario  varchar(16)                   not null
         constraint regulador_pk
             primary key
         constraint regulador_usuario_identificador_fk
             references usuario
             on update cascade,
-    comision      double precision default 0.05 not null
+    comision double precision default 0.05 not null
 );
 
 alter table regulador
     owner to postgres;
+
+

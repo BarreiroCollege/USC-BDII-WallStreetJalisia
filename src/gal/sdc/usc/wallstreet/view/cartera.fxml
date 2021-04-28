@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXCheckBox?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXDatePicker?>
+<?import com.jfoenix.controls.JFXTabPane?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXToggleButton?>
+<?import java.net.URL?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.281" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.CarteraController">
+   <stylesheets>
+      <URL value="@styles/base.css" />
+      <URL value="@styles/cartera.css" />
+   </stylesheets>
+   <children>
+
+      <Label layoutX="154.0" layoutY="58.0" text="Saldo real" />
+      <Label fx:id="txt_saldo" layoutX="30.0" layoutY="76.0" prefHeight="25.0" prefWidth="85.0" text="SALDOD">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+      </Label>
+      <Label layoutX="30.0" layoutY="57.0" text="Saldo disponible" />
+      <Label fx:id="txt_saldo_real" layoutX="154.0" layoutY="79.0" prefHeight="25.0" prefWidth="86.0" text="SALDOR">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Label>
+      <JFXTabPane fx:id="menu_pestanas" layoutX="-1.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="400.0" prefWidth="601.0" tabClosingPolicy="UNAVAILABLE">
+         <tabs>
+            <Tab text="Mis participaciones">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Pane fx:id="cartera_filtro" layoutX="322.0" layoutY="78.0" prefHeight="264.0" prefWidth="258.0">
+                           <children>
+                        
+                              <JFXComboBox fx:id="cb_empresa" editable="true" layoutX="115.0" layoutY="10.0" prefHeight="26.0" prefWidth="138.0" />
+                              <JFXTextField fx:id="txt_min_part" labelFloat="true" layoutX="120.0" layoutY="56.0" prefHeight="26.0" prefWidth="54.0" promptText="Mín">
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                              </JFXTextField>
+                              <JFXTextField fx:id="txt_max_part" labelFloat="true" layoutX="194.0" layoutY="56.0" prefHeight="26.0" prefWidth="59.0" promptText="Máx">
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                              </JFXTextField>
+                        
+                              <Label layoutX="47.0" layoutY="13.0" text="Empresa">
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="-8.0" layoutY="43.0" prefHeight="51.0" prefWidth="99.0" text="Número de participaciones no bloqueadas" textAlignment="RIGHT" wrapText="true">
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="-8.0" layoutY="103.0" prefHeight="51.0" prefWidth="99.0" text="Número de participaciones bloqueadas" textAlignment="RIGHT" wrapText="true">
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="1.0" layoutY="168.0" prefHeight="51.0" prefWidth="92.0" text="Última fecha de pago" textAlignment="RIGHT" wrapText="true">
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                              </Label>
+                              <JFXTextField fx:id="txt_min_part_bloq" labelFloat="true" layoutX="122.0" layoutY="111.0" prefHeight="26.0" prefWidth="54.0" promptText="Mín">
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                              </JFXTextField>
+                              <JFXTextField fx:id="txt_max_part_bloq" labelFloat="true" layoutX="194.0" layoutY="111.0" prefHeight="26.0" prefWidth="59.0" promptText="Máx">
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                              </JFXTextField>
+                              <JFXDatePicker fx:id="datepck_despues_pago" layoutX="120.0" layoutY="192.0" prefHeight="26.0" prefWidth="138.0" promptText="Después del" />
+                              <JFXDatePicker fx:id="datepck_antes_pago" layoutX="121.0" layoutY="160.0" prefHeight="26.0" prefWidth="138.0" promptText="Antes del" />
+                              <JFXButton fx:id="cartera_btn_filtrar" buttonType="RAISED" layoutX="182.0" layoutY="237.0" mnemonicParsing="false" onAction="#filtrarDatosParticipaciones" prefHeight="25.0" prefWidth="69.0" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;" text="Filtrar">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </JFXButton>
+                           </children>
+                        </Pane>
+                  
+                        <TableView fx:id="cartera_tabla" layoutX="30.0" layoutY="79.0" prefHeight="263.0" prefWidth="265.0">
+                          <columns>
+                            <TableColumn fx:id="cartera_tabla_empresa" editable="false" prefWidth="91.3" text="Empresa" />
+                              <TableColumn fx:id="cartera_tabla_cif" editable="false" prefWidth="75.0" text="CIF" />
+                             <TableColumn fx:id="cartera_tabla_cant" editable="false" prefWidth="91.2" text="Cantidad" />
+                             <TableColumn fx:id="cartera_tabla_cant_bloq" editable="false" prefWidth="91.2" text="Bloqueadas" />
+                             <TableColumn fx:id="cartera_tabla_pago" editable="false" prefWidth="91.2" text="Último pago" />
+                          </columns>
+                        </TableView>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+            <Tab text="Mis ofertas de venta">
+              <content>
+                <AnchorPane disable="true" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TableView fx:id="cartera_tablaOferta" layoutX="30.0" layoutY="79.0" prefHeight="263.0" prefWidth="265.0">
+                           <columns>
+                              <TableColumn fx:id="cartera_tablaOferta_fecha" editable="false" prefWidth="91.2" text="Fecha" />
+                              <TableColumn fx:id="cartera_tablaOferta_empresa" editable="false" prefWidth="91.3" text="Empresa" />
+                              <TableColumn fx:id="cartera_tablaOferta_cif" editable="false" prefWidth="75.0" text="CIF" />
+                              <TableColumn fx:id="cartera_tablaOferta_cant" editable="false" prefWidth="91.2" text="Cantidad total" />
+                              <TableColumn fx:id="cartera_tablaOferta_sin_vender" editable="false" prefWidth="91.2" text="Sin vender" />
+                              <TableColumn fx:id="cartera_tablaOferta_precio" editable="false" prefWidth="91.2" text="Precio venta" />
+                           </columns>
+                        </TableView>
+                        <Pane fx:id="cartera_oferta_filtro" layoutX="322.0" layoutY="78.0" prefHeight="264.0" prefWidth="258.0">
+                           <children>
+                              <JFXComboBox fx:id="cb_empresa_ofertas" editable="true" layoutX="115.0" prefHeight="26.0" prefWidth="138.0" />
+                              <JFXTextField fx:id="txt_min_part_ofertas" labelFloat="true" layoutX="120.0" layoutY="44.0" prefHeight="26.0" prefWidth="54.0" promptText="Mín">
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                              </JFXTextField>
+                              <JFXTextField fx:id="txt_max_part_ofertas" labelFloat="true" layoutX="194.0" layoutY="44.0" prefHeight="26.0" prefWidth="59.0" promptText="Máx">
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                              </JFXTextField>
+                              <Label layoutX="47.0" layoutY="3.0" text="Empresa">
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="-8.0" layoutY="37.0" prefHeight="51.0" prefWidth="99.0" text="Número de participaciones a la venta" textAlignment="RIGHT" wrapText="true">
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="15.0" layoutY="79.0" prefHeight="51.0" prefWidth="79.0" text="Precio de venta" textAlignment="RIGHT" wrapText="true">
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="6.0" layoutY="132.0" prefHeight="51.0" prefWidth="92.0" text="Fecha de la oferta" textAlignment="RIGHT" wrapText="true">
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                              </Label>
+                              <JFXTextField fx:id="txt_min_precio" labelFloat="true" layoutX="122.0" layoutY="89.0" prefHeight="26.0" prefWidth="54.0" promptText="Mín">
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                              </JFXTextField>
+                              <JFXTextField fx:id="txt_max_precio" labelFloat="true" layoutX="194.0" layoutY="89.0" prefHeight="26.0" prefWidth="59.0" promptText="Máx">
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                              </JFXTextField>
+                              <JFXDatePicker fx:id="datepck_despues_oferta" layoutX="120.0" layoutY="156.0" prefHeight="26.0" prefWidth="138.0" promptText="Posterior al" />
+                              <JFXDatePicker fx:id="datepck_antes_oferta" layoutX="121.0" layoutY="124.0" prefHeight="26.0" prefWidth="138.0" promptText="Anterior al" />
+                              <JFXButton fx:id="cartera_btn_dar_de_baja" buttonType="RAISED" layoutX="20.0" layoutY="237.0" mnemonicParsing="false" onAction="#darDeBajaOferta" prefHeight="25.0" prefWidth="120.0" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;" text="Dar de baja" visible="false">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </JFXButton>
+                              <JFXButton fx:id="cartera_btn_filtrar_oferta" buttonType="RAISED" layoutX="182.0" layoutY="237.0" mnemonicParsing="false" onAction="#filtrarDatosOfertas" prefHeight="25.0" prefWidth="69.0" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;" text="Filtrar">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </JFXButton>
+                              <JFXCheckBox checkedColor="#4059a9" layoutX="8.0" layoutY="201.0" text="Mostrar solo ofertas activas">
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                              </JFXCheckBox>
+                           </children>
+                        </Pane>
+                     </children></AnchorPane>
+              </content>
+            </Tab>
+         </tabs>
+         <cursor>
+            <Cursor fx:constant="DEFAULT" />
+         </cursor>
+      </JFXTabPane>
+      <JFXToggleButton fx:id="toggle_filtro" layoutX="449.0" layoutY="71.0" onMouseClicked="#togglePanelFiltro" prefHeight="58.0" prefWidth="138.0" text="Filtrar tabla" toggleColor="#4059a9" toggleLineColor="#adbde0">
+         <font>
+            <Font size="11.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </JFXToggleButton>
+   </children>
+
+</AnchorPane>

@@ -1,4 +1,3 @@
-
 package gal.sdc.usc.wallstreet.model;
 
 /**
