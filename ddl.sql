@@ -38,8 +38,8 @@ create table usuario
     telefono        integer,
     saldo           double precision default 0     not null,
     saldo_bloqueado double precision default 0     not null,
-    activo          boolean          default false not null,
-    baja            boolean          default false not null,
+    alta            timestamp,
+    baja            timestamp,
     otp             varchar(32)      default NULL::character varying,
     sociedad        varchar(16)      default NULL::character varying
         constraint usuario_sociedad_identificador_fk
@@ -202,35 +202,18 @@ create table propuesta_compra
 alter table propuesta_compra
     owner to postgres;
 
--- Función asociada al trigger actualizarNumParticipaciones.
--- Disminuye restantes según el número de participaciones
--- de la venta.
-create or replace function actualizar_participaciones_restantes() returns trigger language plpgsql as $trigger$
-begin
-	update oferta_venta
-	set restantes = restantes - NEW.cantidad
-	where fecha = NEW.ov_fecha and usuario = NEW.ov_usuario;
-	return new;
-end;
-$trigger$;
+create table regulador
+(
+    usuario  varchar(16)                   not null
+        constraint regulador_pk
+            primary key
+        constraint regulador_usuario_identificador_fk
+            references usuario
+            on update cascade,
+    comision double precision default 0.05 not null
+);
+
+alter table regulador
+    owner to postgres;
 
 
--- Trigger que se activa al insertar una nueva venta y actualiza oferta_venta
-create trigger actualizarRestantes after insert on venta
-for each row execute procedure actualizar_participaciones_restantes();
-
- -- =================================================================================================
-
--- Función asociada al trigger actualizarNumParticipaciones.
--- Disminuye restantes según el número de participaciones
--- de la venta.
-create or replace function insertar_participaciones_restantes() returns trigger language plpgsql as $trigger$
-begin
-    NEW.restantes := NEW.num_participaciones;
-    return new;
-end;
-$trigger$;
-
--- Trigger que se activa al insertar una nueva venta y actualiza oferta_venta
-create trigger insertarRestantes before insert on oferta_venta
-    for each row execute procedure insertar_participaciones_restantes();

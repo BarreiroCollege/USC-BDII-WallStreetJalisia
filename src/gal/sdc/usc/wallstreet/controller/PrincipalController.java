@@ -10,7 +10,7 @@ import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
 import gal.sdc.usc.wallstreet.repository.ParticipacionDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.Iconos;
-import gal.sdc.usc.wallstreet.util.TipoUsuario;
+import gal.sdc.usc.wallstreet.model.UsuarioTipo;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -101,7 +101,7 @@ public class PrincipalController extends DatabaseLinker {
         ofertaVentaUsuario = super.getDAO(OfertaVentaDAO.class).getOfertasVentaPorUsuario(usuario.getSuperUsuario().getIdentificador(), 6);
         participacionesUsuario = super.getDAO(ParticipacionDAO.class).getParticipacionesPorUsuario(usuario.getSuperUsuario().getIdentificador(), 6);
 
-        seleccionVentana(super.getTipoUsuario().equals(TipoUsuario.EMPRESA));
+        seleccionVentana(super.getTipoUsuario().equals(UsuarioTipo.EMPRESA));
         mostrarSaldo();
 
         gestionTablaParticipaciones(participacionesUsuario);
