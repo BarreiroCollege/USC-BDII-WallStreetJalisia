@@ -6,6 +6,7 @@ import com.jfoenix.controls.JFXSnackbarLayout;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.IntegerValidator;
 import gal.sdc.usc.wallstreet.Main;
+import gal.sdc.usc.wallstreet.model.OfertaVenta;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.*;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
@@ -101,6 +102,17 @@ public class ReguladorController extends DatabaseLinker {
     private Usuario campoDe;            // Usuario que transfiere (null indica un agente externo)
     private Usuario campoPara;          // Usuario que recibe transferencia (null indica que se retira saldo)
 
+    /*
+     * Si el regulador pulsa "aceptar tod_o", se debería ejecutar la acción solo sobre aquellas tuplas de las que tenga
+     * constancia. Ejemplo: puede que se esté mostrando que únicamente hay 2 ofertas de venta pendientes, pero que, en
+     * el intervalo de tiempo entre que se muestra esa información y el regulador pulsa aceptar, lleguen 100 ofertas
+     * de venta. En ese caso, podría ocurrir que el regulador quisiera revisarlas una a una al ser un número tan
+     * elevado. Por tanto, al pulsar "aceptar tod_o", solo se deberían actualizar las 2 tuplas originales.
+     */
+    private List<OfertaVenta> ofertasPendientes;
+    private List<Usuario> usuariosRegistroPendientes;
+    // No se hace lo mismo para las bajas porque el proceso requiere pasos intermedios que ya aseguran esto
+
 
     /** No existe un botón de actualización de la tabla porque filtrar también refresca los datos **/
 
@@ -123,13 +135,15 @@ public class ReguladorController extends DatabaseLinker {
     }
 
     public void actualizarRegistrosPendientes() {
-        // Número de usuarios que han solicitado registrarse y están pendientes de ser revisados
-        Integer registrosPendientes = super.getDAO(UsuarioDAO.class).getNumInactivos();
+        // Usuarios que han solicitado registrarse y están pendientes de ser revisados
+        usuariosRegistroPendientes = super.getDAO(UsuarioDAO.class).getInactivos();
+        int numUsuariosPendientes = usuariosRegistroPendientes.size();
+
         // Se muestra dicha información si no ha habido un error
-        txtSolicitudesRegistro.setText(registrosPendientes == null ? error : registrosPendientes.toString());
+        txtSolicitudesRegistro.setText(numUsuariosPendientes == 0? error : String.valueOf(numUsuariosPendientes));
         // Se muestran los botones de revisión y aceptar si no ha habido un error y hay registros pendientes
-        btnVerRegistros.setVisible(registrosPendientes != null && !registrosPendientes.equals(0));
-        btnAceptarTodoRegistros.setVisible(registrosPendientes != null && !registrosPendientes.equals(0));
+        btnVerRegistros.setVisible(numUsuariosPendientes != 0);
+        btnAceptarTodoRegistros.setVisible(numUsuariosPendientes != 0);
     }
 
     public void actualizarBajasPendientes() {
@@ -143,13 +157,15 @@ public class ReguladorController extends DatabaseLinker {
     }
 
     public void actualizarOfertasPendientes() {
-        // Número de ofertas de venta que no han sido aprobadas
-        Integer ofertasPendientes = super.getDAO(OfertaVentaDAO.class).getNumOfertasPendientes();
+        // Ofertas de venta que no han sido aprobadas
+        ofertasPendientes = super.getDAO(OfertaVentaDAO.class).getOfertasPendientes();
+        int numOfertasPendientes = ofertasPendientes.size();
+
         // Se muestra dicha información si no ha habido un error
-        txtSolicitudesOferta.setText(ofertasPendientes == null ? error : ofertasPendientes.toString());
+        txtSolicitudesOferta.setText(numOfertasPendientes == 0 ? error : String.valueOf(numOfertasPendientes));
         // Se muestran los botones de revisión y aceptar si no ha habido un error y hay ofertas pendientes
-        btnVerOfertas.setVisible(ofertasPendientes != null && !ofertasPendientes.equals(0));
-        btnAceptarTodoOfertas.setVisible(ofertasPendientes != null && !ofertasPendientes.equals(0));
+        btnVerOfertas.setVisible(numOfertasPendientes != 0);
+        btnAceptarTodoOfertas.setVisible(numOfertasPendientes != 0);
     }
 
     public void actualizarSaldo() {
@@ -198,7 +214,7 @@ public class ReguladorController extends DatabaseLinker {
      * No se admite read uncomitted para evitar que se acepten solicitudes de las que el regulador no tenía constancia.
      */
     public void aceptarTodoRegistros() {
-        super.getDAO(UsuarioDAO.class).aceptarUsuariosTodos();
+        super.getDAO(UsuarioDAO.class).aceptarUsuariosTodos(usuariosRegistroPendientes);
         actualizarRegistrosPendientes();
     }
 
@@ -238,7 +254,7 @@ public class ReguladorController extends DatabaseLinker {
         }
 
         // Se da de baja a todos aquellos usuarios no rechazados
-        super.getDAO(SuperUsuarioDAO.class).eliminarSuperUsuarios(identificadores);
+        super.getDAO(UsuarioDAO.class).darDeBajaUsuarios(identificadores);
 
         if (super.ejecutarTransaccion()){
             if (hayRechazos) {
@@ -253,11 +269,11 @@ public class ReguladorController extends DatabaseLinker {
     }
 
     /**
-     * Acepta todas las solicitudes de oferta de venta con la comisión estándar (0.05)
+     * Acepta todas las solicitudes de oferta de venta con la comisión estándar (0.05).
      */
     public void aceptarTodoOfertas() {
         super.iniciarTransaccion(Connection.TRANSACTION_READ_UNCOMMITTED);
-        super.getDAO(OfertaVentaDAO.class).aceptarOfertasVentaPendientes();
+        super.getDAO(OfertaVentaDAO.class).aceptarOfertasVentaPendientes(ofertasPendientes);
         super.ejecutarTransaccion();
         actualizarOfertasPendientes();      // Se actualizan los datos
     }

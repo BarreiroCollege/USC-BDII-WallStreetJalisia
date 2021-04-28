@@ -91,7 +91,7 @@ public class RevisarRegistrosController extends DatabaseLinker {
         txt_localidad.setText(usuarioActual.getLocalidad() == null ? "N/A" : usuarioActual.getLocalidad());
         txt_tlf.setText(usuarioActual.getTelefono() == null ? "N/A" : usuarioActual.getTelefono().toString());
 
-        // Jerarquía total -> en alguno de los dos HashMaps tiene que haber una key
+        // usuariosPendientes es suma directa de empresas e inversores pendientes -> en un conjunto hay una key
         if (inversoresPendientes.containsKey(usuarioActual.getSuperUsuario().getIdentificador())) {
             Inversor inversor = inversoresPendientes.get(usuarioActual.getSuperUsuario().getIdentificador());
             txt_subusuario.setText("Inversor");
@@ -160,7 +160,7 @@ public class RevisarRegistrosController extends DatabaseLinker {
         // Dado que un usuario no puede realizar ninguna acción hasta ser aceptada su solicitud, no va a haber
         // conflictos, y se puede utilizar un nivel de lecturas no comprometidas para acelerar la ejecución.
         super.iniciarTransaccion(Connection.TRANSACTION_READ_UNCOMMITTED);
-        super.getDAO(SuperUsuarioDAO.class).eliminarSuperUsuario(usuarioActual.getSuperUsuario().getIdentificador());
+        super.getDAO(UsuarioDAO.class).darDeBajaUsuario(usuarioActual);
         super.ejecutarTransaccion();
 
         // Se deja de mostrar la solicitud y se determina qué botones deben ser visibles

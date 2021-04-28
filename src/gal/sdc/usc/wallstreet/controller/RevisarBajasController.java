@@ -84,7 +84,7 @@ public class RevisarBajasController extends DatabaseLinker {
         txt_localidad.setText(usuarioActual.getLocalidad() == null ? "N/A" : usuarioActual.getLocalidad());
         txt_tlf.setText(usuarioActual.getTelefono() == null ? "N/A" : usuarioActual.getTelefono().toString());
 
-        // Jerarquía total -> en alguno de los dos HashMaps tiene que haber una key
+        // usuariosPendientes es suma directa de empresas e inversores pendientes -> en un conjunto hay una key
         if (inversoresBajas.containsKey(usuarioActual.getSuperUsuario().getIdentificador())) {
             Inversor inversor = inversoresBajas.get(usuarioActual.getSuperUsuario().getIdentificador());
             txt_subusuario.setText("Inversor");
@@ -139,8 +139,8 @@ public class RevisarBajasController extends DatabaseLinker {
         // El usuario no tenía participaciones. Se retiran los fondos de su cuenta.
         super.getDAO(UsuarioDAO.class).vaciarSaldo(usuarioActual);
 
-        // Se elimina la referencia
-        super.getDAO(SuperUsuarioDAO.class).eliminarSuperUsuario(usuarioActual.getSuperUsuario().getIdentificador());
+        // Se da de baja el usuario (alta y baja quedan ambos nulos -> ver UsuarioEstado)
+        super.getDAO(UsuarioDAO.class).darDeBajaUsuario(usuarioActual);
         super.ejecutarTransaccion();
 
         // Se actualizan los datos guardados y se determina qué botones mostrar.

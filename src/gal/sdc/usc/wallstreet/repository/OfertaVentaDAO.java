@@ -172,29 +172,6 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
     }
 
     /***
-     * Devuelve el número de ofertas de venta no revisadas por el regulador (no activas en el mercado).
-     *
-     * @return Número de ofertas pendientes; null en caso de error.
-     */
-    public Integer getNumOfertasPendientes() {
-        Integer ofertasPendientes = null;
-        try (PreparedStatement ps = conexion.prepareStatement(
-                "SELECT count(*) as pendientes " +
-                        "FROM oferta_venta " +
-                        "WHERE confirmado is false"
-        )) {
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                ofertasPendientes = rs.getInt("pendientes");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return ofertasPendientes;
-    }
-
-    /***
      * Devuelve los datos de todas aquellas ofertas que aún no han sido revisadas y aceptadas por el regulador.
      *
      * @return Lista de ofertas de venta que no están confirmadas.
@@ -238,15 +215,21 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
     }
 
     /***
-     * Pone como activa a cualquier oferta de venta que no esté confirmada por el regulador.
+     * Pone como activas a las ofertas de venta indicadas.
+     *
+     * @param pendientes Lista de ofertas de venta a ser activadas
      */
-    public void aceptarOfertasVentaPendientes(){
+    public void aceptarOfertasVentaPendientes(List<OfertaVenta> pendientes){
         try (PreparedStatement ps = conexion.prepareStatement(
                 "UPDATE oferta_venta " +
                         "SET confirmado = true " +
-                        "WHERE confirmado = false"
+                        "WHERE fecha = ? AND usuario = ?"
         )){
-            ps.executeUpdate();
+            for (OfertaVenta oferta : pendientes){
+                ps.setTimestamp(1, new Timestamp(oferta.getFecha().getTime()));
+                ps.setString(2, oferta.getUsuario().getIdentificador());
+                ps.executeUpdate();
+            }
         } catch (SQLException e){
             e.printStackTrace();
         }

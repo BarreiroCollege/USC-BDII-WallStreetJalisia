@@ -27,30 +27,4 @@ public class SuperUsuarioDAO extends DAO<SuperUsuario> {
         }
         return false;
     }
-
-    public void eliminarSuperUsuario(String idUsuario){
-        try (PreparedStatement ps = conexion.prepareStatement(
-                "DELETE FROM superusuario " +
-                        "WHERE identificador = ?"
-        )){
-            ps.setString(1, idUsuario);
-            ps.executeUpdate();
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-    }
-
-    public void eliminarSuperUsuarios(List<String> identificadores){
-        try (PreparedStatement ps = conexion.prepareStatement(
-                "DELETE FROM superusuario " +
-                        "WHERE identificador = ?"
-        )){
-            for (String identificador : identificadores){
-                ps.setString(1, identificador);
-                ps.executeUpdate();
-            }
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-    }
 }

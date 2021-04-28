@@ -231,20 +231,20 @@ public class UsuarioDAO extends DAO<Usuario> {
     }
 
     /***
-     * Devuelve el número de usuarios que aún no están activos, pero lo han solicitado
+     * Devuelve una lista de usuarios que aún no están activos, pero lo han solicitado
      *
-     * @return Número de usuarios inactivos; null en caso de error
+     * @return Lista de usuarios inactivos
      */
-    public Integer getNumInactivos(){
-        Integer inactivos = null;
+    public List<Usuario> getInactivos(){
+        List<Usuario> inactivos = new ArrayList<>();
         try (PreparedStatement ps = super.conexion.prepareStatement(
-                "SELECT count(*) as inactivos " +
+                "SELECT * " +
                         "FROM usuario " +
                         "WHERE alta is not null"
         )) {
             ResultSet rs = ps.executeQuery();
             if (rs.next()){
-                inactivos = rs.getInt("inactivos");
+                inactivos.add(Mapeador.map(rs, Usuario.class));
             }
         } catch (SQLException e){
             e.printStackTrace();
@@ -295,15 +295,20 @@ public class UsuarioDAO extends DAO<Usuario> {
     }
 
     /***
-     * Se da de alta a cualquier usuario que lo haya solicitado.
+     * Se da de alta a los usuarios de la lista indicada.
+     *
+     * @param usuariosPendientes Lista de usuarios a dar de alta.
      */
-    public void aceptarUsuariosTodos(){
+    public void aceptarUsuariosTodos(List<Usuario> usuariosPendientes){
         try (PreparedStatement ps = conexion.prepareStatement(
                 "UPDATE usuario " +
                         "SET alta = null " +
-                        "WHERE alta is not null "
+                        "WHERE identificador = ? "
         )) {
-            ps.executeUpdate();
+            for (Usuario usuario : usuariosPendientes) {
+                ps.setString(1, usuario.getSuperUsuario().getIdentificador());
+                ps.executeUpdate();
+            }
         } catch (SQLException e){
             e.printStackTrace();
         }
@@ -380,6 +385,49 @@ public class UsuarioDAO extends DAO<Usuario> {
             ps.setFloat(1, 0);
             ps.setString(2, id);
             ps.executeUpdate();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+
+    public void darDeBajaUsuario(Usuario usuario){
+        darDeBajaUsuario(usuario.getSuperUsuario().getIdentificador());
+    }
+
+    /***
+     * Se da de baja un usuario <-> tanto alta como baja quedan no nulos (ver UsuarioEstado)
+     *
+     * @param id Identificador del usuario a dar de baja
+     */
+    public void darDeBajaUsuario(String id){
+        try (PreparedStatement ps = conexion.prepareStatement(
+                "UPDATE usuario " +
+                        "SET alta = now() " +
+                        "WHERE identificador = ?"
+        )){
+            ps.setString(1, id);
+            ps.executeUpdate();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    /***
+     * Da de baja a una lista de usuarios (para cada uno de ellos, alta y baja quedan no nulos -> ver UsuarioEstado)
+     *
+     * @param identificadores Lista de identificadores de los usuarios a dar de baja.
+     */
+    public void darDeBajaUsuarios(List<String> identificadores){
+        try (PreparedStatement ps = conexion.prepareStatement(
+                "UPDATE usuario " +
+                        "SET alta = now () " +
+                        "WHERE identificador = ?"
+        )){
+            for (String identificador : identificadores){
+                ps.setString(1, identificador);
+                ps.executeUpdate();
+            }
         } catch (SQLException e){
             e.printStackTrace();
         }
