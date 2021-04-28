@@ -6,10 +6,7 @@ import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXTextField;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import gal.sdc.usc.wallstreet.model.*;
-import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
-import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
-import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
-import gal.sdc.usc.wallstreet.repository.VentaDAO;
+import gal.sdc.usc.wallstreet.repository.*;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.Iconos;
 import javafx.beans.property.SimpleStringProperty;
@@ -30,7 +27,7 @@ import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
 public class VVentaController extends DatabaseLinker {
-    /*
+
     public static final String VIEW = "VVenta";
     public static final Integer HEIGHT = 425;
     public static final Integer WIDTH = 760;
@@ -38,7 +35,7 @@ public class VVentaController extends DatabaseLinker {
 
     private Usuario usr;
     private ObservableList<OfertaVenta> datosTabla;
-
+    private List<Participacion> listaEmpresas;
     @FXML
     private JFXButton btnVolver;
     @FXML
@@ -72,7 +69,7 @@ public class VVentaController extends DatabaseLinker {
         datosTabla = FXCollections.observableArrayList();
 
         // Recuperamos el usuario
-        usr = super.getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder("eva").build());
+        usr = super.getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder("marcos").build());
 
         // Setup de las columnas de la tabla
         ofertadasCol.setCellValueFactory(new PropertyValueFactory<>("numParticipaciones"));
@@ -101,35 +98,70 @@ public class VVentaController extends DatabaseLinker {
         // Cargamos saldo y preparamos botones de refresh
         botonRefresh.setGraphic(Iconos.icono(FontAwesomeIcon.REFRESH, "1em"));
 
+       //TODO si se quere meter esto en función de actualizar ventana
+        actualizarListaEmpresas();
+        actualizarDatosTabla();
         //actualizarVentana();
-    }
-
-    // FUNCIONALIDADES //
-    /*
-    public void actualizarSaldo() {
-        usr = getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder(usr.getIdentificador()).build());
-        campoSaldo.setText(String.valueOf(usr.getSaldo()-usr.getSaldoBloqueado()));
     }
 
     public void actualizarListaEmpresas(){
         // Se carga la nueva lista
-        listaEmpresas = getDAO(EmpresaDAO.class).getEmpresas();
+        listaEmpresas = getDAO(ParticipacionDAO.class).getParticipaciones(usr.getSuperUsuario().getIdentificador());
         // Se limpia la comboBox y se vuelve a llenar
         empresaComboBox.getItems().clear();
-        for (Empresa e : listaEmpresas) {
-            empresaComboBox.getItems().add(e.getNombre() + " || " + e.getCif());
+        for (Participacion e : listaEmpresas) {
+            empresaComboBox.getItems().add(e.getEmpresa().getNombre() + " || " + e.getEmpresa().getCif());
         }
     }
-
     public void actualizarDatosTabla() {
         // Si no hay ninguna empresa seleccionada, se limpia la tabla
         if (empresaComboBox.getSelectionModel().getSelectedIndex() == -1) {
-            datosTabla.clear();
+            datosTabla.setAll(getDAO(OfertaVentaDAO.class).getOfertasVenta(usr));
+            //datosTabla.clear();
             return;
         }
-        String identificador = listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getUsuario().getIdentificador();
-        datosTabla.setAll(getDAO(OfertaVentaDAO.class).getOfertasVenta(identificador, campoPrecio.getText().isEmpty()? Float.parseFloat(campoPrecio.getText()) : 0f));
+        datosTabla.setAll(getDAO(OfertaVentaDAO.class).getOfertasVentaUsuario(listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getEmpresa().getUsuario().getSuperUsuario().getIdentificador(),
+                listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getUsuario().getSuperUsuario().getIdentificador()));
+
+        actualizarParticipaciones();
+
     }
+
+    public void actualizarParticipaciones() {
+        usr = getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder(usr.getSuperUsuario().getIdentificador()).build());
+        campoParticipaciones.setText(String.valueOf(getDAO(ParticipacionDAO.class).getParticipacionesUsuarioEmpresa(usr.getSuperUsuario().getIdentificador(),
+                listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getEmpresa().getUsuario().getSuperUsuario().getIdentificador())));
+    }
+
+
+    public void nuevaOfertaVenta(){
+        if(!comprobarCampos()){
+            return;
+        }
+        OfertaVenta oferta= new OfertaVenta.Builder().withPrecioVenta(Float.parseFloat(campoPrecio.getText())).
+                withEmpresa(listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getEmpresa()).
+                withUsuario(usr.getSuperUsuario()).withConfirmado(false).withNumParticipaciones(Integer.parseInt(campoNumero.getText())).build();
+
+
+
+        getDAO(OfertaVentaDAO.class).insertar(oferta);
+    }
+
+
+    public boolean comprobarCampos(){
+        if(campoPrecio.getText().isEmpty() ||
+                campoNumero.getText().isEmpty() ||
+                empresaComboBox.getSelectionModel().getSelectedIndex() == -1){
+            return false;
+        }
+        return true;
+    }
+    // FUNCIONALIDADES //
+    /*
+
+
+
+
 
     public void actualizarVentana(){
         actualizarSaldo();

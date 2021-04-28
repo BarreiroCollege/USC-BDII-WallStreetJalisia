@@ -35,6 +35,7 @@ public class UsuarioDAO extends DAO<Usuario> {
 
     public Usuario getUsuario(String identificador) {
         return getUsuarios().stream().filter(user -> identificador.equals(user.getSuperUsuario().getIdentificador())).findFirst().orElse(null);
+
     }
 
 }

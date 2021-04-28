@@ -95,4 +95,23 @@ public class ParticipacionDAO extends DAO<Participacion> {
         }
         return participaciones;
     }
+
+    public Integer getParticipacionesUsuarioEmpresa(String nombreUsuario, String empresa) {
+        Integer participaciones=0;
+        try (PreparedStatement ps = super.conexion.prepareStatement(
+                "SELECT participacion.cantidad -participacion.cantidad_bloqueada " +
+                        "as cuenta FROM participacion where usuario = ? and empresa= ?"
+        )) {
+            ps.setString(1, nombreUsuario);
+            ps.setString(2, empresa);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                participaciones = Integer.parseInt(rs.getString("cuenta"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return participaciones;
+    }
 }
