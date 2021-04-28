@@ -1,12 +1,14 @@
 package gal.sdc.usc.wallstreet.model;
 
 import gal.sdc.usc.wallstreet.model.ddl.Columna;
+import gal.sdc.usc.wallstreet.model.ddl.Entidad;
 import gal.sdc.usc.wallstreet.model.ddl.Tabla;
 
+import java.sql.Timestamp;
 import java.util.Objects;
 
 @Tabla("empresa")
-public class Empresa extends Usuario {
+public class Empresa extends Entidad implements UsuarioSesion {
     @Columna(value = "usuario", pk = true)
     private Usuario usuario;
 
@@ -16,11 +18,9 @@ public class Empresa extends Usuario {
     @Columna("nombre")
     private String nombre;
 
-    private Empresa() {
-    }
+    private Timestamp fechaUltimoPago;
 
-    protected Usuario getSuper() {
-        return super.getThis();
+    private Empresa() {
     }
 
     public Usuario getUsuario() {
@@ -41,6 +41,14 @@ public class Empresa extends Usuario {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public Timestamp getFechaUltimoPago() {
+        return fechaUltimoPago;
+    }
+
+    public void setFechaUltimoPago(Timestamp fechaUltimoPago) {
+        this.fechaUltimoPago = fechaUltimoPago;
     }
 
     @Override
@@ -73,12 +81,10 @@ public class Empresa extends Usuario {
 
         public Builder(Usuario usuario) {
             empresa.usuario = usuario;
-            empresa.getSuper().set(usuario);
         }
 
         public Builder withUsuario(Usuario usuario) {
             empresa.usuario = usuario;
-            empresa.getSuper().set(usuario);
             return this;
         }
 
@@ -89,6 +95,11 @@ public class Empresa extends Usuario {
 
         public Builder withNombre(String nombre) {
             empresa.nombre = nombre;
+            return this;
+        }
+
+        public Builder withFechaUltimoPago(Timestamp fechaUltimoPago) {
+            empresa.fechaUltimoPago = fechaUltimoPago;
             return this;
         }
 

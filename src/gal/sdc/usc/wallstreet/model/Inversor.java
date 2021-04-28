@@ -1,12 +1,13 @@
 package gal.sdc.usc.wallstreet.model;
 
 import gal.sdc.usc.wallstreet.model.ddl.Columna;
+import gal.sdc.usc.wallstreet.model.ddl.Entidad;
 import gal.sdc.usc.wallstreet.model.ddl.Tabla;
 
 import java.util.Objects;
 
 @Tabla("inversor")
-public class Inversor extends Usuario {
+public class Inversor extends Entidad implements UsuarioSesion {
     @Columna(value = "usuario", pk = true)
     private Usuario usuario;
 
@@ -20,10 +21,6 @@ public class Inversor extends Usuario {
     private String apellidos;
 
     private Inversor() {
-    }
-
-    protected Usuario getSuper() {
-        return super.getThis();
     }
 
     public Usuario getUsuario() {
@@ -85,12 +82,10 @@ public class Inversor extends Usuario {
 
         public Builder(Usuario usuario) {
             inversor.usuario = usuario;
-            inversor.getSuper().set(usuario);
         }
 
         public Builder withUsuario(Usuario usuario) {
             inversor.usuario = usuario;
-            inversor.getSuper().set(usuario);
             return this;
         }
 

@@ -1,5 +1,6 @@
 package gal.sdc.usc.wallstreet.controller;
 
+import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.Inversor;
 import gal.sdc.usc.wallstreet.model.OfertaVenta;
 import gal.sdc.usc.wallstreet.model.SuperUsuario;
@@ -24,6 +25,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -50,60 +52,26 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
     private Label txt_num_part;
     @FXML
     private Label txt_precio_venta;
-    @FXML
-    private Button btn_ver_empresa;
-    @FXML
-    private Button btn_ver_usuario;
-
 
     public List<OfertaVenta> ofertasPendientes;
-    public OfertaVenta ofertaActual;
+    public OfertaVenta ofertaActual;            // Oferta que el regulador está viendo
     public String ordenElegido;
 
     public void initialize() {
-        obtenerDatos();
+        obtenerDatos();                 // Se buscan las ofertas pendientes
 
+        // Si hay más de una, se da opción a ordenarlas.
         if (ofertasPendientes.size() > 1) abrirOrdenar();
 
         reordenar();
         ofertaActual = ofertasPendientes.get(0);
-        mostrarDatos();
+        mostrarDatos();             // Se muestran los datos de la oferta actual
         controlarVisibilidadesAnteriorPosterior();
     }
 
     public void obtenerDatos() {
         ofertasPendientes = super.getDAO(OfertaVentaDAO.class).getOfertasPendientes();
     }
-
-    public void anterior() {
-        ofertaActual = ofertasPendientes.get(ofertasPendientes.indexOf(ofertaActual) - 1);
-        mostrarDatos();
-        controlarVisibilidadesAnteriorPosterior();
-    }
-
-    public void siguiente() {
-        ofertaActual = ofertasPendientes.get(ofertasPendientes.indexOf(ofertaActual) + 1);
-        mostrarDatos();
-        controlarVisibilidadesAnteriorPosterior();
-    }
-
-    public void aceptar(){}
-
-    public void rechazar(){}
-
-/*    public void aceptar() {
-        super.getDAO(OfertaVentaDAO.class).aceptarOfertaVet(ofertaActual.getSuperUsuario().getIdentificador());
-        //TODO: borrar usuario
-        if (usuariosBajas.indexOf(usuarioActual) != usuariosBajas.size() - 1){
-            siguiente();
-            usuariosBajas.remove(usuariosBajas.get(usuariosBajas.indexOf(usuarioActual) - 1));
-        } else if (usuariosBajas.indexOf(usuarioActual) != 0){
-            anterior();
-            usuariosBajas.remove(usuariosBajas.get(usuariosBajas.indexOf(usuarioActual) + 1));
-        } else {
-            cerrarVentana();
-        }
-    }*/
 
     public void mostrarDatos() {
         txt_fecha.setText(ofertaActual.getFecha().toString());
@@ -113,9 +81,77 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
         txt_precio_venta.setText(ofertaActual.getPrecioVenta().toString());
     }
 
+    // Botón de retroceso
+    public void anterior() {
+        ofertaActual = ofertasPendientes.get(ofertasPendientes.indexOf(ofertaActual) - 1);
+        mostrarDatos();
+        controlarVisibilidadesAnteriorPosterior();
+    }
+
+    // Botón de avance
+    public void siguiente() {
+        ofertaActual = ofertasPendientes.get(ofertasPendientes.indexOf(ofertaActual) + 1);
+        mostrarDatos();
+        controlarVisibilidadesAnteriorPosterior();
+    }
+
     public void controlarVisibilidadesAnteriorPosterior() {
         btn_siguiente.setVisible(ofertasPendientes.indexOf(ofertaActual) != ofertasPendientes.size() - 1);
         btn_anterior.setVisible(ofertasPendientes.indexOf(ofertaActual) != 0);
+    }
+
+    /**
+     * Rechaza la oferta que se está mostrando.
+     *
+     * Se admite un nivel de aislamiento con lecturas no comprometidas, puesto que es imposible que se produzcan cambios
+     * sobre la oferta de venta si el regulador aún no la ha aceptado/rechazado. Esto acelera la ejecución concurrente.
+     */
+    public void rechazar(){
+        super.iniciarTransaccion(Connection.TRANSACTION_READ_UNCOMMITTED);
+        super.getDAO(OfertaVentaDAO.class).rechazarOfertaVenta(ofertaActual);
+        super.ejecutarTransaccion();
+
+        // Se retira la oferta de la lista de pendientes y se determina qué botones mostrar
+        if (ofertasPendientes.indexOf(ofertaActual) != ofertasPendientes.size() - 1){
+            siguiente();
+            ofertasPendientes.remove(ofertasPendientes.get(ofertasPendientes.indexOf(ofertaActual) - 1));
+        } else if (ofertasPendientes.indexOf(ofertaActual) != 0){
+            anterior();
+            ofertasPendientes.remove(ofertasPendientes.get(ofertasPendientes.indexOf(ofertaActual) + 1));
+        } else {
+            Main.aviso("No quedan ofertas de venta por revisar");
+            cerrarVentana();
+        }
+    }
+
+    /**
+     * Se acepta la oferta de venta actual.
+     *
+     * Se admite un nivel de aislamiento con lecturas no comprometidas, puesto que es imposible que se produzcan cambios
+     * sobre la oferta de venta si el regulador aún no la ha aceptado/rechazado. Esto acelera la ejecución concurrente.
+     */
+    //TODO: documentar
+    public void aceptar() {
+        super.iniciarTransaccion(Connection.TRANSACTION_READ_UNCOMMITTED);
+        super.getDAO(OfertaVentaDAO.class).aceptarOfertaVenta(ofertaActual);
+        super.ejecutarTransaccion();
+
+        // Se retira la oferta de la lista de pendientes y se determina qué botones mostrar
+        if (ofertasPendientes.indexOf(ofertaActual) != ofertasPendientes.size() - 1){
+            siguiente();
+            ofertasPendientes.remove(ofertasPendientes.get(ofertasPendientes.indexOf(ofertaActual) - 1));
+        } else if (ofertasPendientes.indexOf(ofertaActual) != 0){
+            anterior();
+            ofertasPendientes.remove(ofertasPendientes.get(ofertasPendientes.indexOf(ofertaActual) + 1));
+        } else {
+            Main.aviso("No quedan ofertas de venta por revisar");
+            cerrarVentana();
+        }
+    }
+
+    public void cerrarVentana() {
+        Stage stage = (Stage) btn_siguiente.getScene().getWindow();
+        stage.close();
     }
 
     public void abrirOrdenar() {
@@ -136,14 +172,18 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
 
     public void reordenar(){
         if (ordenElegido == null || ordenElegido.equals("Orden de creación")){
+            // Orden en el que llegaron las ofertas a la aplicación
             ofertasPendientes.sort(Comparator.comparing(OfertaVenta::getFecha));
         } else if (ordenElegido.equals("Número de participaciones")){
             ofertasPendientes.sort(Comparator.comparing(OfertaVenta::getNumParticipaciones));
-        } else {
+        } else {        // Se ordenan por precio de venta
             ofertasPendientes.sort(Comparator.comparing(OfertaVenta::getPrecioVenta));
         }
     }
 
+    /**
+     * Se abre una nueva ventana que muestra los datos de la empresa referenciada por la oferta actual.
+     */
     public void mostrarEmpresa(){
         Comunicador comunicador = new Comunicador() {
             @Override
@@ -168,6 +208,9 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
         }
     }
 
+    /**
+     * Se abre una nueva ventana que muestra los datos del usuario que creó la oferta de venta actual.
+     */
     public void mostrarUsuario(){
         SuperUsuario superUsuarioOferta = ofertaActual.getUsuario();
         Entidad usuario = super.getDAO(InversorDAO.class).getInversor(superUsuarioOferta.getIdentificador());

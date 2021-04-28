@@ -30,6 +30,11 @@ public class OfertaVenta extends Entidad {
     @Columna("comision")
     private Float comision = 0.05f;
 
+    @Columna("restantes")
+    private Integer restantes = numParticipaciones;
+
+    private Integer participacionesSinVender;
+
     private OfertaVenta() {
     }
 
@@ -81,6 +86,33 @@ public class OfertaVenta extends Entidad {
         this.comision = comision;
     }
 
+    public Integer getRestantes() {
+        return restantes;
+    }
+
+    public void setRestantes(Integer restantes) {
+        this.restantes = restantes;
+    }
+
+    public Integer getParticipacionesSinVender() {
+        return participacionesSinVender;
+    }
+
+    public void setParticipacionesSinVender(Integer participacionesSinVender) {
+        this.participacionesSinVender = participacionesSinVender;
+    }
+
+    /***
+     * Indica si una oferta de venta sigue disponible (todavía no se han vendido todas sus participaciones) o si ya se
+     * ha completado.
+     *
+     * @return true, si la oferta no se ha completado; false, si ya no está activa; null, en caso de error.
+     */
+    public Boolean isOfertaActiva(){
+        if (participacionesSinVender == null) return null;
+        return !participacionesSinVender.equals(0);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -105,6 +137,7 @@ public class OfertaVenta extends Entidad {
                 ", precioVenta=" + precioVenta +
                 ", confirmado=" + confirmado +
                 ", comision=" + comision +
+                ", restantes=" + restantes +
                 '}';
     }
 
@@ -151,6 +184,16 @@ public class OfertaVenta extends Entidad {
 
         public Builder withComision(Float comision) {
             ofertaVenta.comision = comision;
+            return this;
+        }
+
+        public Builder withRestantes(Integer restantes) {
+            ofertaVenta.restantes = restantes;
+            return this;
+        }
+
+        public Builder withParticipacionesSinVender(Integer participacionesSinVender){
+            ofertaVenta.participacionesSinVender = participacionesSinVender;
             return this;
         }
 

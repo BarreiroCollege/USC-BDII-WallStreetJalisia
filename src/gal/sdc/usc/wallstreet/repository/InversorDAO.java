@@ -20,23 +20,21 @@ public class InversorDAO extends DAO<Inversor> {
     }
 
     /***
+     * Devuelve una lista con los datos de todas aquellos inversores con solicitudes de registro pendientes.
      *
-     * @return Devuelve una lista con los datos de todos aquellos inversores con solicitudes de registro pendientes
+     * @return Lista con los inverores que desean darse de alta.
      */
-    public List<Usuario> getInversoresRegistrosPendientes() {
-        List<Usuario> pendientes = new ArrayList<>();
+    public List<Inversor> getInversoresRegistrosPendientes() {
+        List<Inversor> pendientes = new ArrayList<>();
 
         try (PreparedStatement ps = super.conexion.prepareStatement(
                 "SELECT * " +
                         "FROM usuario u JOIN inversor i ON u.identificador = i.usuario " +
-                        "WHERE u.activo is false"
+                        "WHERE u.alta is not null"
         )) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()){
-                Usuario usuario = Mapeador.map(rs, Usuario.class);
-                Inversor inversor = new Inversor.Builder().withUsuario(usuario).withDni(rs.getString("dni"))
-                        .withNombre(rs.getString("nombre"))
-                        .withApellidos(rs.getString("apellidos")).build();
+                Inversor inversor = Mapeador.map(rs, Inversor.class);
                 pendientes.add(inversor);
             }
         } catch (SQLException e) {
@@ -46,6 +44,12 @@ public class InversorDAO extends DAO<Inversor> {
         return pendientes;
     }
 
+    /***
+     * Devuelve todos los datos de un inversor (inversor y usuario) a partir de su identificador.
+     *
+     * @param identificador Clave primaria.
+     * @return Inversor con todos sus datos.
+     */
     public Inversor getInversor(String identificador){
         try (PreparedStatement ps = conexion.prepareStatement(
                 "SELECT * " +
@@ -64,20 +68,22 @@ public class InversorDAO extends DAO<Inversor> {
         return null;
     }
 
-    public List<Usuario> getInversoresBajasPendientes(){
-        List<Usuario> bajas = new ArrayList<>();
+    /***
+     * Devuelve una lista con los inversores que hayan solicitado una baja de la aplicación.
+     *
+     * @return Lista con los inversores que desean darse de baja.
+     */
+    public List<Inversor> getInversoresBajasPendientes(){
+        List<Inversor> bajas = new ArrayList<>();
 
         try(PreparedStatement ps = super.conexion.prepareStatement(
                 "SELECT * " +
-                        "FROM usuario u JOIN inversor i ON u.identificador = i.usuario" +
-                        "WHERE u.baja is true"
+                        "FROM usuario u JOIN inversor i ON u.identificador = i.usuario " +
+                        "WHERE u.baja is not null"
         )){
             ResultSet rs = ps.executeQuery();
             while (rs.next()){
-                Usuario usuario = Mapeador.map(rs, Usuario.class);
-                Inversor inversor = new Inversor.Builder().withUsuario(usuario).withDni(rs.getString("dni"))
-                        .withNombre(rs.getString("nombre"))
-                        .withApellidos(rs.getString("apellidos")).build();
+                Inversor inversor = Mapeador.map(rs, Inversor.class);
                 bajas.add(inversor);
             }
         } catch (SQLException e){

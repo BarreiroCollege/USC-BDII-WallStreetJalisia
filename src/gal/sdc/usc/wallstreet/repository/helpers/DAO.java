@@ -55,7 +55,10 @@ public abstract class DAO<E extends Entidad> {
     private HashMap<String, Object> resolverPksForaneas(String nombre, Entidad e, String subNombre) {
         HashMap<String, Object> paresPk = new HashMap<>();
 
-        if (e == null) return paresPk;
+        if (e == null) {
+            paresPk.put(nombre, null);
+            return paresPk;
+        }
 
         // Iterar sobre los atributos de la entidad
         for (Field field : e.getClass().getDeclaredFields()) {
@@ -64,7 +67,7 @@ public abstract class DAO<E extends Entidad> {
 
             // Si no es clave primaria, saltar
             Columna columna = field.getDeclaredAnnotation(Columna.class);
-            if (!columna.pk()) continue;
+            if (columna == null || !columna.pk()) continue;
 
             // Llamar al getter del atributo para recuperar el valor al ser privado
             Object valor = LectorDinamico.llamarGetter(name, e);
@@ -111,6 +114,7 @@ public abstract class DAO<E extends Entidad> {
 
             // Dependiendo del tipo de clave, decidir si saltar o no
             Columna columna = field.getDeclaredAnnotation(Columna.class);
+            if (columna == null) continue;
             if (ta.equals(TipoAtributo.PK) && !columna.pk()) continue;
             else if (ta.equals(TipoAtributo.NO_PK) && columna.pk()) continue;
 
@@ -284,7 +288,11 @@ public abstract class DAO<E extends Entidad> {
         Iterator<Map.Entry<String, Object>> itMapKey = paresPk.entrySet().iterator();
         while (itMapKey.hasNext()) {
             Map.Entry<String, Object> entry = itMapKey.next();
+            // if (entry.getValue() == null) {
+            //     SQL.append(entry.getKey()).append(" is ?");
+            // } else {
             SQL.append(entry.getKey()).append("=?");
+            // }
             if (itMapKey.hasNext()) {
                 SQL.append(" AND ");
             }

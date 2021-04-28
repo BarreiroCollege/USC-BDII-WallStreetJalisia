@@ -1,8 +1,6 @@
 package gal.sdc.usc.wallstreet.repository.helpers;
 
-import gal.sdc.usc.wallstreet.model.Empresa;
-import gal.sdc.usc.wallstreet.model.Inversor;
-import gal.sdc.usc.wallstreet.util.TipoUsuario;
+import gal.sdc.usc.wallstreet.model.*;
 import gal.sdc.usc.wallstreet.model.ddl.Entidad;
 import gal.sdc.usc.wallstreet.util.PackageScanner;
 
@@ -24,9 +22,10 @@ public class DatabaseLinker {
     private static Connection conexion;
     // Lista de DAOs disponibles
     private static HashMap<Class<? extends DAO<? extends Entidad>>, DAO<? extends Entidad>> daos;
+    // Nivel de aislamiento por defecto
+    private static int nivelAislamiento = -1;
 
-    private static Inversor inversor;
-    private static Empresa empresa;
+    private static UsuarioSesion usuario;
 
     public static boolean DEBUG = false;
 
@@ -66,6 +65,7 @@ public class DatabaseLinker {
             cargarDAOs(conexion);
             // Marcar como ya inicializado
             DatabaseLinker.conexion = conexion;
+            DatabaseLinker.nivelAislamiento = conexion.getTransactionIsolation();
         } catch (IOException | SQLException f) {
             f.printStackTrace();
         }
@@ -73,6 +73,7 @@ public class DatabaseLinker {
 
     /**
      * Carga todos los DAO en el HashMap
+     *
      * @param conexion conexión con la base de datos
      */
     private void cargarDAOs(Connection conexion) {
@@ -97,8 +98,9 @@ public class DatabaseLinker {
 
     /**
      * Devuelve un DAO que haya sido inicializado
+     *
      * @param clase clase del DAO a buscar
-     * @param <D> DAO de salida
+     * @param <D>   DAO de salida
      * @return DAO instanciado
      */
     public <D extends DAO<? extends Entidad>> D getDAO(Class<D> clase) {
@@ -107,8 +109,9 @@ public class DatabaseLinker {
 
     /**
      * Devuelve un DAO que haya sido inicializado
+     *
      * @param clase clase del DAO a buscar
-     * @param <D> DAO de salida
+     * @param <D>   DAO de salida
      * @return DAO instanciado
      */
     public static <D extends DAO<? extends Entidad>> D getSDAO(Class<D> clase) {
@@ -117,68 +120,66 @@ public class DatabaseLinker {
 
     /**
      * Indica si hay una sesión iniciada
+     *
      * @return true cuando hay un usuario dentro
      */
     public boolean haySesion() {
-        return inversor != null || empresa != null;
+        return usuario != null;
     }
 
     /**
      * Indica el tipo de usuario, si es inversor o empresa
+     *
      * @return INVERSOR cuando es inversor, EMPRESA si es empresa, null si no hay sesión
      */
-    public TipoUsuario getTipoUsuario() {
-        return haySesion() ? (DatabaseLinker.inversor != null ? TipoUsuario.INVERSOR : TipoUsuario.EMPRESA) : null;
+    public UsuarioTipo getTipoUsuario() {
+        if (!haySesion()) return null;
+
+        if (usuario instanceof Inversor) return UsuarioTipo.INVERSOR;
+        else if (usuario instanceof Empresa) return UsuarioTipo.EMPRESA;
+        return UsuarioTipo.REGULADOR;
     }
 
     /**
-     * Devuelve el usuario inversor si hay sesión
-     * @return Inversor
+     * Devuelve el usuario si hay sesión
+     *
+     * @return Usuario
      */
-    public Inversor getInversor() {
-        return DatabaseLinker.inversor;
+    public UsuarioSesion getUsuarioSesion() {
+        return DatabaseLinker.usuario;
     }
 
     /**
-     * Devuelve el usuario empresa si hay sesión
-     * @return Empresa
+     * Inicia sesión
+     *
+     * @param usuario usuario
      */
-    public Empresa getEmpresa() {
-        return DatabaseLinker.empresa;
-    }
-
-    /**
-     * Inicia sesión como inversor
-     * @param inversor usuario
-     */
-    public void setInversor(Inversor inversor) {
-        DatabaseLinker.inversor = inversor;
-        DatabaseLinker.empresa = null;
-    }
-
-    /**
-     * Inicia sesión como inversor
-     * @param empresa usuario
-     */
-    public void setEmpresa(Empresa empresa) {
-        DatabaseLinker.inversor = null;
-        DatabaseLinker.empresa = empresa;
+    public void setUsuarioSesion(UsuarioSesion usuario) {
+        DatabaseLinker.usuario = usuario;
     }
 
     /**
      * Cierra la sesión existente
      */
     public void cerrarSesion() {
-        DatabaseLinker.inversor = null;
-        DatabaseLinker.empresa = null;
+        DatabaseLinker.usuario = null;
     }
 
     /**
-     * Inicia una nueva transacción, deshabilitando el autocommit
+     * Inicia una transacción con el nivel de aislamiento por defecto
      */
     public void iniciarTransaccion() {
+        iniciarTransaccion(DatabaseLinker.nivelAislamiento);
+    }
+
+    /**
+     * Inicia una transacción con el nivel de aislamiento especificado
+     * @param nivelAislamiento aislamiento
+     */
+    public void iniciarTransaccion(int nivelAislamiento) {
         try {
             DatabaseLinker.conexion.setAutoCommit(false);
+            DatabaseLinker.conexion.setTransactionIsolation(nivelAislamiento);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -186,6 +187,7 @@ public class DatabaseLinker {
 
     /**
      * Ejecuta una transacción pendiente
+     *
      * @return true cuando se ejecuta correctamente, false en caso contrario (rollback)
      */
     public boolean ejecutarTransaccion() {
@@ -194,6 +196,7 @@ public class DatabaseLinker {
             if (!DatabaseLinker.conexion.getAutoCommit()) {
                 DatabaseLinker.conexion.commit();
                 DatabaseLinker.conexion.setAutoCommit(true);
+                DatabaseLinker.conexion.setTransactionIsolation(DatabaseLinker.nivelAislamiento);
 
                 return true;
             }
@@ -202,6 +205,7 @@ public class DatabaseLinker {
                 System.err.println(e.getMessage());
                 DatabaseLinker.conexion.rollback();
                 DatabaseLinker.conexion.setAutoCommit(true);
+                DatabaseLinker.conexion.setTransactionIsolation(DatabaseLinker.nivelAislamiento);
             } catch (SQLException e2) {
                 System.err.println(e2.getMessage());
             }

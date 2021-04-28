@@ -19,10 +19,16 @@ public class EmpresaDAO extends DAO<Empresa> {
         super(conexion, Empresa.class);
     }
 
+    /***
+     * Devuelve una lista con todas las empresas activas en la aplicación. Cada una de ellas contendrá todos los datos
+     * de la tabla de empresa y la tabla de usuario.
+     *
+     * @return Lista de empresas dadas de alta.
+     */
     public List<Empresa> getEmpresas(){
         List<Empresa> empresas = new ArrayList<>();
         try (PreparedStatement ps = conexion.prepareStatement(
-                "SELECT e.* FROM empresa as e join usuario as u ON(e.usuario=u.identificador) WHERE activo is true"
+                "SELECT e.* FROM empresa as e join usuario as u ON(e.usuario=u.identificador) WHERE alta is null"
         )) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -36,6 +42,12 @@ public class EmpresaDAO extends DAO<Empresa> {
         return empresas;
     }
 
+    /***
+     * Devuelve todos los datos de una empresa (empresa y usuario) a partir de su identificador.
+     *
+     * @param identificador Clave primaria.
+     * @return Empresa con todos sus datos.
+     */
     public Empresa getEmpresa(String identificador){
         try (PreparedStatement ps = conexion.prepareStatement(
                 "SELECT * " +
@@ -55,22 +67,21 @@ public class EmpresaDAO extends DAO<Empresa> {
     }
 
     /***
+     * Devuelve una lista con los datos de todas aquellas empresas con solicitudes de registro pendientes.
      *
-     * @return Devuelve una lista con los datos de todas aquellos empresas con solicitudes de registro pendientes
+     * @return Lista con las empresas que desean darse de alta.
      */
-    public List<Usuario> getEmpresasRegistrosPendientes() {
-        List<Usuario> pendientes = new ArrayList<>();
+    public List<Empresa> getEmpresasRegistrosPendientes() {
+        List<Empresa> pendientes = new ArrayList<>();
 
         try (PreparedStatement ps = super.conexion.prepareStatement(
                 "SELECT * " +
                         "FROM usuario u JOIN empresa e ON u.identificador = e.usuario " +
-                        "WHERE u.activo is false"
+                        "WHERE u.alta is not null"
         )) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()){
-                Usuario usuario = Mapeador.map(rs, Usuario.class);
-                Empresa empresa = new Empresa.Builder().withUsuario(usuario).withCif(rs.getString("cif"))
-                        .withNombre(rs.getString("nombre")).build();
+                Empresa empresa = Mapeador.map(rs, Empresa.class);
                 pendientes.add(empresa);
             }
         } catch (SQLException e) {
@@ -80,19 +91,22 @@ public class EmpresaDAO extends DAO<Empresa> {
         return pendientes;
     }
 
-    public List<Usuario> getEmpresasBajasPendientes(){
-        List<Usuario> bajas = new ArrayList<>();
+    /***
+     * Devuelve una lista con las empresas que hayan solicitado una baja de la aplicación.
+     *
+     * @return Lista con las empresas que desean darse de baja.
+     */
+    public List<Empresa> getEmpresasBajasPendientes(){
+        List<Empresa> bajas = new ArrayList<>();
 
         try (PreparedStatement ps = super.conexion.prepareStatement(
                 "SELECT * " +
                         "FROM usuario u JOIN empresa e ON u.identificador = e.usuario " +
-                        "WHERE u.baja is true"
+                        "WHERE u.baja is not null"
         )){
             ResultSet rs = ps.executeQuery();
             while (rs.next()){
-                Usuario usuario = Mapeador.map(rs, Usuario.class);
-                Empresa empresa = new Empresa.Builder().withUsuario(usuario).withCif(rs.getString("cif"))
-                        .withNombre(rs.getString("nombre")).build();
+                Empresa empresa = Mapeador.map(rs, Empresa.class);
                 bajas.add(empresa);
             }
         } catch (SQLException e){

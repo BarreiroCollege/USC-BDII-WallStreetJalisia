@@ -9,19 +9,20 @@ import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Inversor;
 import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.model.Usuario;
+import gal.sdc.usc.wallstreet.model.UsuarioEstado;
+import gal.sdc.usc.wallstreet.model.UsuarioSesion;
 import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
 import gal.sdc.usc.wallstreet.repository.InversorDAO;
 import gal.sdc.usc.wallstreet.repository.SuperUsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
+import gal.sdc.usc.wallstreet.util.Comunicador;
 import gal.sdc.usc.wallstreet.util.ErrorValidator;
-import gal.sdc.usc.wallstreet.util.auth.PasswordStorage;
 import gal.sdc.usc.wallstreet.util.Validadores;
-import javafx.event.EventHandler;
+import gal.sdc.usc.wallstreet.util.auth.PasswordStorage;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
@@ -52,13 +53,7 @@ public class AccesoController extends DatabaseLinker implements Initializable {
     @FXML
     private JFXButton btnAcceso;
 
-    private Usuario usuario;
-
     public AccesoController() {
-    }
-
-    public Usuario getUsuario() {
-        return this.usuario;
     }
 
     private void acceder() {
@@ -83,7 +78,8 @@ public class AccesoController extends DatabaseLinker implements Initializable {
             return;
         }
 
-        if (!usuario.getActivo()) {
+        if (usuario.getEstado().equals(UsuarioEstado.BAJA)
+                || usuario.getEstado().equals(UsuarioEstado.PENDIENTE_ALTA)) {
             if (txtUsuario.getValidators().size() == 1) txtUsuario.getValidators().add(usuarioNoActivo);
             txtUsuario.validate();
             return;
@@ -99,35 +95,37 @@ public class AccesoController extends DatabaseLinker implements Initializable {
             System.err.println(ex.getMessage());
         }
 
-        this.usuario = usuario;
         if (usuario.getOtp() != null) {
-            OtpController.setAccesoController(this);
+            Comunicador callback = new Comunicador() {
+                @Override
+                public Object[] getData() {
+                    return new Object[]{usuario};
+                }
+
+                @Override
+                public void onSuccess() {
+                    autenticar(usuario);
+                }
+
+                @Override
+                public void onFailure() {
+                    txtUsuario.setText("");
+                    txtClave.setText("");
+                }
+            };
+            OtpController.setComunicador(callback);
             Main.dialogo(OtpController.VIEW, OtpController.WIDTH, OtpController.HEIGHT, OtpController.TITULO);
         } else {
-            this.autenticar();
+            this.autenticar(usuario);
         }
     }
 
-    public void confirmarOtp() {
-        this.autenticar();
-    }
+    private void autenticar(Usuario usuario) {
+        UsuarioSesion us = super.getDAO(InversorDAO.class).seleccionar(usuario);
+        if (us == null) us = super.getDAO(EmpresaDAO.class).seleccionar(usuario);
+        super.setUsuarioSesion(us);
 
-    public void cancelarOtp() {
-        txtUsuario.setText("");
-        txtClave.setText("");
-    }
-
-    private void autenticar() {
-        Inversor inversor = super.getDAO(InversorDAO.class).seleccionar(usuario);
-
-        if (inversor != null) {
-            super.setInversor(inversor);
-        } else {
-            Empresa empresa = super.getDAO(EmpresaDAO.class).seleccionar(usuario);
-            super.setEmpresa(empresa);
-        }
-        
-        // TODO: Usuario correcto, abrir ventana principal
+        Main.ventana(PrincipalController.VIEW, PrincipalController.WIDTH, PrincipalController.HEIGHT, PrincipalController.TITULO);
     }
 
     @FXML

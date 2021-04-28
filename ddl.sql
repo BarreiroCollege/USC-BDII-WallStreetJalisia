@@ -38,8 +38,8 @@ create table usuario
     telefono        integer,
     saldo           double precision default 0     not null,
     saldo_bloqueado double precision default 0     not null,
-    activo          boolean          default false not null,
-    baja            boolean          default false not null,
+    alta            timestamp,
+    baja            timestamp,
     otp             varchar(32)      default NULL::character varying,
     sociedad        varchar(16)      default NULL::character varying
         constraint usuario_sociedad_identificador_fk
@@ -135,6 +135,7 @@ create table oferta_venta
     precio_venta        double precision               not null,
     confirmado          boolean          default false not null,
     comision            double precision default 0.05  not null,
+    restantes           integer                        not null,
     constraint oferta_venta_pk
         primary key (fecha, usuario)
 );
@@ -201,3 +202,16 @@ create table propuesta_compra
 alter table propuesta_compra
     owner to postgres;
 
+create table regulador
+(
+    identificador varchar(16)                   not null
+        constraint regulador_pk
+            primary key
+        constraint regulador_usuario_identificador_fk
+            references usuario
+            on update cascade,
+    comision      double precision default 0.05 not null
+);
+
+alter table regulador
+    owner to postgres;

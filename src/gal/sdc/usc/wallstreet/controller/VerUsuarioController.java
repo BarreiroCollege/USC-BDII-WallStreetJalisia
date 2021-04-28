@@ -9,74 +9,101 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 public class VerUsuarioController {
-    @FXML
-    private Label txt_titulo_apellidos;
-    @FXML
-    private Label txt_dni_cif;
-    @FXML
-    private Label txt_nombre;
-    @FXML
-    private Label txt_apellidos;
-    @FXML
-    private Label txt_titulo_dni_cif;
-    @FXML
-    private Label txt_tipo;
-    @FXML
-    private Label txt_principal_nombre;
-    @FXML
-    private Label txt_id;
-    @FXML
-    private Label txt_direccion;
-    @FXML
-    private Label txt_cp;
-    @FXML
-    private Label txt_localidad;
-    @FXML
-    private Label txt_tlf;
 
-    private static Comunicador comunicador;
+    @FXML
+    private Label txtPrincipalNombre;
+    @FXML
+    private Label txtId;
+    @FXML
+    private Label txtDireccion;
+    @FXML
+    private Label txtCp;
+    @FXML
+    private Label txtLocalidad;
+    @FXML
+    private Label txtTlf;
+    @FXML
+    private Label txtSaldo;
+    @FXML
+    private Label txtSaldoBloqueado;
+    @FXML
+    private Label txtTipo;
+    @FXML
+    private Label txtTituloDniCif;           // Indicación de si se muestra un DNI o un CIF
+    @FXML
+    private Label txtDniCif;                  // DNI o CIF del usuario
+    @FXML
+    private Label txtNombre;
+    @FXML
+    private Label txtTituloApellidos;         // Indicación de apellidos (no aparece para la empresa)
+    @FXML
+    private Label txtApellidos;                // Apellidos del inversor
+
+
+    private static Comunicador comunicador;         // A través de él se recibe la información del usuario a mostrar
 
     public static void setComunicador(Comunicador comunicador){
         VerUsuarioController.comunicador = comunicador;
     }
 
     public void initialize(){
-        if (comunicador == null) ((Stage) txt_apellidos.getScene().getWindow()).close();
+        // Si no se ha recibido información, no se puede mostrar nada
+        if (comunicador == null) ((Stage) txtApellidos.getScene().getWindow()).close();
 
         Object[] objeto = comunicador.getData();
 
-        mostrarDatosUsuario((Usuario) objeto[0]);
-
-        if (objeto[0] instanceof Empresa) mostrarDatosEmpresa((Empresa) objeto[0]);
-        else mostrarDatosInversor((Inversor) objeto[0]);
+        // El layout varía en función de si el usuario es un inversor o una empresa
+        if (objeto[0] instanceof Empresa){
+            mostrarDatosUsuario((Empresa) objeto[0]);
+            mostrarDatosEmpresa((Empresa) objeto[0]);
+        } else {
+            mostrarDatosUsuario((Inversor) objeto[0]);
+            mostrarDatosInversor((Inversor) objeto[0]);
+        }
     }
 
-    private void mostrarDatosUsuario(Usuario usuario){
-        txt_id.setText(usuario.getIdentificador());
-        txt_direccion.setText(usuario.getDireccion());
-        txt_cp.setText(usuario.getCp());
-        txt_localidad.setText(usuario.getLocalidad());
-        txt_tlf.setText(usuario.getTelefono().toString());
+    // Datos comunes a todos los usuarios
+    private void mostrarDatosUsuario(Inversor inversor){
+        txtId.setText(inversor.getUsuario().getSuperUsuario().getIdentificador());
+        txtDireccion.setText(inversor.getUsuario().getDireccion());
+        txtCp.setText(inversor.getUsuario().getCp());
+        txtLocalidad.setText(inversor.getUsuario().getLocalidad());
+        txtTlf.setText(inversor.getUsuario().getTelefono().toString());
+        txtSaldo.setText(inversor.getUsuario().getSaldo().toString());
+        txtSaldoBloqueado.setText(inversor.getUsuario().getSaldoBloqueado().toString());
     }
 
+    // Datos comunes a todos los usuarios
+    private void mostrarDatosUsuario(Empresa empresa){
+        txtId.setText(empresa.getUsuario().getSuperUsuario().getIdentificador());
+        txtDireccion.setText(empresa.getUsuario().getDireccion());
+        txtCp.setText(empresa.getUsuario().getCp());
+        txtLocalidad.setText(empresa.getUsuario().getLocalidad());
+        txtTlf.setText(empresa.getUsuario().getTelefono().toString());
+        txtSaldo.setText(empresa.getUsuario().getSaldo().toString());
+        txtSaldoBloqueado.setText(empresa.getUsuario().getSaldoBloqueado().toString());
+    }
+
+    // Datos propios de las empresas
     private void mostrarDatosEmpresa(Empresa empresa){
-        txt_principal_nombre.setText(empresa.getNombre());
-        txt_tipo.setText("Empresa");
-        txt_titulo_dni_cif.setText("CIF:");
-        txt_dni_cif.setText(empresa.getCif());
-        txt_nombre.setText(empresa.getNombre());
-        txt_titulo_apellidos.setVisible(false);
-        txt_apellidos.setVisible(false);
+        txtPrincipalNombre.setText(empresa.getNombre());
+        txtTipo.setText("Empresa");
+        txtTituloDniCif.setText("CIF:");
+        txtDniCif.setText(empresa.getCif());
+        txtNombre.setText(empresa.getNombre());
+        txtTituloApellidos.setVisible(false);
+        txtApellidos.setVisible(false);
     }
 
+    // Datos propios del inversor
     private void mostrarDatosInversor(Inversor inversor){
-        txt_principal_nombre.setText(inversor.getNombre() + " " + inversor.getApellidos());
-        txt_tipo.setText("Inversor");
-        txt_titulo_dni_cif.setText("DNI:");
-        txt_dni_cif.setText(inversor.getDni());
-        txt_nombre.setText(inversor.getNombre());
-        txt_titulo_apellidos.setVisible(true);
-        txt_apellidos.setVisible(true);
-        txt_apellidos.setText(inversor.getApellidos());
+        txtPrincipalNombre.setText(inversor.getNombre() + " " + inversor.getApellidos());
+        txtTipo.setText("Inversor");
+        txtTituloDniCif.setText("DNI:");
+        txtDniCif.setText(inversor.getDni());
+        txtNombre.setText(inversor.getNombre());
+        txtTituloApellidos.setVisible(true);
+        txtApellidos.setVisible(true);
+        txtApellidos.setText(inversor.getApellidos());
     }
 }

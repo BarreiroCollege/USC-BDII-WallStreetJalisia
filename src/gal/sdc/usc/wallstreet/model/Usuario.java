@@ -1,13 +1,15 @@
 package gal.sdc.usc.wallstreet.model;
 
 import gal.sdc.usc.wallstreet.model.ddl.Columna;
+import gal.sdc.usc.wallstreet.model.ddl.Entidad;
 import gal.sdc.usc.wallstreet.model.ddl.Tabla;
 import gal.sdc.usc.wallstreet.util.auth.PasswordStorage;
 
+import java.util.Date;
 import java.util.Objects;
 
 @Tabla("usuario")
-public class Usuario extends SuperUsuario {
+public class Usuario extends Entidad {
     @Columna(value = "identificador", pk = true)
     private SuperUsuario superUsuario;
 
@@ -32,11 +34,11 @@ public class Usuario extends SuperUsuario {
     @Columna("saldo_bloqueado")
     private Float saldoBloqueado = 0.f;
 
-    @Columna("activo")
-    private Boolean activo = false;
+    @Columna("alta")
+    private Date alta;
 
     @Columna("baja")
-    private Boolean baja = false;
+    private Date baja;
 
     @Columna("otp")
     private String otp;
@@ -47,35 +49,7 @@ public class Usuario extends SuperUsuario {
     @Columna("lider")
     private Boolean lider = false;
 
-    // Ha de ser protected para permitir crear la jerarquía
-    protected Usuario() {
-    }
-
-    protected Usuario getThis() {
-        return this;
-    }
-
-    protected SuperUsuario getSuper() {
-        return super.getThis();
-    }
-
-    // Para poner desde jerarquía
-    protected void set(Usuario usuario) {
-        this.superUsuario = usuario.superUsuario;
-        this.getSuper().set(usuario.superUsuario);
-
-        this.clave = usuario.clave;
-        this.direccion = usuario.direccion;
-        this.cp = usuario.cp;
-        this.localidad = usuario.localidad;
-        this.telefono = usuario.telefono;
-        this.saldo = usuario.saldo;
-        this.saldoBloqueado = usuario.saldoBloqueado;
-        this.activo = usuario.activo;
-        this.baja = usuario.baja;
-        this.otp = usuario.otp;
-        this.sociedad = usuario.sociedad;
-        this.lider = usuario.lider;
+    private Usuario() {
     }
 
     public SuperUsuario getSuperUsuario() {
@@ -146,19 +120,19 @@ public class Usuario extends SuperUsuario {
         this.saldoBloqueado = saldoBloqueado;
     }
 
-    public Boolean getActivo() {
-        return activo;
+    public Date getAlta() {
+        return alta;
     }
 
-    public void setActivo(Boolean activo) {
-        this.activo = activo;
+    public void setActivo(Date alta) {
+        this.alta = alta;
     }
 
-    public Boolean getBaja() {
+    public Date getBaja() {
         return baja;
     }
 
-    public void setBaja(Boolean baja) {
+    public void setBaja(Date baja) {
         this.baja = baja;
     }
 
@@ -186,6 +160,16 @@ public class Usuario extends SuperUsuario {
         this.lider = lider;
     }
 
+    public UsuarioEstado getEstado() {
+        if (alta != null) {
+            if (baja == null) return UsuarioEstado.ACTIVO;
+            else return UsuarioEstado.PENDIENTE_BAJA;
+        } else {
+            if (baja == null) return UsuarioEstado.PENDIENTE_ALTA;
+            else return UsuarioEstado.BAJA;
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -210,13 +194,14 @@ public class Usuario extends SuperUsuario {
                 ", telefono=" + telefono +
                 ", saldo=" + saldo +
                 ", saldoBloqueado=" + saldoBloqueado +
-                ", activo=" + activo +
+                ", alta=" + alta +
                 ", baja=" + baja +
                 ", otp=" + otp +
                 ", sociedad=" + sociedad +
                 ", lider=" + lider +
                 '}';
     }
+
 
     public static class Builder {
         private final Usuario usuario = new Usuario();
@@ -226,12 +211,10 @@ public class Usuario extends SuperUsuario {
 
         public Builder(SuperUsuario superUsuario) {
             usuario.superUsuario = superUsuario;
-            usuario.getSuper().set(superUsuario);
         }
 
         public Builder withSuperUsuario(SuperUsuario superUsuario) {
             usuario.superUsuario = superUsuario;
-            usuario.getSuper().set(superUsuario);
             return this;
         }
 
@@ -270,12 +253,12 @@ public class Usuario extends SuperUsuario {
             return this;
         }
 
-        public Builder withActivo(Boolean activo) {
-            usuario.activo = activo;
+        public Builder withAlta(Date alta) {
+            usuario.alta = alta;
             return this;
         }
 
-        public Builder withBaja(Boolean baja) {
+        public Builder withBaja(Date baja) {
             usuario.baja = baja;
             return this;
         }

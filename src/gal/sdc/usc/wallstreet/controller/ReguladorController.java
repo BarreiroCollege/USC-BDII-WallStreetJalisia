@@ -4,6 +4,8 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXSnackbarLayout;
 import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.validation.IntegerValidator;
+import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.*;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
@@ -14,155 +16,408 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
-import java.util.List;
+import java.sql.Connection;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ReguladorController extends DatabaseLinker {
+
+    //<editor-fold defaultstate="collapsed" desc="Variables desde FXML">
+    // Pestaña de pendientes
+    // Número de pendientes
+    @FXML
+    private Label txtSolicitudesRegistro;
+    @FXML
+    private Label txtSolicitudesBaja;
+    @FXML
+    private Label txtSolicitudesOferta;
+
+    // Botones para la apertura de ventanas
+    @FXML
+    private JFXButton btnVerRegistros;
+    @FXML
+    private JFXButton btnVerBajas;
+    @FXML
+    private JFXButton btnVerOfertas;
+
+    // Botones de gestión automática
+    @FXML
+    private JFXButton btnAceptarTodoRegistros;
+    @FXML
+    private JFXButton btnAceptarTodoBajas;
+    @FXML
+    private JFXButton btnAceptarTodoOfertas;
+
+    @FXML
+    private Label txtSaldo;
+
+
+    // Pestaña de transferencias
+    // Tabla de usuarios (dos columnas: identificador y saldo)
+    @FXML
+    private TableView<Usuario> tablaUsuarios;
     @FXML
     private TableColumn<Usuario, String> columnaId;
     @FXML
     private TableColumn<Usuario, String> columnaSaldo;
+
+    // Botones para indicar la transferencia
     @FXML
-    private ChoiceBox cbTipo;
+    private JFXButton btnTransferir;
+    @FXML
+    private JFXButton btnParaTabla;
+    @FXML
+    private JFXButton btnDeTabla;
+
+    // Selectores
+    @FXML
+    private JFXTextField txtCampoDe;
+    @FXML
+    private JFXTextField txtCampoPara;
+    @FXML
+    private ChoiceBox<String> cbTipo;
     @FXML
     private JFXTextField txtId;
     @FXML
-    private JFXTextField DniCif;
+    private JFXTextField txtDniCif;
     @FXML
-    private JFXTextField Nombre;
+    private JFXTextField txtNombre;
     @FXML
-    private JFXTextField Apellidos;
+    private JFXTextField txtApellidos;
     @FXML
-    private Label txt_solicitudes_registro;
-    @FXML
-    private Label txt_solicitudes_baja;
-    @FXML
-    private Label txt_solicitudes_oferta;
-    @FXML
-    private Label txt_saldo;
-    @FXML
-    private JFXButton btn_ver_registros;
-    @FXML
-    private JFXButton btn_ver_bajas;
-    @FXML
-    private JFXButton btn_ver_ofertas;
-    @FXML
-    private JFXButton btn_actualizar_datos;
-    @FXML
-    private JFXButton btn_aceptar_todo_registros;
-    @FXML
-    private JFXButton btn_aceptar_todo_bajas;
-    @FXML
-    private JFXButton btn_aceptar_todo_ofertas;
-    @FXML
-    private TableView<Usuario> tablaUsuarios;
+    private JFXTextField txtCantidad;
+    //</editor-fold>
 
-    private final String error = "error";
-    private static JFXSnackbar snackbar;
+    private final String error = "error";       // Mensaje de error
+    // Datos a mostrar en la tabla
     private final ObservableList<Usuario> datosTabla = FXCollections.observableArrayList();
 
+    private Usuario campoDe;            // Usuario que transfiere (null indica un agente externo)
+    private Usuario campoPara;          // Usuario que recibe transferencia (null indica que se retira saldo)
+
+
+    /** No existe un botón de actualización de la tabla porque filtrar también refresca los datos **/
 
     @FXML
     public void initialize() {
-        actualizarDatos();
-        //actualizarSaldo();
-        registrarDatos();
-        establecerColumnasTabla();
+        actualizarDatosPendientes();        // Se indica cuántos registros, bajas y ofertas de venta hay pendientes
+        // Dependiendo de esas cantidades, se mostrarán unos botones u otros
+
+        setupComponentes();
+        addValidadores();
+        registrarDatosTabla();              // Se busca a los usuarios activos, que pueden realizar transferencias
+        establecerColumnasTabla();          // Se establece la estructura de la tabla
     }
 
-    public void actualizarDatos() {
+    public void actualizarDatosPendientes() {
         actualizarRegistrosPendientes();
         actualizarBajasPendientes();
         actualizarOfertasPendientes();
         actualizarSaldo();
     }
 
-    public void registrarDatos(){
-        List<Usuario> usuarios = super.getDAO(UsuarioDAO.class).getUsuariosActivos();
-        datosTabla.setAll(usuarios);
-        tablaUsuarios.setItems(datosTabla);
-    }
-
-    public void establecerColumnasTabla() {
-        // Establecemos los valores que contendrá cada columna de la tabla de participaciones
-        columnaId.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getIdentificador()));
-        columnaSaldo.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getSaldo().toString()));
-    }
-
     public void actualizarRegistrosPendientes() {
         // Número de usuarios que han solicitado registrarse y están pendientes de ser revisados
         Integer registrosPendientes = super.getDAO(UsuarioDAO.class).getNumInactivos();
         // Se muestra dicha información si no ha habido un error
-        txt_solicitudes_registro.setText(registrosPendientes == null ? error : registrosPendientes.toString());
+        txtSolicitudesRegistro.setText(registrosPendientes == null ? error : registrosPendientes.toString());
         // Se muestran los botones de revisión y aceptar si no ha habido un error y hay registros pendientes
-        btn_ver_registros.setVisible(registrosPendientes != null && !registrosPendientes.equals(0));
-        btn_aceptar_todo_registros.setVisible(registrosPendientes != null && !registrosPendientes.equals(0));
+        btnVerRegistros.setVisible(registrosPendientes != null && !registrosPendientes.equals(0));
+        btnAceptarTodoRegistros.setVisible(registrosPendientes != null && !registrosPendientes.equals(0));
     }
 
     public void actualizarBajasPendientes() {
         // Número de usuarios que han solicitado darse de baja y están pendientes de ser revisados
         Integer bajasPendientes = super.getDAO(UsuarioDAO.class).getNumSolicitudesBaja();
         // Se muestra dicha información si no ha habido un error
-        txt_solicitudes_baja.setText(bajasPendientes == null ? error : bajasPendientes.toString());
+        txtSolicitudesBaja.setText(bajasPendientes == null ? error : bajasPendientes.toString());
         // Se muestran los botones de revisión y aceptar si no ha habido un error y hay bajas pendientes
-        btn_ver_bajas.setVisible(bajasPendientes != null && !bajasPendientes.equals(0));
-        btn_aceptar_todo_bajas.setVisible(bajasPendientes != null && !bajasPendientes.equals(0));
+        btnVerBajas.setVisible(bajasPendientes != null && !bajasPendientes.equals(0));
+        btnAceptarTodoBajas.setVisible(bajasPendientes != null && !bajasPendientes.equals(0));
     }
 
     public void actualizarOfertasPendientes() {
         // Número de ofertas de venta que no han sido aprobadas
         Integer ofertasPendientes = super.getDAO(OfertaVentaDAO.class).getNumOfertasPendientes();
         // Se muestra dicha información si no ha habido un error
-        txt_solicitudes_oferta.setText(ofertasPendientes == null ? error : ofertasPendientes.toString());
+        txtSolicitudesOferta.setText(ofertasPendientes == null ? error : ofertasPendientes.toString());
         // Se muestran los botones de revisión y aceptar si no ha habido un error y hay ofertas pendientes
-        btn_ver_ofertas.setVisible(ofertasPendientes != null && !ofertasPendientes.equals(0));
-        btn_aceptar_todo_ofertas.setVisible(ofertasPendientes != null && !ofertasPendientes.equals(0));
+        btnVerOfertas.setVisible(ofertasPendientes != null && !ofertasPendientes.equals(0));
+        btnAceptarTodoOfertas.setVisible(ofertasPendientes != null && !ofertasPendientes.equals(0));
     }
 
     public void actualizarSaldo() {
 
     }
 
+    public void registrarDatosTabla(){
+        // Inicialmente solo se muestran los 100 usuarios de más saldo (filtrar actualizará la tabla)
+        List<Usuario> usuarios = super.getDAO(UsuarioDAO.class).getUsuariosMasSaldo(100);
+        datosTabla.setAll(usuarios);
+        tablaUsuarios.setItems(datosTabla);
+    }
+
+    public void setupComponentes(){
+        // No hay seleccionada ninguna columna de la tabla
+        btnDeTabla.setVisible(false);
+        btnParaTabla.setVisible(false);
+        btnTransferir.setVisible(false);
+
+        List<String> opcionesComboBox = new ArrayList<>(Arrays.asList("---", "Empresas", "Inversores"));
+        cbTipo.setItems(FXCollections.observableArrayList(opcionesComboBox));
+    }
+
+    public void addValidadores(){
+        // Validadores de entrada numérica
+        IntegerValidator iv = new IntegerValidator("");
+        txtCantidad.getValidators().add(iv);
+
+        txtCantidad.textProperty().addListener((observable, oldValue, newValue) -> {
+            txtCantidad.validate();
+            determinarActivacionBtnTransferencia();
+        });
+        //TODO: fallo
+    }
+
+    public void establecerColumnasTabla() {
+        // Establecemos los valores que contendrá cada columna de la tabla de participaciones
+        columnaId.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getSuperUsuario().getIdentificador()));
+        columnaSaldo.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getSaldo().toString()));
+    }
+
+
+
+    /**
+     * Se aceptan los registros pendientes.
+     * No se admite read uncomitted para evitar que se acepten solicitudes de las que el regulador no tenía constancia.
+     */
     public void aceptarTodoRegistros() {
-        //TODO: transacción?
-        //super.iniciarTransaccion();
         super.getDAO(UsuarioDAO.class).aceptarUsuariosTodos();
-        //super.ejecutarTransaccion();
         actualizarRegistrosPendientes();
     }
 
-    public void aceptarTodoBajas() {
-        actualizarBajasPendientes();
-    }
+    /**
+     * Se aceptan todas las solicitudes de baja (comprobando que se puedan realizar)
+     */
+    public void aceptarTodoBajas(){
+        boolean hayRechazos = false;        // Aviso al finalizar
 
-/*    public void aceptarTodoBajas(){
-        super.iniciarTransaccion();
-        Boolean sinRechazos = super.getDAO(UsuarioDAO.class).aceptarBajasTodas(
-                super.getDAO(EmpresaDAO.class).getEmpresasBajasPendientes(),
-                super.getDAO(InversorDAO.class).getInversoresBajasPendientes()
-        );
-        if (super.ejecutarTransaccion()){
-            if (Boolean.FALSE.equals(sinRechazos)) {
-                mensaje("Las bajas de cuentas con participaciones se han rechazado.", 5);
+        /***
+         * Para evitar que se produzcan movimientos en la cuenta del usuario una vez el regulador ha aceptado la baja
+         * (pues el usuario aún podría comprar participaciones), se fuerza a una ejecución secuencial.
+         */
+        super.iniciarTransaccion(Connection.TRANSACTION_SERIALIZABLE);
+
+        // Se recogen todos los identificadores de los usuarios a dar de baja
+        List<String> identificadores = super.getDAO(EmpresaDAO.class).getEmpresasBajasPendientes().stream().map(
+                empresa -> empresa.getUsuario().getSuperUsuario().getIdentificador()
+        ).collect(Collectors.toList());
+        identificadores.addAll(super.getDAO(InversorDAO.class).getInversoresBajasPendientes().stream().map(
+                inversor -> inversor.getUsuario().getSuperUsuario().getIdentificador()
+        ).collect(Collectors.toList()));
+
+        // Iterador para poder quitar elementos de identificadores mientras se recorre la lista
+        Iterator<String> iterator = identificadores.iterator();
+        while (iterator.hasNext()){
+            String identificador = iterator.next();
+            if (super.getDAO(ParticipacionDAO.class).tieneParticipaciones(identificador)){
+                // Se rechaza la baja del usuario
+                hayRechazos = true;
+                super.getDAO(UsuarioDAO.class).rechazarBaja(identificador);
+                iterator.remove();
+            } else {
+                // Se prepara la cuenta transfiriendo todos los fondos
+                super.getDAO(UsuarioDAO.class).vaciarSaldo(identificador);
             }
-            actualizarDatos();
-        } else  {
-            mensaje("Error en la gestión de bajas", 5);
         }
-    }*/
 
-    public void aceptarTodoOfertas() {
-        actualizarOfertasPendientes();
+        // Se da de baja a todos aquellos usuarios no rechazados
+        super.getDAO(SuperUsuarioDAO.class).eliminarSuperUsuarios(identificadores);
+
+        if (super.ejecutarTransaccion()){
+            if (hayRechazos) {
+                Main.mensaje("Las bajas de cuentas con participaciones se han rechazado.", 5);
+            } else {
+                Main.mensaje("Todas las bajas de cuentas han sido aceptadas", 5);
+            }
+        } else  {
+            Main.mensaje("Error en la gestión de bajas", 5);
+        }
+        actualizarBajasPendientes();            // Se actualizan los datos mostrados
     }
 
+    /**
+     * Acepta todas las solicitudes de oferta de venta con la comisión estándar (0.05)
+     */
+    public void aceptarTodoOfertas() {
+        super.iniciarTransaccion(Connection.TRANSACTION_READ_UNCOMMITTED);
+        super.getDAO(OfertaVentaDAO.class).aceptarOfertasVentaPendientes();
+        super.ejecutarTransaccion();
+        actualizarOfertasPendientes();      // Se actualizan los datos
+    }
+
+    /**
+     * Actualiza los datos de la tabla en función de los filtros indicados (se vuelven a cargar los saldos)
+     */
+    public void onClickFiltrar(){
+        List<Usuario> usuariosFiltrados = super.getDAO(UsuarioDAO.class)
+                .getUsuariosFiltroPersonalizado(construirDatosFiltro(), 100);
+        datosTabla.setAll(usuariosFiltrados);
+        tablaUsuarios.setItems(datosTabla);
+    }
+
+    private HashMap<String, String> construirDatosFiltro(){
+        HashMap<String, String> datosFiltrado = new HashMap<>();
+
+        // id
+        if (txtId.getText() != null && !txtId.getText().isEmpty()) datosFiltrado.put("id", txtId.getText());
+
+        // ¿Empresa o inversor?
+        if (cbTipo.getValue() != null && !cbTipo.getValue().isEmpty() && !cbTipo.getValue().equals("---"))
+            datosFiltrado.put("tipo", cbTipo.getValue());
+
+        // DNI o CIF
+        if (txtDniCif.isVisible() && txtDniCif.getText() != null && !txtDniCif.getText().isEmpty()){
+            datosFiltrado.put(txtDniCif.getPromptText(), txtDniCif.getText());
+        }
+
+        // Nombre
+        if (txtNombre.isVisible() && txtNombre.getText() != null && !txtNombre.getText().isEmpty()){
+            datosFiltrado.put("nombre", txtNombre.getText());
+        }
+
+        // Apellidos
+        if (txtApellidos.isVisible() && txtApellidos.getText() != null && !txtApellidos.getText().isEmpty()){
+            datosFiltrado.put("apellidos", txtApellidos.getText());
+        }
+
+        return datosFiltrado;
+    }
+
+    /**
+     * Filtrado por tipo de usuario (varían los campos que se pueden cubrir)
+     */
+    public void onActionComboBoxTipo(){
+        if ("Empresas".equals(cbTipo.getValue())){
+            txtDniCif.setVisible(true);
+            txtDniCif.setPromptText("CIF");
+            txtNombre.setVisible(true);
+            txtNombre.setPromptText("Nombre comercial");
+            txtApellidos.setVisible(false);
+        } else if ("Inversores".equals(cbTipo.getValue())){
+            txtDniCif.setVisible(true);
+            txtDniCif.setPromptText("DNI");
+            txtNombre.setVisible(true);
+            txtNombre.setPromptText("Nombre");
+            txtApellidos.setVisible(true);
+        } else {
+            txtDniCif.setVisible(false);
+            txtNombre.setVisible(false);
+            txtApellidos.setVisible(false);
+        }
+    }
+
+    /**
+     * Realizar una transferencia desde campoDe a campoPara con la cantidad indicada
+     */
+    // TODO: darle una vuelta a la comprobación de saldo. Read uncomitted?
+    public void onClickBtnTransferir(){
+        if (campoPara == null){                   // Los fondos se retiran de la cuenta
+            // Se comprueba que haya saldo suficiente
+            if (Float.parseFloat(txtCantidad.getText()) > campoDe.getSaldo()){
+                Main.mensaje("Saldo insuficiente", 5);
+                return;
+            }
+
+            // Hay saldo suficiente. Se retiran los fondos.
+            if (super.getDAO(UsuarioDAO.class).retirarSaldo(Float.parseFloat(txtCantidad.getText()), campoDe)){
+                // Se actualiza la tabla.
+                campoDe.setSaldo(campoDe.getSaldo() - Float.parseFloat(txtCantidad.getText()));
+                tablaUsuarios.refresh();
+            }
+        } else if (campoDe == null){          // Se depositan fondos
+            super.getDAO(UsuarioDAO.class).depositarSaldo(Integer.parseInt(txtCantidad.getText()), campoPara);
+        } else {                                // Transferencia de una cuenta a otra
+            // Se comprueba que haya saldo suficiente
+            if ((Float.parseFloat(txtCantidad.getText()) > campoDe.getSaldo())){
+                Main.mensaje("Saldo insuficiente", 5);
+                return;
+            }
+
+            super.iniciarTransaccion();
+            super.getDAO(UsuarioDAO.class).retirarSaldo(Float.parseFloat(txtCantidad.getText()), campoDe);
+            super.getDAO(UsuarioDAO.class).depositarSaldo(Float.parseFloat(txtCantidad.getText()), campoPara);
+            super.ejecutarTransaccion();
+        }
+    }
+
+    /**
+     * Permite escoger el usuario seleccionado en la tabla como un campo para la transferencia.
+     */
+    public void onClickTabla(){
+        btnDeTabla.setVisible(true);
+        btnParaTabla.setVisible(true);
+    }
+
+    /**
+     * Elimina la opción de escoger un dato de la tabla.
+     */
+    public void onMouseReleasedTabla(){
+        btnDeTabla.setVisible(false);
+        btnParaTabla.setVisible(false);
+    }
+
+    public void onClickBtnDeExterior(){
+        campoDe = null;
+        txtCampoDe.setText("Exterior");
+        determinarActivacionBtnTransferencia();
+    }
+
+    public void onClickBtnParaExterior(){
+        campoPara = null;
+        txtCampoPara.setText("Exterior");
+        determinarActivacionBtnTransferencia();
+    }
+
+    public void onClickBtnDeTabla(){
+        Usuario usuarioSeleccionado = tablaUsuarios.getSelectionModel().getSelectedItem();
+        campoDe = usuarioSeleccionado;
+        txtCampoDe.setText(usuarioSeleccionado.getSuperUsuario().getIdentificador());
+        determinarActivacionBtnTransferencia();
+    }
+
+    public void onClickBtnParaTabla(){
+        Usuario usuarioSeleccionado = tablaUsuarios.getSelectionModel().getSelectedItem();
+        campoPara = usuarioSeleccionado;
+        txtCampoPara.setText(usuarioSeleccionado.getSuperUsuario().getIdentificador());
+        determinarActivacionBtnTransferencia();
+    }
+
+    /**
+     * El botón de transferir solo se muestra si las opciones escogidas son coherentes.
+     */
+    private void determinarActivacionBtnTransferencia(){
+        boolean condicion = true;
+        if (campoDe != null){               // Los dos campos no pueden ser iguales
+            condicion = !campoDe.equals(campoPara);
+        } else if (campoPara == null){      // Ambos campos son nulos
+            condicion = false;
+        }                                   // Si campoDe == null y campoPara != null, son distintos
+
+        condicion = condicion && txtCantidad.getText() != null && !txtCantidad.getText().isEmpty();
+
+        btnTransferir.setVisible(condicion);
+    }
+
+    /**
+     * Abre la ventana de revisión de registros
+     */
     public void mostrarRevisarRegistros() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("../view/revisarRegistros.fxml"));
@@ -172,7 +427,7 @@ public class ReguladorController extends DatabaseLinker {
             stage.setScene(new Scene(root, 600, 400));
             // La ventana del regulador es la ventana padre. Queda visible, pero desactivada.
             stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(btn_aceptar_todo_bajas.getScene().getWindow());
+            stage.initOwner(btnAceptarTodoBajas.getScene().getWindow());
             stage.setOnCloseRequest(event -> actualizarRegistrosPendientes());
             stage.show();
         } catch (IOException e) {
@@ -180,6 +435,9 @@ public class ReguladorController extends DatabaseLinker {
         }
     }
 
+    /**
+     * Abre la ventana de revisión de bajas
+     */
     public void mostrarRevisarBajas() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("../view/revisarBajas.fxml"));
@@ -189,7 +447,7 @@ public class ReguladorController extends DatabaseLinker {
             stage.setScene(new Scene(root, 600, 400));
             // La ventana del regulador es la ventana padre. Queda visible, pero desactivada.
             stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(btn_aceptar_todo_bajas.getScene().getWindow());
+            stage.initOwner(btnAceptarTodoBajas.getScene().getWindow());
             stage.setOnCloseRequest(event -> actualizarBajasPendientes());
             stage.show();
         } catch (IOException e) {
@@ -197,6 +455,9 @@ public class ReguladorController extends DatabaseLinker {
         }
     }
 
+    /**
+     * Abre la ventana de revisión de ofertas de venta
+     */
     public void mostrarRevisarOfertasVenta() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("../view/revisarOfertasVenta.fxml"));
@@ -206,24 +467,11 @@ public class ReguladorController extends DatabaseLinker {
             stage.setScene(new Scene(root, 550, 350));
             // La ventana del regulador es la ventana padre. Queda visible, pero desactivada.
             stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(btn_aceptar_todo_bajas.getScene().getWindow());
+            stage.initOwner(btnAceptarTodoBajas.getScene().getWindow());
             stage.setOnCloseRequest(event -> actualizarOfertasPendientes());
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    public static void mensaje(String mensaje, Integer duracion) {
-        mensaje(new JFXSnackbarLayout(mensaje), duracion);
-    }
-
-    private static void mensaje(JFXSnackbarLayout layout, Integer duracion) {
-        JFXSnackbarLayout finalLayout = new JFXSnackbarLayout(layout.getToast(), "Cerrar", e -> snackbar.close());
-        if (duracion != null) {
-            snackbar.enqueue(new JFXSnackbar.SnackbarEvent(finalLayout, Duration.seconds(duracion)));
-        } else {
-            snackbar.enqueue(new JFXSnackbar.SnackbarEvent(finalLayout));
         }
     }
 }
