@@ -99,9 +99,9 @@ public class VVentaController extends DatabaseLinker {
         botonRefresh.setGraphic(Iconos.icono(FontAwesomeIcon.REFRESH, "1em"));
 
        //TODO si se quere meter esto en función de actualizar ventana
-        actualizarListaEmpresas();
-        actualizarDatosTabla();
-        //actualizarVentana();
+        //actualizarListaEmpresas();
+        //actualizarDatosTabla();
+        actualizarVentana();
     }
 
     public void actualizarListaEmpresas(){
@@ -120,6 +120,7 @@ public class VVentaController extends DatabaseLinker {
             //datosTabla.clear();
             return;
         }
+
         datosTabla.setAll(getDAO(OfertaVentaDAO.class).getOfertasVentaUsuario(listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getEmpresa().getUsuario().getSuperUsuario().getIdentificador(),
                 listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getUsuario().getSuperUsuario().getIdentificador()));
 
@@ -129,6 +130,7 @@ public class VVentaController extends DatabaseLinker {
 
     public void actualizarParticipaciones() {
         usr = getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder(usr.getSuperUsuario().getIdentificador()).build());
+
         campoParticipaciones.setText(String.valueOf(getDAO(ParticipacionDAO.class).getParticipacionesUsuarioEmpresa(usr.getSuperUsuario().getIdentificador(),
                 listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getEmpresa().getUsuario().getSuperUsuario().getIdentificador())));
     }
@@ -138,14 +140,27 @@ public class VVentaController extends DatabaseLinker {
         if(!comprobarCampos()){
             return;
         }
+        //TODO cambiar por función nova para comision, de momento setteada de forma provisional
         OfertaVenta oferta= new OfertaVenta.Builder().withPrecioVenta(Float.parseFloat(campoPrecio.getText())).
                 withEmpresa(listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getEmpresa()).
-                withUsuario(usr.getSuperUsuario()).withConfirmado(false).withNumParticipaciones(Integer.parseInt(campoNumero.getText())).build();
+                withUsuario(usr.getSuperUsuario()).withConfirmado(false).
+                withNumParticipaciones(Integer.parseInt(campoNumero.getText())).
+                withComision(0.5f)
+                .build();
 
 
 
         getDAO(OfertaVentaDAO.class).insertar(oferta);
     }
+    public void actualizarVentana(){
+
+        actualizarListaEmpresas();
+        actualizarDatosTabla();
+        campoNumero.setText("");
+        campoParticipaciones.setText("0");
+        campoPrecio.setText("");
+    }
+    //actualizarParticipaciones();
 
 
     public boolean comprobarCampos(){
@@ -163,13 +178,6 @@ public class VVentaController extends DatabaseLinker {
 
 
 
-    public void actualizarVentana(){
-        actualizarSaldo();
-        actualizarListaEmpresas();
-        actualizarDatosTabla();
-        campoNumero.setText("");
-        campoPrecio.setText("");
-    }
 
     // BOTONES //
 
