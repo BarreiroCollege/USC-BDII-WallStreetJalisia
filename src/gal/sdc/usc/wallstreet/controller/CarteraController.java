@@ -314,7 +314,6 @@ public class CarteraController extends DatabaseLinker {
 
         // Se elimina la oferta de la tabla
         datosTablaOfertas.remove(cartera_tablaOferta.getSelectionModel().getSelectedItem());
-        cartera_tablaOferta.refresh();
     }
 
     private void establecerColumnasTablas(){
