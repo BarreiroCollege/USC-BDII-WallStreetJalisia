@@ -11,6 +11,7 @@
 
     <stylesheets>
         <URL value="@styles/base.css" />
+        <URL value="@styles/cartera.css" />
     </stylesheets>
     <children>
         <Line endX="752.0" layoutX="115.0" layoutY="89.0" startX="-115.0" />

@@ -24,7 +24,7 @@ public class PagoDAO extends DAO<Pago> {
 
         try (PreparedStatement ps = conexion.prepareStatement(
                 "SELECT p.fecha, p.empresa, e.nombre, e.cif, p.beneficio_por_participacion, p.participacion_por_participacion, p.fecha_anuncio, p.porcentaje_beneficio, p.porcentaje_participacion " +
-                        "FROM pago p JOIN empresa e ON p.empresa WHERE p.empresa = ?"
+                        "FROM pago p JOIN empresa e ON p.empresa = e.usuario WHERE p.empresa = ?"
         )) {
             ps.setString(1, idEmpresa);
             ResultSet rs = ps.executeQuery();

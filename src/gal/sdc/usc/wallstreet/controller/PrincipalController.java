@@ -150,7 +150,9 @@ public class PrincipalController extends DatabaseLinker {
 
         //Declaramos el nombre de las columnas
         colEmpresa.setCellValueFactory(cellData -> Bindings.createObjectBinding(() -> cellData.getValue().getEmpresa().getNombre()));
+        colEmpresa.setStyle("-fx-alignment: CENTER;");
         colCantidad.setCellValueFactory(new PropertyValueFactory<Participacion, Integer>("cantidad"));
+        colCantidad.setStyle("-fx-alignment: CENTER;");
     }
 
     public void gestionTablaOfertas(List<OfertaVenta> ofertaVentaList) {
@@ -162,8 +164,11 @@ public class PrincipalController extends DatabaseLinker {
         //Declaramos el nombre de las columnas
 
         colEmpresa2.setCellValueFactory(cellData -> Bindings.createObjectBinding(() -> cellData.getValue().getEmpresa().getNombre()));
+        colEmpresa2.setStyle("-fx-alignment: CENTER;");
         colPrecio.setCellValueFactory(new PropertyValueFactory<OfertaVenta, Float>("precioVenta"));
+        colPrecio.setStyle("-fx-alignment: CENTER;");
         colNParticipaciones.setCellValueFactory(new PropertyValueFactory<OfertaVenta, Integer>("numParticipaciones"));
+        colNParticipaciones.setStyle("-fx-alignment: CENTER;");
 
     }
 
