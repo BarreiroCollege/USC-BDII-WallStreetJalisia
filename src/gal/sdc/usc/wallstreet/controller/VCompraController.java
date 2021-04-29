@@ -191,7 +191,7 @@ public class VCompraController extends DatabaseLinker {
 
     // Boton de salida
     public void btnVolverEvent(ActionEvent event) {
-        Main.ventana(PrincipalController.TITULO, PrincipalController.WIDTH, PrincipalController.HEIGHT,PrincipalController.TITULO);
+        Main.ventana(PrincipalController.VIEW, PrincipalController.WIDTH, PrincipalController.HEIGHT,PrincipalController.TITULO);
     }
 
 
