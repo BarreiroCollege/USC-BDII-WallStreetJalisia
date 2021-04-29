@@ -15,7 +15,7 @@ public class Sociedad extends Entidad {
     private Float saldoComunal = 0.0f;
 
     @Columna("tolerancia")
-    private Integer tolerancia = 0;
+    private Integer tolerancia = 60 * 24;
 
     private Sociedad() {
     }

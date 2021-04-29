@@ -6,14 +6,16 @@ import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.OfertaVenta;
 import gal.sdc.usc.wallstreet.model.Participacion;
 import gal.sdc.usc.wallstreet.model.Usuario;
+import gal.sdc.usc.wallstreet.model.UsuarioTipo;
 import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
 import gal.sdc.usc.wallstreet.repository.ParticipacionDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
+import gal.sdc.usc.wallstreet.util.Comunicador;
 import gal.sdc.usc.wallstreet.util.Iconos;
-import gal.sdc.usc.wallstreet.model.UsuarioTipo;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -85,6 +87,8 @@ public class PrincipalController extends DatabaseLinker {
     private MenuItem buttonCerrarSesion;
     @FXML
     private MenuItem buttonVerPerfil;
+    @FXML
+    private MenuItem buttonSociedad;
 
 
     Scene scene;
@@ -107,6 +111,9 @@ public class PrincipalController extends DatabaseLinker {
         gestionTablaParticipaciones(participacionesUsuario);
         gestionTablaOfertas(ofertaVentaUsuario);
 
+        if (usuario.getSociedad() == null) {
+            buttonSociedad.setText("Nueva sociedad");
+        }
 
         buttonPerfil.setGraphic(Iconos.icono(FontAwesomeIcon.USERS, "2.5em"));
         buttonVerPerfil.setGraphic(Iconos.icono(FontAwesomeIcon.USER));
@@ -115,6 +122,7 @@ public class PrincipalController extends DatabaseLinker {
         });
         buttonEstadisticas.setGraphic(Iconos.icono(FontAwesomeIcon.BAR_CHART, "2.5em"));
         buttonCerrarSesion.setGraphic(Iconos.icono(FontAwesomeIcon.POWER_OFF));
+        buttonSociedad.setGraphic(Iconos.icono(FontAwesomeIcon.SHARE_ALT));
 
         buttonCerrarSesion.setOnAction(event -> {
             super.cerrarSesion();
@@ -128,8 +136,35 @@ public class PrincipalController extends DatabaseLinker {
         buttonMostrarMas.setOnAction(event -> {
             Main.ventana(CarteraController.VIEW, CarteraController.WIDTH, CarteraController.HEIGHT, CarteraController.TITULO);
         });
+
+        buttonSociedad.setOnAction(this::onBtnSociedad);
     }
 
+    public void onBtnSociedad(ActionEvent e) {
+        if (super.getUsuarioSesion().getUsuario().getSociedad() == null) {
+            Comunicador comunicador = new Comunicador() {
+                @Override
+                public void onSuccess() {
+                    onBtnSociedad(null);
+                }
+            };
+
+            SociedadNuevaController.setComunicador(comunicador);
+            Main.dialogo(
+                    SociedadNuevaController.VIEW,
+                    SociedadNuevaController.WIDTH,
+                    SociedadNuevaController.HEIGHT,
+                    SociedadNuevaController.TITULO
+            );
+        } else {
+            Main.ventana(
+                    SociedadController.VIEW,
+                    SociedadController.WIDTH,
+                    SociedadController.HEIGHT,
+                    SociedadController.TITULO
+            );
+        }
+    }
 
     public void seleccionVentana(boolean empresa) {
         if (!empresa) {
