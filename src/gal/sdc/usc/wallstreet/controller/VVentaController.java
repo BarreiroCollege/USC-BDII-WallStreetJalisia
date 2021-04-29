@@ -29,8 +29,8 @@ import java.util.regex.Pattern;
 public class VVentaController extends DatabaseLinker {
 
     public static final String VIEW = "VVenta";
-    public static final Integer HEIGHT = 425;
-    public static final Integer WIDTH = 760;
+    public static final Integer HEIGHT = 500;
+    public static final Integer WIDTH = 800;
     public static final String TITULO = "Venta";
 
     private Usuario usr;
@@ -100,8 +100,6 @@ public class VVentaController extends DatabaseLinker {
         botonRefresh.setGraphic(Iconos.icono(FontAwesomeIcon.REFRESH, "1em"));
 
        //TODO si se quere meter esto en función de actualizar ventana
-        //actualizarListaEmpresas();
-        //actualizarDatosTabla();
         actualizarVentana();
     }
 
@@ -117,70 +115,72 @@ public class VVentaController extends DatabaseLinker {
     public void actualizarDatosTabla() {
         // Si no hay ninguna empresa seleccionada, se limpia la tabla
         if (empresaComboBox.getSelectionModel().getSelectedIndex() == -1) {
-            datosTabla.setAll(getDAO(OfertaVentaDAO.class).getOfertasVenta(usr));
+            datosTabla.setAll(getDAO(OfertaVentaDAO.class).getOfertasVentaUsuario(null,usr.getSuperUsuario().getIdentificador()));
             return;
         }
-        datosTabla.setAll(getDAO(OfertaVentaDAO.class).
-                getOfertasVentaUsuario(listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getEmpresa().getUsuario().getSuperUsuario().getIdentificador(),
-                listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getUsuario().getSuperUsuario().getIdentificador()));
+        datosTabla.setAll(getDAO(OfertaVentaDAO.class).getOfertasVentaUsuario(
+                listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getEmpresa().getUsuario().getSuperUsuario().getIdentificador(),
+                usr.getSuperUsuario().getIdentificador())
+        );
 
         actualizarParticipaciones();
 
     }
 
-    public void actualizarParticipaciones() {
-        usr = getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder(usr.getSuperUsuario().getIdentificador()).build());
-
+    // Actualiza el campo del saldo de participaciones que el usuario tiene de la empresa seleccionada
+    public void actualizarParticipaciones(){
+        // Si no hay ninguna empresa seleccionada, se pone a 0
+        if (empresaComboBox.getSelectionModel().getSelectedIndex() == -1) {
+            campoParticipaciones.setText("0");
+            return;
+        }
         campoParticipaciones.setText(String.valueOf(getDAO(ParticipacionDAO.class).getParticipacionesUsuarioEmpresa(usr.getSuperUsuario().getIdentificador(),
                 listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getEmpresa().getUsuario().getSuperUsuario().getIdentificador())));
     }
 
 
     public void nuevaOfertaVenta(){
-        if(!comprobarCampos()){
+        // Si alguno de los campos necesarios está vacio, se para
+        if(campoPrecio.getText().isEmpty() || campoNumero.getText().isEmpty() || empresaComboBox.getSelectionModel().getSelectedIndex() != -1){
             return;
         }
-        //TODO cambiar por función nova para comision, de momento setteada de forma provisional
+        actualizarParticipaciones();
+        // Si no tiene suficientes o el precio es 0, se informa al usuario y se para
+        if(Integer.parseInt(campoNumero.getText())>Integer.parseInt(campoParticipaciones.getText())){
+            notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label("No dispone de suficientes"),Duration.seconds(3.0),null));
+            return;
+        }
+        if(Float.parseFloat(campoPrecio.getText())<=0){
+            notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label("Introduzca un precio válido"),Duration.seconds(3.0),null));
+            return;
+        }
+
+        // TODO Incluir comision regulador
         OfertaVenta oferta= new OfertaVenta.Builder().withPrecioVenta(Float.parseFloat(campoPrecio.getText())).
                 withEmpresa(listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getEmpresa()).
-                withUsuario(usr.getSuperUsuario()).withConfirmado(false).
+                withUsuario(usr.getSuperUsuario()).
+                withConfirmado(false).
                 withNumParticipaciones(Integer.parseInt(campoNumero.getText())).
-                withComision(0.5f)
+                withComision(super.getDAO(ReguladorDAO.class).)
                 .build();
-
-
 
         getDAO(OfertaVentaDAO.class).insertar(oferta);
     }
     public void actualizarVentana(){
-
         actualizarListaEmpresas();
         actualizarDatosTabla();
+        actualizarParticipaciones();
         campoNumero.setText("");
-        campoParticipaciones.setText("0");
         campoPrecio.setText("");
     }
-    //actualizarParticipaciones();
-
 
     public boolean comprobarCampos(){
-        if(campoPrecio.getText().isEmpty() ||
-                campoNumero.getText().isEmpty() ||
-                empresaComboBox.getSelectionModel().getSelectedIndex() == -1){
-            return false;
-        }
-        return true;
+        return ;
     }
     // FUNCIONALIDADES //
     /*
 
-
-
-
-
-
     // BOTONES //
-
     // Boton de salir
     public void btnSalirEvent(ActionEvent event) {
         ((Stage) btnSalir.getScene().getWindow()).close();

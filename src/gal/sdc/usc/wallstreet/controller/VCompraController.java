@@ -196,6 +196,7 @@ public class VCompraController extends DatabaseLinker {
             mensaje = "Compra fallida!";
         }
 
+        // TODO deberiamos dejar la empresa seleccionada?
         // Actualizamos los elementos gráficos
         notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label(mensaje), Duration.seconds(3.0), null));
         actualizarVentana();
