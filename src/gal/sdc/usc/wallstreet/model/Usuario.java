@@ -161,12 +161,14 @@ public class Usuario extends Entidad {
     }
 
     public UsuarioEstado getEstado() {
+        // Alta almacena la fecha en la que se pide el alta en el sistema
+        // (o en la que se acepta la baja en caso de estar de baja)
         if (alta != null) {
+            if (baja == null) return UsuarioEstado.PENDIENTE_ALTA;
+            return UsuarioEstado.BAJA;
+        } else {
             if (baja == null) return UsuarioEstado.ACTIVO;
             else return UsuarioEstado.PENDIENTE_BAJA;
-        } else {
-            if (baja == null) return UsuarioEstado.PENDIENTE_ALTA;
-            else return UsuarioEstado.BAJA;
         }
     }
 
