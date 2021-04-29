@@ -23,7 +23,7 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class NuevaSociedadController extends DatabaseLinker implements Initializable {
+public class SociedadNuevaController extends DatabaseLinker implements Initializable {
     public static final String VIEW = "nuevasociedad";
     public static final Integer HEIGHT = 200;
     public static final Integer WIDTH = 500;
@@ -41,7 +41,7 @@ public class NuevaSociedadController extends DatabaseLinker implements Initializ
     private static Comunicador comunicador;
 
     public static void setComunicador(Comunicador comunicador) {
-        NuevaSociedadController.comunicador = comunicador;
+        SociedadNuevaController.comunicador = comunicador;
     }
 
     private void crear(ActionEvent e) {

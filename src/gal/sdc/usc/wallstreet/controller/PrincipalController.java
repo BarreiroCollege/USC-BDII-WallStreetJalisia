@@ -16,7 +16,6 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -150,12 +149,12 @@ public class PrincipalController extends DatabaseLinker {
                 }
             };
 
-            NuevaSociedadController.setComunicador(comunicador);
+            SociedadNuevaController.setComunicador(comunicador);
             Main.dialogo(
-                    NuevaSociedadController.VIEW,
-                    NuevaSociedadController.WIDTH,
-                    NuevaSociedadController.HEIGHT,
-                    NuevaSociedadController.TITULO
+                    SociedadNuevaController.VIEW,
+                    SociedadNuevaController.WIDTH,
+                    SociedadNuevaController.HEIGHT,
+                    SociedadNuevaController.TITULO
             );
         } else {
             Main.ventana(

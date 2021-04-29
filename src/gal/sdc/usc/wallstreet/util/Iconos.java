@@ -2,7 +2,6 @@ package gal.sdc.usc.wallstreet.util;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
-import javafx.beans.binding.ObjectBinding;
 import javafx.scene.Node;
 
 public class Iconos {
