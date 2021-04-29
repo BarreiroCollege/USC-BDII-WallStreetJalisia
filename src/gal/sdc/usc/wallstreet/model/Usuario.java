@@ -170,6 +170,10 @@ public class Usuario extends Entidad {
         }
     }
 
+    public Float getSaldoDisponible() {
+        return saldo - saldoBloqueado;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
