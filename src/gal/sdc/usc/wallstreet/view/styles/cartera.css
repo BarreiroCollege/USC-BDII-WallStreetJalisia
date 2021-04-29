@@ -25,3 +25,41 @@
     -jfx-default-color: #4059a9;
     -fx-show-week-numbers: true;
 }
+
+/* Override del TabPane base*/
+
+.jfx-tab-pane .tab-header-background {
+    -fx-background-color: #4059a9;
+}
+
+.jfx-tab-pane .tab-header-area .tab-down-button {
+    -fx-background-color: #adbde0;
+    -fx-min-width: 0.8em;
+    -fx-max-width: 0.8em;
+    -fx-min-height: 1.3em;
+    -fx-max-height: 1.3em;
+}
+
+.jfx-tab-pane .tab-header-area .control-buttons-tab .jfx-rippler {
+    -jfx-rippler-fill: WHITE;
+}
+
+.jfx-tab-pane .headers-region > .tab > .jfx-rippler {
+    -jfx-rippler-fill: WHITE;
+}
+
+.jfx-tab-pane .headers-region .tab-selected-line {
+    -fx-background-color: #b6c3e0;
+}
+
+.jfx-tab-pane .headers-region .tab .tab-container .tab-label {
+    -fx-text-fill: #adbde0;
+    -fx-padding: 6 10 6 10;
+    -fx-font-size: 16;
+    -fx-font-weight: NORMAL;
+}
+
+.jfx-tab-pane .headers-region .tab:selected .tab-container .tab-label {
+    -fx-text-fill: WHITE;
+    -fx-font-weight: BOLD;
+}
