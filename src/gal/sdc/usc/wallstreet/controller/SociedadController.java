@@ -8,6 +8,8 @@ import com.jfoenix.validation.RegexValidator;
 import com.jfoenix.validation.RequiredFieldValidator;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import gal.sdc.usc.wallstreet.Main;
+import gal.sdc.usc.wallstreet.components.BotonObservable;
+import gal.sdc.usc.wallstreet.components.IconoObservable;
 import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Inversor;
 import gal.sdc.usc.wallstreet.model.PropuestaCompra;
@@ -41,6 +43,8 @@ import javafx.scene.control.TableView;
 
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 public class SociedadController extends DatabaseLinker implements Initializable {
@@ -119,7 +123,10 @@ public class SociedadController extends DatabaseLinker implements Initializable 
             btnEditar.setText("Guardar");
             btnVolver.setText("Cancelar");
             editando.setValue(true);
-            tabVentana.setDisable(true);
+            // tabVentana.setDisable(true);
+            tabVentana.getTabs().forEach(a -> {
+                if (a.getId() == null) a.setDisable(true);
+            });
         } else {
             if (!txtIdentificador.validate() || !txtTolerancia.validate()) return;
             Usuario u = super.getUsuarioSesion().getUsuario();
@@ -134,7 +141,7 @@ public class SociedadController extends DatabaseLinker implements Initializable 
             super.iniciarTransaccion();
 
             if (!txtIdentificador.getText().toLowerCase()
-                    .equals(u.getSuperUsuario().getIdentificador())) {
+                    .equals(u.getSociedad().getIdentificador().getIdentificador())) {
                 super.getDAO(SuperUsuarioDAO.class).actualizarIdentificador(
                         u.getSuperUsuario().getIdentificador(),
                         txtIdentificador.getText().toLowerCase()
@@ -156,7 +163,10 @@ public class SociedadController extends DatabaseLinker implements Initializable 
                 btnEditar.setText("Editar");
                 btnVolver.setText("Volver");
                 editando.setValue(false);
-                tabVentana.setDisable(false);
+                // tabVentana.setDisable(false);
+                tabVentana.getTabs().forEach(a -> {
+                    if (a.getId() == null) a.setDisable(false);
+                });
                 u.setSociedad(s);
                 Main.mensaje("Se han actualizado los datos de la sociedad");
             } else {
@@ -166,7 +176,31 @@ public class SociedadController extends DatabaseLinker implements Initializable 
     }
 
     private void onBtnEditarPropuesta(ActionEvent e) {
+        Sociedad s = super.getUsuarioSesion().getUsuario().getSociedad();
+        Comunicador comunicador = new Comunicador() {
+            @Override
+            public Object[] getData() {
+                return new Object[] {s};
+            }
 
+            @Override
+            public void onSuccess() {
+                Main.mensaje("Se ha creado la propuesta de venta");
+                actualizarTablaPropuestas(s);
+            }
+
+            @Override
+            public void onFailure() {
+                Main.mensaje("Hubo un error creando la propuesta");
+            }
+        };
+        SociedadMiembroController.setComunicador(comunicador);
+        Main.dialogo(
+                SociedadPropuestaController.VIEW,
+                SociedadPropuestaController.WIDTH,
+                SociedadPropuestaController.HEIGHT,
+                SociedadPropuestaController.TITULO
+        );
     }
 
     private void onBtnEditarMiembro(ActionEvent e) {
@@ -188,12 +222,12 @@ public class SociedadController extends DatabaseLinker implements Initializable 
                 Main.mensaje("Hubo un error invitando al usuario");
             }
         };
-        SociedadNuevoMiembroController.setComunicador(comunicador);
+        SociedadMiembroController.setComunicador(comunicador);
         Main.dialogo(
-                SociedadNuevoMiembroController.VIEW,
-                SociedadNuevoMiembroController.WIDTH,
-                SociedadNuevoMiembroController.HEIGHT,
-                SociedadNuevoMiembroController.TITULO
+                SociedadMiembroController.VIEW,
+                SociedadMiembroController.WIDTH,
+                SociedadMiembroController.HEIGHT,
+                SociedadMiembroController.TITULO
         );
     }
 
@@ -217,7 +251,10 @@ public class SociedadController extends DatabaseLinker implements Initializable 
         } else {
             this.asignarValores();
             editando.setValue(false);
-            tabVentana.setDisable(false);
+            // tabVentana.setDisable(false)
+            tabVentana.getTabs().forEach(a -> {
+                if (a.getId() == null) a.setDisable(false);
+            });
             btnEditar.setText("Editar");
             btnVolver.setText("Volver");
         }
@@ -246,7 +283,6 @@ public class SociedadController extends DatabaseLinker implements Initializable 
     }
 
     private void actualizarVentana() {
-        System.out.println(tabVentana.getSelectionModel().getSelectedIndex());
         switch (tabVentana.getSelectionModel().getSelectedIndex()) {
             case 0:
                 btnEditar.setText("Editar");
@@ -255,11 +291,37 @@ public class SociedadController extends DatabaseLinker implements Initializable 
             case 1:
                 btnEditar.setText("Invitar");
                 btnAbandonar.setVisible(false);
+                break;
             case 2:
                 btnEditar.setText("Nueva");
                 btnAbandonar.setVisible(false);
                 break;
         }
+    }
+
+    public void onBtnAccion(PropuestaCompra pc, boolean ejecutar) {
+
+    }
+
+    public BotonObservable extraerBoton(PropuestaCompra pc, Integer tolerancia) {
+        JFXButton button = new JFXButton();
+
+        long t = new Date().getTime() - 1000 * 60 * tolerancia;
+        if (pc.getFechaInicio().before(new Date(t))) {
+            button.setGraphic(Iconos.icono(FontAwesomeIcon.USER_TIMES));
+            if (super.getUsuarioSesion().getUsuario().getLider()) {
+                button.setDisable(true);
+            }
+            button.setOnAction(e -> this.onBtnAccion(pc, false));
+        } else {
+            button.setGraphic(Iconos.icono(FontAwesomeIcon.PLAY_CIRCLE));
+            if (!super.getUsuarioSesion().getUsuario().getLider()) {
+                button.setDisable(true);
+            }
+            button.setOnAction(e -> this.onBtnAccion(pc, true));
+        }
+
+        return new BotonObservable(button);
     }
 
     private void generarTablaPropuestas() {
@@ -282,6 +344,13 @@ public class SociedadController extends DatabaseLinker implements Initializable 
         colEmpresa.setPrefWidth(150);
         colEmpresa.setCellValueFactory((TableColumn.CellDataFeatures<PropuestaCompra, String> param)
                 -> new SimpleStringProperty(param.getValue().getEmpresa().getNombre()));
+
+        Integer tolerancia = super.getDAO(SociedadDAO.class).seleccionar(
+                super.getUsuarioSesion().getUsuario().getSociedad().getIdentificador()
+        ).getTolerancia();
+        TableColumn<PropuestaCompra, JFXButton> colAccion = new TableColumn<>("");
+        colAccion.setCellValueFactory((TableColumn.CellDataFeatures<PropuestaCompra, JFXButton> param)
+                -> extraerBoton(param.getValue(), tolerancia));
 
         tblPropuestas.getColumns().addAll(Arrays.asList(colFecha, colCantidad, colPrecioMax, colEmpresa));
     }
@@ -308,7 +377,7 @@ public class SociedadController extends DatabaseLinker implements Initializable 
         TableColumn<UsuarioSesion, Node> colLider = new TableColumn<>("");
         // colIdentificador.setPrefWidth(150);
         colLider.setCellValueFactory((TableColumn.CellDataFeatures<UsuarioSesion, Node> param)
-                -> param.getValue().getUsuario().getLider() ? new Iconos.IconoObservale(FontAwesomeIcon.SHIELD): null);
+                -> param.getValue().getUsuario().getLider() ? new IconoObservable(FontAwesomeIcon.SHIELD): null);
         colLider.setStyle("-fx-alignment: CENTER;");
 
         TableColumn<UsuarioSesion, String> colIdentificador = new TableColumn<>("Identificador");
@@ -397,6 +466,8 @@ public class SociedadController extends DatabaseLinker implements Initializable 
         btnVolver.setOnAction(this::onBtnVolver);
         btnAbandonar.setOnAction(this::onBtnAbandonar);
         btnEditar.setOnAction(this::onBtnEditar);
+
+        // btnVolver.setGraphic(Iconos.icono(FontAwesomeIcon.CHEVRON_LEFT, "0.9em"));
 
         this.asignarValores();
     }

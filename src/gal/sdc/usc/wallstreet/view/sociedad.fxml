@@ -27,7 +27,7 @@
                 <Insets top="4.0" left="25.0" right="25.0"/>
             </VBox.margin>
             <JFXTabPane VBox.vgrow="ALWAYS" maxHeight="Infinity" minHeight="190.0" fx:id="tabVentana">
-                <Tab text="Sociedad">
+                <Tab text="Sociedad" id="detalles">
                     <VBox alignment="TOP_CENTER">
                         <Label minHeight="25.0"/>
                         <JFXTextField promptText="Identificador" labelFloat="true" fx:id="txtIdentificador"/>

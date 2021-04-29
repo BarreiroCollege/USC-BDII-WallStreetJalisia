@@ -3,12 +3,9 @@ package gal.sdc.usc.wallstreet.controller;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.RequiredFieldValidator;
-import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.Sociedad;
 import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.model.Usuario;
-import gal.sdc.usc.wallstreet.repository.SociedadDAO;
-import gal.sdc.usc.wallstreet.repository.SuperUsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.Comunicador;
@@ -24,8 +21,8 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class SociedadNuevoMiembroController extends DatabaseLinker implements Initializable {
-    public static final String VIEW = "sociedadnuevomiembro";
+public class SociedadMiembroController extends DatabaseLinker implements Initializable {
+    public static final String VIEW = "sociedadmiembro";
     public static final Integer HEIGHT = 200;
     public static final Integer WIDTH = 500;
     public static final String TITULO = "Invitar Miembro";
@@ -42,7 +39,7 @@ public class SociedadNuevoMiembroController extends DatabaseLinker implements In
     private static Comunicador comunicador;
 
     public static void setComunicador(Comunicador comunicador) {
-        SociedadNuevoMiembroController.comunicador = comunicador;
+        SociedadMiembroController.comunicador = comunicador;
     }
 
     private void invitar(ActionEvent e) {

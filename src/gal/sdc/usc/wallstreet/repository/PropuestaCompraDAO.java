@@ -22,7 +22,7 @@ public class PropuestaCompraDAO extends DAO<PropuestaCompra> {
         List<PropuestaCompra> pcs = new LinkedList<>();
 
         try (PreparedStatement ps = super.conexion.prepareStatement(
-                "SELECT * FROM propuesta_compra WHERE sociedad=?"
+                "SELECT * FROM propuesta_compra WHERE sociedad=? ORDER BY fecha_inicio"
         )) {
             ps.setString(1, s.getIdentificador().getIdentificador());
             ResultSet rs = ps.executeQuery();
