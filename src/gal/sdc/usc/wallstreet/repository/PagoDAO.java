@@ -3,10 +3,7 @@ package gal.sdc.usc.wallstreet.repository;
 import gal.sdc.usc.wallstreet.model.*;
 import gal.sdc.usc.wallstreet.repository.helpers.DAO;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,4 +49,24 @@ public class PagoDAO extends DAO<Pago> {
 
         return pagos;
     }
+    public boolean insertarPago(Pago p){
+        try (PreparedStatement ps = conexion.prepareStatement(
+            "INSERT INTO pago (fecha, empresa, beneficio_por_participacion, participacion_por_participacion, fecha_anuncio, porcentaje_beneficio, porcentaje_participacion)" +
+                    " VALUES (?, ?, ?, ?, ?, ?, ?)"
+        )){
+            ps.setTimestamp(1, new Timestamp(((Date) p.getFecha()).getTime()));
+            ps.setString(2, p.getEmpresa().getNombre());
+            ps.setFloat(3, p.getBeneficioPorParticipacion());
+            ps.setFloat(4, p.getParticipacionPorParticipacion());
+            ps.setTimestamp(5, new Timestamp(((Date) p.getFechaAnuncio()).getTime()));
+            ps.setFloat(6, p.getPorcentajeBeneficio());
+            ps.setFloat(7, p.getPorcentajeParticipacion());
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+        return false;
+    }
+    //pa los funcionarios
 }
