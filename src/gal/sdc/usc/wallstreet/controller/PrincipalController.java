@@ -101,7 +101,6 @@ public class PrincipalController extends DatabaseLinker {
         Group root = new Group();
         scene = new Scene(root, WIDTH, HEIGHT);
         usuario = super.getUsuarioSesion().getUsuario();
-        System.out.println(usuario);
         ofertaVentaUsuario = super.getDAO(OfertaVentaDAO.class).getOfertasVentaPorUsuario(usuario.getSuperUsuario().getIdentificador(), 6);
         participacionesUsuario = super.getDAO(ParticipacionDAO.class).getParticipacionesPorUsuario(usuario.getSuperUsuario().getIdentificador(), 6);
 
