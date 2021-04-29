@@ -141,7 +141,7 @@ public class VVentaController extends DatabaseLinker {
 
     public void nuevaOfertaVenta(){
         // Si alguno de los campos necesarios está vacio, se para
-        if(campoPrecio.getText().isEmpty() || campoNumero.getText().isEmpty() || empresaComboBox.getSelectionModel().getSelectedIndex() != -1){
+        if(campoPrecio.getText().isEmpty() || campoNumero.getText().isEmpty() || empresaComboBox.getSelectionModel().getSelectedIndex() == -1){
             return;
         }
         actualizarParticipaciones();
