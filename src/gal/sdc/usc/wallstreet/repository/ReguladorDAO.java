@@ -1,7 +1,6 @@
 package gal.sdc.usc.wallstreet.repository;
 
 import gal.sdc.usc.wallstreet.model.Regulador;
-import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.repository.helpers.DAO;
 import gal.sdc.usc.wallstreet.util.Mapeador;
 

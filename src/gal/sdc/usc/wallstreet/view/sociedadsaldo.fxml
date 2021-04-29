@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
@@ -9,10 +10,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import java.net.URL?>
-<?import com.jfoenix.controls.JFXComboBox?>
 <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="225.0" prefWidth="500.0"
             xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="gal.sdc.usc.wallstreet.controller.SociedadPropuestaController"
+            fx:controller="gal.sdc.usc.wallstreet.controller.SociedadSaldoController"
             fx:id="anchor">
     <stylesheets>
         <URL value="@styles/base.css"/>
@@ -21,7 +21,7 @@
     <HBox alignment="CENTER" AnchorPane.bottomAnchor="150.0" AnchorPane.leftAnchor="0.0"
           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" prefHeight="50.0">
         <VBox prefHeight="75.0" alignment="CENTER" HBox.hgrow="ALWAYS">
-            <Label alignment="CENTER" VBox.vgrow="ALWAYS" text="Introduce los datos de la propuesta">
+            <Label alignment="CENTER" VBox.vgrow="ALWAYS" text="Indica el saldo que quieres transferir">
                 <font>
                     <Font name="System Bold" size="18.0"/>
                 </font>
@@ -35,15 +35,10 @@
             <VBox.margin>
                 <Insets left="25.0" right="25.0"/>
             </VBox.margin>
-            <VBox HBox.hgrow="ALWAYS" maxWidth="Infinity">
-                <!-- <JFXTextField fx:id="txtEmpresa" labelFloat="true" alignment="CENTER" promptText="Empresa"
-                              maxWidth="Infinity"/> -->
-                <JFXComboBox fx:id="cmbEmpresa" maxWidth="Infinity"/>
-            </VBox>
+            <JFXTextField fx:id="txtSaldoDisponible" labelFloat="true" alignment="CENTER" promptText="Saldo disponible"
+                          disable="true"/>
             <Label minWidth="10.0"/>
-            <JFXTextField fx:id="txtCantidad" labelFloat="true" alignment="CENTER" promptText="Cantidad"/>
-            <Label minWidth="10.0"/>
-            <JFXTextField fx:id="txtPrecioMax" labelFloat="true" alignment="CENTER" promptText="Precio Max"/>
+            <JFXTextField fx:id="txtSaldo" labelFloat="true" alignment="CENTER" promptText="Saldo a transferir"/>
         </HBox>
     </VBox>
 
@@ -59,7 +54,7 @@
                 </font>
             </JFXButton>
             <Label HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-            <JFXButton text="Crear" fx:id="btnCrear" buttonType="RAISED" styleClass="btn-primario">
+            <JFXButton text="Transferir" fx:id="btnTransferir" buttonType="RAISED" styleClass="btn-primario">
                 <font>
                     <Font name="System Bold" size="16.0"/>
                 </font>
