@@ -6,7 +6,7 @@ import gal.sdc.usc.wallstreet.util.Iconos;
 import javafx.beans.binding.ObjectBinding;
 import javafx.scene.Node;
 
-public class BotonObservable extends ObjectBinding<JFXButton> {
+public class BotonObservable extends ObjectBinding<Node> {
     private final JFXButton boton;
 
     public BotonObservable(JFXButton boton) {

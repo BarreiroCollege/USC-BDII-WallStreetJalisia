@@ -73,6 +73,7 @@ public class SociedadPropuestaController extends DatabaseLinker implements Initi
             return;
         } */
 
+        ErrorValidator empresaNoHay = Validadores.personalizado("Selecciona una empresa");
         ErrorValidator numeroNoValido = Validadores.personalizado("Introduce un precio válido");
         Empresa e = cmbEmpresa.getValue();
 

@@ -42,6 +42,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -169,6 +170,7 @@ public class SociedadController extends DatabaseLinker implements Initializable 
                 });
                 u.setSociedad(s);
                 Main.mensaje("Se han actualizado los datos de la sociedad");
+                actualizarTablaPropuestas(s);
             } else {
                 Main.mensaje("Error actualizando los datos");
             }
@@ -299,35 +301,52 @@ public class SociedadController extends DatabaseLinker implements Initializable 
     }
 
     public void onBtnAccion(PropuestaCompra pc, boolean ejecutar) {
-
+        if (ejecutar) {
+            if (super.getDAO(PropuestaCompraDAO.class).eliminar(pc)) {
+                actualizarTablaPropuestas(pc.getSociedad());
+                // TODO: Llamar al proceso de compra
+                Main.mensaje("Se ha realizado la compra");
+            } else {
+                Main.mensaje("Hubo un error realizando la compra");
+            }
+        } else {
+            if (super.getDAO(PropuestaCompraDAO.class).eliminar(pc)) {
+                actualizarTablaPropuestas(pc.getSociedad());
+                Main.mensaje("Se ha rechazado la propuesta");
+            } else {
+                Main.mensaje("Hubo un error rechazando la propuesta");
+            }
+        }
     }
 
     public BotonObservable extraerBoton(PropuestaCompra pc, Integer tolerancia) {
         JFXButton button = new JFXButton();
 
-        long t = new Date().getTime() - 1000 * 60 * tolerancia;
-        if (pc.getFechaInicio().before(new Date(t))) {
-            button.setGraphic(Iconos.icono(FontAwesomeIcon.USER_TIMES));
-            if (super.getUsuarioSesion().getUsuario().getLider()) {
-                button.setDisable(true);
-            }
-            button.setOnAction(e -> this.onBtnAccion(pc, false));
-        } else {
+        if (super.getUsuarioSesion().getUsuario().getLider()) {
             button.setGraphic(Iconos.icono(FontAwesomeIcon.PLAY_CIRCLE));
-            if (!super.getUsuarioSesion().getUsuario().getLider()) {
+            button.setOnAction(e -> this.onBtnAccion(pc, true));
+            long t = new Date().getTime() - 1000 * 60 * tolerancia;
+            if (pc.getFechaInicio().after(new Date(t))) {
                 button.setDisable(true);
             }
-            button.setOnAction(e -> this.onBtnAccion(pc, true));
+        } else {
+            button.setGraphic(Iconos.icono(FontAwesomeIcon.USER_TIMES));
+            button.setOnAction(e -> this.onBtnAccion(pc, false));
         }
 
         return new BotonObservable(button);
+    }
+
+    public String extraerFecha(Date date) {
+        SimpleDateFormat sdc = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+        return sdc.format(date);
     }
 
     private void generarTablaPropuestas() {
         TableColumn<PropuestaCompra, String> colFecha = new TableColumn<>("Fecha");
         colFecha.setPrefWidth(150);
         colFecha.setCellValueFactory((TableColumn.CellDataFeatures<PropuestaCompra, String> param)
-                -> new SimpleStringProperty(param.getValue().getFechaInicio().toString()));
+                -> new SimpleStringProperty(extraerFecha(param.getValue().getFechaInicio())));
 
         TableColumn<PropuestaCompra, Number> colCantidad = new TableColumn<>("Cantidad");
         colCantidad.setPrefWidth(150);
@@ -347,11 +366,11 @@ public class SociedadController extends DatabaseLinker implements Initializable 
         Integer tolerancia = super.getDAO(SociedadDAO.class).seleccionar(
                 super.getUsuarioSesion().getUsuario().getSociedad().getIdentificador()
         ).getTolerancia();
-        TableColumn<PropuestaCompra, JFXButton> colAccion = new TableColumn<>("");
-        colAccion.setCellValueFactory((TableColumn.CellDataFeatures<PropuestaCompra, JFXButton> param)
+        TableColumn<PropuestaCompra, Node> colAccion = new TableColumn<>("");
+        colAccion.setCellValueFactory((TableColumn.CellDataFeatures<PropuestaCompra, Node> param)
                 -> extraerBoton(param.getValue(), tolerancia));
 
-        tblPropuestas.getColumns().addAll(Arrays.asList(colFecha, colCantidad, colPrecioMax, colEmpresa));
+        tblPropuestas.getColumns().addAll(Arrays.asList(colFecha, colCantidad, colPrecioMax, colEmpresa, colAccion));
     }
 
     private String extraerNombre(UsuarioSesion us) {
