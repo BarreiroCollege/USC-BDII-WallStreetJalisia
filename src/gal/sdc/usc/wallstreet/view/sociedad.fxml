@@ -45,6 +45,12 @@
                         </HBox>
                     </VBox>
                 </Tab>
+                <Tab text="Miembros">
+                    <VBox alignment="TOP_CENTER">
+                        <Label minHeight="25.0"/>
+                        <TableView fx:id="tblMiembros"/>
+                    </VBox>
+                </Tab>
                 <Tab text="Propuestas">
                     <VBox alignment="TOP_CENTER">
                         <Label minHeight="15.0"/>

@@ -6,6 +6,7 @@ import com.jfoenix.validation.RequiredFieldValidator;
 import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.Sociedad;
 import gal.sdc.usc.wallstreet.model.SuperUsuario;
+import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.SociedadDAO;
 import gal.sdc.usc.wallstreet.repository.SuperUsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
@@ -23,11 +24,11 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class NuevaSociedadController extends DatabaseLinker implements Initializable {
-    public static final String VIEW = "nuevasociedad";
+public class SociedadNuevoMiembroController extends DatabaseLinker implements Initializable {
+    public static final String VIEW = "sociedadnuevomiembro";
     public static final Integer HEIGHT = 200;
     public static final Integer WIDTH = 500;
-    public static final String TITULO = "Crear Sociedad";
+    public static final String TITULO = "Invitar Miembro";
 
     @FXML
     private AnchorPane anchor;
@@ -36,34 +37,39 @@ public class NuevaSociedadController extends DatabaseLinker implements Initializ
     @FXML
     public JFXButton btnCancelar;
     @FXML
-    public JFXButton btnCrear;
+    public JFXButton btnInvitar;
 
     private static Comunicador comunicador;
 
     public static void setComunicador(Comunicador comunicador) {
-        NuevaSociedadController.comunicador = comunicador;
+        SociedadNuevoMiembroController.comunicador = comunicador;
     }
 
-    private void crear(ActionEvent e) {
+    private void invitar(ActionEvent e) {
         if (!txtIdentificador.validate()) return;
 
-        ErrorValidator usuarioYaExiste = Validadores.personalizado("Este nombre ya está en uso");
+        ErrorValidator usuarioNoExiste = Validadores.personalizado("Este usuario no existe");
+        ErrorValidator usuarioYaSociedad = Validadores.personalizado("Este usuario ya está en una sociedad");
 
-        if (super.getDAO(SuperUsuarioDAO.class).seleccionar(txtIdentificador.getText().toLowerCase()) != null) {
-            if (txtIdentificador.getValidators().size() == 1) txtIdentificador.getValidators().add(usuarioYaExiste);
+        Usuario u = super.getDAO(UsuarioDAO.class).seleccionar(
+                new SuperUsuario.Builder(txtIdentificador.getText().toLowerCase()).build()
+        );
+
+        if (u == null) {
+            if (txtIdentificador.getValidators().size() == 1) txtIdentificador.getValidators().add(usuarioNoExiste);
             txtIdentificador.validate();
             return;
         }
 
-        Sociedad s = new Sociedad.Builder()
-                .withIdentificador(new SuperUsuario.Builder(txtIdentificador.getText()).build())
-                .build();
+        if (u.getSociedad() != null) {
+            if (txtIdentificador.getValidators().size() == 1) txtIdentificador.getValidators().add(usuarioYaSociedad);
+            txtIdentificador.validate();
+            return;
+        }
 
-        if (super.getDAO(SociedadDAO.class).insertar(s)) {
-            super.getUsuarioSesion().getUsuario().setLider(true);
-            super.getUsuarioSesion().getUsuario().setSociedad(s);
-            super.getDAO(UsuarioDAO.class).actualizar(super.getUsuarioSesion().getUsuario());
+        u.setSociedad((Sociedad) comunicador.getData()[0]);
 
+        if (super.getDAO(UsuarioDAO.class).actualizar(u)) {
             ((Stage) anchor.getScene().getWindow()).close();
             comunicador.onSuccess();
             comunicador = null;
@@ -71,7 +77,6 @@ public class NuevaSociedadController extends DatabaseLinker implements Initializ
             ((Stage) anchor.getScene().getWindow()).close();
             comunicador.onFailure();
             comunicador = null;
-            Main.mensaje("Hubo un error creando la sociedad");
         }
     }
 
@@ -94,17 +99,16 @@ public class NuevaSociedadController extends DatabaseLinker implements Initializ
             }
         });
 
+        txtIdentificador.setOnKeyPressed(ke -> {
+            if (ke.getCode().equals(KeyCode.ENTER)) this.invitar(null);
+        });
+
         btnCancelar.setOnAction(e -> {
             ((Stage) anchor.getScene().getWindow()).close();
             comunicador.onFailure();
             comunicador = null;
         });
 
-
-        txtIdentificador.setOnKeyPressed(ke -> {
-            if (ke.getCode().equals(KeyCode.ENTER)) this.crear(null);
-        });
-
-        btnCrear.setOnAction(this::crear);
+        btnInvitar.setOnAction(this::invitar);
     }
 }

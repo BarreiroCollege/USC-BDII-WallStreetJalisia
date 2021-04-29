@@ -6,7 +6,10 @@ import com.jfoenix.controls.JFXTabPane;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.RegexValidator;
 import com.jfoenix.validation.RequiredFieldValidator;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import gal.sdc.usc.wallstreet.Main;
+import gal.sdc.usc.wallstreet.model.Empresa;
+import gal.sdc.usc.wallstreet.model.Inversor;
 import gal.sdc.usc.wallstreet.model.PropuestaCompra;
 import gal.sdc.usc.wallstreet.model.Sociedad;
 import gal.sdc.usc.wallstreet.model.SuperUsuario;
@@ -19,6 +22,7 @@ import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.Comunicador;
 import gal.sdc.usc.wallstreet.util.ErrorValidator;
+import gal.sdc.usc.wallstreet.util.Iconos;
 import gal.sdc.usc.wallstreet.util.Validadores;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -30,6 +34,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -60,6 +65,8 @@ public class SociedadController extends DatabaseLinker implements Initializable 
 
     @FXML
     private TableView<PropuestaCompra> tblPropuestas;
+    @FXML
+    private TableView<UsuarioSesion> tblMiembros;
 
     @FXML
     private JFXButton btnVolver;
@@ -158,8 +165,36 @@ public class SociedadController extends DatabaseLinker implements Initializable 
         }
     }
 
-    private void onBtnEditarNueva(ActionEvent e) {
+    private void onBtnEditarPropuesta(ActionEvent e) {
 
+    }
+
+    private void onBtnEditarMiembro(ActionEvent e) {
+        Sociedad s = super.getUsuarioSesion().getUsuario().getSociedad();
+        Comunicador comunicador = new Comunicador() {
+            @Override
+            public Object[] getData() {
+                return new Object[] {s};
+            }
+
+            @Override
+            public void onSuccess() {
+                Main.mensaje("El usuario ha sido invitado");
+                actualizarTablaMiembros(s);
+            }
+
+            @Override
+            public void onFailure() {
+                Main.mensaje("Hubo un error invitando al usuario");
+            }
+        };
+        SociedadNuevoMiembroController.setComunicador(comunicador);
+        Main.dialogo(
+                SociedadNuevoMiembroController.VIEW,
+                SociedadNuevoMiembroController.WIDTH,
+                SociedadNuevoMiembroController.HEIGHT,
+                SociedadNuevoMiembroController.TITULO
+        );
     }
 
     private void onBtnEditar(ActionEvent e) {
@@ -168,7 +203,10 @@ public class SociedadController extends DatabaseLinker implements Initializable 
                 onBtnEditarGuardar(e);
                 break;
             case 1:
-                onBtnEditarNueva(e);
+                onBtnEditarMiembro(e);
+                break;
+            case 2:
+                onBtnEditarPropuesta(e);
                 break;
         }
     }
@@ -208,16 +246,87 @@ public class SociedadController extends DatabaseLinker implements Initializable 
     }
 
     private void actualizarVentana() {
+        System.out.println(tabVentana.getSelectionModel().getSelectedIndex());
         switch (tabVentana.getSelectionModel().getSelectedIndex()) {
             case 0:
                 btnEditar.setText("Editar");
                 btnAbandonar.setVisible(true);
                 break;
             case 1:
+                btnEditar.setText("Invitar");
+                btnAbandonar.setVisible(false);
+            case 2:
                 btnEditar.setText("Nueva");
                 btnAbandonar.setVisible(false);
                 break;
         }
+    }
+
+    private void generarTablaPropuestas() {
+        TableColumn<PropuestaCompra, String> colFecha = new TableColumn<>("Fecha");
+        colFecha.setPrefWidth(150);
+        colFecha.setCellValueFactory((TableColumn.CellDataFeatures<PropuestaCompra, String> param)
+                -> new SimpleStringProperty(param.getValue().getFechaInicio().toString()));
+
+        TableColumn<PropuestaCompra, Number> colCantidad = new TableColumn<>("Cantidad");
+        colCantidad.setPrefWidth(150);
+        colCantidad.setCellValueFactory((TableColumn.CellDataFeatures<PropuestaCompra, Number> param)
+                -> new SimpleIntegerProperty(param.getValue().getCantidad()));
+
+        TableColumn<PropuestaCompra, Number> colPrecioMax = new TableColumn<>("Precio Max");
+        colPrecioMax.setPrefWidth(150);
+        colPrecioMax.setCellValueFactory((TableColumn.CellDataFeatures<PropuestaCompra, Number> param)
+                -> new SimpleFloatProperty(param.getValue().getPrecioMax()));
+
+        TableColumn<PropuestaCompra, String> colEmpresa = new TableColumn<>("Empresa");
+        colEmpresa.setPrefWidth(150);
+        colEmpresa.setCellValueFactory((TableColumn.CellDataFeatures<PropuestaCompra, String> param)
+                -> new SimpleStringProperty(param.getValue().getEmpresa().getNombre()));
+
+        tblPropuestas.getColumns().addAll(Arrays.asList(colFecha, colCantidad, colPrecioMax, colEmpresa));
+    }
+
+    private String extraerNombre(UsuarioSesion us) {
+        if (us instanceof Inversor) {
+            return ((Inversor) us).getNombre() + " " + ((Inversor) us).getApellidos();
+        } else if (us instanceof Empresa) {
+            return ((Empresa) us).getNombre();
+        }
+        return us.getUsuario().getSuperUsuario().getIdentificador();
+    }
+
+    private String extraerDniCif(UsuarioSesion us) {
+        if (us instanceof Inversor) {
+            return ((Inversor) us).getDni();
+        } else if (us instanceof Empresa) {
+            return ((Empresa) us).getCif();
+        }
+        return us.getUsuario().getSuperUsuario().getIdentificador();
+    }
+
+    private void generarTablaMiembros() {
+        TableColumn<UsuarioSesion, Node> colLider = new TableColumn<>("");
+        // colIdentificador.setPrefWidth(150);
+        colLider.setCellValueFactory((TableColumn.CellDataFeatures<UsuarioSesion, Node> param)
+                -> param.getValue().getUsuario().getLider() ? new Iconos.IconoObservale(FontAwesomeIcon.SHIELD): null);
+        colLider.setStyle("-fx-alignment: CENTER;");
+
+        TableColumn<UsuarioSesion, String> colIdentificador = new TableColumn<>("Identificador");
+        colIdentificador.setPrefWidth(150);
+        colIdentificador.setCellValueFactory((TableColumn.CellDataFeatures<UsuarioSesion, String> param)
+                -> new SimpleStringProperty(param.getValue().getUsuario().getSuperUsuario().getIdentificador()));
+
+        TableColumn<UsuarioSesion, String> colNombre = new TableColumn<>("Nombre");
+        colNombre.setPrefWidth(150);
+        colNombre.setCellValueFactory((TableColumn.CellDataFeatures<UsuarioSesion, String> param)
+                -> new SimpleStringProperty(extraerNombre(param.getValue())));
+
+        TableColumn<UsuarioSesion, String> colDniCif = new TableColumn<>("DNI/CIF");
+        colDniCif.setPrefWidth(150);
+        colDniCif.setCellValueFactory((TableColumn.CellDataFeatures<UsuarioSesion, String> param)
+                -> new SimpleStringProperty(extraerDniCif(param.getValue())));
+
+        tblMiembros.getColumns().addAll(Arrays.asList(colLider, colIdentificador, colNombre, colDniCif));
     }
 
     @FXML
@@ -266,32 +375,13 @@ public class SociedadController extends DatabaseLinker implements Initializable 
             }
         });
 
-        cmbToleranciaUnidad.getSelectionModel().selectFirst();
         tabVentana.getSelectionModel().selectedItemProperty().addListener(listener -> actualizarVentana());
 
-        TableColumn<PropuestaCompra, String> colFecha = new TableColumn<>("Fecha");
-        colFecha.setPrefWidth(150);
-        colFecha.setCellValueFactory((TableColumn.CellDataFeatures<PropuestaCompra, String> param)
-                -> new SimpleStringProperty(param.getValue().getFechaInicio().toString()));
+        generarTablaPropuestas();
+        generarTablaMiembros();
 
-        TableColumn<PropuestaCompra, Number> colCantidad = new TableColumn<>("Cantidad");
-        colCantidad.setPrefWidth(150);
-        colCantidad.setCellValueFactory((TableColumn.CellDataFeatures<PropuestaCompra, Number> param)
-                -> new SimpleIntegerProperty(param.getValue().getCantidad()));
-
-        TableColumn<PropuestaCompra, Number> colPrecioMax = new TableColumn<>("Precio Max");
-        colPrecioMax.setPrefWidth(150);
-        colPrecioMax.setCellValueFactory((TableColumn.CellDataFeatures<PropuestaCompra, Number> param)
-                -> new SimpleFloatProperty(param.getValue().getPrecioMax()));
-
-        TableColumn<PropuestaCompra, String> colEmpresa = new TableColumn<>("Empresa");
-        colEmpresa.setPrefWidth(150);
-        colEmpresa.setCellValueFactory((TableColumn.CellDataFeatures<PropuestaCompra, String> param)
-                -> new SimpleStringProperty(param.getValue().getEmpresa().getNombre()));
-
-        ObservableList<PropuestaCompra> pcs = FXCollections.observableList(
-                super.getDAO(PropuestaCompraDAO.class).getPropuestasPorSociedad(s)
-        );
+        actualizarTablaPropuestas(s);
+        actualizarTablaMiembros(s);
 
         Label lblMinuto = new Label("Minutos");
         lblMinuto.setId("minuto");
@@ -302,14 +392,26 @@ public class SociedadController extends DatabaseLinker implements Initializable 
         Label lblDia = new Label("Días");
         lblDia.setId("dia");
         cmbToleranciaUnidad.getItems().addAll(lblDia);
-
-        tblPropuestas.getColumns().addAll(Arrays.asList(colFecha, colCantidad, colPrecioMax, colEmpresa));
-        tblPropuestas.setItems(pcs);
+        cmbToleranciaUnidad.getSelectionModel().selectFirst();
 
         btnVolver.setOnAction(this::onBtnVolver);
         btnAbandonar.setOnAction(this::onBtnAbandonar);
         btnEditar.setOnAction(this::onBtnEditar);
 
         this.asignarValores();
+    }
+
+    private void actualizarTablaPropuestas(Sociedad s) {
+        ObservableList<PropuestaCompra> pcs = FXCollections.observableList(
+                super.getDAO(PropuestaCompraDAO.class).getPropuestasPorSociedad(s)
+        );
+        tblPropuestas.setItems(pcs);
+    }
+
+    private void actualizarTablaMiembros(Sociedad s) {
+        ObservableList<UsuarioSesion> pcs = FXCollections.observableList(
+                super.getDAO(UsuarioDAO.class).getUsuariosPorSociedad(s)
+        );
+        tblMiembros.setItems(pcs);
     }
 }

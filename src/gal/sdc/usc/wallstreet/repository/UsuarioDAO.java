@@ -1,6 +1,10 @@
 package gal.sdc.usc.wallstreet.repository;
 
+import gal.sdc.usc.wallstreet.model.Empresa;
+import gal.sdc.usc.wallstreet.model.Inversor;
+import gal.sdc.usc.wallstreet.model.Sociedad;
 import gal.sdc.usc.wallstreet.model.Usuario;
+import gal.sdc.usc.wallstreet.model.UsuarioSesion;
 import gal.sdc.usc.wallstreet.repository.helpers.DAO;
 import gal.sdc.usc.wallstreet.util.Mapeador;
 
@@ -37,4 +41,35 @@ public class UsuarioDAO extends DAO<Usuario> {
         return getUsuarios().stream().filter(user -> identificador.equals(user.getSuperUsuario().getIdentificador())).findFirst().orElse(null);
     }
 
+    public List<UsuarioSesion> getUsuariosPorSociedad(Sociedad s) {
+        List<UsuarioSesion> usuarios = new ArrayList<>();
+
+        try (PreparedStatement ps = super.conexion.prepareStatement(
+                "SELECT i.* FROM inversor i, usuario u WHERE i.usuario = u.identificador AND u.sociedad = ?"
+        )) {
+            ps.setString(1, s.getIdentificador().getIdentificador());
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                usuarios.add(Mapeador.map(rs, Inversor.class));
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+
+        try (PreparedStatement ps = super.conexion.prepareStatement(
+                "SELECT e.* FROM empresa e, usuario u WHERE e.usuario = u.identificador AND u.sociedad = ?"
+        )) {
+            ps.setString(1, s.getIdentificador().getIdentificador());
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                usuarios.add(Mapeador.map(rs, Empresa.class));
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+
+        return usuarios;
+    }
 }
