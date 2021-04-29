@@ -79,7 +79,6 @@ public class VVentaController extends DatabaseLinker {
         fechaCol.setCellValueFactory(new PropertyValueFactory<>("fecha"));
         tablaOfertas.setItems(datosTabla);
 
-        tablaOfertas.setSelectionModel(null); // Evitamos que se seleccionen filas (estético)
         tablaOfertas.setPlaceholder(new Label("")); // Eliminamos el texto por defecto (estético)
         empresaCol.setCellValueFactory(p -> {
             if (p.getValue() != null) {
@@ -112,10 +111,11 @@ public class VVentaController extends DatabaseLinker {
             empresaComboBox.getItems().add(e.getEmpresa().getNombre() + " || " + e.getEmpresa().getCif());
         }
     }
+
     public void actualizarDatosTabla() {
         // Si no hay ninguna empresa seleccionada, se limpia la tabla
         if (empresaComboBox.getSelectionModel().getSelectedIndex() == -1) {
-            datosTabla.setAll(getDAO(OfertaVentaDAO.class).getOfertasVentaUsuario(null,usr.getSuperUsuario().getIdentificador()));
+            datosTabla.clear();
             return;
         }
         datosTabla.setAll(getDAO(OfertaVentaDAO.class).getOfertasVentaUsuario(
@@ -155,17 +155,28 @@ public class VVentaController extends DatabaseLinker {
             return;
         }
 
+        Empresa empresa = listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getEmpresa();
         // TODO Incluir comision regulador
         OfertaVenta oferta= new OfertaVenta.Builder().withPrecioVenta(Float.parseFloat(campoPrecio.getText())).
-                withEmpresa(listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getEmpresa()).
+                withEmpresa(empresa).
                 withUsuario(usr.getSuperUsuario()).
                 withConfirmado(false).
                 withNumParticipaciones(Integer.parseInt(campoNumero.getText())).
-                withComision(super.getDAO(ReguladorDAO.class).)
+                withComision(0.5f)
                 .build();
-
+        // Insertamos la oferta
         getDAO(OfertaVentaDAO.class).insertar(oferta);
+        // Aumentamos su saldo de participaciones bloqueadas
+        Participacion cartera = super.getDAO(ParticipacionDAO.class).seleccionar(new Participacion.Builder().
+                                                                                withUsuario(usr).
+                                                                                withEmpresa(empresa).build());
+        cartera.setCantidadBloqueada(cartera.getCantidadBloqueada()+oferta.getNumParticipaciones());
+        super.getDAO(ParticipacionDAO.class).actualizar(cartera);
+
+        actualizarVentana();
     }
+
+
     public void actualizarVentana(){
         actualizarListaEmpresas();
         actualizarDatosTabla();
@@ -174,30 +185,25 @@ public class VVentaController extends DatabaseLinker {
         campoPrecio.setText("");
     }
 
-    public boolean comprobarCampos(){
-        return ;
-    }
-    // FUNCIONALIDADES //
-    /*
+    
+    public void retirarOferta(){
+        // SI no hay nada seleccionado se sale
+        if(tablaOfertas.getSelectionModel().getSelectedIndex()==-1){
+            return;
+        }
+        OfertaVenta oferta = tablaOfertas.getSelectionModel().getSelectedItem();
 
-    // BOTONES //
-    // Boton de salir
-    public void btnSalirEvent(ActionEvent event) {
-        ((Stage) btnSalir.getScene().getWindow()).close();
-    }
+        Empresa empresa = listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getEmpresa();
+        // Se ponen las participaciones restantes a 0 y se le desbloquean de su saldo
+        Participacion saldo = super.getDAO(ParticipacionDAO.class).seleccionar(new Participacion.Builder()
+                                                                                    .withUsuario(usr)
+                                                                                    .withEmpresa(empresa));
+        saldo.setCantidadBloqueada(saldo.getCantidadBloqueada()-oferta.getRestantes());
+        super.getDAO(ParticipacionDAO.class).actualizar(saldo);
+        oferta.setRestantes(0);
+        super.getDAO(OfertaVentaDAO.class).actualizar(oferta);
 
-    // Nueva empresa seleccionada
-    public void btnEmpresaEvent(ActionEvent event) {
-        actualizarDatosTabla();
-    }
-
-    // Boton de comprar
-    public void btnComprarEvent(ActionEvent event) {
-        comprar();
-    }
-
-    // Boton de refresco
-    public void btnRefreshEvent(ActionEvent event){
         actualizarVentana();
-    }*/
+    }
+
 }

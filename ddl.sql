@@ -221,9 +221,17 @@ alter table regulador
 -- de la venta.
 create or replace function actualizar_participaciones_restantes() returns trigger language plpgsql as $trigger$
 begin
+    -- Reducimos las restantes en la oferta
     update oferta_venta
     set restantes = restantes - NEW.cantidad
     where fecha = NEW.ov_fecha and usuario = NEW.ov_usuario;
+    -- Reducimos las compradas de la cartera del vendedor
+    update participacion
+    set (cantidad_bloqueada, cantidad) = (cantidad_bloqueada - NEW.cantidad, cantidad-NEW.cantidad)
+    where usuario = NEW.ov_usuario;
+    -- Aumentamos el saldo del vendedor
+    update usuario
+    set saldo = saldo + NEW.cantidad * (select precio_venta from oferta_venta where usuario = NEW.ov_usuario and fecha = NEW.ov_fecha)
     return new;
 end;
 $trigger$;

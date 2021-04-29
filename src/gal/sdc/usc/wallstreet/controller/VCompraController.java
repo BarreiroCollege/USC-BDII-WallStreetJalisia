@@ -76,7 +76,6 @@ public class VCompraController extends DatabaseLinker {
         usr = super.getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder("eva").build());
 
         // Setup de las columnas de la tabla
-        //nombreCol.setCellValueFactory(new PropertyValueFactory<>("usuario"));
         precioCol.setCellValueFactory(new PropertyValueFactory<>("precioVenta"));
         fechaCol.setCellValueFactory(new PropertyValueFactory<>("fecha"));
         cantidadCol.setCellValueFactory(new PropertyValueFactory<>("restantes"));
@@ -91,6 +90,7 @@ public class VCompraController extends DatabaseLinker {
             }
         });
 
+        // Formateo de los campos numericos
         campoNumero.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) campoNumero.setText(oldValue);
         });
@@ -103,7 +103,7 @@ public class VCompraController extends DatabaseLinker {
                 actualizarDatosTabla();
         });
 
-        // Cargamos saldo y preparamos botones de refresh
+        // Boton de refresh
         botonRefresh.setGraphic(Iconos.icono(FontAwesomeIcon.REFRESH, "1em"));
 
         actualizarVentana();
