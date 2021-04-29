@@ -109,6 +109,8 @@ public class ParticipacionDAO extends DAO<Participacion> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        System.out.println(nombreEmpresa);
+        System.out.println(participaciones);
         return participaciones;
     }
 

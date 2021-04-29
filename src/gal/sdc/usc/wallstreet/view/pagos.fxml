@@ -23,6 +23,7 @@
     <stylesheets>
         <URL value="@styles/base.css" />
         <URL value="@styles/cartera.css" />
+        <URL value="@styles/scrollbar.css" />
     </stylesheets>
 
     <children>
@@ -45,9 +46,9 @@
                                     <columns>
                                         <TableColumn prefWidth="425.0" text="Pagos Participaciones Empresa">
                                             <columns>
-                                                <TableColumn fx:id="colFechaPago" prefWidth="127.5" text="Fecha Pago" />
-                                                <TableColumn fx:id="colFechaAnuncio" prefWidth="127.5" text="Fecha anuncio"  />
-                                                <TableColumn fx:id="colBeneficio" prefWidth="20.0" text="Beneficio" />
+                                                <TableColumn fx:id="colFechaPago" prefWidth="122.5" text="Fecha Pago" />
+                                                <TableColumn fx:id="colFechaAnuncio" prefWidth="122.5" text="Fecha anuncio"  />
+                                                <TableColumn fx:id="colBeneficio" prefWidth="30.0" text="Beneficio" />
                                                 <TableColumn fx:id="colParticipacion" prefWidth="30.0" text="Participación" />
                                             </columns>
                                         </TableColumn>
@@ -98,7 +99,7 @@
                                         </Label>
                                         <JFXDatePicker fx:id="dPagoDespuesDe" layoutX="650.0" layoutY="350.0" prefHeight="12.0" prefWidth="120.0"/>
 
-                                        <JFXButton fx:id="buttonBuscar" layoutX="610.0" layoutY="415.0" mnemonicParsing="false" text="Buscar">
+                                        <JFXButton fx:id="buttonBuscar" layoutX="610.0" layoutY="415.0" mnemonicParsing="false" text="Buscar" style="-fx-background-color: #adbde0;">
                                             <font>
                                                 <Font size="18.0" />
                                             </font>
@@ -170,7 +171,7 @@
 
                             <JFXDatePicker fx:id="dFechaPago" layoutX="475.0" layoutY="300.0" prefHeight="12.0" prefWidth="120.0"/>
 
-                            <JFXButton fx:id="buttonPagar" layoutX="525.0" layoutY="415.0" mnemonicParsing="false" text="Pagar">
+                            <JFXButton fx:id="buttonPagar" layoutX="525.0" layoutY="415.0" mnemonicParsing="false" text="Pagar" style="-fx-background-color: #adbde0;">
                                 <font>
                                     <Font size="18.0" />
                                 </font>

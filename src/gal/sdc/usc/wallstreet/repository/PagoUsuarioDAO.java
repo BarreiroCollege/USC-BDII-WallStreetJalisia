@@ -31,15 +31,15 @@ public class PagoUsuarioDAO extends DAO<PagoUsuario> {
         return pagos;
     }
 
-    public boolean insertarListaPagos(List<PagoUsuario> pagoUsuarios){
+    public boolean insertarListaPagos(List<PagoUsuario> pagoUsuarios, String nombreEmpresa){
         for(PagoUsuario p: pagoUsuarios){
             try (PreparedStatement ps = conexion.prepareStatement(
                     "INSERT INTO pago_usuario (usuario, pago_fecha, pago_empresa, num_participaciones)" +
                             " VALUES (?, ?, ?, ?)"
             )){
                 ps.setString(1, p.getUsuario().getIdentificador());
-                ps.setTimestamp(2, new Timestamp(((Date) p.getPago().getFecha()).getTime()));
-                ps.setString(3,  p.getPago().getEmpresa().getNombre());
+                ps.setTimestamp(2, new Timestamp(( p.getPago().getFecha()).getTime()));
+                ps.setString(3, nombreEmpresa);
                 ps.setInt(4, p.getNumParticipaciones());
                 ps.executeUpdate();
             } catch (SQLException e) {

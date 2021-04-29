@@ -26,6 +26,7 @@ import javafx.util.Callback;
 
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -106,6 +107,9 @@ public class PagosController extends DatabaseLinker {
     @FXML
     private Spinner<Integer> sPorcentajeParticipaciones;
 
+    @FXML
+    private ScrollBar scrollVertical;
+
     private final ObservableList<Pago> datosTablaPagos = FXCollections.observableArrayList();
 
 
@@ -142,6 +146,8 @@ public class PagosController extends DatabaseLinker {
         sPorcentajeBeneficios.setEditable(true);
         sPorcentajeParticipaciones.setEditable(true);
 
+        tablaPagosProgramados.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
     }
 
     public void gestionarControles(){
@@ -169,23 +175,26 @@ public class PagosController extends DatabaseLinker {
                 sPorcentajeBeneficios.setEditable(true);
                 sPorcentajeParticipaciones.setEditable(true);
             }
-            //Botón de volver (VENTANA 1)
-            buttonVolverPagosProgramados.setOnAction(event2 -> {
-                Main.ventana(PrincipalController.VIEW, PrincipalController.WIDTH, PrincipalController.HEIGHT, PrincipalController.TITULO);
-            });
-            //Botón de volver (VENTANA 2)
-            buttonVolverPagos.setOnAction(event3 -> {
-                Main.ventana(PrincipalController.VIEW, PrincipalController.WIDTH, PrincipalController.HEIGHT, PrincipalController.TITULO);
-            });
-            //Botón para filtrar los datos de la tabla (VENTANA 1)
-            buttonBuscar.setOnAction(event4 -> {
-                filtrarDatosPagos();
-            });
-            //Botón para insertar un pago (VENTANA 2)
-            buttonPagar.setOnAction(event5 -> {
-                insertarPago();
-            });
 
+        });
+
+
+        //Botón de volver (VENTANA 1)
+        buttonVolverPagosProgramados.setOnAction(event2 -> {
+            Main.ventana(PrincipalController.VIEW, PrincipalController.WIDTH, PrincipalController.HEIGHT, PrincipalController.TITULO);
+        });
+        //Botón de volver (VENTANA 2)
+        buttonVolverPagos.setOnAction(event3 -> {
+            Main.ventana(PrincipalController.VIEW, PrincipalController.WIDTH, PrincipalController.HEIGHT, PrincipalController.TITULO);
+        });
+        //Botón para filtrar los datos de la tabla (VENTANA 1)
+        buttonBuscar.setOnAction(event4 -> {
+            filtrarDatosPagos();
+        });
+        //Botón para insertar un pago (VENTANA 2)
+        buttonPagar.setOnAction(event5 -> {
+            insertarPago();
+            limpiarCampos();
         });
         //Control del CheckBox de pago programado (VENTANA 2)
         cbPagoProgramado.setOnAction(event -> {
@@ -306,16 +315,17 @@ public class PagosController extends DatabaseLinker {
 
         colFechaPago.setCellValueFactory(celda -> new SimpleStringProperty(formatoFechaTabla.format(celda.getValue().getFecha())));
         colFechaPago.setStyle("-fx-alignment: CENTER;");
-        colFechaAnuncio.setCellValueFactory(celda -> new SimpleStringProperty(formatoFechaTabla.format(celda.getValue().getFechaAnuncio())));
+        colFechaAnuncio.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getFechaAnuncio() == null ? "Sin anuncio" : formatoFechaTabla.format(celda.getValue().getFechaAnuncio())));
         colFechaAnuncio.setStyle("-fx-alignment: CENTER;");
         colBeneficio.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Pago, String>, ObservableValue<String>>(){
            @Override
            public ObservableValue<String> call(TableColumn.CellDataFeatures<Pago, String> param) {
                if(param.getValue() != null){
+                   DecimalFormat df = new DecimalFormat("#");
                    Float beneficio = param.getValue().getBeneficioPorParticipacion();
                    Float porcentaje_beneficio = param.getValue().getPorcentajeBeneficio();
-                   porcentaje_beneficio *= 100;
-                   return new SimpleStringProperty(beneficio.toString() + " x " + porcentaje_beneficio + "%");
+                   porcentaje_beneficio *= 100.0f;
+                   return new SimpleStringProperty(beneficio.toString() + " x " + df.format(porcentaje_beneficio) + "%");
                } else{
                    return new SimpleStringProperty("<sin especificar>");
                }
@@ -326,10 +336,11 @@ public class PagosController extends DatabaseLinker {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<Pago, String> param) {
                 if(param.getValue() != null){
+                    DecimalFormat df = new DecimalFormat("#");
                     Float participacion = param.getValue().getParticipacionPorParticipacion();
                     Float porcentaje_participacion = param.getValue().getPorcentajeParticipacion();
-                    porcentaje_participacion *= 100;
-                    return new SimpleStringProperty(participacion.toString() + " x " + porcentaje_participacion + "%");
+                    porcentaje_participacion *= 100.0f;
+                    return new SimpleStringProperty(participacion.toString() + " x " + df.format(porcentaje_participacion) + "%");
                 } else{
                     return new SimpleStringProperty("<sin especificar>");
                 }
@@ -343,9 +354,9 @@ public class PagosController extends DatabaseLinker {
             paneFiltro.setVisible(true);
             tablaPagosProgramados.setPrefSize(425.0, 370.0);
             colParticipacion.setPrefWidth(90.0);
-            colBeneficio.setPrefWidth(60.0);
-            colFechaPago.setPrefWidth(137.5);
-            colFechaAnuncio.setPrefWidth(137.5);
+            colBeneficio.setPrefWidth(90.0);
+            colFechaPago.setPrefWidth(122.5);
+            colFechaAnuncio.setPrefWidth(122.5);
 
         } else {
             paneFiltro.setVisible(false);
@@ -382,6 +393,10 @@ public class PagosController extends DatabaseLinker {
     public boolean validarCampos(){
         if(cbMetodoPago.getValue().equals("Dinero")){
             if(!regexPrecio(txtDinero)){
+                Main.mensaje("El valor del dinero introducido no es válido", 3);
+                return false;
+            } else if(txtDinero.getText().isEmpty()){
+                Main.mensaje("Introduce un valor para la cantidad de dinero", 3);
                 return false;
             }
             txtParticipaciones.setDisable(true);
@@ -389,17 +404,36 @@ public class PagosController extends DatabaseLinker {
             sPorcentajeBeneficios.setDisable(true);
         } else if(cbMetodoPago.getValue().equals("Participaciones")){
             if(!regexNumerico(txtParticipaciones)){
+                Main.mensaje("El valor de participaciones introducido no es válido", 3);
+                return false;
+            } else if(txtParticipaciones.getText().isEmpty()){
+                Main.mensaje("Introduce un valor para la cantidad de participaciones");
                 return false;
             }
             txtDinero.setDisable(true);
             sPorcentajeParticipaciones.setDisable(true);
             sPorcentajeBeneficios.setDisable(true);
         } else if(cbMetodoPago.getValue().equals("Ambas")){
-            if(!regexPrecio(txtDinero) || !regexNumerico(txtParticipaciones)){
+            if(!regexPrecio(txtDinero)){
+                Main.mensaje("El valor del dinero introducido no es válido", 3);
+                return false;
+            } else if(txtDinero.getText().isEmpty()){
+                Main.mensaje("Introduce un valor para la cantidad de dinero", 3);
+                return false;
+            }
+            if(!regexNumerico(txtParticipaciones)){
+                Main.mensaje("El valor de participaciones introducido no es válido", 3);
+                return false;
+            } else if(txtParticipaciones.getText().isEmpty()){
+                Main.mensaje("Introduce un valor para la cantidad de participaciones", 3);
                 return false;
             }
             sPorcentajeParticipaciones.setDisable(false);
             sPorcentajeBeneficios.setDisable(false);
+        }
+        if(cbPagoProgramado.isSelected() && dFechaPago.getValue() == null){
+            Main.mensaje("Introduce la fecha en la que quieres realizar el pago", 3);
+            return false;
         }
         dFechaPago.setDisable(!cbPagoProgramado.isSelected());
         return !cbPagoProgramado.isDisabled() || cbPagoProgramado.getText() != null;
@@ -413,35 +447,112 @@ public class PagosController extends DatabaseLinker {
         }
         if(cbPagoProgramado.isSelected()){
             //Construimos pago fecha_anuncio now() y fecha la seleccionada
-            final DateFormat formatoFechaTabla = new SimpleDateFormat("d/L/y");   // Asigna el formato de fecha para la tabla de ofertas de venta
-
-             p = new Pago.Builder().withFecha(Date.from(dFechaPago.getValue().atStartOfDay().toInstant(ZoneOffset.UTC))).withEmpresa((Empresa) super.getUsuarioSesion()).
-                    withBeneficioPorParticipacion(Float.valueOf(txtDinero.getText())).withParticipacionPorParticipacion(Float.valueOf(txtParticipaciones.getText()))
-                    .withFechaAnuncio(new Date()).withPorcentajeBeneficio(sPorcentajeBeneficios.getValue() / 100.0f)
-                    .withPorcentajeParticipacion((sPorcentajeParticipaciones.getValue() / 100.0f)).build();
+            switch(cbMetodoPago.getValue().toString()){
+                case "Dinero":
+                    p = new Pago.Builder()
+                            .withFecha(Date.from(dFechaPago.getValue().atStartOfDay().toInstant(ZoneOffset.UTC)))
+                            .withEmpresa((Empresa) super.getUsuarioSesion())
+                            .withBeneficioPorParticipacion(Float.valueOf(txtDinero.getText()))
+                            .withParticipacionPorParticipacion(0.0f)
+                            .withFechaAnuncio(new Date())
+                            .withPorcentajeBeneficio(1.0f)
+                            .withPorcentajeParticipacion(0.0f)
+                            .build();
+                    break;
+                case "Participaciones":
+                    p = new Pago.Builder()
+                            .withFecha(Date.from(dFechaPago.getValue().atStartOfDay().toInstant(ZoneOffset.UTC)))
+                            .withEmpresa((Empresa) super.getUsuarioSesion())
+                            .withBeneficioPorParticipacion(0.0f)
+                            .withParticipacionPorParticipacion(Float.valueOf(txtParticipaciones.getText()))
+                            .withFechaAnuncio(new Date())
+                            .withPorcentajeBeneficio(0.0f)
+                            .withPorcentajeParticipacion(1.0f)
+                            .build();
+                    break;
+                case "Ambas":
+                    p = new Pago.Builder()
+                            .withFecha(Date.from(dFechaPago.getValue().atStartOfDay().toInstant(ZoneOffset.UTC)))
+                            .withEmpresa((Empresa) super.getUsuarioSesion())
+                            .withBeneficioPorParticipacion(Float.valueOf(txtDinero.getText()))
+                            .withParticipacionPorParticipacion(Float.valueOf(txtParticipaciones.getText()))
+                            .withFechaAnuncio(new Date())
+                            .withPorcentajeBeneficio(sPorcentajeBeneficios.getValue() / 100.0f)
+                            .withPorcentajeParticipacion((sPorcentajeParticipaciones.getValue() / 100.0f))
+                            .build();
+                    break;
+            }
         }else{
             //Construimos pago fecha_anuncio null y fecha now()
-             p = new Pago.Builder().withFecha(new Date()).withEmpresa((Empresa) super.getUsuarioSesion()).
-                    withBeneficioPorParticipacion(Float.valueOf(txtDinero.getText())).withParticipacionPorParticipacion(Float.valueOf(txtParticipaciones.getText()))
-                    .withFechaAnuncio(null).withPorcentajeBeneficio(sPorcentajeBeneficios.getValue() / 100.0f)
-                    .withPorcentajeParticipacion((sPorcentajeParticipaciones.getValue() / 100.0f)).build();
+            switch(cbMetodoPago.getValue().toString()){
+                case "Dinero":
+                    p = new Pago.Builder()
+                            .withFecha(new Date())
+                            .withEmpresa((Empresa) super.getUsuarioSesion())
+                            .withBeneficioPorParticipacion(Float.valueOf(txtDinero.getText()))
+                            .withParticipacionPorParticipacion(0.0f)
+                            .withFechaAnuncio(null)
+                            .withPorcentajeBeneficio(1.0f)
+                            .withPorcentajeParticipacion(0.0f)
+                            .build();
+                    break;
+                case "Participaciones":
+                    p = new Pago.Builder()
+                            .withFecha(new Date())
+                            .withEmpresa((Empresa) super.getUsuarioSesion())
+                            .withBeneficioPorParticipacion(0.0f)
+                            .withParticipacionPorParticipacion(Float.valueOf(txtParticipaciones.getText()))
+                            .withFechaAnuncio(null)
+                            .withPorcentajeBeneficio(0.0f)
+                            .withPorcentajeParticipacion(1.0f)
+                            .build();
+                    break;
+                case "Ambas":
+                    p = new Pago.Builder()
+                            .withFecha(new Date())
+                            .withEmpresa((Empresa) super.getUsuarioSesion())
+                            .withBeneficioPorParticipacion(Float.valueOf(txtDinero.getText()))
+                            .withParticipacionPorParticipacion(Float.valueOf(txtParticipaciones.getText()))
+                            .withFechaAnuncio(null)
+                            .withPorcentajeBeneficio(sPorcentajeBeneficios.getValue() / 100.0f)
+                            .withPorcentajeParticipacion((sPorcentajeParticipaciones.getValue() / 100.0f))
+                            .build();
+            }
         }
         if(!super.getDAO(PagoDAO.class).insertarPago(p)){
             return false;
         }
         pagosAUsuarios = obtenerPagosUsuarios(super.getDAO(ParticipacionDAO.class).getParticipacionesPorEmpresa(super.getUsuarioSesion().getUsuario().getSuperUsuario().getIdentificador()) ,p);
 
-        if (!super.getDAO(PagoUsuarioDAO.class).insertarListaPagos(pagosAUsuarios)){
+
+        super.getUsuarioSesion().getUsuario().setSaldo(super.getUsuarioSesion().getUsuario().getSaldo() - Float.valueOf(txtDinero.getText()) * pagosAUsuarios.size());
+
+        if (!super.getDAO(PagoUsuarioDAO.class).insertarListaPagos(pagosAUsuarios, super.getUsuarioSesion().getUsuario().getSuperUsuario().getIdentificador())){
             return false;
         }
         return true;
     }
+
+    public void limpiarCampos(){
+        cbMetodoPago.setValue("Dinero");
+        txtDinero.clear();
+        txtParticipaciones.clear();
+        if(dFechaPago.getValue() != null) {
+            dFechaPago.getEditor().clear();
+        }
+        dFechaPago.setDisable(true);
+        sPorcentajeParticipaciones.getValueFactory().setValue(50);
+        sPorcentajeBeneficios.getValueFactory().setValue(50);
+        cbPagoProgramado.setSelected(false);
+    }
+
     public List<PagoUsuario> obtenerPagosUsuarios(List<Participacion> participacionesEmpresa, Pago pa){
         List<PagoUsuario> pagosAUsuarios = new ArrayList<>();
         for (Participacion p: participacionesEmpresa) {
             PagoUsuario pU = new PagoUsuario.Builder().withUsuario(p.getUsuario().getSuperUsuario()).withPago(pa).withNumParticipaciones(p.getCantidad()).build();
             pagosAUsuarios.add(pU);
         }
+        System.out.println(pagosAUsuarios);
         return pagosAUsuarios;
     }
 

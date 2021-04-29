@@ -54,11 +54,15 @@ public class PagoDAO extends DAO<Pago> {
             "INSERT INTO pago (fecha, empresa, beneficio_por_participacion, participacion_por_participacion, fecha_anuncio, porcentaje_beneficio, porcentaje_participacion)" +
                     " VALUES (?, ?, ?, ?, ?, ?, ?)"
         )){
-            ps.setTimestamp(1, new Timestamp(((Date) p.getFecha()).getTime()));
-            ps.setString(2, p.getEmpresa().getNombre());
+            ps.setTimestamp(1, new Timestamp((p.getFecha()).getTime()));
+            ps.setString(2, p.getEmpresa().getUsuario().getSuperUsuario().getIdentificador());
             ps.setFloat(3, p.getBeneficioPorParticipacion());
             ps.setFloat(4, p.getParticipacionPorParticipacion());
-            ps.setTimestamp(5, new Timestamp(((Date) p.getFechaAnuncio()).getTime()));
+            if(p.getFechaAnuncio() != null) {
+                ps.setTimestamp(5, new Timestamp((p.getFechaAnuncio()).getTime()));
+            } else{
+                ps.setTimestamp(5, null);
+            }
             ps.setFloat(6, p.getPorcentajeBeneficio());
             ps.setFloat(7, p.getPorcentajeParticipacion());
             ps.executeUpdate();
