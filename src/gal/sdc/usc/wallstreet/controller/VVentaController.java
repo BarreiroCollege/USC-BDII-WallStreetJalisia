@@ -185,7 +185,7 @@ public class VVentaController extends DatabaseLinker {
         campoPrecio.setText("");
     }
 
-    
+
     public void retirarOferta(){
         // SI no hay nada seleccionado se sale
         if(tablaOfertas.getSelectionModel().getSelectedIndex()==-1){
