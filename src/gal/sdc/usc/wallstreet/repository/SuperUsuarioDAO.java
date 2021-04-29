@@ -13,17 +13,6 @@ public class SuperUsuarioDAO extends DAO<SuperUsuario> {
         super(conexion, SuperUsuario.class);
     }
 
-    public SuperUsuario getSuperUsuario() {
-        try (PreparedStatement ps = conexion.prepareStatement(
-                "SELECT * FROM superusuario LIMIT 1"
-        )) {
-            return Mapeador.map(ps.executeQuery(), SuperUsuario.class);
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-        }
-        return null;
-    }
-
     public boolean actualizarIdentificador(String antiguo, String nuevo) {
         try (PreparedStatement ps = conexion.prepareStatement(
                 "UPDATE superusuario SET identificador=? WHERE identificador=?"
