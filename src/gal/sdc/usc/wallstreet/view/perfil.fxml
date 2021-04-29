@@ -2,12 +2,10 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXPasswordField?>
-<?import com.jfoenix.controls.JFXTabPane?>
 <?import com.jfoenix.controls.JFXTextArea?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Tab?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -80,6 +78,12 @@
                     <Font size="18.0"/>
                 </font>
             </JFXButton>
+            <JFXButton text="Solicitar Baja" fx:id="btnBaja">
+                <font>
+                    <Font size="18.0"/>
+                </font>
+            </JFXButton>
+            <Label minWidth="20.0"/>
             <Label HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
             <JFXButton text="Activar 2FA" fx:id="btnOtp" buttonType="RAISED">
                 <font>

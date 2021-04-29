@@ -91,12 +91,12 @@ public class VCompraController extends DatabaseLinker {
             }
         });
 
-        // Formato Integer para campoNumero y Float para campoPrecio
-        campoNumero.setTextFormatter(new TextFormatter<>(
-                new IntegerStringConverter(),
-                null,
-                c -> Pattern.matches("\\d*", c.getText()) ? c : null));
-        campoPrecio.setTextFormatter(new TextFormatter((UnaryOperator<TextFormatter.Change>) change -> Pattern.compile("\\d*|\\d+\\.\\d{0,2}").matcher(change.getControlNewText()).matches() ? change : null));
+        campoNumero.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) campoNumero.setText(oldValue);
+        });
+        campoPrecio.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*|\\d+\\.\\d{0,2}")) campoPrecio.setText(oldValue);
+        });
 
         // Cuando se cambie el precio se actualizan las ofertas en base al nuevo
         campoPrecio.textProperty().addListener((observable, oldValue, newValue) -> {

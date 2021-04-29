@@ -5,9 +5,19 @@ import gal.sdc.usc.wallstreet.model.Inversor;
 import gal.sdc.usc.wallstreet.model.UsuarioSesion;
 import gal.sdc.usc.wallstreet.model.UsuarioTipo;
 import gal.sdc.usc.wallstreet.model.ddl.Entidad;
-import gal.sdc.usc.wallstreet.util.PackageScanner;
+import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
+import gal.sdc.usc.wallstreet.repository.InversorDAO;
+import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
+import gal.sdc.usc.wallstreet.repository.PagoDAO;
+import gal.sdc.usc.wallstreet.repository.PagoUsuarioDAO;
+import gal.sdc.usc.wallstreet.repository.ParticipacionDAO;
+import gal.sdc.usc.wallstreet.repository.PropuestaCompraDAO;
+import gal.sdc.usc.wallstreet.repository.ReguladorDAO;
+import gal.sdc.usc.wallstreet.repository.SociedadDAO;
+import gal.sdc.usc.wallstreet.repository.SuperUsuarioDAO;
+import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
+import gal.sdc.usc.wallstreet.repository.VentaDAO;
 
-import javax.xml.crypto.Data;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -21,7 +31,7 @@ import java.util.Properties;
  * Clase que actúa de enlace con la base de datos. Puede ser extendida por cualquier
  * clase al usar variables estáticas.
  */
-public class DatabaseLinker {
+public abstract class DatabaseLinker {
     // Indica que la conexión se ha inicializado
     private static Connection conexion;
     // Lista de DAOs disponibles
@@ -83,7 +93,22 @@ public class DatabaseLinker {
     private void cargarDAOs(Connection conexion) {
         try {
             // Analizar el paquete con las clases
-            Class<?>[] clases = PackageScanner.getClasses();
+            // TODO: Esto no funca en el NetBeans de los profes
+            // Class<?>[] clases = PackageScanner.getClasses();
+            Class<?>[] clases = new Class<?>[]{
+                    EmpresaDAO.class,
+                    InversorDAO.class,
+                    OfertaVentaDAO.class,
+                    PagoDAO.class,
+                    PagoUsuarioDAO.class,
+                    ParticipacionDAO.class,
+                    PropuestaCompraDAO.class,
+                    ReguladorDAO.class,
+                    SociedadDAO.class,
+                    SuperUsuarioDAO.class,
+                    UsuarioDAO.class,
+                    VentaDAO.class
+            };
             // E iterar
             for (Class<?> clase : clases) {
                 // Castear la clase a un DAO
@@ -178,6 +203,7 @@ public class DatabaseLinker {
 
     /**
      * Inicia una transacción con el nivel de aislamiento especificado
+     *
      * @param nivelAislamiento aislamiento
      */
     public void iniciarTransaccion(int nivelAislamiento) {

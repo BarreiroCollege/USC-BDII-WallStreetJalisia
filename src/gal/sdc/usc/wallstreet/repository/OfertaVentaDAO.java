@@ -88,7 +88,7 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
         Usuario usuario = new Usuario.Builder(new SuperUsuario.Builder(idUsuario).build()).build();
 
         try (PreparedStatement ps = conexion.prepareStatement(
-                "SELECT o.fecha, o.empresa, e.nombre, e.cif, o.num_participaciones, o.precio_venta " +
+                "SELECT o.fecha, o.empresa, e.nombre, e.cif, o.num_participaciones, o.precio_venta, o.restantes " +
                         "FROM oferta_venta o JOIN empresa e ON o.empresa = e.usuario " +
                         "WHERE o.usuario = ?"
         )) {
@@ -106,7 +106,9 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
                                         .withNombre(rs.getString("nombre")).build()
                         )
                         .withNumParticipaciones(rs.getInt("num_participaciones"))
+                        .withRestantes(rs.getInt("restantes"))
                         .withPrecioVenta(rs.getFloat("precio_venta")).build();
+
 
                 try (PreparedStatement psFecha = conexion.prepareStatement(
                         "SELECT max(fecha) FROM oferta_venta WHERE empresa = ?"
@@ -125,32 +127,6 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
         }
 
         return ofertas;
-    }
-
-    /***
-     * Devuelve el número de participaciones que todavía no han sido vendidas de una oferta de venta determinada.
-     *
-     * @param ov Oferta de venta sobre la que se calculará el total de participaciones restante.
-     * @return Entero con el número de participaciones no vendidas; null en caso de error.
-     */
-    public Integer getNumParticipacionesRestantes(OfertaVenta ov){
-        Integer sinVender = null;
-
-        // TODO: restantes
-        /* String sqlCall = "SELECT * FROM participaciones_por_vender (?, ?)";
-        try (PreparedStatement ps = conexion.prepareStatement(sqlCall)){
-            ps.setTimestamp(1, new Timestamp(ov.getFecha().getTime()));
-            ps.setString(2, ov.getUsuario().getIdentificador());
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()){
-                sinVender = rs.getInt(1);
-            }
-        } catch (SQLException e){
-            e.printStackTrace();
-        } */
-
-        return sinVender;
     }
 
     /***
