@@ -185,7 +185,6 @@ public class SociedadController extends DatabaseLinker implements Initializable 
 
             @Override
             public void onSuccess() {
-                Main.mensaje("Se ha creado la propuesta de venta");
                 actualizarTablaPropuestas(s);
             }
 
@@ -194,7 +193,8 @@ public class SociedadController extends DatabaseLinker implements Initializable 
                 Main.mensaje("Hubo un error creando la propuesta");
             }
         };
-        SociedadMiembroController.setComunicador(comunicador);
+
+        SociedadPropuestaController.setComunicador(comunicador);
         Main.dialogo(
                 SociedadPropuestaController.VIEW,
                 SociedadPropuestaController.WIDTH,
@@ -213,7 +213,6 @@ public class SociedadController extends DatabaseLinker implements Initializable 
 
             @Override
             public void onSuccess() {
-                Main.mensaje("El usuario ha sido invitado");
                 actualizarTablaMiembros(s);
             }
 

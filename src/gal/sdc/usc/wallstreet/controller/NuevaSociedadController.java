@@ -67,6 +67,7 @@ public class NuevaSociedadController extends DatabaseLinker implements Initializ
             ((Stage) anchor.getScene().getWindow()).close();
             comunicador.onSuccess();
             comunicador = null;
+            Main.mensaje("Se ha creado la sociedad");
         } else {
             ((Stage) anchor.getScene().getWindow()).close();
             comunicador.onFailure();

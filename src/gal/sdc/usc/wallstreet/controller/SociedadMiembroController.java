@@ -3,6 +3,7 @@ package gal.sdc.usc.wallstreet.controller;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.RequiredFieldValidator;
+import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.Sociedad;
 import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.model.Usuario;
@@ -70,6 +71,7 @@ public class SociedadMiembroController extends DatabaseLinker implements Initial
             ((Stage) anchor.getScene().getWindow()).close();
             comunicador.onSuccess();
             comunicador = null;
+            Main.mensaje("El usuario ha sido invitado");
         } else {
             ((Stage) anchor.getScene().getWindow()).close();
             comunicador.onFailure();
@@ -102,7 +104,7 @@ public class SociedadMiembroController extends DatabaseLinker implements Initial
 
         btnCancelar.setOnAction(e -> {
             ((Stage) anchor.getScene().getWindow()).close();
-            comunicador.onFailure();
+            comunicador.onSuccess();
             comunicador = null;
         });
 

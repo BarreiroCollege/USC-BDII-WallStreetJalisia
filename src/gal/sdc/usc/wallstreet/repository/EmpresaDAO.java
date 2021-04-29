@@ -17,10 +17,10 @@ public class EmpresaDAO extends DAO<Empresa> {
         super(conexion, Empresa.class);
     }
 
-    public List<Empresa> getEmpresas(){
+    public List<Empresa> getEmpresas (){
         List<Empresa> empresas = new ArrayList<>();
         try (PreparedStatement ps = conexion.prepareStatement(
-                "SELECT e.* FROM empresa as e join usuario as u ON(e.usuario=u.identificador) WHERE activo is true"
+                "SELECT e.* FROM empresa as e join usuario as u ON(e.usuario=u.identificador) WHERE alta is null"
         )) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
