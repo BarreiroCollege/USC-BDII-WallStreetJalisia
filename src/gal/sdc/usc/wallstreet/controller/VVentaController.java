@@ -43,13 +43,14 @@ public class VVentaController extends DatabaseLinker {
     @FXML
     private TableColumn<OfertaVenta,String> empresaCol;
     @FXML
-    private TableColumn<OfertaVenta,Integer> ofertadasCol;
-    @FXML
     private TableColumn<OfertaVenta,Integer> restantesCol;
     @FXML
     private TableColumn<OfertaVenta,Float> precioCol;
     @FXML
     private TableColumn<OfertaVenta,Boolean> confirmadoCol;
+    @FXML
+    private TableColumn<OfertaVenta,Date> fechaCol;
+
     @FXML
     private JFXTextField campoNumero;
     @FXML
@@ -72,10 +73,10 @@ public class VVentaController extends DatabaseLinker {
         usr = super.getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder("marcos").build());
 
         // Setup de las columnas de la tabla
-        ofertadasCol.setCellValueFactory(new PropertyValueFactory<>("numParticipaciones"));
-        restantesCol.setCellValueFactory(new PropertyValueFactory<>("restantes"));
         precioCol.setCellValueFactory(new PropertyValueFactory<>("precioVenta"));
+        restantesCol.setCellValueFactory(new PropertyValueFactory<>("restantes"));
         confirmadoCol.setCellValueFactory(new PropertyValueFactory<>("confirmado"));
+        fechaCol.setCellValueFactory(new PropertyValueFactory<>("fecha"));
         tablaOfertas.setItems(datosTabla);
 
         tablaOfertas.setSelectionModel(null); // Evitamos que se seleccionen filas (estético)
@@ -117,11 +118,10 @@ public class VVentaController extends DatabaseLinker {
         // Si no hay ninguna empresa seleccionada, se limpia la tabla
         if (empresaComboBox.getSelectionModel().getSelectedIndex() == -1) {
             datosTabla.setAll(getDAO(OfertaVentaDAO.class).getOfertasVenta(usr));
-            //datosTabla.clear();
             return;
         }
-
-        datosTabla.setAll(getDAO(OfertaVentaDAO.class).getOfertasVentaUsuario(listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getEmpresa().getUsuario().getSuperUsuario().getIdentificador(),
+        datosTabla.setAll(getDAO(OfertaVentaDAO.class).
+                getOfertasVentaUsuario(listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getEmpresa().getUsuario().getSuperUsuario().getIdentificador(),
                 listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getUsuario().getSuperUsuario().getIdentificador()));
 
         actualizarParticipaciones();

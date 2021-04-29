@@ -7,13 +7,13 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="776.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.VVentaController">
    <children>
-       <TableView fx:id="tablaOfertas" layoutX="14.0" layoutY="106.0" prefHeight="234.0" prefWidth="558.0" style="-fx-background-color: #FFF9F9; -fx-border-width: 1; -fx-border-color: #D9D9D9;">
+       <TableView fx:id="tablaOfertas" layoutX="17.0" layoutY="110.0" prefHeight="234.0" prefWidth="558.0" style="-fx-background-color: #FFF9F9; -fx-border-width: 1; -fx-border-color: #D9D9D9;">
            <columns>
                <TableColumn fx:id="empresaCol" prefWidth="162.0" text="Empresa" />
-               <TableColumn fx:id="ofertadasCol" prefWidth="79.0" text="Ofertadas" />
-               <TableColumn fx:id="restantesCol" prefWidth="73.0" text="Restantes" />
-               <TableColumn fx:id="precioCol" prefWidth="111.0" text="Fecha oferta" />
-               <TableColumn fx:id="confirmadoCol" prefWidth="131.0" text="Confirmada" />
+               <TableColumn fx:id="precioCol" prefWidth="76.0" text="Precio" />
+               <TableColumn fx:id="restantesCol" prefWidth="113.0" text="Restantes" />
+               <TableColumn fx:id="fechaCol" prefWidth="114.0" text="Fecha oferta" />
+               <TableColumn fx:id="confirmadoCol" minWidth="0.0" prefWidth="91.0" text="Confirmada" />
            </columns>
        </TableView>
        <JFXTextField fx:id="campoPrecio" focusColor="#a6acbf" labelFloat="true" layoutX="595.0" layoutY="275.0" prefHeight="31.0" prefWidth="146.0" promptText="Precio" unFocusColor="#d0caca" />

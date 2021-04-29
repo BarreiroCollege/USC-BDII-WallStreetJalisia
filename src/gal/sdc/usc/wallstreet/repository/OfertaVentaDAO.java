@@ -44,21 +44,20 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
 
         return ofertas;
     }
+
     public List<OfertaVenta> getOfertasVentaUsuario(String empresa, String usuario) {
         List<OfertaVenta> ofertas = new ArrayList<>();
-        try{
-            String statement = "SELECT * FROM oferta_venta " +
-                    "WHERE confirmado is true and empresa=? " +
-                    "and usuario=? ";
-            statement += "and restantes>0 ORDER BY precio_venta asc";
+            try{
+                String statement = "SELECT * FROM oferta_venta WHERE usuario=? and restantes>0 ";
+                if(empresa != null) statement +=  "and empresa = ?  ";
+                statement += "ORDER BY precio_venta asc";
 
             PreparedStatement ps = conexion.prepareStatement(statement);
-            ps.setString(1,empresa);
-         ps.setString(2,usuario);
+            ps.setString(1,usuario);
+            if(empresa!=null) ps.setString(2,empresa);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                OfertaVenta oferta = Mapeador.map(rs, OfertaVenta.class);
-                ofertas.add(oferta);
+                ofertas.add(Mapeador.map(rs, OfertaVenta.class));
             }
         } catch (SQLException e) {
             e.printStackTrace();
