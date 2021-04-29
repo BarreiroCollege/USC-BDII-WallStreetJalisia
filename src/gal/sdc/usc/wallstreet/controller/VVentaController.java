@@ -49,7 +49,7 @@ public class VVentaController extends DatabaseLinker {
     @FXML
     private TableColumn<OfertaVenta,Float> precioCol;
     @FXML
-    private TableColumn<OfertaVenta,Date> fechaCol;
+    private TableColumn<OfertaVenta,Boolean> confirmadoCol;
     @FXML
     private JFXTextField campoNumero;
     @FXML
@@ -75,7 +75,7 @@ public class VVentaController extends DatabaseLinker {
         ofertadasCol.setCellValueFactory(new PropertyValueFactory<>("numParticipaciones"));
         restantesCol.setCellValueFactory(new PropertyValueFactory<>("restantes"));
         precioCol.setCellValueFactory(new PropertyValueFactory<>("precioVenta"));
-        fechaCol.setCellValueFactory(new PropertyValueFactory<>("fecha"));
+        confirmadoCol.setCellValueFactory(new PropertyValueFactory<>("confirmado"));
         tablaOfertas.setItems(datosTabla);
 
         tablaOfertas.setSelectionModel(null); // Evitamos que se seleccionen filas (estético)
