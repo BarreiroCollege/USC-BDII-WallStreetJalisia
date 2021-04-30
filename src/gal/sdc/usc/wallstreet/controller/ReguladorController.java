@@ -28,6 +28,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class ReguladorController extends DatabaseLinker {
+    public static final String VIEW = "regulador";
+    public static final Integer HEIGHT = 500;
+    public static final Integer WIDTH = 700;
+    public static final String TITULO = "Administración";
 
     //<editor-fold defaultstate="collapsed" desc="Variables desde FXML">
     // Pestaña de pendientes
