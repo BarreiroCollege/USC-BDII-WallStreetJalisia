@@ -63,7 +63,7 @@ values ('eva', '10024875E', 'Eva', 'Doural Méndez');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
 values ('pepe', 'sha1:64000:18:fRyIy2KpkOhXIkFl9+OCu6BPq32xY2+Y:d5j3M7amOsYqisxLDk6VbSL3', 'Calle del mar, 78', '15701', 'Santiago de Compostela', 678910344, 1485.30, 0.0,  null, null,'U4NREHH3F4LJONAIBGOD3YT66CHVZFKR','urrs', true);
 insert into inversor (usuario, dni, nombre, apellidos)
-values ('pepe', '10024875E', 'Eva', 'Doural Méndez');
+values ('pepe', '10024875E', 'Pepe', 'Doural Méndez');
 
 insert into usuario(identificador,clave)
 values('regulador','sha1:64000:18:fRyIy2KpkOhXIkFl9+OCu6BPq32xY2+Y:d5j3M7amOsYqisxLDk6VbSL3');

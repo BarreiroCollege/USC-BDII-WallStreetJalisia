@@ -6,11 +6,7 @@ import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXTextField;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import gal.sdc.usc.wallstreet.model.*;
-import gal.sdc.usc.wallstreet.repository.SuperUsuarioDAO;
-import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
-import gal.sdc.usc.wallstreet.repository.VentaDAO;
-import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
-import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
+import gal.sdc.usc.wallstreet.repository.*;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.Iconos;
 import javafx.beans.property.SimpleStringProperty;
@@ -150,13 +146,14 @@ public class VCompraController extends DatabaseLinker {
             return;
 
         // Variables de estado
-        float saldo, saldoInicial;
+        float saldo, saldoInicial, precio;
         int acomprar,partPosibles,compradas = 0;
 
         // INICIAMOS TRANSACCION
         super.iniciarTransaccion();
 
         //Recojemos los datos actualizados
+        Regulador regulador = super.getDAO(ReguladorDAO.class).getRegulador();
         actualizarDatosTabla();
         actualizarSaldo();
         saldo = Float.parseFloat(campoSaldo.getText());
@@ -175,18 +172,52 @@ public class VCompraController extends DatabaseLinker {
             partPosibles = Math.min(partPosibles, oferta.getRestantes());
 
             // TODO incluir la comision
-
             compradas += partPosibles;
-            saldo -= partPosibles * oferta.getPrecioVenta();
+            precio = partPosibles * oferta.getPrecioVenta();
+            saldo -= precio;
 
+            // Se inserta la venta en la BD, las 'restantes' en la oferta_venta se reducen con un trigger
             getDAO(VentaDAO.class).insertar(new Venta.Builder().withCantidad(partPosibles)
                                             .withOfertaVenta(oferta)
                                             .withFecha(new Date(System.currentTimeMillis()))
                                             .withUsuarioCompra(usr.getSuperUsuario())
                                             .build());
+
+            // Aumentamos el saldo del vendedor (menos comision), que puede ser un Usuario o Sociedad
+            Object vendedor = super.getDAO(UsuarioDAO.class).seleccionar(oferta.getUsuario().getIdentificador());
+            if(vendedor == null){ // Es sociedad
+                vendedor = super.getDAO(SociedadDAO.class).seleccionar(oferta.getUsuario().getIdentificador());
+                ((Sociedad)vendedor).setSaldoComunal(((Sociedad)vendedor).getSaldoComunal()+precio*(1-regulador.getComision()));
+                super.getDAO(SociedadDAO.class).actualizar((Sociedad)vendedor);
+            }else{ // Es usuario
+                vendedor = super.getDAO(UsuarioDAO.class).seleccionar(oferta.getUsuario().getIdentificador());
+                ((Usuario)vendedor).setSaldo(((Usuario)vendedor).getSaldo()+precio*(1-regulador.getComision()));
+                super.getDAO(UsuarioDAO.class).actualizar((Usuario) vendedor);
+            }
+
+            // Reducimos la cartera de participaciones del vendedor
+            Participacion cartera = super.getDAO(ParticipacionDAO.class).seleccionar(oferta.getUsuario(), oferta.getEmpresa());
+            cartera.setCantidad(cartera.getCantidad()-partPosibles);
+            cartera.setCantidadBloqueada(cartera.getCantidadBloqueada()-partPosibles);
+            super.getDAO(ParticipacionDAO.class).actualizar(cartera);
+
+            // Le damos la comision al regulador
+            regulador.getUsuario().setSaldo(regulador.getUsuario().getSaldo()+precio+regulador.getComision());
+            super.getDAO(UsuarioDAO.class).actualizar(regulador.getUsuario());
+
+            // Aumentamos la cartera de participaciones del comprador, si es la primera vez que compra se crea
+            cartera = super.getDAO(ParticipacionDAO.class).seleccionar(usr.getSuperUsuario(), oferta.getEmpresa());
+            if(cartera !=null){
+                cartera.setCantidad(cartera.getCantidad()+partPosibles);
+                super.getDAO(ParticipacionDAO.class).actualizar(cartera);
+            } else{
+                cartera = new Participacion.Builder().withCantidad(partPosibles).withEmpresa(oferta.getEmpresa()).withUsuario(usr.getSuperUsuario()).build();
+                super.getDAO(ParticipacionDAO.class).insertar(cartera);
+            }
+
         }
 
-        // Actualizamos el saldo en la BD
+        // Reducimos el saldo del comprador
         usr.setSaldo(saldo+usr.getSaldoBloqueado());
         getDAO(UsuarioDAO.class).actualizar(usr);
 
@@ -198,7 +229,6 @@ public class VCompraController extends DatabaseLinker {
             mensaje = "Compra fallida!";
         }
 
-        // TODO deberiamos dejar la empresa seleccionada?
         // Actualizamos los elementos gráficos
         notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label(mensaje), Duration.seconds(3.0), null));
         actualizarVentana();

@@ -217,7 +217,7 @@ alter table regulador
     owner to postgres;
 
 -- Función asociada al trigger actualizarNumParticipaciones.
--- Disminuye restantes según el número de participaciones
+-- Disminuye restantes según el número de participaciones vendidas
 -- de la venta.
 create or replace function actualizar_participaciones_restantes() returns trigger language plpgsql as $trigger$
 begin
@@ -225,15 +225,6 @@ begin
     update oferta_venta
     set restantes = restantes - NEW.cantidad
     where fecha = NEW.ov_fecha and usuario = NEW.ov_usuario;
-    -- Reducimos las compradas de la cartera del vendedor
-    update participacion
-    set (cantidad_bloqueada, cantidad) = (cantidad_bloqueada - NEW.cantidad, cantidad-NEW.cantidad)
-    where usuario = NEW.ov_usuario;
-    -- Aumentamos el saldo del vendedor
-    update usuario
-    set saldo = saldo + NEW.cantidad * (select precio_venta from oferta_venta where usuario = NEW.ov_usuario and fecha = NEW.ov_fecha)
-    where identificador = NEW.ov_usuario;
-    return new;
 end;
 $trigger$;
 
@@ -244,9 +235,8 @@ create trigger actualizarRestantes after insert on venta
 
 -- =================================================================================================
 
--- Función asociada al trigger actualizarNumParticipaciones.
--- Disminuye restantes según el número de participaciones
--- de la venta.
+-- Función asociada al trigger insertarNumParticipaciones.
+-- Cuando se lanza una oferta se establece restantes = num_participaciones
 create or replace function insertar_participaciones_restantes() returns trigger language plpgsql as $trigger$
 begin
     NEW.restantes := NEW.num_participaciones;
@@ -254,7 +244,7 @@ begin
 end;
 $trigger$;
 
--- Trigger que se activa al insertar una nueva venta y actualiza oferta_venta
+-- Trigger que se activa al insertar una nueva oferta y actualiza oferta_venta
 create trigger insertarRestantes before insert on oferta_venta
     for each row execute procedure insertar_participaciones_restantes();
 
