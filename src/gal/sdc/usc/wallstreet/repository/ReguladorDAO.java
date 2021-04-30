@@ -1,7 +1,6 @@
 package gal.sdc.usc.wallstreet.repository;
 
 import gal.sdc.usc.wallstreet.model.Regulador;
-import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.repository.helpers.DAO;
 import gal.sdc.usc.wallstreet.util.Mapeador;
 
@@ -15,7 +14,7 @@ public class ReguladorDAO extends DAO<Regulador> {
         super(conexion, Regulador.class);
     }
 
-    public Regulador getSuperUsuario() {
+    public Regulador getRegulador() {
         try (PreparedStatement ps = conexion.prepareStatement(
                 "SELECT * FROM regulador LIMIT 1"
         )) {

@@ -28,7 +28,7 @@
             </VBox.margin>
             <JFXTabPane VBox.vgrow="ALWAYS" maxHeight="Infinity" minHeight="190.0" fx:id="tabVentana">
                 <Tab text="Sociedad" id="detalles">
-                    <VBox alignment="TOP_CENTER">
+                    <VBox>
                         <Label minHeight="25.0"/>
                         <JFXTextField promptText="Identificador" labelFloat="true" fx:id="txtIdentificador"/>
                         <Label minHeight="40.0"/>
@@ -43,6 +43,12 @@
                                 <JFXComboBox fx:id="cmbToleranciaUnidad"/>
                             </HBox>
                         </HBox>
+                        <Label minHeight="50.0"/>
+                        <JFXButton text="Transferir Saldo" fx:id="btnSaldo" buttonType="RAISED">
+                            <font>
+                                <Font name="System Bold" size="16.0"/>
+                            </font>
+                        </JFXButton>
                     </VBox>
                 </Tab>
                 <Tab text="Miembros">

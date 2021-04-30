@@ -67,6 +67,8 @@ public class SociedadController extends DatabaseLinker implements Initializable 
     private JFXTextField txtTolerancia;
     @FXML
     private JFXComboBox<Label> cmbToleranciaUnidad;
+    @FXML
+    private JFXButton btnSaldo;
 
     @FXML
     private TableView<PropuestaCompra> tblPropuestas;
@@ -259,6 +261,32 @@ public class SociedadController extends DatabaseLinker implements Initializable 
             btnEditar.setText("Editar");
             btnVolver.setText("Volver");
         }
+    }
+
+    private void onBtnSaldo(ActionEvent e) {
+        Comunicador comunicador = new Comunicador() {
+            @Override
+            public Object[] getData() {
+                return new Object[] {SociedadController.super.getUsuarioSesion().getUsuario().getSociedad()};
+            }
+
+            @Override
+            public void onSuccess() {
+                asignarValores();
+            }
+
+            @Override
+            public void onFailure() {
+                Main.mensaje("Hubo un error transfiriendo los fondos");
+            }
+        };
+        SociedadSaldoController.setComunicador(comunicador);
+        Main.dialogo(
+                SociedadSaldoController.VIEW,
+                SociedadSaldoController.WIDTH,
+                SociedadSaldoController.HEIGHT,
+                SociedadSaldoController.TITULO
+        );
     }
 
     private void onBtnAbandonar(ActionEvent e) {
@@ -482,6 +510,7 @@ public class SociedadController extends DatabaseLinker implements Initializable 
         cmbToleranciaUnidad.getSelectionModel().selectFirst();
 
         btnVolver.setOnAction(this::onBtnVolver);
+        btnSaldo.setOnAction(this::onBtnSaldo);
         btnAbandonar.setOnAction(this::onBtnAbandonar);
         btnEditar.setOnAction(this::onBtnEditar);
 
