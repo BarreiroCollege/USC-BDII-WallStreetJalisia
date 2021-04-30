@@ -208,6 +208,7 @@ public class Usuario extends Entidad {
                 '}';
     }
 
+
     public static class Builder {
         private final Usuario usuario = new Usuario();
 

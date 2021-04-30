@@ -75,6 +75,14 @@ values ('pepe', 'sha1:64000:18:fRyIy2KpkOhXIkFl9+OCu6BPq32xY2+Y:d5j3M7amOsYqisxL
         true);
 insert into inversor (usuario, dni, nombre, apellidos)
 values ('pepe', '10024875E', 'Eva', 'Doural Méndez');
+insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
+values ('alex', 'sha1:64000:18:X3VP9nH9e1I22k867DfORqwyZbkAcbGc:auveQ6rmVBCsYT/tsEFaB8d7', 'Gran Vía, 15', '15701', 'Santiago de Compostela', 648512326, 0.0, 0.0, '2021-01-01 12:51:42', null, null, null, false);
+insert into inversor (usuario, dni, nombre, apellidos)
+values ('alex', '95214724B', 'Álex', 'Castro Pérez');
+insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
+values ('sherlock', 'sha1:64000:18:BOmExqs4iWQxxY5mB4ogKoCaai4l8D1F:bmBSjmSzez/Ml7CNDmFhPuJF', 'Baker Street 221B', 'NW1', 'Londres', null, 0.0, 0.0, '2021-03-14 15:22:33', null, null, null, false);
+insert into inversor (usuario, dni, nombre, apellidos)
+values ('sherlock', '10011001S', 'Shelock', 'Holmes');
 
 
 

@@ -3,10 +3,12 @@ package gal.sdc.usc.wallstreet;
 import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXSnackbarLayout;
 import gal.sdc.usc.wallstreet.controller.AccesoController;
+import gal.sdc.usc.wallstreet.controller.ReguladorController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -35,10 +37,23 @@ public class Main extends Application {
         }
     }
 
+    public static void aviso(String mensaje){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Aviso");
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
+
     @Override
-    public void start(Stage primaryStage) {
-        Main.primaryStage = primaryStage;
-        Main.ventana(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT, AccesoController.TITULO);
+    public void start(Stage primaryStage) throws IOException {
+          Main.primaryStage = primaryStage;
+       // Main.ventana(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT, AccesoController.TITULO);
+          Parent root = FXMLLoader.load(getClass().getResource("view/regulador.fxml"));
+          primaryStage.setTitle("Administración");
+          primaryStage.setScene(new Scene(root, 700, 500));
+          Main.snackbar = new JFXSnackbar((AnchorPane) root);;
+          primaryStage.show();
     }
 
     public static void dialogo(String view, int width, int height, String titulo) {

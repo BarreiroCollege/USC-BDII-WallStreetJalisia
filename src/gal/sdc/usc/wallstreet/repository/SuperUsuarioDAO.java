@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class SuperUsuarioDAO extends DAO<SuperUsuario> {
+
     public SuperUsuarioDAO(Connection conexion) {
         super(conexion, SuperUsuario.class);
     }

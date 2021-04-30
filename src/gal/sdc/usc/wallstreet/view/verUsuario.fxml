@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="500.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.VerUsuarioController">
+   <children>
+      <Label fx:id="txtPrincipalNombre" alignment="CENTER" layoutY="34.0" prefHeight="17.0" prefWidth="321.0" text="Nombre" />
+      <Label layoutX="42.0" layoutY="85.0" text="Identificador:" />
+      <Label layoutX="51.0" layoutY="125.0" text="Dirección:" />
+      <Label layoutX="39.0" layoutY="163.0" text="Código postal:" />
+      <Label layoutX="51.0" layoutY="206.0" text="Localidad:" />
+      <Label layoutX="53.0" layoutY="250.0" text="Teléfono:" />
+      <Label fx:id="txtId" layoutX="180.0" layoutY="85.0" text="id" />
+      <Label fx:id="txtDireccion" layoutX="176.0" layoutY="125.0" text="dirección" />
+      <Label fx:id="txtCp" layoutX="170.0" layoutY="163.0" text="cp" />
+      <Label fx:id="txtLocalidad" layoutX="166.0" layoutY="206.0" text="localidad" />
+      <Label fx:id="txtTlf" layoutX="175.0" layoutY="250.0" text="tlf" />
+      <Label fx:id="txtTipo" layoutX="139.0" layoutY="350.0" text="Tipo" />
+      <Label fx:id="txtTituloDniCif" layoutX="49.0" layoutY="389.0" text="DNI/CIF:" />
+      <Label fx:id="txtDniCif" layoutX="125.0" layoutY="389.0" text="dni o cif" />
+      <Label layoutX="50.0" layoutY="417.0" text="Nombre:" />
+      <Label fx:id="txtNombre" layoutX="125.0" layoutY="417.0" text="nombre" />
+      <Label fx:id="txtTituloApellidos" layoutX="49.0" layoutY="450.0" text="Apellidos:" />
+      <Label fx:id="txtApellidos" layoutX="132.0" layoutY="450.0" text="apellidos" />
+      <Label layoutX="64.0" layoutY="283.0" text="Saldo:" />
+      <Label layoutX="48.0" layoutY="314.0" text="Saldo bloqueado:" />
+      <Label fx:id="txtSaldo" layoutX="176.0" layoutY="283.0" text="saldo" />
+      <Label fx:id="txtSaldoBloqueado" layoutX="176.0" layoutY="314.0" text="saldo bloqueado" />
+   </children>
+</AnchorPane>

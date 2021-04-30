@@ -108,7 +108,7 @@ public class VCompraController extends DatabaseLinker {
 
         // Cuando se cambie el precio se actualizan las ofertas en base al nuevo
         campoPrecio.textProperty().addListener((observable, oldValue, newValue) -> {
-                actualizarDatosTabla(new ActionEvent());
+            actualizarDatosTabla(new ActionEvent());
         });
 
         // Cargamos saldo y preparamos botones de refresh

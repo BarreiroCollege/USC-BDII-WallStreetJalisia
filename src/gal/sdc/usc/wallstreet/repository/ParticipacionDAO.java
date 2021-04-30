@@ -37,7 +37,7 @@ public class ParticipacionDAO extends DAO<Participacion> {
      */
     public List<Participacion> getParticipaciones(String idUsuario) {
         List<Participacion> participaciones = new ArrayList<>();
-        SuperUsuario usuario = new SuperUsuario.Builder(idUsuario).build();
+        Usuario usuario = new Usuario.Builder(new SuperUsuario.Builder(idUsuario).build()).build();
 
         try (PreparedStatement ps = conexion.prepareStatement(
                 "SELECT p.empresa, e.nombre, e.cif, p.cantidad, p.cantidad_bloqueada " +
@@ -94,5 +94,36 @@ public class ParticipacionDAO extends DAO<Participacion> {
             e.printStackTrace();
         }
         return participaciones;
+    }
+    public Boolean tieneParticipaciones(Usuario usuario){
+        return tieneParticipaciones(usuario.getSuperUsuario().getIdentificador());
+    }
+
+    /***
+     * Comprueba si un superusuario tiene participaciones, ya sea como poseedor (usuario) o como empresa de las
+     * participaciones.
+     *
+     * @param idSuperUsuario Clave primaria.
+     * @return true, si el superusuario tiene participaciones; false, si no las tiene; null, en caso de error.
+     */
+    public Boolean tieneParticipaciones(String idSuperUsuario){
+        try(PreparedStatement ps = conexion.prepareStatement(
+                "SELECT count(*) " +
+                        "FROM participacion " +
+                        "WHERE (usuario = ? OR empresa = ?) AND (cantidad > ? OR cantidad_bloqueada > ?)"
+        )){
+            ps.setString(1, idSuperUsuario);
+            ps.setString(2, idSuperUsuario);
+            ps.setInt(3, 0);
+            ps.setInt(4, 0);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()){
+                return rs.getInt(1) != 0;
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }
