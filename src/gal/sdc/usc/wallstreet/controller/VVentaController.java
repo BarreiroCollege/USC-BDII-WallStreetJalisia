@@ -147,33 +147,30 @@ public class VVentaController extends DatabaseLinker {
 
         // INICIAMOS TRANSACCION
         super.iniciarTransaccion();
-
-        actualizarParticipaciones();
+        Boolean ejecutada = true;
         // Si no tiene suficientes o el precio es 0, se informa al usuario y se para
         if(Integer.parseInt(campoNumero.getText())>Integer.parseInt(campoParticipaciones.getText()) || Integer.parseInt(campoNumero.getText())<=0){
             notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label("No dispone de suficientes"),Duration.seconds(3.0),null));
-            return;
-        }
-        if(Float.parseFloat(campoPrecio.getText())<=0){
+            ejecutada = false;
+        }else if(Float.parseFloat(campoPrecio.getText())<=0){
             notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label("Introduzca un precio válido"),Duration.seconds(3.0),null));
-            return;
+            ejecutada = false;
+        }else {
+            Empresa empresa = listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getEmpresa();
+            OfertaVenta oferta = new OfertaVenta.Builder().withPrecioVenta(Float.parseFloat(campoPrecio.getText())).
+                    withEmpresa(empresa).
+                    withUsuario(usr.getSuperUsuario()).
+                    withConfirmado(false).
+                    withNumParticipaciones(Integer.parseInt(campoNumero.getText())).
+                    withComision(super.getDAO(ReguladorDAO.class).getRegulador().getComision())
+                    .build();
+            // Insertamos la oferta
+            getDAO(OfertaVentaDAO.class).insertar(oferta);
+            // Incrementamos su saldo de participaciones bloqueadas
+            Participacion cartera = super.getDAO(ParticipacionDAO.class).seleccionar(usr.getSuperUsuario(), empresa);
+            cartera.setCantidadBloqueada(cartera.getCantidadBloqueada() + oferta.getNumParticipaciones());
+            super.getDAO(ParticipacionDAO.class).actualizar(cartera);
         }
-
-        Empresa empresa = listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getEmpresa();
-        OfertaVenta oferta= new OfertaVenta.Builder().withPrecioVenta(Float.parseFloat(campoPrecio.getText())).
-                withEmpresa(empresa).
-                withUsuario(usr.getSuperUsuario()).
-                withConfirmado(false).
-                withNumParticipaciones(Integer.parseInt(campoNumero.getText())).
-                withComision(super.getDAO(ReguladorDAO.class).getRegulador().getComision())
-                .build();
-        // Insertamos la oferta
-        getDAO(OfertaVentaDAO.class).insertar(oferta);
-        // Incrementamos su saldo de participaciones bloqueadas
-        Participacion cartera = super.getDAO(ParticipacionDAO.class).seleccionar(usr.getSuperUsuario(),empresa);
-        cartera.setCantidadBloqueada(cartera.getCantidadBloqueada()+oferta.getNumParticipaciones());
-        super.getDAO(ParticipacionDAO.class).actualizar(cartera);
-
         // Tratamos de comprometer la transacción e informamos al usuario
         String mensaje;
         if (super.ejecutarTransaccion()) {
@@ -181,7 +178,7 @@ public class VVentaController extends DatabaseLinker {
         }else{
             mensaje = "Lanzamiento fallido";
         }
-        notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label(mensaje), Duration.seconds(3.0), null));
+        if(ejecutada) notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label(mensaje), Duration.seconds(3.0), null));
 
         actualizarVentana();
     }
