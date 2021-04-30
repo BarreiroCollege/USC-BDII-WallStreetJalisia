@@ -37,7 +37,7 @@ public class ParticipacionDAO extends DAO<Participacion> {
      */
     public List<Participacion> getParticipaciones(String idUsuario) {
         List<Participacion> participaciones = new ArrayList<>();
-        Usuario usuario = new Usuario.Builder(new SuperUsuario.Builder(idUsuario).build()).build();
+        SuperUsuario usuario = new SuperUsuario.Builder(idUsuario).build();
 
         try (PreparedStatement ps = conexion.prepareStatement(
                 "SELECT p.empresa, e.nombre, e.cif, p.cantidad, p.cantidad_bloqueada " +

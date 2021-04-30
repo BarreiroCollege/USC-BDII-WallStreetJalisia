@@ -3,7 +3,6 @@ package gal.sdc.usc.wallstreet;
 import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXSnackbarLayout;
 import gal.sdc.usc.wallstreet.controller.AccesoController;
-import gal.sdc.usc.wallstreet.controller.ReguladorController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -37,7 +36,7 @@ public class Main extends Application {
         }
     }
 
-    public static void aviso(String mensaje){
+    public static void aviso(String mensaje) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Aviso");
         alert.setHeaderText(null);
@@ -46,8 +45,9 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws IOException {
-          Main.ventana(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT, AccesoController.TITULO);
+    public void start(Stage primaryStage) {
+        Main.primaryStage = primaryStage;
+        Main.ventana(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT, AccesoController.TITULO);
     }
 
     public static void dialogo(String view, int width, int height, String titulo) {
