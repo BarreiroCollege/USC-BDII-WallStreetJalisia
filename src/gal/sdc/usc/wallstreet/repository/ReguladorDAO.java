@@ -14,7 +14,7 @@ public class ReguladorDAO extends DAO<Regulador> {
         super(conexion, Regulador.class);
     }
 
-    public Regulador getSuperUsuario() {
+    public Regulador getRegulador() {
         try (PreparedStatement ps = conexion.prepareStatement(
                 "SELECT * FROM regulador LIMIT 1"
         )) {
