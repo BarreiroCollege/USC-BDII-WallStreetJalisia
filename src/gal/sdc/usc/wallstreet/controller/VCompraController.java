@@ -174,6 +174,8 @@ public class VCompraController extends DatabaseLinker {
             partPosibles = Math.min(partPosibles, acomprar - compradas);
             partPosibles = Math.min(partPosibles, oferta.getRestantes());
 
+            // TODO incluir la comision
+
             compradas += partPosibles;
             saldo -= partPosibles * oferta.getPrecioVenta();
 

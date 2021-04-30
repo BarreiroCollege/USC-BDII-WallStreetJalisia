@@ -69,6 +69,7 @@ public class VVentaController extends DatabaseLinker {
 
         datosTabla = FXCollections.observableArrayList();
 
+        // TODO recoger usuario sesion
         // Recuperamos el usuario
         usr = super.getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder("marcos").build());
 
@@ -98,7 +99,6 @@ public class VVentaController extends DatabaseLinker {
         // Cargamos saldo y preparamos botones de refresh
         botonRefresh.setGraphic(Iconos.icono(FontAwesomeIcon.REFRESH, "1em"));
 
-       //TODO si se quere meter esto en función de actualizar ventana
         actualizarVentana();
     }
 
@@ -156,7 +156,6 @@ public class VVentaController extends DatabaseLinker {
         }
 
         Empresa empresa = listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getEmpresa();
-        // TODO Incluir comision regulador
         OfertaVenta oferta= new OfertaVenta.Builder().withPrecioVenta(Float.parseFloat(campoPrecio.getText())).
                 withEmpresa(empresa).
                 withUsuario(usr.getSuperUsuario()).

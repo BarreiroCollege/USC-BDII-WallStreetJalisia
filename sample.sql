@@ -8,6 +8,8 @@ insert into superusuario(identificador)
 values ('eva');
 insert into superusuario(identificador)
 values ('pepe');
+insert into superusuario(identificador)
+values ('regulador');
 
 insert into superusuario(identificador)
 values ('teceric');
@@ -63,6 +65,10 @@ values ('pepe', 'sha1:64000:18:fRyIy2KpkOhXIkFl9+OCu6BPq32xY2+Y:d5j3M7amOsYqisxL
 insert into inversor (usuario, dni, nombre, apellidos)
 values ('pepe', '10024875E', 'Eva', 'Doural Méndez');
 
+insert into usuario(identificador,clave)
+values('regulador','sha1:64000:18:fRyIy2KpkOhXIkFl9+OCu6BPq32xY2+Y:d5j3M7amOsYqisxLDk6VbSL3');
+insert into regulador(usuario, comision)
+values ('regulador',0.05);
 
 
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
