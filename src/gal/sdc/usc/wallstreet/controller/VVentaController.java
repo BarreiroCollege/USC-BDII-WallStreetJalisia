@@ -162,14 +162,12 @@ public class VVentaController extends DatabaseLinker {
                 withUsuario(usr.getSuperUsuario()).
                 withConfirmado(false).
                 withNumParticipaciones(Integer.parseInt(campoNumero.getText())).
-                withComision(0.5f)
+                withComision(super.getDAO(ReguladorDAO.class).getRegulador().getComision())
                 .build();
         // Insertamos la oferta
         getDAO(OfertaVentaDAO.class).insertar(oferta);
         // Aumentamos su saldo de participaciones bloqueadas
-        Participacion cartera = super.getDAO(ParticipacionDAO.class).seleccionar(new Participacion.Builder().
-                                                                                withUsuario(usr).
-                                                                                withEmpresa(empresa).build());
+        Participacion cartera = super.getDAO(ParticipacionDAO.class).seleccionar(usr.getSuperUsuario(),empresa);
         cartera.setCantidadBloqueada(cartera.getCantidadBloqueada()+oferta.getNumParticipaciones());
         super.getDAO(ParticipacionDAO.class).actualizar(cartera);
 
@@ -195,9 +193,7 @@ public class VVentaController extends DatabaseLinker {
 
         Empresa empresa = listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getEmpresa();
         // Se ponen las participaciones restantes a 0 y se le desbloquean de su saldo
-        Participacion saldo = super.getDAO(ParticipacionDAO.class).seleccionar(new Participacion.Builder()
-                                                                                    .withUsuario(usr)
-                                                                                    .withEmpresa(empresa));
+        Participacion saldo = super.getDAO(ParticipacionDAO.class).seleccionar(usr.getSuperUsuario(),empresa);
         saldo.setCantidadBloqueada(saldo.getCantidadBloqueada()-oferta.getRestantes());
         super.getDAO(ParticipacionDAO.class).actualizar(saldo);
         oferta.setRestantes(0);
