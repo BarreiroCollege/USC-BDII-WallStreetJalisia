@@ -40,7 +40,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         Main.primaryStage = primaryStage;
-        Main.ventana(VVentaController.VIEW, VVentaController.WIDTH, VVentaController.HEIGHT, VVentaController.TITULO);
+        Main.ventana(VCompraController.VIEW, VCompraController.WIDTH, VCompraController.HEIGHT, VCompraController.TITULO);
     }
 
     public static void dialogo(String view, int width, int height, String titulo) {

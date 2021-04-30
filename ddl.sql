@@ -225,6 +225,7 @@ begin
     update oferta_venta
     set restantes = restantes - NEW.cantidad
     where fecha = NEW.ov_fecha and usuario = NEW.ov_usuario;
+    return new;
 end;
 $trigger$;
 

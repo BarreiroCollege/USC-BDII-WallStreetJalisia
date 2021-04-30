@@ -20,7 +20,7 @@
           <JFXButton layoutX="592.0" layoutY="351.0" onAction="#nuevaOfertaVenta" prefHeight="35.0" prefWidth="152.0" ripplerFill="#838282" style="-fx-background-color: #E9E9E9;" text="Lanzar oferta" />
           <JFXButton fx:id="btnVolver" layoutX="17.0" layoutY="351.0" prefHeight="35.0" prefWidth="81.0" style="-fx-background-color: #E9E9E9;" text="Volver" />
           <JFXComboBox fx:id="empresaComboBox" layoutX="57.0" layoutY="67.0" onAction="#actualizarDatosTabla" prefHeight="31.0" prefWidth="347.0" promptText="Empresa" visibleRowCount="8" />
-          <JFXTextField fx:id="campoNumero" focusColor="#a6acbf" labelFloat="true" layoutX="595.0" layoutY="227.0" prefHeight="31.0" prefWidth="146.0" promptText="Cantidad" unFocusColor="#d0caca" />
+          <JFXTextField fx:id="campoNumero" focusColor="#a6acbf" labelFloat="true" layoutX="595.0" layoutY="200.0" prefHeight="31.0" prefWidth="146.0" promptText="Cantidad" unFocusColor="#d0caca" />
           <JFXTextField fx:id="campoParticipaciones" editable="false" focusColor="#a6acbf" labelFloat="true" layoutX="428.0" layoutY="67.0" prefHeight="31.0" prefWidth="116.0" promptText="De esta empresa" style="-fx-highlight-fill: null; -fx-highlight-text-fill: null;" text="0" unFocusColor="#d0caca" />
           <JFXButton fx:id="botonRefresh" layoutX="14.0" layoutY="14.0" onAction="#actualizarVentana" prefHeight="35.0" prefWidth="35.0" />
           <JFXSnackbar fx:id="notificationBar" layoutX="55.0" layoutY="17.0" />

@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.converter.IntegerStringConverter;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -171,7 +172,6 @@ public class VCompraController extends DatabaseLinker {
             partPosibles = Math.min(partPosibles, acomprar - compradas);
             partPosibles = Math.min(partPosibles, oferta.getRestantes());
 
-            // TODO incluir la comision
             compradas += partPosibles;
             precio = partPosibles * oferta.getPrecioVenta();
             saldo -= precio;
@@ -184,13 +184,12 @@ public class VCompraController extends DatabaseLinker {
                                             .build());
 
             // Aumentamos el saldo del vendedor (menos comision), que puede ser un Usuario o Sociedad
-            Object vendedor = super.getDAO(UsuarioDAO.class).seleccionar(oferta.getUsuario().getIdentificador());
+            Object vendedor = super.getDAO(UsuarioDAO.class).seleccionar(oferta.getUsuario());
             if(vendedor == null){ // Es sociedad
-                vendedor = super.getDAO(SociedadDAO.class).seleccionar(oferta.getUsuario().getIdentificador());
+                vendedor = super.getDAO(SociedadDAO.class).seleccionar(oferta.getUsuario());
                 ((Sociedad)vendedor).setSaldoComunal(((Sociedad)vendedor).getSaldoComunal()+precio*(1-regulador.getComision()));
                 super.getDAO(SociedadDAO.class).actualizar((Sociedad)vendedor);
             }else{ // Es usuario
-                vendedor = super.getDAO(UsuarioDAO.class).seleccionar(oferta.getUsuario().getIdentificador());
                 ((Usuario)vendedor).setSaldo(((Usuario)vendedor).getSaldo()+precio*(1-regulador.getComision()));
                 super.getDAO(UsuarioDAO.class).actualizar((Usuario) vendedor);
             }
@@ -202,7 +201,7 @@ public class VCompraController extends DatabaseLinker {
             super.getDAO(ParticipacionDAO.class).actualizar(cartera);
 
             // Le damos la comision al regulador
-            regulador.getUsuario().setSaldo(regulador.getUsuario().getSaldo()+precio+regulador.getComision());
+            regulador.getUsuario().setSaldo(regulador.getUsuario().getSaldo()+precio*regulador.getComision());
             super.getDAO(UsuarioDAO.class).actualizar(regulador.getUsuario());
 
             // Aumentamos la cartera de participaciones del comprador, si es la primera vez que compra se crea
@@ -224,7 +223,7 @@ public class VCompraController extends DatabaseLinker {
         // Tratamos de comprometer la transacción e informamos al usuario
         String mensaje;
         if (super.ejecutarTransaccion()) {
-            mensaje = "Éxito. Se compraron "+ compradas + " participaciones a una media de " + (saldoInicial-saldo)/compradas + " €/participacion";
+            mensaje = "Éxito. Se compraron "+ compradas + " participaciones a una media de " + new DecimalFormat("0.00").format((saldoInicial-saldo)/compradas) + " €/participacion";
         }else{
             mensaje = "Compra fallida!";
         }
