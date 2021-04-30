@@ -13,6 +13,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -74,6 +75,7 @@ public class VVentaController extends DatabaseLinker {
         usr = super.getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder("pepePhone").build());
 
         // Setup de las columnas de la tabla
+        tablaOfertas.setOnSort(Event::consume); // Impedimos reordenamiento
         precioCol.setCellValueFactory(new PropertyValueFactory<>("precioVenta"));
         restantesCol.setCellValueFactory(new PropertyValueFactory<>("restantes"));
         confirmadoCol.setCellValueFactory(new PropertyValueFactory<>("confirmado"));

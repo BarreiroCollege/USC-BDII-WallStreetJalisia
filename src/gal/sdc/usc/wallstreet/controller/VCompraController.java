@@ -13,10 +13,12 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import javafx.util.Duration;
 import javafx.util.converter.IntegerStringConverter;
 
@@ -73,6 +75,7 @@ public class VCompraController extends DatabaseLinker {
         usr = super.getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder("eva").build());
 
         // Setup de las columnas de la tabla
+        tablaOfertas.setOnSort(Event::consume); // Impedimos reordenamiento
         precioCol.setCellValueFactory(new PropertyValueFactory<>("precioVenta"));
         fechaCol.setCellValueFactory(new PropertyValueFactory<>("fecha"));
         cantidadCol.setCellValueFactory(new PropertyValueFactory<>("restantes"));
@@ -143,8 +146,10 @@ public class VCompraController extends DatabaseLinker {
 
     public void comprar(){
         // Si alguno de los campos necesarios está vacío o es 0 no se hace nada
-        if (campoPrecio.getText().isEmpty() || Float.parseFloat(campoPrecio.getText())==0 || campoNumero.getText().isEmpty() || Integer.parseInt(campoNumero.getText())==0 || empresaComboBox.getSelectionModel().getSelectedIndex() == -1)
+        if (campoPrecio.getText().isEmpty() || Float.parseFloat(campoPrecio.getText())==0 || campoNumero.getText().isEmpty() || Integer.parseInt(campoNumero.getText())==0 || empresaComboBox.getSelectionModel().getSelectedIndex() == -1 || Float.parseFloat(campoSaldo.getText())==0) {
+            notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label("Introduzca valores válidos"), Duration.seconds(3.0), null));
             return;
+        }
 
         // Variables de estado
         float saldo, saldoInicial, precio;
@@ -223,7 +228,8 @@ public class VCompraController extends DatabaseLinker {
         // Tratamos de comprometer la transacción e informamos al usuario
         String mensaje;
         if (super.ejecutarTransaccion()) {
-            mensaje = "Éxito. Se compraron "+ compradas + " participaciones a una media de " + new DecimalFormat("0.00").format((saldoInicial-saldo)/compradas) + " €/participacion";
+            if(compradas==0) mensaje="No dispone de suficiente saldo";
+            else mensaje = "Éxito. Se compraron "+ compradas + " participaciones a una media de " + new DecimalFormat("0.00").format((saldoInicial-saldo)/compradas) + " €/participacion";
         }else{
             mensaje = "Compra fallida!";
         }
