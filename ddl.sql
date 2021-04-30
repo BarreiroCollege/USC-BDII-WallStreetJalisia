@@ -232,6 +232,7 @@ begin
     -- Aumentamos el saldo del vendedor
     update usuario
     set saldo = saldo + NEW.cantidad * (select precio_venta from oferta_venta where usuario = NEW.ov_usuario and fecha = NEW.ov_fecha)
+    where identificador = NEW.ov_usuario;
     return new;
 end;
 $trigger$;
