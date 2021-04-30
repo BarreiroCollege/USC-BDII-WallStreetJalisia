@@ -47,13 +47,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-          Main.primaryStage = primaryStage;
-       // Main.ventana(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT, AccesoController.TITULO);
-          Parent root = FXMLLoader.load(getClass().getResource("view/regulador.fxml"));
-          primaryStage.setTitle("Administración");
-          primaryStage.setScene(new Scene(root, 700, 500));
-          Main.snackbar = new JFXSnackbar((AnchorPane) root);;
-          primaryStage.show();
+          Main.ventana(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT, AccesoController.TITULO);
     }
 
     public static void dialogo(String view, int width, int height, String titulo) {

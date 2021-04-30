@@ -72,7 +72,7 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
         Usuario usuario = new Usuario.Builder(new SuperUsuario.Builder(idUsuario).build()).build();
 
         try (PreparedStatement ps = conexion.prepareStatement(
-                "SELECT o.fecha, o.empresa, e.nombre, e.cif, o.num_participaciones, o.precio_venta " +
+                "SELECT o.fecha, o.empresa, e.nombre, e.cif, o.num_participaciones, o.precio_venta, o.restantes " +
                         "FROM oferta_venta o JOIN empresa e ON o.empresa = e.usuario " +
                         "WHERE o.usuario = ?"
         )) {
@@ -90,6 +90,7 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
                                         .withNombre(rs.getString("nombre")).build()
                         )
                         .withNumParticipaciones(rs.getInt("num_participaciones"))
+                        .withRestantes(rs.getInt("restantes"))
                         .withPrecioVenta(rs.getFloat("precio_venta")).build();
 
                 try (PreparedStatement psFecha = conexion.prepareStatement(
