@@ -37,7 +37,7 @@ public class VCompraController extends DatabaseLinker {
     public static final String VIEW = "vcompra";
     public static final Integer HEIGHT = 425;
     public static final Integer WIDTH = 760;
-    public static final String TITULO = "Comprar";
+    public static final String TITULO = "Comprar participaciones";
 
     @FXML
     private JFXTextField campoNumero;
@@ -115,7 +115,7 @@ public class VCompraController extends DatabaseLinker {
     // FUNCIONALIDADES //
 
     public void actualizarSaldo() {
-        usr = super.getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder("eva").build());
+        usr = super.getDAO(UsuarioDAO.class).seleccionar(usr.getSuperUsuario());
         campoSaldo.setText(String.valueOf(usr.getSaldo() - usr.getSaldoBloqueado()));
     }
 
@@ -154,21 +154,27 @@ public class VCompraController extends DatabaseLinker {
             return;
         }
 
+        super.iniciarTransaccion();
+
+        actualizarDatosTabla();
+        actualizarSaldo();
+
         // Variables de estado
         float saldoInicial = Float.parseFloat(campoSaldo.getText());
 
         Integer compradas = Comprador.comprar(usr, datosTabla, Integer.parseInt(campoNumero.getText()));
-        actualizarDatosTabla();
-        actualizarSaldo();
 
-        // Tratamos de comprometer la transacción e informamos al usuario
         String mensaje;
-        if (compradas == 0) mensaje = "No dispone de suficiente saldo";
-        else if (compradas > 0)
-            mensaje = "Éxito. Se compraron " + compradas + " participaciones a una media de "
-                    + new DecimalFormat("0.00").format((saldoInicial - usr.getSaldoDisponible()) / compradas)
-                    + " €/participacion";
-        else mensaje = "Compra fallida!";
+        // Tratamos de comprometer la transacción e informamos al usuario
+        if(super.ejecutarTransaccion()){
+            if (compradas == 0) mensaje = "No dispone de suficiente saldo";
+            else
+                mensaje = "Éxito. Se compraron " + compradas + " participaciones a una media de "
+                        + new DecimalFormat("0.00").format((saldoInicial - usr.getSaldoDisponible()) / compradas)
+                        + " €/participacion";
+        }else{
+            mensaje = "Compra fallida!";
+        }
 
         // Actualizamos los elementos gráficos
         notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label(mensaje), Duration.seconds(3.0), null));

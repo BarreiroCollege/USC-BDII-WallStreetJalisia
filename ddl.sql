@@ -36,7 +36,7 @@ create table usuario
     cp              varchar(10),
     localidad       varchar(32),
     telefono        integer,
-    saldo           double precision default 0     not null,
+    saldo           double precision default 1000     not null,
     saldo_bloqueado double precision default 0     not null,
     alta            timestamp,
     baja            timestamp,
