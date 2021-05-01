@@ -379,7 +379,8 @@ public class ReguladorController extends DatabaseLinker {
             if (super.getDAO(UsuarioDAO.class).retirarSaldo(Float.parseFloat(txtCantidad.getText()), campoDe)){
                 // Se actualiza la tabla.
                 campoDe.setSaldo(campoDe.getSaldo() - Float.parseFloat(txtCantidad.getText()));
-                tablaUsuarios.refresh();
+                tablaUsuarios.getColumns().get(0).setVisible(false);
+                tablaUsuarios.getColumns().get(0).setVisible(true);
             }
         } else if (campoDe == null){          // Se depositan fondos
             super.getDAO(UsuarioDAO.class).depositarSaldo(Integer.parseInt(txtCantidad.getText()), campoPara);
