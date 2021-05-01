@@ -351,7 +351,8 @@ public class SociedadController extends DatabaseLinker implements Initializable 
             Integer res = Comprador.comprar(
                     super.getUsuarioSesion().getUsuario().getSociedad(),
                     ofertas,
-                    pc.getCantidad()
+                    pc.getCantidad(),
+                    true
             );
 
             if (super.ejecutarTransaccion()) {

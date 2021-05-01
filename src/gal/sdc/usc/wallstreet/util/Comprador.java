@@ -30,12 +30,12 @@ public class Comprador extends DatabaseLinker {
         this.esSociedad = esSociedad;
     }
 
-    private Comprador(UsuarioComprador u, List<OfertaVenta> ofertasVenta, Integer cantidad) {
-        this(u, ofertasVenta, cantidad, false);
+    public static Integer comprar(UsuarioComprador u, List<OfertaVenta> ofertasVenta, Integer cantidad) {
+        return Comprador.comprar(u, ofertasVenta, cantidad, false);
     }
 
-    public static Integer comprar(UsuarioComprador u, List<OfertaVenta> ofertasVenta, Integer cantidad) {
-        Comprador c = new Comprador(u, ofertasVenta, cantidad);
+    public static Integer comprar(UsuarioComprador u, List<OfertaVenta> ofertasVenta, Integer cantidad, Boolean esSociedad) {
+        Comprador c = new Comprador(u, ofertasVenta, cantidad, esSociedad);
         return c.comprar();
     }
 
