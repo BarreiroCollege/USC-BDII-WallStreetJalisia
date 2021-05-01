@@ -227,7 +227,7 @@ public class UsuarioDAO extends DAO<Usuario> {
                         "WHERE alta is not null"
         )) {
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
+            while (rs.next()) {
                 inactivos.add(Mapeador.map(rs, Usuario.class));
             }
         } catch (SQLException e) {
