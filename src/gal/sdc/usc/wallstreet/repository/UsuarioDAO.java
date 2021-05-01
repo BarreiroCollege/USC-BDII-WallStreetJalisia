@@ -290,7 +290,7 @@ public class UsuarioDAO extends DAO<Usuario> {
         try (PreparedStatement ps = super.conexion.prepareStatement(
                 "SELECT * " +
                         "FROM usuario " +
-                        "WHERE alta is not null"
+                        "WHERE alta is not null AND baja is null"
         )) {
             ResultSet rs = ps.executeQuery();
             if (rs.next()){
