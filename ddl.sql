@@ -210,7 +210,8 @@ create table regulador
         constraint regulador_usuario_identificador_fk
             references usuario
             on update cascade,
-    comision double precision default 0.05 not null
+    comision double precision default 0.05 not null,
+    comision_sociedad double precision default 0.025 not null
 );
 
 alter table regulador

@@ -96,8 +96,8 @@ values ('sherlock', '10011001S', 'Shelock', 'Holmes');
 
 insert into usuario(identificador, clave)
 values ('regulador', 'sha1:64000:18:fRyIy2KpkOhXIkFl9+OCu6BPq32xY2+Y:d5j3M7amOsYqisxLDk6VbSL3');
-insert into regulador(usuario, comision)
-values ('regulador', 0.05);
+insert into regulador(usuario, comision, comision_sociedad)
+values ('regulador', 0.05, 0.025);
 
 
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp,
