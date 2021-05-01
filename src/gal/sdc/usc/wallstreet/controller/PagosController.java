@@ -502,25 +502,23 @@ public class PagosController extends DatabaseLinker {
                     .build();
             pagoUsuarios.add(pu);
 
-            saldoAQuitar = pu.getNumParticipaciones()
-                    * pu.getPago().getPorcentajeBeneficio()
-                    * pu.getBeneficioRecibir();
-            participacionesAQuitar += pu.getNumParticipaciones()
-                    * pu.getPago().getPorcentajeParticipacion()
-                    * pu.getParticipacionesRecibir();
+            saldoAQuitar = pu.getBeneficioRecibir();
+            participacionesAQuitar += pu.getParticipacionesRecibir();
         }
 
-        if (pago.getEmpresa().getUsuario().getSaldoDisponible() < saldoAQuitar) {
-            Main.mensaje("El saldo disponible no es suficiente", 3);
+        if (saldoAQuitar > 0.0f && pago.getEmpresa().getUsuario().getSaldoDisponible() < saldoAQuitar) {
+            Main.mensaje("No dispones del saldo suficiente", 3);
             return false;
         }
 
         Participacion participacion = super.getDAO(ParticipacionDAO.class).seleccionar(pago.getEmpresa().getUsuario().getSuperUsuario(), pago.getEmpresa());
         if (participacionesAQuitar > 0.0f && (participacion == null || participacion.getCantidad() < participacionesAQuitar)) {
-            Main.mensaje("Las participaciones disponibles no son suficientes", 3);
+            Main.mensaje("No dispones de suficientes participaciones", 3);
             return false;
         }
 
+        System.out.println(saldoAQuitar);
+        System.out.println(participacionesAQuitar);
         super.iniciarTransaccion();
 
         // 1. Crear Pago e insertar

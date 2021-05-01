@@ -33,12 +33,8 @@ public class Pagador extends DatabaseLinker {
             float saldoAQuitar = 0.0f;
             int participacionesAQuitar = 0;
             for (PagoUsuario pu : pagoUsuarios) {
-                saldoAQuitar = pu.getNumParticipaciones()
-                        * pu.getPago().getPorcentajeBeneficio()
-                        * pu.getBeneficioRecibir();
-                participacionesAQuitar += pu.getNumParticipaciones()
-                        * pu.getPago().getPorcentajeParticipacion()
-                        * pu.getParticipacionesRecibir();
+                saldoAQuitar = pu.getBeneficioRecibir();
+                participacionesAQuitar += pu.getParticipacionesRecibir();
             }
 
             super.getDAO(PagoDAO.class).quitarSaldoBloqueado(pago, saldoAQuitar);
