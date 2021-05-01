@@ -15,6 +15,9 @@ public class Regulador extends Entidad implements UsuarioSesion {
     @Columna("comision")
     private Float comision;
 
+    @Columna("comision_sociedad")
+    private Float comisionSociedad;
+
     private Regulador() {
     }
 
@@ -28,6 +31,14 @@ public class Regulador extends Entidad implements UsuarioSesion {
 
     public void setComision(Float comision) {
         this.comision = comision;
+    }
+
+    public Float getComisionSociedad() {
+        return comisionSociedad;
+    }
+
+    public void setComisionSociedad(Float comisionSociedad) {
+        this.comisionSociedad = comisionSociedad;
     }
 
     @Override
@@ -48,6 +59,7 @@ public class Regulador extends Entidad implements UsuarioSesion {
         return "Regulador{" +
                 "usuario=" + usuario +
                 ", comision='" + comision + '\'' +
+                ", comisionSociedad='" + comisionSociedad + '\'' +
                 '}';
     }
 
@@ -68,6 +80,11 @@ public class Regulador extends Entidad implements UsuarioSesion {
 
         public Builder withComision(Float comision) {
             regulador.comision = comision;
+            return this;
+        }
+
+        public Boolean withComisionSociedad(Float comisionSociedad) {
+            regulador.comisionSociedad = comisionSociedad;
             return this;
         }
 

@@ -21,11 +21,17 @@ public class Comprador extends DatabaseLinker {
     private final UsuarioComprador u;
     private final List<OfertaVenta> ofertaVentas;
     private final Integer cantidad;
+    private final Boolean esSociedad;
 
-    private Comprador(UsuarioComprador u, List<OfertaVenta> ofertasVenta, Integer cantidad) {
+    private Comprador(UsuarioComprador u, List<OfertaVenta> ofertasVenta, Integer cantidad, Boolean esSociedad) {
         this.u = u;
         this.ofertaVentas = ofertasVenta;
         this.cantidad = cantidad;
+        this.esSociedad = esSociedad;
+    }
+
+    private Comprador(UsuarioComprador u, List<OfertaVenta> ofertasVenta, Integer cantidad) {
+        this(u, ofertasVenta, cantidad, false);
     }
 
     public static Integer comprar(UsuarioComprador u, List<OfertaVenta> ofertasVenta, Integer cantidad) {
@@ -66,14 +72,16 @@ public class Comprador extends DatabaseLinker {
                     .withUsuarioCompra(u.getSuperUsuario())
                     .build());
 
+            float comision = esSociedad ? regulador.getComisionSociedad() : regulador.getComision();
+
             // Aumentamos el saldo del vendedor (menos comision), que puede ser un Usuario o Sociedad
             Usuario usuario = super.getDAO(UsuarioDAO.class).seleccionar(oferta.getUsuario());
             if (usuario == null) { // Es sociedad
                 Sociedad sociedad = super.getDAO(SociedadDAO.class).seleccionar(oferta.getUsuario());
-                sociedad.setSaldoComunal(sociedad.getSaldoComunal() + precio * (1 - regulador.getComision()));
+                sociedad.setSaldoComunal(sociedad.getSaldoComunal() + precio * (1 - comision));
                 super.getDAO(SociedadDAO.class).actualizar(sociedad);
             } else { // Es usuario
-                usuario.setSaldo(usuario.getSaldo() + precio * (1 - regulador.getComision()));
+                usuario.setSaldo(usuario.getSaldo() + precio * (1 - comision));
                 super.getDAO(UsuarioDAO.class).actualizar(usuario);
             }
 
@@ -84,7 +92,7 @@ public class Comprador extends DatabaseLinker {
             super.getDAO(ParticipacionDAO.class).actualizar(cartera);
 
             // Le damos la comision al regulador
-            regulador.getUsuario().setSaldo(regulador.getUsuario().getSaldo() + precio * regulador.getComision());
+            regulador.getUsuario().setSaldo(regulador.getUsuario().getSaldo() + precio * comision);
             super.getDAO(UsuarioDAO.class).actualizar(regulador.getUsuario());
 
             // Aumentamos la cartera de participaciones del comprador, si es la primera vez que compra se crea
