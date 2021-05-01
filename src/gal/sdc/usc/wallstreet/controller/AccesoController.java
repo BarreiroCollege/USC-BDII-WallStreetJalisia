@@ -33,7 +33,7 @@ import java.util.ResourceBundle;
 public class AccesoController extends DatabaseLinker implements Initializable {
     public static final String VIEW = "acceso";
     public static final Integer HEIGHT = 500;
-    public static final Integer WIDTH = 400;
+    public static final Integer WIDTH = 450;
     public static final String TITULO = "Acceso";
 
     @FXML
