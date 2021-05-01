@@ -83,7 +83,7 @@ public class Regulador extends Entidad implements UsuarioSesion {
             return this;
         }
 
-        public Boolean withComisionSociedad(Float comisionSociedad) {
+        public Builder withComisionSociedad(Float comisionSociedad) {
             regulador.comisionSociedad = comisionSociedad;
             return this;
         }
