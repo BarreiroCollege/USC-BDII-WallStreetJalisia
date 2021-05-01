@@ -58,6 +58,23 @@ public class PagoDAO extends DAO<Pago> {
         return pagos;
     }
 
+    public List<Pago> getPagosProgramados() {
+        List<Pago> pagos = new LinkedList<>();
+
+        try (PreparedStatement ps = super.conexion.prepareStatement(
+                "SELECT * FROM pago WHERE fecha_anuncio IS NOT NULL AND fecha > NOW()"
+        )) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                pagos.add(Mapeador.map(rs, Pago.class));
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+
+        return pagos;
+    }
+
     public List<Pago> getPagosProgramadosPendientesDeEjecutar() {
         List<Pago> pagos = new LinkedList<>();
 

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXCheckBox?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXDatePicker?>
 <?import com.jfoenix.controls.JFXTabPane?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import java.net.URL?>
@@ -92,13 +95,13 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView layoutX="45.0" layoutY="92.0" prefHeight="273.0" prefWidth="621.0">
+                        <TableView fx:id="tablaPagos" layoutX="45.0" layoutY="92.0" prefHeight="277.0" prefWidth="417.0">
                           <columns>
-                            <TableColumn prefWidth="150.0" text="Empresa" />
-                            <TableColumn prefWidth="125.0" text="Fecha anuncio" />
-                              <TableColumn prefWidth="125.0" text="Fecha pago" />
-                              <TableColumn prefWidth="110.0" text="Beneficio" />
-                              <TableColumn prefWidth="110.0" text="Participaciones" />
+                            <TableColumn fx:id="columnaEmpresa" prefWidth="93.5" text="Empresa" />
+                            <TableColumn fx:id="columnaAnuncio" prefWidth="86.0" text="Fecha anuncio" />
+                              <TableColumn fx:id="columnaPago" prefWidth="74.0" text="Fecha pago" />
+                              <TableColumn fx:id="columnaBeneficio" prefWidth="62.0" text="Beneficio" />
+                              <TableColumn fx:id="columnaParticipaciones" prefWidth="100.0" text="Participaciones" />
                           </columns>
                         </TableView>
                         <Label layoutX="44.0" layoutY="36.0" text="Pagos programados">
@@ -106,7 +109,17 @@
                               <Font name="System Bold" size="18.0" />
                            </font>
                         </Label>
-                        <JFXButton disable="true" layoutX="537.0" layoutY="383.0" prefHeight="25.0" prefWidth="128.0" ripplerFill="#a95b5a" style="-fx-background-color: #e0adad;" text="Eliminar pago" />
+                        <JFXButton fx:id="btnEliminarPago" disable="true" layoutX="314.0" layoutY="382.0" onAction="#eliminarPago" prefHeight="25.0" prefWidth="148.0" ripplerFill="#a95b5a" style="-fx-background-color: #e0adad;" text="Eliminar pago" />
+                        <JFXComboBox fx:id="cbEmpresa" layoutX="488.0" layoutY="128.0" prefHeight="25.0" prefWidth="149.0" promptText="Empresa" />
+                        <JFXDatePicker fx:id="datePagoAntes" layoutX="489.0" layoutY="188.0" prefHeight="25.0" prefWidth="154.0" promptText="Pago antes del" />
+                        <JFXDatePicker fx:id="datePagoDespues" layoutX="489.0" layoutY="223.0" prefHeight="25.0" prefWidth="153.0" promptText="Pago después del" />
+                        <JFXCheckBox fx:id="chkAnunciados" layoutX="489.0" layoutY="279.0" text="Solo pagos anunciados" />
+                        <Label layoutX="486.0" layoutY="91.0" text="Filtros de la tabla">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <JFXButton layoutX="488.0" layoutY="344.0" onAction="#filtrarTablaPagos" prefHeight="25.0" prefWidth="89.0" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;" text="Filtrar" />
                      </children></AnchorPane>
               </content>
             </Tab>

@@ -1,10 +1,10 @@
 package gal.sdc.usc.wallstreet.controller;
 
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.*;
 import com.jfoenix.validation.IntegerValidator;
 import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.OfertaVenta;
+import gal.sdc.usc.wallstreet.model.Pago;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.*;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
@@ -18,6 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
@@ -25,6 +26,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -102,11 +105,38 @@ public class ReguladorController extends DatabaseLinker {
     private JFXTextField txtApellidos;
     @FXML
     private JFXTextField txtCantidad;
+
+    // Pestaña de pagos pendientes
+    @FXML
+    private TableView<Pago> tablaPagos;
+    @FXML
+    private TableColumn<Pago, String> columnaEmpresa;
+    @FXML
+    private TableColumn<Pago, String> columnaAnuncio;
+    @FXML
+    private TableColumn<Pago, String> columnaPago;
+    @FXML
+    private TableColumn<Pago, Double> columnaBeneficio;
+    @FXML
+    private TableColumn<Pago, Double> columnaParticipaciones;
+
+    @FXML
+    private JFXButton btnEliminarPago;
+    @FXML
+    private JFXComboBox<String> cbEmpresa;
+    @FXML
+    private JFXDatePicker datePagoAntes;
+    @FXML
+    private JFXDatePicker datePagoDespues;
+    @FXML
+    private JFXCheckBox chkAnunciados;
+
     //</editor-fold>
 
     private final String error = "error";       // Mensaje de error
     // Datos a mostrar en la tabla
     private final ObservableList<Usuario> datosTabla = FXCollections.observableArrayList();
+    private final ObservableList<Pago> datosTablaPagos = FXCollections.observableArrayList();
 
     private Usuario campoDe;            // Usuario que transfiere (null indica un agente externo)
     private Usuario campoPara;          // Usuario que recibe transferencia (null indica que se retira saldo)
@@ -186,6 +216,10 @@ public class ReguladorController extends DatabaseLinker {
         List<Usuario> usuarios = super.getDAO(UsuarioDAO.class).getUsuariosMasSaldo(100, super.getDAO(ReguladorDAO.class));
         datosTabla.setAll(usuarios);
         tablaUsuarios.setItems(datosTabla);
+
+        List<Pago> pagos = super.getDAO(PagoDAO.class).getPagosProgramados();
+        datosTablaPagos.setAll(pagos);
+        tablaPagos.setItems(datosTablaPagos);
     }
 
     public void setupComponentes(){
@@ -231,6 +265,15 @@ public class ReguladorController extends DatabaseLinker {
         // Establecemos los valores que contendrá cada columna de la tabla de participaciones
         columnaId.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getSuperUsuario().getIdentificador()));
         columnaSaldo.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getSaldo().toString()));
+
+        // Establecemos los valores que contendrá cada columna de la tabla de pagos
+        final DateFormat formatoFecha = new SimpleDateFormat("d/L/y");
+        tablaPagos.setPlaceholder(new Label("No existen pagos programados actualmente"));
+        columnaEmpresa.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getNombre()));
+        columnaAnuncio.setCellValueFactory(celda -> new SimpleStringProperty( celda.getValue().getFechaAnuncio() == null ? "Sin anunciar" : formatoFecha.format(celda.getValue().getFechaAnuncio()) ));
+        columnaPago.setCellValueFactory(celda -> new SimpleStringProperty( formatoFecha.format(celda.getValue().getFecha()) ));
+        columnaBeneficio.setCellValueFactory(new PropertyValueFactory<>("porcentajeBeneficio"));
+        columnaParticipaciones.setCellValueFactory(new PropertyValueFactory<>("porcentajeParticipacion"));
     }
 
     /**
@@ -308,6 +351,7 @@ public class ReguladorController extends DatabaseLinker {
      * Actualiza los datos de la tabla en función de los filtros indicados (se vuelven a cargar los saldos)
      */
     public void onClickFiltrar(){
+        tablaUsuarios.setPlaceholder(new Label("No existen usuarios con los parámetros indicados"));
         List<Usuario> usuariosFiltrados = super.getDAO(UsuarioDAO.class)
                 .getUsuariosFiltroPersonalizado(construirDatosFiltro(), 100);
         datosTabla.setAll(usuariosFiltrados);
@@ -340,6 +384,10 @@ public class ReguladorController extends DatabaseLinker {
         }
 
         return datosFiltrado;
+    }
+
+    public void filtrarTablaPagos(){
+        tablaPagos.setPlaceholder(new Label("No existen pagos con los parámetros indicados"));
     }
 
     /**
@@ -542,6 +590,10 @@ public class ReguladorController extends DatabaseLinker {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void eliminarPago(){
+
     }
 
     public void cerrarSesion(){
