@@ -201,14 +201,17 @@ public class ReguladorController extends DatabaseLinker {
 
 
     public void addValidadores(){
-        // Validadores de entrada numérica
+        // Validador de entrada numérica
         IntegerValidator iv = new IntegerValidator("Valor no numérico");
         txtCantidad.getValidators().add(iv);
 
+        // Si lo introducido contiene caracteres no numéricos, aparece un error y no se muestra el botón de transferir
         txtCantidad.textProperty().addListener((observable, oldValue, newValue) -> {
-            txtCantidad.validate();
-            if (txtCantidad.getText() != null && !txtCantidad.getText().isEmpty() && !txtCantidad.getActiveValidator().hasErrorsProperty().getValue())
+            if (txtCantidad.getText() != null && !txtCantidad.getText().isEmpty() && txtCantidad.validate()) {
                 determinarActivacionBtnTransferencia();
+            } else {
+                btnTransferir.setVisible(false);
+            }
         });
     }
 
@@ -217,8 +220,6 @@ public class ReguladorController extends DatabaseLinker {
         columnaId.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getSuperUsuario().getIdentificador()));
         columnaSaldo.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getSaldo().toString()));
     }
-
-
 
     /**
      * Se aceptan los registros pendientes.
