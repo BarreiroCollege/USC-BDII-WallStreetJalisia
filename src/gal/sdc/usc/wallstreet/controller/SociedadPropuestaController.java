@@ -101,7 +101,7 @@ public class SociedadPropuestaController extends DatabaseLinker implements Initi
             return;
         }
 
-        if (cantidad <= 0) {
+        if (cantidad < 0) {
             if (txtCantidad.getValidators().size() == 1) txtCantidad.getValidators().add(numeroNoValido);
             txtCantidad.validate();
             return;
