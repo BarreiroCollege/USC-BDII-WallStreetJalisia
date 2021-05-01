@@ -517,8 +517,6 @@ public class PagosController extends DatabaseLinker {
             return false;
         }
 
-        System.out.println(saldoAQuitar);
-        System.out.println(participacionesAQuitar);
         super.iniciarTransaccion();
 
         // 1. Crear Pago e insertar
