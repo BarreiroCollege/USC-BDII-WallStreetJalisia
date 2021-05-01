@@ -205,7 +205,7 @@ public class VVentaController extends DatabaseLinker {
     }
 
     public void actualizarComision(){
-        campoComision.setText(String.valueOf(super.getDAO(ReguladorDAO.class).getRegulador().getComision()*100)+" %");
+        campoComision.setText(super.getDAO(ReguladorDAO.class).getRegulador().getComision() * 100 +" %");
     }
 
 
