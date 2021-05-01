@@ -16,8 +16,10 @@ create table sociedad
         constraint sociedad_superusuario_identificador_fk
             references superusuario
             on update cascade,
-    saldo_comunal double precision default 0    not null,
+    saldo_comunal double precision default 0    not null
+        CHECK (saldo_comunal >= 0),
     tolerancia    integer          default 1440 not null
+        CHECK (tolerancia >= 0)
 );
 
 alter table sociedad
@@ -36,8 +38,10 @@ create table usuario
     cp              varchar(10),
     localidad       varchar(32),
     telefono        integer,
-    saldo           double precision default 1000     not null,
-    saldo_bloqueado double precision default 0     not null,
+    saldo           double precision default 1000     not null
+        CHECK (saldo >= 0),
+    saldo_bloqueado double precision default 0     not null
+        CHECK (saldo_bloqueado >= 0),
     alta            timestamp,
     baja            timestamp,
     otp             varchar(32)      default NULL::character varying,
@@ -89,11 +93,15 @@ create table pago
         constraint pago_empresa_identificador_fk
             references empresa
             on update cascade,
-    beneficio_por_participacion     double precision default 0     not null,
-    participacion_por_participacion double precision default 0     not null,
+    beneficio_por_participacion     double precision default 0     not null
+        CHECK (beneficio_por_participacion >= 0),
+    participacion_por_participacion double precision default 0     not null
+        CHECK (participacion_por_participacion >= 0),
     fecha_anuncio                   timestamp,
-    porcentaje_beneficio            double precision default 0     not null,
-    porcentaje_participacion        double precision default 0     not null,
+    porcentaje_beneficio            double precision default 0     not null
+        CHECK (porcentaje_beneficio >= 0 AND porcentaje_beneficio <= 1),
+    porcentaje_participacion        double precision default 0     not null
+        CHECK (porcentaje_participacion >= 0 AND porcentaje_participacion <= 1),
     constraint pago_pk
         primary key (fecha, empresa)
 );
@@ -109,7 +117,7 @@ create table pago_usuario
             on update cascade,
     pago_fecha          timestamp   not null,
     pago_empresa        varchar(16) not null,
-    num_participaciones integer     not null,
+    num_participaciones integer     not null CHECK (num_participaciones >= 0),
     constraint pago_usuario_pk
         primary key (usuario, pago_fecha, pago_empresa),
     constraint pago_usuario_pago_fecha_pago_empresa_fk
@@ -131,10 +139,10 @@ create table oferta_venta
         constraint oferta_venta_superusuario_identificador_fk
             references superusuario
             on update cascade,
-    num_participaciones integer                        not null,
-    precio_venta        double precision               not null,
+    num_participaciones integer                        not null CHECK (num_participaciones >= 0),
+    precio_venta        double precision               not null CHECK (precio_venta >= 0),
     confirmado          boolean          default false not null,
-    comision            double precision default 0.05  not null,
+    comision            double precision default 0.05  not null CHECK (comision >= 0 AND comision <= 1),
     restantes           integer                        not null,
     constraint oferta_venta_pk
         primary key (fecha, usuario)
@@ -153,7 +161,7 @@ create table participacion
         constraint poseer_participacion_empresa_identificador_fk
             references empresa
             on update cascade,
-    cantidad           integer default 0 not null,
+    cantidad           integer default 0 not null CHECK (cantidad >= 0),
     cantidad_bloqueada integer default 0 not null,
     constraint poseer_participacion_pk
         primary key (usuario, empresa)
@@ -171,7 +179,7 @@ create table venta
         constraint comprar_usuario_identificador_fk
             references superusuario
             on update cascade,
-    cantidad       integer                 not null,
+    cantidad       integer                 not null CHECK (cantidad >= 0),
     constraint comprar_pk
         primary key (fecha, ov_fecha, ov_usuario, usuario_compra),
     constraint comprar_oferta_venta_fecha_anuncio_usuario_fk
@@ -189,8 +197,8 @@ create table propuesta_compra
             references sociedad
             on update cascade,
     fecha_inicio timestamp default now() not null,
-    cantidad     integer                 not null,
-    precio_max   double precision,
+    cantidad     integer                 not null CHECK (cantidad >= 0),
+    precio_max   double precision CHECK (precio_max >= 0),
     empresa      varchar(16)             not null
         constraint propuesta_compra_empresa_usuario_fk
             references empresa
