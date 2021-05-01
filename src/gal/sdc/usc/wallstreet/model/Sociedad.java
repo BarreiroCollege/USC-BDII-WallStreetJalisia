@@ -7,17 +7,37 @@ import gal.sdc.usc.wallstreet.model.ddl.Tabla;
 import java.util.Objects;
 
 @Tabla("sociedad")
-public class Sociedad extends Entidad {
+public class Sociedad extends Entidad implements UsuarioComprador {
     @Columna(value = "identificador", pk = true)
-    private SuperUsuario identificador;
+    private SuperUsuario superUsuario;
 
     @Columna("saldo_comunal")
     private Float saldoComunal = 0.0f;
 
     @Columna("tolerancia")
-    private Integer tolerancia = 0;
+    private Integer tolerancia = 60 * 24;
 
     private Sociedad() {
+    }
+
+    public SuperUsuario getSuperUsuario() {
+        return superUsuario;
+    }
+
+    public Float getSaldoComunal() {
+        return saldoComunal;
+    }
+
+    public void setSaldoComunal(Float saldoComunal) {
+        this.saldoComunal = saldoComunal;
+    }
+
+    public Integer getTolerancia() {
+        return tolerancia;
+    }
+
+    public void setTolerancia(Integer tolerancia) {
+        this.tolerancia = tolerancia;
     }
 
     @Override
@@ -25,18 +45,18 @@ public class Sociedad extends Entidad {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Sociedad sociedad = (Sociedad) o;
-        return identificador.equals(sociedad.identificador);
+        return superUsuario.equals(sociedad.superUsuario);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(identificador);
+        return Objects.hash(superUsuario);
     }
 
     @Override
     public String toString() {
         return "Sociedad{" +
-                "identificador=" + identificador +
+                "superUsuario=" + superUsuario +
                 ", saldoComunal=" + saldoComunal +
                 ", tolerancia=" + tolerancia +
                 '}';
@@ -48,12 +68,12 @@ public class Sociedad extends Entidad {
         public Builder() {
         }
 
-        public Builder(SuperUsuario identificador) {
-            sociedad.identificador = identificador;
+        public Builder(SuperUsuario superUsuario) {
+            sociedad.superUsuario = superUsuario;
         }
 
-        public Builder withIdentificador(SuperUsuario identificador) {
-            sociedad.identificador = identificador;
+        public Builder withSuperUsuario(SuperUsuario superUsuario) {
+            sociedad.superUsuario = superUsuario;
             return this;
         }
 

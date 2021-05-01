@@ -11,6 +11,8 @@ public class SuperUsuario extends Entidad {
     @Columna(value = "identificador", pk = true)
     private String identificador;
 
+    private boolean tieneParticipaciones;
+
     private SuperUsuario() {
     }
 
@@ -20,6 +22,14 @@ public class SuperUsuario extends Entidad {
 
     public void setIdentificador(String identificador) {
         this.identificador = identificador;
+    }
+
+    public boolean tieneParticipaciones() {
+        return tieneParticipaciones;
+    }
+
+    public void setTieneParticipaciones(boolean tieneParticipaciones) {
+        this.tieneParticipaciones = tieneParticipaciones;
     }
 
     @Override

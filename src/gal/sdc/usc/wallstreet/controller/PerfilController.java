@@ -11,6 +11,7 @@ import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Inversor;
 import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.model.Usuario;
+import gal.sdc.usc.wallstreet.model.UsuarioEstado;
 import gal.sdc.usc.wallstreet.model.UsuarioSesion;
 import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
 import gal.sdc.usc.wallstreet.repository.InversorDAO;
@@ -19,7 +20,7 @@ import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.Comunicador;
 import gal.sdc.usc.wallstreet.util.ErrorValidator;
-import gal.sdc.usc.wallstreet.util.TipoUsuario;
+import gal.sdc.usc.wallstreet.model.UsuarioTipo;
 import gal.sdc.usc.wallstreet.util.Validadores;
 import gal.sdc.usc.wallstreet.util.auth.GoogleAuth;
 import gal.sdc.usc.wallstreet.util.auth.PasswordStorage;
@@ -31,6 +32,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.VBox;
 
 import java.net.URL;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 public class PerfilController extends DatabaseLinker implements Initializable {
@@ -73,6 +75,8 @@ public class PerfilController extends DatabaseLinker implements Initializable {
 
     @FXML
     private JFXButton btnVolver;
+    @FXML
+    private JFXButton btnBaja;
     @FXML
     public JFXButton btnOtp;
     @FXML
@@ -180,6 +184,28 @@ public class PerfilController extends DatabaseLinker implements Initializable {
         }
     }
 
+    private void onBtnBaja(ActionEvent e) {
+        ConfirmacionController.setComunicador(new Comunicador() {
+            @Override
+            public Object[] getData() {
+                return new Object[] {"¿Estás seguro que quieres solicitar la baja en el sistema?"};
+            }
+
+            @Override
+            public void onSuccess() {
+                Usuario usuario = PerfilController.super.getUsuarioSesion().getUsuario();
+                usuario.setBaja(new Date());
+                if (PerfilController.super.getDAO(UsuarioDAO.class).actualizar(usuario)) {
+                    btnBaja.setDisable(true);
+                    Main.mensaje("Se ha solicitado la baja en el sistema");
+                } else {
+                    Main.mensaje("Hubo un error solicitando la baja");
+                }
+            }
+        });
+        Main.dialogo(ConfirmacionController.VIEW, ConfirmacionController.WIDTH, ConfirmacionController.HEIGHT, ConfirmacionController.TITULO);
+    }
+
     private void asignarValores() {
         UsuarioSesion us = super.getUsuarioSesion();
         Usuario u = us.getUsuario();
@@ -191,7 +217,7 @@ public class PerfilController extends DatabaseLinker implements Initializable {
         txtCp.setText(u.getCp());
         txtTelefono.setText(u.getTelefono().toString());
 
-        if (super.getTipoUsuario().equals(TipoUsuario.INVERSOR)) {
+        if (super.getTipoUsuario().equals(UsuarioTipo.INVERSOR)) {
             Inversor i = (Inversor) us;
             txtNombre.setText(i.getNombre());
             txtApellidos.setText(i.getApellidos());
@@ -222,6 +248,11 @@ public class PerfilController extends DatabaseLinker implements Initializable {
         txtTelefono.disableProperty().bind(editando.not());
 
         btnOtp.visibleProperty().bind(editando.not());
+        btnBaja.visibleProperty().bind(editando.not());
+
+        if (super.getUsuarioSesion().getUsuario().getEstado().equals(UsuarioEstado.PENDIENTE_BAJA)) {
+            btnBaja.setDisable(true);
+        }
 
         RegexValidator rgx = new RegexValidator("Introduce un número de teléfono válido");
         // rgx.setRegexPattern("^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$");
@@ -273,9 +304,10 @@ public class PerfilController extends DatabaseLinker implements Initializable {
             }
         });
 
-        btnEditar.setOnAction(this::onBtnEditar);
         btnVolver.setOnAction(this::onBtnVolver);
+        btnBaja.setOnAction(this::onBtnBaja);
         btnOtp.setOnAction(this::onBtnOtp);
+        btnEditar.setOnAction(this::onBtnEditar);
 
         this.usuarioNoValido = Validadores.personalizado("Sólo puede tener numeros y letras");
         this.usuarioYaExiste = Validadores.personalizado("Este usuario ya existe");
@@ -288,7 +320,7 @@ public class PerfilController extends DatabaseLinker implements Initializable {
         if (!txtUsuario.validate() || !txtClave.validate() || !txtDireccion.validate() || !txtCp.validate()
                 || !txtLocalidad.validate() || !txtTelefono.validate()) return;
 
-        if (super.getTipoUsuario().equals(TipoUsuario.INVERSOR)) {
+        if (super.getTipoUsuario().equals(UsuarioTipo.INVERSOR)) {
             if (!txtNombre.validate() || !txtApellidos.validate() || !txtDni.validate()) return;
         } else {
             if (!txtEmpresa.validate() || !txtCif.validate()) return;
@@ -341,7 +373,7 @@ public class PerfilController extends DatabaseLinker implements Initializable {
                     .withTelefono(Integer.parseInt(txtTelefono.getText()))
                     .withSaldo(u.getSaldo())
                     .withSaldoBloqueado(u.getSaldoBloqueado())
-                    .withActivo(u.getActivo())
+                    .withAlta(u.getAlta())
                     .withBaja(u.getBaja())
                     .withOtp(u.getOtp())
                     .withSociedad(u.getSociedad())
@@ -349,7 +381,7 @@ public class PerfilController extends DatabaseLinker implements Initializable {
                     .build();
 
             UsuarioSesion us;
-            if (super.getTipoUsuario().equals(TipoUsuario.INVERSOR)) {
+            if (super.getTipoUsuario().equals(UsuarioTipo.INVERSOR)) {
                 us = new Inversor.Builder(usuario)
                         .withNombre(txtNombre.getText())
                         .withApellidos(txtApellidos.getText())

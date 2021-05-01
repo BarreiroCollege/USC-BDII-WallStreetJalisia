@@ -5,13 +5,14 @@ import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.RequiredFieldValidator;
 import gal.sdc.usc.wallstreet.Main;
-import gal.sdc.usc.wallstreet.model.Empresa;
-import gal.sdc.usc.wallstreet.model.Inversor;
+import gal.sdc.usc.wallstreet.model.Regulador;
 import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.model.Usuario;
+import gal.sdc.usc.wallstreet.model.UsuarioEstado;
 import gal.sdc.usc.wallstreet.model.UsuarioSesion;
 import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
 import gal.sdc.usc.wallstreet.repository.InversorDAO;
+import gal.sdc.usc.wallstreet.repository.ReguladorDAO;
 import gal.sdc.usc.wallstreet.repository.SuperUsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
@@ -77,7 +78,8 @@ public class AccesoController extends DatabaseLinker implements Initializable {
             return;
         }
 
-        if (!usuario.getActivo()) {
+        if (usuario.getEstado().equals(UsuarioEstado.BAJA)
+                || usuario.getEstado().equals(UsuarioEstado.PENDIENTE_ALTA)) {
             if (txtUsuario.getValidators().size() == 1) txtUsuario.getValidators().add(usuarioNoActivo);
             txtUsuario.validate();
             return;
@@ -121,9 +123,24 @@ public class AccesoController extends DatabaseLinker implements Initializable {
     private void autenticar(Usuario usuario) {
         UsuarioSesion us = super.getDAO(InversorDAO.class).seleccionar(usuario);
         if (us == null) us = super.getDAO(EmpresaDAO.class).seleccionar(usuario);
+        if (us == null) us = super.getDAO(ReguladorDAO.class).seleccionar(usuario);
         super.setUsuarioSesion(us);
 
-        Main.ventana(PrincipalController.VIEW, PrincipalController.WIDTH, PrincipalController.HEIGHT, PrincipalController.TITULO);
+        if (us instanceof Regulador) {
+            Main.ventana(
+                    ReguladorController.VIEW,
+                    ReguladorController.WIDTH,
+                    ReguladorController.HEIGHT,
+                    ReguladorController.TITULO
+            );
+        } else {
+            Main.ventana(
+                    PrincipalController.VIEW,
+                    PrincipalController.WIDTH,
+                    PrincipalController.HEIGHT,
+                    PrincipalController.TITULO
+            );
+        }
     }
 
     @FXML

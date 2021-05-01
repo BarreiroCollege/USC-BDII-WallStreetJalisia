@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import java.net.URL?>
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="225.0" prefWidth="500.0"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="gal.sdc.usc.wallstreet.controller.SociedadSaldoController"
+            fx:id="anchor">
+    <stylesheets>
+        <URL value="@styles/base.css"/>
+    </stylesheets>
+
+    <HBox alignment="CENTER" AnchorPane.bottomAnchor="150.0" AnchorPane.leftAnchor="0.0"
+          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" prefHeight="50.0">
+        <VBox prefHeight="75.0" alignment="CENTER" HBox.hgrow="ALWAYS">
+            <Label alignment="CENTER" VBox.vgrow="ALWAYS" text="Indica el saldo que quieres transferir">
+                <font>
+                    <Font name="System Bold" size="18.0"/>
+                </font>
+            </Label>
+        </VBox>
+    </HBox>
+
+    <VBox alignment="CENTER" AnchorPane.bottomAnchor="75.0" AnchorPane.leftAnchor="0.0"
+          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="75.0" prefHeight="75.0">
+        <HBox prefHeight="75.0" alignment="CENTER" VBox.vgrow="ALWAYS">
+            <VBox.margin>
+                <Insets left="25.0" right="25.0"/>
+            </VBox.margin>
+            <JFXTextField fx:id="txtSaldoDisponible" labelFloat="true" alignment="CENTER" promptText="Saldo disponible"
+                          disable="true"/>
+            <Label minWidth="10.0"/>
+            <JFXTextField fx:id="txtSaldo" labelFloat="true" alignment="CENTER" promptText="Saldo a transferir"/>
+        </HBox>
+    </VBox>
+
+    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="150.0" alignment="BOTTOM_CENTER" prefHeight="75.0">
+        <HBox prefHeight="75.0" alignment="BOTTOM_CENTER">
+            <VBox.margin>
+                <Insets left="25.0" right="25.0" bottom="20.0"/>
+            </VBox.margin>
+            <JFXButton text="Cancelar" fx:id="btnCancelar">
+                <font>
+                    <Font size="16.0"/>
+                </font>
+            </JFXButton>
+            <Label HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            <JFXButton text="Transferir" fx:id="btnTransferir" buttonType="RAISED" styleClass="btn-primario">
+                <font>
+                    <Font name="System Bold" size="16.0"/>
+                </font>
+            </JFXButton>
+        </HBox>
+    </VBox>
+</AnchorPane>

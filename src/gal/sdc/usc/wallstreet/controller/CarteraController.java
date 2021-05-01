@@ -8,7 +8,6 @@ import gal.sdc.usc.wallstreet.model.Participacion;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
 import gal.sdc.usc.wallstreet.repository.ParticipacionDAO;
-import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -32,8 +31,8 @@ public class CarteraController extends DatabaseLinker {
 
     // Parámetros de la ventana
     public static final String VIEW = "cartera";
-    public static final Integer HEIGHT = 440;
-    public static final Integer WIDTH = 610;
+    public static final Integer HEIGHT = 480;
+    public static final Integer WIDTH = 897;
     public static final String TITULO = "Cartera";
 
     //<editor-fold defaultstate="collapsed" desc="Variables desde FXML">
@@ -114,6 +113,9 @@ public class CarteraController extends DatabaseLinker {
     @FXML
     private DatePicker datepck_antes_oferta;
 
+    @FXML
+    private CheckBox CheckOfertasActivas;
+
     // Botón para dar de baja una oferta de venta
     @FXML
     private JFXButton cartera_btn_dar_de_baja;
@@ -126,31 +128,17 @@ public class CarteraController extends DatabaseLinker {
     private FilteredList<String> empresas;
     private FilteredList<String> empresasOfertas;
 
-    /*
-     * Cosas pendientes en cuanto a desarrollo de la ventana
-     * TODO validadores para precio en la pestaña de ofertas?
-     * TODO filtrar ofertas de venta completadas (participaciones sin vender == 0)
-     *
-     * Completado:
-     * dar de baja ofertas de venta
-     * revisar tipo de datos de fechas en ofertas de venta
-     * cambiar por algo similar a pagos de la otra tabla (Timestamp con formato)
-     * filtros & validadores de la nueva tabla
-     */
-
     /**
      * Inicializa la tabla de datos que se muestra en Cartera
      * Establece los valores que buscar para cada columna de la tabla
      */
     @FXML
     public void initialize() {
-
-        togglePanelFiltro(); // Controla el estado inicial de las tablas y paneles de filtrado
         establecerColumnasTablas();
 
         // Placeholders de las tablas de datos
         cartera_tabla.setPlaceholder(new Label("No dispones de participaciones"));
-        cartera_tablaOferta.setPlaceholder(new Label("No dispones de ninguna oferta"));
+        cartera_tablaOferta.setPlaceholder(new Label("No dispones de ninguna oferta de venta"));
 
         addValidadores();
 
@@ -175,17 +163,17 @@ public class CarteraController extends DatabaseLinker {
         addListeners();
     }
 
+    // Volver al menu principal
+    public void btnVolver() {
+        Main.ventana(PrincipalController.VIEW, PrincipalController.WIDTH, PrincipalController.HEIGHT, PrincipalController.TITULO);
+    }
+
     public void actualizarDatos() {
         Usuario usuario = super.getUsuarioSesion().getUsuario();
 
         // Accedemos a los DAOs para obtener los datos del usuario actual
         List<Participacion> participaciones = super.getDAO(ParticipacionDAO.class).getParticipaciones(usuario);
         List<OfertaVenta> ofertas = super.getDAO(OfertaVentaDAO.class).getOfertasVenta(usuario);
-
-        // Se guarda el número de participaciones sin vender para cada oferta
-        ofertas.forEach(oferta -> oferta.setParticipacionesSinVender(
-                super.getDAO(OfertaVentaDAO.class).getNumParticipacionesRestantes(oferta))
-        );
 
         // Introducimos los datos leidos de la bd a nuestra ObservableList
         datosTabla.setAll(participaciones);
@@ -283,7 +271,7 @@ public class CarteraController extends DatabaseLinker {
      */
     public void filtrarDatosOfertas() {
         // Cambiamos el placeholder de la tabla para indicar que el filtro no obtuvo resultados
-        cartera_tablaOferta.setPlaceholder(new Label("No se encuentran participaciones con los parámetros indicados"));
+        cartera_tablaOferta.setPlaceholder(new Label("No se encuentran ofertas con los parámetros indicados"));
 
         // Se guardan todas las ofertas de venta en un FilteredList
         FilteredList<OfertaVenta> partFiltradasOfertas = new FilteredList<>(datosTablaOfertas, p -> true);
@@ -326,7 +314,6 @@ public class CarteraController extends DatabaseLinker {
 
         // Se elimina la oferta de la tabla
         datosTablaOfertas.remove(cartera_tablaOferta.getSelectionModel().getSelectedItem());
-        cartera_tablaOferta.refresh();
     }
 
     private void establecerColumnasTablas(){
@@ -346,7 +333,7 @@ public class CarteraController extends DatabaseLinker {
         cartera_tablaOferta_empresa.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getNombre()));
         cartera_tablaOferta_cif.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getCif()));
         cartera_tablaOferta_cant.setCellValueFactory(new PropertyValueFactory<>("numParticipaciones"));
-        cartera_tablaOferta_sin_vender.setCellValueFactory(new PropertyValueFactory<>("participacionesSinVender"));
+        cartera_tablaOferta_sin_vender.setCellValueFactory(new PropertyValueFactory<>("restantes"));
         cartera_tablaOferta_precio.setCellValueFactory(new PropertyValueFactory<>("precioVenta"));
     }
 
@@ -419,10 +406,10 @@ public class CarteraController extends DatabaseLinker {
         cartera_tablaOferta.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldSelection, newSelection) -> {
                 if (newSelection.isOfertaActiva()){
-                    cartera_btn_dar_de_baja.setVisible(true);
+                    cartera_btn_dar_de_baja.setDisable(false);
                     return;
                 }
-                cartera_btn_dar_de_baja.setVisible(false);
+                cartera_btn_dar_de_baja.setDisable(true);
                 });
     }
 
@@ -566,42 +553,15 @@ public class CarteraController extends DatabaseLinker {
             return true;
         };
 
+        Predicate<OfertaVenta> predOfertaActiva = ofertaVenta -> {
+            if ( CheckOfertasActivas.isSelected() ) {
+                return ofertaVenta.isOfertaActiva();
+            }
+            return true;
+        };
+
         return predDespuesFecha.and(predAntesFecha).and(predComboBox).and(predMinPart).and(predMaxPart)
-                .and(predMinPrecio).and(predMaxPrecio);
+                .and(predMinPrecio).and(predMaxPrecio).and(predOfertaActiva);
     }
 
-    // Abre o cierra las ventanas de filtros, además de redimensionar las tablas
-    public void togglePanelFiltro() {
-        if (toggle_filtro.isSelected()) {
-            cartera_filtro.setVisible(true);
-            cartera_tabla.setPrefSize(265, 263);
-            cartera_tabla_empresa.setPrefWidth(91.3);
-            cartera_tabla_cif.setPrefWidth(75);
-            cartera_tabla_cant.setPrefWidth(91.2);
-            cartera_tabla_cant_bloq.setPrefWidth(91.2);
-            cartera_tabla_pago.setPrefWidth(91.2);
-            cartera_oferta_filtro.setVisible(true);
-            cartera_tablaOferta.setPrefSize(265, 263);
-            cartera_tablaOferta_empresa.setPrefWidth(91.3);
-            cartera_tablaOferta_cif.setPrefWidth(75);
-            cartera_tablaOferta_cant.setPrefWidth(91.2);
-            cartera_tablaOferta_fecha.setPrefWidth(91.2);
-            cartera_tablaOferta_precio.setPrefWidth(91.2);
-        } else {
-            cartera_filtro.setVisible(false);
-            cartera_tabla.setPrefSize(545, 263);
-            cartera_tabla_empresa.setPrefWidth(220);
-            cartera_tabla_cif.setPrefWidth(84);
-            cartera_tabla_cant.setPrefWidth(75);
-            cartera_tabla_cant_bloq.setPrefWidth(75);
-            cartera_tabla_pago.setPrefWidth(90);
-            cartera_oferta_filtro.setVisible(false);
-            cartera_tablaOferta.setPrefSize(545, 263);
-            cartera_tablaOferta_empresa.setPrefWidth(220);
-            cartera_tablaOferta_cif.setPrefWidth(84);
-            cartera_tablaOferta_cant.setPrefWidth(75);
-            cartera_tablaOferta_fecha.setPrefWidth(75);
-            cartera_tablaOferta_precio.setPrefWidth(90);
-        }
-    }
 }

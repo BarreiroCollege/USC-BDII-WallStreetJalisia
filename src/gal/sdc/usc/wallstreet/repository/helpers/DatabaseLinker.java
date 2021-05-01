@@ -1,11 +1,22 @@
 package gal.sdc.usc.wallstreet.repository.helpers;
 
+import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Inversor;
-import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.model.UsuarioSesion;
+import gal.sdc.usc.wallstreet.model.UsuarioTipo;
 import gal.sdc.usc.wallstreet.model.ddl.Entidad;
-import gal.sdc.usc.wallstreet.util.PackageScanner;
-import gal.sdc.usc.wallstreet.util.TipoUsuario;
+import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
+import gal.sdc.usc.wallstreet.repository.InversorDAO;
+import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
+import gal.sdc.usc.wallstreet.repository.PagoDAO;
+import gal.sdc.usc.wallstreet.repository.PagoUsuarioDAO;
+import gal.sdc.usc.wallstreet.repository.ParticipacionDAO;
+import gal.sdc.usc.wallstreet.repository.PropuestaCompraDAO;
+import gal.sdc.usc.wallstreet.repository.ReguladorDAO;
+import gal.sdc.usc.wallstreet.repository.SociedadDAO;
+import gal.sdc.usc.wallstreet.repository.SuperUsuarioDAO;
+import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
+import gal.sdc.usc.wallstreet.repository.VentaDAO;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -20,11 +31,13 @@ import java.util.Properties;
  * Clase que actúa de enlace con la base de datos. Puede ser extendida por cualquier
  * clase al usar variables estáticas.
  */
-public class DatabaseLinker {
+public abstract class DatabaseLinker {
     // Indica que la conexión se ha inicializado
     private static Connection conexion;
     // Lista de DAOs disponibles
     private static HashMap<Class<? extends DAO<? extends Entidad>>, DAO<? extends Entidad>> daos;
+    // Nivel de aislamiento por defecto
+    private static int nivelAislamiento = -1;
 
     private static UsuarioSesion usuario;
 
@@ -66,6 +79,7 @@ public class DatabaseLinker {
             cargarDAOs(conexion);
             // Marcar como ya inicializado
             DatabaseLinker.conexion = conexion;
+            DatabaseLinker.nivelAislamiento = conexion.getTransactionIsolation();
         } catch (IOException | SQLException f) {
             f.printStackTrace();
         }
@@ -73,12 +87,28 @@ public class DatabaseLinker {
 
     /**
      * Carga todos los DAO en el HashMap
+     *
      * @param conexion conexión con la base de datos
      */
     private void cargarDAOs(Connection conexion) {
         try {
             // Analizar el paquete con las clases
-            Class<?>[] clases = PackageScanner.getClasses();
+            // TODO: Esto no funca en el NetBeans de los profes
+            // Class<?>[] clases = PackageScanner.getClasses();
+            Class<?>[] clases = new Class<?>[]{
+                    EmpresaDAO.class,
+                    InversorDAO.class,
+                    OfertaVentaDAO.class,
+                    PagoDAO.class,
+                    PagoUsuarioDAO.class,
+                    ParticipacionDAO.class,
+                    PropuestaCompraDAO.class,
+                    ReguladorDAO.class,
+                    SociedadDAO.class,
+                    SuperUsuarioDAO.class,
+                    UsuarioDAO.class,
+                    VentaDAO.class
+            };
             // E iterar
             for (Class<?> clase : clases) {
                 // Castear la clase a un DAO
@@ -97,8 +127,9 @@ public class DatabaseLinker {
 
     /**
      * Devuelve un DAO que haya sido inicializado
+     *
      * @param clase clase del DAO a buscar
-     * @param <D> DAO de salida
+     * @param <D>   DAO de salida
      * @return DAO instanciado
      */
     public <D extends DAO<? extends Entidad>> D getDAO(Class<D> clase) {
@@ -107,8 +138,9 @@ public class DatabaseLinker {
 
     /**
      * Devuelve un DAO que haya sido inicializado
+     *
      * @param clase clase del DAO a buscar
-     * @param <D> DAO de salida
+     * @param <D>   DAO de salida
      * @return DAO instanciado
      */
     public static <D extends DAO<? extends Entidad>> D getSDAO(Class<D> clase) {
@@ -117,6 +149,7 @@ public class DatabaseLinker {
 
     /**
      * Indica si hay una sesión iniciada
+     *
      * @return true cuando hay un usuario dentro
      */
     public boolean haySesion() {
@@ -125,14 +158,20 @@ public class DatabaseLinker {
 
     /**
      * Indica el tipo de usuario, si es inversor o empresa
+     *
      * @return INVERSOR cuando es inversor, EMPRESA si es empresa, null si no hay sesión
      */
-    public TipoUsuario getTipoUsuario() {
-        return haySesion() ? (usuario instanceof Inversor ? TipoUsuario.INVERSOR : TipoUsuario.EMPRESA) : null;
+    public UsuarioTipo getTipoUsuario() {
+        if (!haySesion()) return null;
+
+        if (usuario instanceof Inversor) return UsuarioTipo.INVERSOR;
+        else if (usuario instanceof Empresa) return UsuarioTipo.EMPRESA;
+        return UsuarioTipo.REGULADOR;
     }
 
     /**
      * Devuelve el usuario si hay sesión
+     *
      * @return Usuario
      */
     public UsuarioSesion getUsuarioSesion() {
@@ -141,6 +180,7 @@ public class DatabaseLinker {
 
     /**
      * Inicia sesión
+     *
      * @param usuario usuario
      */
     public void setUsuarioSesion(UsuarioSesion usuario) {
@@ -155,11 +195,21 @@ public class DatabaseLinker {
     }
 
     /**
-     * Inicia una nueva transacción, deshabilitando el autocommit
+     * Inicia una transacción con el nivel de aislamiento por defecto
      */
     public void iniciarTransaccion() {
+        iniciarTransaccion(DatabaseLinker.nivelAislamiento);
+    }
+
+    /**
+     * Inicia una transacción con el nivel de aislamiento especificado
+     *
+     * @param nivelAislamiento aislamiento
+     */
+    public void iniciarTransaccion(int nivelAislamiento) {
         try {
             DatabaseLinker.conexion.setAutoCommit(false);
+            DatabaseLinker.conexion.setTransactionIsolation(nivelAislamiento);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -167,6 +217,7 @@ public class DatabaseLinker {
 
     /**
      * Ejecuta una transacción pendiente
+     *
      * @return true cuando se ejecuta correctamente, false en caso contrario (rollback)
      */
     public boolean ejecutarTransaccion() {
@@ -175,6 +226,7 @@ public class DatabaseLinker {
             if (!DatabaseLinker.conexion.getAutoCommit()) {
                 DatabaseLinker.conexion.commit();
                 DatabaseLinker.conexion.setAutoCommit(true);
+                DatabaseLinker.conexion.setTransactionIsolation(DatabaseLinker.nivelAislamiento);
 
                 return true;
             }
@@ -183,6 +235,7 @@ public class DatabaseLinker {
                 System.err.println(e.getMessage());
                 DatabaseLinker.conexion.rollback();
                 DatabaseLinker.conexion.setAutoCommit(true);
+                DatabaseLinker.conexion.setTransactionIsolation(DatabaseLinker.nivelAislamiento);
             } catch (SQLException e2) {
                 System.err.println(e2.getMessage());
             }
