@@ -12,16 +12,19 @@ import gal.sdc.usc.wallstreet.components.BotonObservable;
 import gal.sdc.usc.wallstreet.components.IconoObservable;
 import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Inversor;
+import gal.sdc.usc.wallstreet.model.OfertaVenta;
 import gal.sdc.usc.wallstreet.model.PropuestaCompra;
 import gal.sdc.usc.wallstreet.model.Sociedad;
 import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.model.UsuarioSesion;
+import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
 import gal.sdc.usc.wallstreet.repository.PropuestaCompraDAO;
 import gal.sdc.usc.wallstreet.repository.SociedadDAO;
 import gal.sdc.usc.wallstreet.repository.SuperUsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
+import gal.sdc.usc.wallstreet.util.Comprador;
 import gal.sdc.usc.wallstreet.util.Comunicador;
 import gal.sdc.usc.wallstreet.util.ErrorValidator;
 import gal.sdc.usc.wallstreet.util.Iconos;
@@ -44,8 +47,8 @@ import javafx.scene.control.TableView;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class SociedadController extends DatabaseLinker implements Initializable {
@@ -103,7 +106,7 @@ public class SociedadController extends DatabaseLinker implements Initializable 
             cmbToleranciaUnidad.getSelectionModel().select(1);
         }
 
-        txtIdentificador.setText(s.getIdentificador().getIdentificador());
+        txtIdentificador.setText(s.getSuperUsuario().getIdentificador());
         txtTolerancia.setText(valor);
         txtSaldoComunal.setText(s.getSaldoComunal().toString());
     }
@@ -134,7 +137,7 @@ public class SociedadController extends DatabaseLinker implements Initializable 
             if (!txtIdentificador.validate() || !txtTolerancia.validate()) return;
             Usuario u = super.getUsuarioSesion().getUsuario();
 
-            if (!u.getSociedad().getIdentificador().getIdentificador().equals(txtIdentificador.getText().toLowerCase())
+            if (!u.getSociedad().getSuperUsuario().getIdentificador().equals(txtIdentificador.getText().toLowerCase())
                     && super.getDAO(SuperUsuarioDAO.class).seleccionar(txtIdentificador.getText().toLowerCase()) != null) {
                 if (txtIdentificador.getValidators().size() == 1) txtIdentificador.getValidators().add(usuarioYaExiste);
                 txtIdentificador.validate();
@@ -144,7 +147,7 @@ public class SociedadController extends DatabaseLinker implements Initializable 
             super.iniciarTransaccion();
 
             if (!txtIdentificador.getText().toLowerCase()
-                    .equals(u.getSociedad().getIdentificador().getIdentificador())) {
+                    .equals(u.getSociedad().getSuperUsuario().getIdentificador())) {
                 super.getDAO(SuperUsuarioDAO.class).actualizarIdentificador(
                         u.getSuperUsuario().getIdentificador(),
                         txtIdentificador.getText().toLowerCase()
@@ -332,8 +335,18 @@ public class SociedadController extends DatabaseLinker implements Initializable 
         if (ejecutar) {
             if (super.getDAO(PropuestaCompraDAO.class).eliminar(pc)) {
                 actualizarTablaPropuestas(pc.getSociedad());
-                // TODO: Llamar al proceso de compra
-                Main.mensaje("Se ha realizado la compra");
+                List<OfertaVenta> ofertas =  super.getDAO(OfertaVentaDAO.class).getOfertasVenta(
+                                pc.getEmpresa().getUsuario().getSuperUsuario().getIdentificador(),
+                                pc.getPrecioMax() == null ? 0.0f : pc.getPrecioMax()
+                );
+                Integer res = Comprador.comprar(
+                        super.getUsuarioSesion().getUsuario().getSociedad(),
+                        ofertas,
+                        pc.getCantidad()
+                );
+                if (res == -1) Main.mensaje("Hubo un error procesando la compra");
+                else if (res == 0) Main.mensaje("No había participaciones a la venta");
+                else Main.mensaje("Se han comprado " + res + " participaciones");
             } else {
                 Main.mensaje("Hubo un error realizando la compra");
             }
@@ -392,7 +405,7 @@ public class SociedadController extends DatabaseLinker implements Initializable 
                 -> new SimpleStringProperty(param.getValue().getEmpresa().getNombre()));
 
         Integer tolerancia = super.getDAO(SociedadDAO.class).seleccionar(
-                super.getUsuarioSesion().getUsuario().getSociedad().getIdentificador()
+                super.getUsuarioSesion().getUsuario().getSociedad().getSuperUsuario()
         ).getTolerancia();
         TableColumn<PropuestaCompra, Node> colAccion = new TableColumn<>("");
         colAccion.setCellValueFactory((TableColumn.CellDataFeatures<PropuestaCompra, Node> param)

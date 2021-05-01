@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.Objects;
 
 @Tabla("usuario")
-public class Usuario extends Entidad {
+public class Usuario extends Entidad implements UsuarioComprador {
     @Columna(value = "identificador", pk = true)
     private SuperUsuario superUsuario;
 

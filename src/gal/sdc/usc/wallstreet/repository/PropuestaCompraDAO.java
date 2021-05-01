@@ -9,7 +9,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,7 +23,7 @@ public class PropuestaCompraDAO extends DAO<PropuestaCompra> {
         try (PreparedStatement ps = super.conexion.prepareStatement(
                 "SELECT * FROM propuesta_compra WHERE sociedad=? ORDER BY fecha_inicio"
         )) {
-            ps.setString(1, s.getIdentificador().getIdentificador());
+            ps.setString(1, s.getSuperUsuario().getIdentificador());
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 pcs.add(Mapeador.map(rs, PropuestaCompra.class));
