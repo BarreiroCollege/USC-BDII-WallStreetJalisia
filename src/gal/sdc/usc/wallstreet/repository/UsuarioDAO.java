@@ -228,6 +228,22 @@ public class UsuarioDAO extends DAO<Usuario> {
         ps.setInt(indice, limite);
     }
 
+    public List<Usuario> getUsuariosParticipacionEmpresa(String empresa){
+        List<Usuario> usuarios = new ArrayList<>();
+        try (PreparedStatement ps = super.conexion.prepareStatement(
+                "SELECT * FROM usuario u, participacion p WHERE u.identificador = p.usuario AND p.empresa = ?"
+        )) {
+            ps.setString(1, empresa);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                usuarios.add(Mapeador.map(rs, Usuario.class));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return usuarios;
+    }
+
     public Usuario getUsuario(String identificador) {
         return getUsuarios().stream().filter(user -> identificador.equals(user.getSuperUsuario().getIdentificador())).findFirst().orElse(null);
 

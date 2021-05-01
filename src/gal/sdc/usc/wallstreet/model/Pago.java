@@ -31,6 +31,7 @@ public class Pago extends Entidad {
     private Float porcentajeParticipacion = 0f;
 
     private Pago() {
+
     }
 
     public Date getFecha() {

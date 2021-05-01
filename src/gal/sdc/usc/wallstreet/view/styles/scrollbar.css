@@ -1,0 +1,4 @@
+.table-view .scroll-bar:vertical > .increment-button,
+.table-view .scroll-bar:vertical > .decrement-button {
+    -fx-padding: 0.25em 0.5em  ;
+}

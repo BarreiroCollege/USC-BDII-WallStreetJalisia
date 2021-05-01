@@ -145,4 +145,23 @@ public class ParticipacionDAO extends DAO<Participacion> {
         }
         return participaciones;
     }
+
+    public List<Participacion> getParticipacionesPorEmpresa(String nombreEmpresa){
+        List<Participacion> participaciones = new ArrayList<>();
+        try (PreparedStatement ps = super.conexion.prepareStatement(
+                "SELECT p.* FROM participacion as p WHERE p.empresa = ? AND p.empresa NOT LIKE p.usuario"
+        )) {
+            ps.setString(1, nombreEmpresa);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                participaciones.add(Mapeador.map(rs, Participacion.class));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        System.out.println(nombreEmpresa);
+        System.out.println(participaciones);
+        return participaciones;
+    }
+
 }

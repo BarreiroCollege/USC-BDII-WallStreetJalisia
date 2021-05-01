@@ -36,8 +36,6 @@ public class PrincipalController extends DatabaseLinker {
     public static final String TITULO = "Ventana principal";
 
     @FXML
-    private JFXButton buttonPerfilUsuario;
-    @FXML
     private JFXButton buttonParticipaciones;
     @FXML
     private JFXButton buttonPagos;
@@ -48,9 +46,6 @@ public class PrincipalController extends DatabaseLinker {
 
     @FXML
     private JFXButton buttonMostrarMas;
-
-    @FXML
-    private JFXButton buttonMostrarMasOfertas;
 
     @FXML
     private TableView<Participacion> tablaParticipaciones;
@@ -129,7 +124,11 @@ public class PrincipalController extends DatabaseLinker {
         });
 
         buttonComprar.setOnAction(e -> {
-            Main.ventana(VCompraController.VIEW, VCompraController.WIDTH, VCompraController.HEIGHT, VCompraController.TITULO);
+                    Main.ventana(VCompraController.VIEW, VCompraController.WIDTH, VCompraController.HEIGHT, VCompraController.TITULO);
+        });
+        buttonPagos.setOnAction(event -> {
+            Main.ventana(PagosController.VIEW, PagosController.WIDTH, PagosController.HEIGHT, PagosController.TITULO);
+
         });
 
         buttonVender.setOnAction(e -> {
@@ -189,7 +188,9 @@ public class PrincipalController extends DatabaseLinker {
 
         //Declaramos el nombre de las columnas
         colEmpresa.setCellValueFactory(cellData -> Bindings.createObjectBinding(() -> cellData.getValue().getEmpresa().getNombre()));
+        colEmpresa.setStyle("-fx-alignment: CENTER;");
         colCantidad.setCellValueFactory(new PropertyValueFactory<Participacion, Integer>("cantidad"));
+        colCantidad.setStyle("-fx-alignment: CENTER;");
     }
 
     public void gestionTablaOfertas(List<OfertaVenta> ofertaVentaList) {
@@ -201,14 +202,19 @@ public class PrincipalController extends DatabaseLinker {
         //Declaramos el nombre de las columnas
 
         colEmpresa2.setCellValueFactory(cellData -> Bindings.createObjectBinding(() -> cellData.getValue().getEmpresa().getNombre()));
+        colEmpresa2.setStyle("-fx-alignment: CENTER;");
         colPrecio.setCellValueFactory(new PropertyValueFactory<OfertaVenta, Float>("precioVenta"));
+        colPrecio.setStyle("-fx-alignment: CENTER;");
         colNParticipaciones.setCellValueFactory(new PropertyValueFactory<OfertaVenta, Integer>("numParticipaciones"));
+        colNParticipaciones.setStyle("-fx-alignment: CENTER;");
 
     }
 
     public void mostrarSaldo() {
-        txtSaldo.setText(usuario.getSaldo() + " €");
+        txtSaldo.setText(usuario.getSaldo() - usuario.getSaldoBloqueado() + " €");
     }
+
+
 
 
 }
