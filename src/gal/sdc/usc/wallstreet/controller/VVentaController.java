@@ -22,6 +22,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.converter.IntegerStringConverter;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -205,7 +206,7 @@ public class VVentaController extends DatabaseLinker {
     }
 
     public void actualizarComision(){
-        campoComision.setText(super.getDAO(ReguladorDAO.class).getRegulador().getComision() * 100 +" %");
+        campoComision.setText(new DecimalFormat("0.00").format(super.getDAO(ReguladorDAO.class).getRegulador().getComision() * 100) +" %");
     }
 
 
