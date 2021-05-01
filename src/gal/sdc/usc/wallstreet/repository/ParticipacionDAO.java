@@ -110,7 +110,7 @@ public class ParticipacionDAO extends DAO<Participacion> {
         try(PreparedStatement ps = conexion.prepareStatement(
                 "SELECT count(*) " +
                         "FROM participacion " +
-                        "WHERE (usuario = ? OR empresa = ?) AND (cantidad > ? OR cantidad_bloqueada > ?)"
+                        "WHERE (usuario = ? OR empresa = ?) AND (cantidad != ? OR cantidad_bloqueada != ?)"
         )){
             ps.setString(1, idSuperUsuario);
             ps.setString(2, idSuperUsuario);

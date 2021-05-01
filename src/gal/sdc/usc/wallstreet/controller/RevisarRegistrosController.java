@@ -139,7 +139,11 @@ public class RevisarRegistrosController extends DatabaseLinker {
         // conflictos, y se puede utilizar un nivel de lecturas no comprometidas para acelerar la ejecución.
         super.iniciarTransaccion(Connection.TRANSACTION_READ_UNCOMMITTED);
         super.getDAO(UsuarioDAO.class).aceptarUsuario(usuarioActual.getSuperUsuario().getIdentificador());
-        super.ejecutarTransaccion();
+        if (super.ejecutarTransaccion()) Main.mensaje("Solicitud aceptada correctamente");
+        else {
+            Main.mensaje("Error al aceptar la solicitud");
+            return;
+        }
 
         // Se deja de mostrar la solicitud y se determina qué botones deben ser visibles
         if (usuariosPendientes.indexOf(usuarioActual) != usuariosPendientes.size() - 1) {
@@ -161,7 +165,11 @@ public class RevisarRegistrosController extends DatabaseLinker {
         // conflictos, y se puede utilizar un nivel de lecturas no comprometidas para acelerar la ejecución.
         super.iniciarTransaccion(Connection.TRANSACTION_READ_UNCOMMITTED);
         super.getDAO(UsuarioDAO.class).rechazarSolicitud(usuarioActual.getSuperUsuario().getIdentificador());
-        super.ejecutarTransaccion();
+        if (super.ejecutarTransaccion()) Main.mensaje("Solicitud rechazada correctamente");
+        else {
+            Main.mensaje("Error al aceptar la solicitud");
+            return;
+        }
 
         // Se deja de mostrar la solicitud y se determina qué botones deben ser visibles
         if (usuariosPendientes.indexOf(usuarioActual) != usuariosPendientes.size() - 1) {

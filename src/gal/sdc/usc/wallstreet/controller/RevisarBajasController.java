@@ -141,7 +141,11 @@ public class RevisarBajasController extends DatabaseLinker {
 
         // Se da de baja el usuario (alta y baja quedan ambos nulos -> ver UsuarioEstado)
         super.getDAO(UsuarioDAO.class).darDeBajaUsuario(usuarioActual);
-        super.ejecutarTransaccion();
+        if (super.ejecutarTransaccion()) Main.mensaje("Baja realizada correctamente");
+        else{
+            Main.mensaje("Error en el proceso de la baja");
+            return;
+        }
 
         // Se actualizan los datos guardados y se determina qué botones mostrar.
         if (usuariosBajas.indexOf(usuarioActual) != usuariosBajas.size() - 1) {

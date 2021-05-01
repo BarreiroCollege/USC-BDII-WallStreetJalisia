@@ -421,11 +421,12 @@ public class UsuarioDAO extends DAO<Usuario> {
     public void vaciarSaldo(String id) {
         try (PreparedStatement ps = conexion.prepareStatement(
                 "UPDATE usuario " +
-                        "SET saldo = ? " +
+                        "SET saldo = ?, saldo_bloqueado = ? " +
                         "WHERE identificador = ?"
         )) {
             ps.setFloat(1, 0);
-            ps.setString(2, id);
+            ps.setFloat(2, 0);
+            ps.setString(3, id);
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
