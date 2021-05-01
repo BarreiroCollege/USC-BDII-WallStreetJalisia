@@ -169,6 +169,7 @@ public class ReguladorController extends DatabaseLinker {
         addValidadores();
         registrarDatosTabla();              // Se busca a los usuarios activos, que pueden realizar transferencias
         establecerColumnasTabla();          // Se establece la estructura de la tabla
+        updateListaPagos();                 // Actualizamos la lista de pagos en el sistema
         setupListeners();
     }
 
@@ -221,7 +222,9 @@ public class ReguladorController extends DatabaseLinker {
         List<Usuario> usuarios = super.getDAO(UsuarioDAO.class).getUsuariosMasSaldo(100, super.getDAO(ReguladorDAO.class));
         datosTabla.setAll(usuarios);
         tablaUsuarios.setItems(datosTabla);
+    }
 
+    public void updateListaPagos(){
         List<Pago> pagos = super.getDAO(PagoDAO.class).getPagosProgramados();
         datosTablaPagos.setAll(pagos);
         tablaPagos.setItems(datosTablaPagos);
@@ -548,12 +551,22 @@ public class ReguladorController extends DatabaseLinker {
     }
 
     /**
+     * Permite el borrado de un pago
+     */
+    public void onClickTablaPagos(){ btnEliminarPago.setDisable(false); }
+
+    /**
      * Elimina la opción de escoger un dato de la tabla.
      */
     public void onMouseReleasedTabla(){
         btnDeTabla.setVisible(false);
         btnParaTabla.setVisible(false);
     }
+
+    /**
+     * Impide el borrado de un pago
+     */
+    public void onMouseReleasedTablaPagos(){ btnEliminarPago.setDisable(true); }
 
     public void onClickBtnDeExterior(){
         campoDe = null;
@@ -658,7 +671,16 @@ public class ReguladorController extends DatabaseLinker {
     }
 
     public void eliminarPago(){
+        Pago seleccion = tablaPagos.getSelectionModel().getSelectedItem(); // Leemos el pago seleccionado en la tabla
 
+        super.getDAO(PagoDAO.class).eliminar(seleccion); // Lo eliminamos de la base de datos
+
+        // Y actualizamos la tabla
+        updateListaPagos();
+        tablaPagos.getColumns().get(0).setVisible(false);
+        tablaPagos.getColumns().get(0).setVisible(true);
+
+        btnEliminarPago.setDisable(true); // Desactivamos el boton de borrado, puesto que la fila seleccionada no existe
     }
 
     public void cerrarSesion(){
