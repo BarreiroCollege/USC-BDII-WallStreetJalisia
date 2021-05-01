@@ -40,20 +40,23 @@ public class UsuarioDAO extends DAO<Usuario> {
     /**
      * Devuelve una lista con los usuarios que poseen más saldo (no bloqueado) en el mercado.
      * El número de usuarios se regula con el parámetro límite.
+     * No se incluye al regulador en el resultado.
      *
      * @param limite Número de usuarios máximo de la lista.
+     * @param reguladorDAO DAO del regulador (permite eliminarlo del resultado)
      * @return Lista con los usuarios de mayor saldo con tamaño máximo limite.
      */
-    public List<Usuario> getUsuariosMasSaldo(int limite) {
+    public List<Usuario> getUsuariosMasSaldo(int limite, ReguladorDAO reguladorDAO) {
         List<Usuario> usuarios = new ArrayList<>();
         try (PreparedStatement ps = super.conexion.prepareStatement(
                 "SELECT * " +
                         "FROM usuario " +
-                        "WHERE alta is null " +
+                        "WHERE alta is null AND identificador != ? " +
                         "ORDER BY saldo " +
                         "LIMIT ?"
         )) {
-            ps.setInt(1, limite);
+            ps.setString(1, reguladorDAO.getDatoRegulador("identificador"));
+            ps.setInt(2, limite);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 usuarios.add(Mapeador.map(rs, Usuario.class));

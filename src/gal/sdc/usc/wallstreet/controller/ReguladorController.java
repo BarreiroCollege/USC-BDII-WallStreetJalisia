@@ -10,6 +10,7 @@ import gal.sdc.usc.wallstreet.model.OfertaVenta;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.*;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
+import gal.sdc.usc.wallstreet.util.ErrorValidator;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -178,7 +179,7 @@ public class ReguladorController extends DatabaseLinker {
 
     public void registrarDatosTabla(){
         // Inicialmente solo se muestran los 100 usuarios de más saldo (filtrar actualizará la tabla)
-        List<Usuario> usuarios = super.getDAO(UsuarioDAO.class).getUsuariosMasSaldo(100);
+        List<Usuario> usuarios = super.getDAO(UsuarioDAO.class).getUsuariosMasSaldo(100, super.getDAO(ReguladorDAO.class));
         datosTabla.setAll(usuarios);
         tablaUsuarios.setItems(datosTabla);
     }
@@ -201,14 +202,14 @@ public class ReguladorController extends DatabaseLinker {
 
     public void addValidadores(){
         // Validadores de entrada numérica
-        IntegerValidator iv = new IntegerValidator("");
+        IntegerValidator iv = new IntegerValidator("Valor no numérico");
         txtCantidad.getValidators().add(iv);
 
         txtCantidad.textProperty().addListener((observable, oldValue, newValue) -> {
             txtCantidad.validate();
-            determinarActivacionBtnTransferencia();
+            if (txtCantidad.getText() != null && !txtCantidad.getText().isEmpty() && !txtCantidad.getActiveValidator().hasErrorsProperty().getValue())
+                determinarActivacionBtnTransferencia();
         });
-        //TODO: fallo
     }
 
     public void establecerColumnasTabla() {
