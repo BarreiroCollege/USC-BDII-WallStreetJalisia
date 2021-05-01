@@ -50,7 +50,7 @@ public class UsuarioDAO extends DAO<Usuario> {
                 "SELECT * " +
                         "FROM usuario " +
                         "WHERE alta is null AND identificador != ? " +
-                        "ORDER BY saldo " +
+                        "ORDER BY saldo DESC " +
                         "LIMIT ?"
         )) {
             ps.setString(1, reguladorDAO.getDatoRegulador("identificador"));

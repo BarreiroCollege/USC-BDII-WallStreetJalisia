@@ -235,10 +235,15 @@ public class ReguladorController extends DatabaseLinker {
 
     /**
      * Se aceptan los registros pendientes.
-     * No se admite read uncomitted para evitar que se acepten solicitudes de las que el regulador no tenía constancia.
      */
     public void aceptarTodoRegistros() {
+        // Dado que un usuario no puede realizar ninguna acción hasta ser aceptada su solicitud, no va a haber
+        // conflictos, y se puede utilizar un nivel de lecturas no comprometidas para acelerar la ejecución.
+        // No tenemos problemas de cara a admitir usuarios de los que el regulador no tenía constancia al pasar
+        // la lista usuariosRegistroPendientes.
+        super.iniciarTransaccion(Connection.TRANSACTION_READ_UNCOMMITTED);
         super.getDAO(UsuarioDAO.class).aceptarUsuariosTodos(usuariosRegistroPendientes);
+        super.ejecutarTransaccion();
         actualizarRegistrosPendientes();
     }
 
@@ -373,17 +378,30 @@ public class ReguladorController extends DatabaseLinker {
 
             // Hay saldo suficiente. Se retiran los fondos.
             if (super.getDAO(UsuarioDAO.class).retirarSaldo(Float.parseFloat(txtCantidad.getText()), campoDe)){
-                // Se actualiza la tabla.
+                // Se actualiza la tabla y se da un aviso
+                Main.mensaje("Transferencia realizada correctamente");
                 campoDe.setSaldo(campoDe.getSaldo() - Float.parseFloat(txtCantidad.getText()));
+                // Se refresca la tabla.
                 tablaUsuarios.getColumns().get(0).setVisible(false);
                 tablaUsuarios.getColumns().get(0).setVisible(true);
+            } else {
+                Main.mensaje("Error en la transferencia");
             }
         } else if (campoDe == null){          // Se depositan fondos
             // Como depositar fondos no supone peligros respecto a comprobaciones, se puede hacer con un nivel de
             // aislamiento de lecturas no comprometidas
             super.iniciarTransaccion(Connection.TRANSACTION_READ_UNCOMMITTED);
             super.getDAO(UsuarioDAO.class).depositarSaldo(Integer.parseInt(txtCantidad.getText()), campoPara);
-            super.ejecutarTransaccion();
+            if (super.ejecutarTransaccion()){
+                // Se actualiza la tabla y se da un aviso
+                Main.mensaje("Transferencia realizada correctamente");
+                campoPara.setSaldo(campoPara.getSaldo() + Float.parseFloat(txtCantidad.getText()));
+                // Se refresca la tabla
+                tablaUsuarios.getColumns().get(0).setVisible(false);
+                tablaUsuarios.getColumns().get(0).setVisible(true);
+            } else {
+                Main.mensaje("Error en la transferencia");
+            }
         } else {                                // Transferencia de una cuenta a otra
             // Se comprueba que haya saldo suficiente
             if ((Float.parseFloat(txtCantidad.getText()) > campoDe.getSaldo())){
@@ -394,7 +412,17 @@ public class ReguladorController extends DatabaseLinker {
             super.iniciarTransaccion();
             super.getDAO(UsuarioDAO.class).retirarSaldo(Float.parseFloat(txtCantidad.getText()), campoDe);
             super.getDAO(UsuarioDAO.class).depositarSaldo(Float.parseFloat(txtCantidad.getText()), campoPara);
-            super.ejecutarTransaccion();
+            if (super.ejecutarTransaccion()){
+                // Se actualiza la tabla y se da un aviso
+                Main.mensaje("Transferencia realizada correctamente");
+                campoDe.setSaldo(campoDe.getSaldo() - Float.parseFloat(txtCantidad.getText()));
+                campoPara.setSaldo(campoPara.getSaldo() + Float.parseFloat(txtCantidad.getText()));
+                // Se refresca la tabla
+                tablaUsuarios.getColumns().get(0).setVisible(false);
+                tablaUsuarios.getColumns().get(0).setVisible(true);
+            } else {
+                Main.mensaje("Error en la transferencia");
+            }
         }
     }
 
