@@ -451,31 +451,33 @@ public class PagosController extends DatabaseLinker {
             return false;
         }
 
-        super.iniciarTransaccion();
-
         Pago.Builder pb = new Pago.Builder().withEmpresa((Empresa) super.getUsuarioSesion());
 
         //Construimos pago fecha_anuncio now() y fecha la seleccionada
-        switch (cbMetodoPago.getValue().toString()) {
-            case "Dinero":
-                pb = pb
-                        .withBeneficioPorParticipacion(Float.valueOf(txtDinero.getText()))
-                        .withParticipacionPorParticipacion(0.0f)
-                        .withPorcentajeBeneficio(1.0f)
-                        .withPorcentajeParticipacion(0.0f);
-                break;
-            case "Participaciones":
-                pb = pb.withBeneficioPorParticipacion(0.0f)
-                        .withParticipacionPorParticipacion(Float.valueOf(txtParticipaciones.getText()))
-                        .withPorcentajeBeneficio(0.0f)
-                        .withPorcentajeParticipacion(1.0f);
-                break;
-            case "Ambas":
-                pb = pb.withBeneficioPorParticipacion(Float.valueOf(txtDinero.getText()))
-                        .withParticipacionPorParticipacion(Float.valueOf(txtParticipaciones.getText()))
-                        .withPorcentajeBeneficio(sPorcentajeBeneficios.getValue() / 100.0f)
-                        .withPorcentajeParticipacion((sPorcentajeParticipaciones.getValue() / 100.0f));
-                break;
+        try {
+            switch (cbMetodoPago.getValue().toString()) {
+                case "Dinero":
+                    pb = pb
+                            .withBeneficioPorParticipacion(Float.valueOf(txtDinero.getText()))
+                            .withParticipacionPorParticipacion(0.0f)
+                            .withPorcentajeBeneficio(1.0f)
+                            .withPorcentajeParticipacion(0.0f);
+                    break;
+                case "Participaciones":
+                    pb = pb.withBeneficioPorParticipacion(0.0f)
+                            .withParticipacionPorParticipacion(Float.valueOf(txtParticipaciones.getText()))
+                            .withPorcentajeBeneficio(0.0f)
+                            .withPorcentajeParticipacion(1.0f);
+                    break;
+                case "Ambas":
+                    pb = pb.withBeneficioPorParticipacion(Float.valueOf(txtDinero.getText()))
+                            .withParticipacionPorParticipacion(Float.valueOf(txtParticipaciones.getText()))
+                            .withPorcentajeBeneficio(sPorcentajeBeneficios.getValue() / 100.0f)
+                            .withPorcentajeParticipacion((sPorcentajeParticipaciones.getValue() / 100.0f));
+                    break;
+            }
+        } catch (NumberFormatException e) {
+            // TODO: Mostrar mensaje y cancelar o petarlo
         }
 
         if (cbPagoProgramado.isSelected()) {
@@ -488,10 +490,8 @@ public class PagosController extends DatabaseLinker {
 
         Pago pago = pb.build();
 
-        // 1. Crear Pago e insertar
-        super.getDAO(PagoDAO.class).insertar(pago);
-
-        // 2. Crear PagoUsuarios
+        float saldoAQuitar = 0.0f;
+        int participacionesAQuitar = 0;
         List<PagoUsuario> pagoUsuarios = new LinkedList<>();
         for (Participacion participacion : super.getDAO(ParticipacionDAO.class).getParticipacionesPorEmpresa(super.getUsuarioSesion().getUsuario().getSuperUsuario().getIdentificador())) {
             PagoUsuario pu = new PagoUsuario.Builder()
@@ -500,19 +500,32 @@ public class PagosController extends DatabaseLinker {
                     .withNumParticipaciones(participacion.getCantidad())
                     .build();
             pagoUsuarios.add(pu);
-            super.getDAO(PagoUsuarioDAO.class).insertar(pu);
-        }
 
-        // 3. Calcular cuanto dinero y participaciones tiene que dar la empresa
-        float saldoAQuitar = 0.0f;
-        int participacionesAQuitar = 0;
-        for (PagoUsuario pu : pagoUsuarios) {
             saldoAQuitar = pu.getNumParticipaciones()
                     * pu.getPago().getPorcentajeBeneficio()
                     * pu.getBeneficioRecibir();
             participacionesAQuitar += pu.getNumParticipaciones()
                     * pu.getPago().getPorcentajeParticipacion()
                     * pu.getParticipacionesRecibir();
+        }
+
+        if (pago.getEmpresa().getUsuario().getSaldoDisponible() < saldoAQuitar) {
+            // TODO: Mostrar mensaje y cancelar o petarlo
+        }
+
+        Participacion participacion = super.getDAO(ParticipacionDAO.class).seleccionar(pago.getEmpresa().getUsuario().getSuperUsuario(), pago.getEmpresa());
+        if (participacionesAQuitar > 0.0f && (participacion == null || participacion.getCantidad() < participacionesAQuitar)) {
+            // TODO: Mostrar mensaje y cancelar o petarlo
+        }
+
+        super.iniciarTransaccion();
+
+        // 1. Crear Pago e insertar
+        super.getDAO(PagoDAO.class).insertar(pago);
+
+        // 2. Crear PagoUsuarios
+        for (PagoUsuario pu : pagoUsuarios) {
+            super.getDAO(PagoUsuarioDAO.class).insertar(pu);
         }
 
         // 3. Si es programado, bloquear saldos y participaciones
