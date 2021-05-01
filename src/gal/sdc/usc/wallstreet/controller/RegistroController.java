@@ -28,6 +28,7 @@ import javafx.scene.control.TextInputControl;
 
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -213,6 +214,7 @@ public class RegistroController extends DatabaseLinker implements Initializable 
                     .withCp(txtCp.getText())
                     .withLocalidad(txtLocalidad.getText())
                     .withTelefono(Integer.parseInt(txtTelefono.getText()))
+                    .withAlta(new Date())
                     .build();
 
             boolean ok;
