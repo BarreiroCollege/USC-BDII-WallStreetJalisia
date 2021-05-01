@@ -24,7 +24,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class SociedadNuevaController extends DatabaseLinker implements Initializable {
-    public static final String VIEW = "nuevasociedad";
+    public static final String VIEW = "sociedadnueva";
     public static final Integer HEIGHT = 200;
     public static final Integer WIDTH = 500;
     public static final String TITULO = "Crear Sociedad";
@@ -56,7 +56,7 @@ public class SociedadNuevaController extends DatabaseLinker implements Initializ
         }
 
         Sociedad s = new Sociedad.Builder()
-                .withIdentificador(new SuperUsuario.Builder(txtIdentificador.getText()).build())
+                .withSuperUsuario(new SuperUsuario.Builder(txtIdentificador.getText()).build())
                 .build();
 
         if (super.getDAO(SociedadDAO.class).insertar(s)) {

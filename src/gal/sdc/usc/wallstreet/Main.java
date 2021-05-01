@@ -67,7 +67,7 @@ public class Main extends Application {
             stage.setWidth(width);
             stage.setHeight(height);
             stage.setResizable(false);
-            stage.setTitle(titulo + " | Wall Street Jalisia");
+            stage.setTitle(titulo + " | eMercado de Abastos");
 
             if (modal) {
                 stage.initOwner(Main.primaryStage);

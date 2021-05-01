@@ -3,8 +3,6 @@ package gal.sdc.usc.wallstreet.repository;
 import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Inversor;
 import gal.sdc.usc.wallstreet.model.Sociedad;
-import gal.sdc.usc.wallstreet.model.Empresa;
-import gal.sdc.usc.wallstreet.model.Inversor;
 import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.model.UsuarioSesion;
@@ -178,8 +176,25 @@ public class UsuarioDAO extends DAO<Usuario> {
         ps.setInt(indice, limite);
     }
 
+    public List<Usuario> getUsuariosParticipacionEmpresa(String empresa){
+        List<Usuario> usuarios = new ArrayList<>();
+        try (PreparedStatement ps = super.conexion.prepareStatement(
+                "SELECT * FROM usuario u, participacion p WHERE u.identificador = p.usuario AND p.empresa = ?"
+        )) {
+            ps.setString(1, empresa);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                usuarios.add(Mapeador.map(rs, Usuario.class));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return usuarios;
+    }
+
     public Usuario getUsuario(String identificador) {
         return getUsuarios().stream().filter(user -> identificador.equals(user.getSuperUsuario().getIdentificador())).findFirst().orElse(null);
+
     }
 
     public List<UsuarioSesion> getUsuariosPorSociedad(Sociedad s) {
@@ -188,7 +203,7 @@ public class UsuarioDAO extends DAO<Usuario> {
         try (PreparedStatement ps = super.conexion.prepareStatement(
                 "SELECT i.* FROM inversor i, usuario u WHERE i.usuario = u.identificador AND u.sociedad = ?"
         )) {
-            ps.setString(1, s.getIdentificador().getIdentificador());
+            ps.setString(1, s.getSuperUsuario().getIdentificador());
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -201,7 +216,7 @@ public class UsuarioDAO extends DAO<Usuario> {
         try (PreparedStatement ps = super.conexion.prepareStatement(
                 "SELECT e.* FROM empresa e, usuario u WHERE e.usuario = u.identificador AND u.sociedad = ?"
         )) {
-            ps.setString(1, s.getIdentificador().getIdentificador());
+            ps.setString(1, s.getSuperUsuario().getIdentificador());
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -224,7 +239,7 @@ public class UsuarioDAO extends DAO<Usuario> {
         try (PreparedStatement ps = super.conexion.prepareStatement(
                 "SELECT * " +
                         "FROM usuario " +
-                        "WHERE alta is not null"
+                        "WHERE alta is not null AND baja is null"
         )) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {

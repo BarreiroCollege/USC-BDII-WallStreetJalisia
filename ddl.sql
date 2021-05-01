@@ -10,14 +10,14 @@ alter table superusuario
 
 create table sociedad
 (
-    identificador varchar(16)                not null
+    identificador varchar(16)                   not null
         constraint sociedad_pk
             primary key
         constraint sociedad_superusuario_identificador_fk
             references superusuario
             on update cascade,
-    saldo_comunal double precision default 0 not null,
-    tolerancia    integer          default 0 not null
+    saldo_comunal double precision default 0    not null,
+    tolerancia    integer          default 1440 not null
 );
 
 alter table sociedad
@@ -36,7 +36,7 @@ create table usuario
     cp              varchar(10),
     localidad       varchar(32),
     telefono        integer,
-    saldo           double precision default 0     not null,
+    saldo           double precision default 1000     not null,
     saldo_bloqueado double precision default 0     not null,
     alta            timestamp,
     baja            timestamp,
@@ -216,6 +216,38 @@ create table regulador
 alter table regulador
     owner to postgres;
 
+-- Función asociada al trigger actualizarNumParticipaciones.
+-- Disminuye restantes según el número de participaciones vendidas
+-- de la venta.
+create or replace function actualizar_participaciones_restantes() returns trigger language plpgsql as $trigger$
+begin
+    -- Reducimos las restantes en la oferta
+    update oferta_venta
+    set restantes = restantes - NEW.cantidad
+    where fecha = NEW.ov_fecha and usuario = NEW.ov_usuario;
+    return new;
+end;
+$trigger$;
+
+
+-- Trigger que se activa al insertar una nueva venta y actualiza oferta_venta
+create trigger actualizarRestantes after insert on venta
+    for each row execute procedure actualizar_participaciones_restantes();
+
+-- =================================================================================================
+
+-- Función asociada al trigger insertarNumParticipaciones.
+-- Cuando se lanza una oferta se establece restantes = num_participaciones
+create or replace function insertar_participaciones_restantes() returns trigger language plpgsql as $trigger$
+begin
+    NEW.restantes := NEW.num_participaciones;
+    return new;
+end;
+$trigger$;
+
+-- Trigger que se activa al insertar una nueva oferta y actualiza oferta_venta
+create trigger insertarRestantes before insert on oferta_venta
+    for each row execute procedure insertar_participaciones_restantes();
 
 create view empresas_inversores_usuarios as
 select m.identificador, m.saldo, i.usuario as usuario_inversor, i.dni, i.nombre, i.apellidos, m.usuario as usuario_empresa, m.cif, m.nombre as nombre_comercial

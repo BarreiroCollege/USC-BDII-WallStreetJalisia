@@ -18,6 +18,7 @@ import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.Comunicador;
 import gal.sdc.usc.wallstreet.util.ErrorValidator;
+import gal.sdc.usc.wallstreet.util.Pagador;
 import gal.sdc.usc.wallstreet.util.Validadores;
 import gal.sdc.usc.wallstreet.util.auth.PasswordStorage;
 import javafx.fxml.FXML;
@@ -32,7 +33,7 @@ import java.util.ResourceBundle;
 public class AccesoController extends DatabaseLinker implements Initializable {
     public static final String VIEW = "acceso";
     public static final Integer HEIGHT = 500;
-    public static final Integer WIDTH = 400;
+    public static final Integer WIDTH = 450;
     public static final String TITULO = "Acceso";
 
     @FXML
@@ -125,6 +126,8 @@ public class AccesoController extends DatabaseLinker implements Initializable {
         if (us == null) us = super.getDAO(EmpresaDAO.class).seleccionar(usuario);
         if (us == null) us = super.getDAO(ReguladorDAO.class).seleccionar(usuario);
         super.setUsuarioSesion(us);
+
+        Pagador.despacharPagosProgramados();
 
         if (us instanceof Regulador) {
             Main.ventana(

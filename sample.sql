@@ -60,6 +60,10 @@ values ('sherlock', 'sha1:64000:18:DkxtFkqdJgthfzufgtXk2cUtgc0beHP7:gl6FXkP8ho9s
 insert into inversor (usuario, dni, nombre, apellidos)
 values ('sherlock', '10011001S', 'Shelock', 'Holmes');
 
+insert into usuario(identificador, clave)
+values ('regulador', 'sha1:64000:18:fRyIy2KpkOhXIkFl9+OCu6BPq32xY2+Y:d5j3M7amOsYqisxLDk6VbSL3');
+insert into regulador(usuario, comision)
+values ('regulador', 0.05);
 
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
 values ('teceric', 'sha1:64000:18:amY24vKwv1SJGpgjVpdLsWWx9qc69qMl:2AidJweG25zNE4orrhkVxkMF', 'Calle 10 de Marzo', '36210', 'Vigo', 986331724, 7012.0, 0.0, null, null,'GWI7QDYNDQZQ3BZU7I6WTGPCIK5S5Q75','aaI', false );
@@ -114,11 +118,11 @@ values ('2021-03-20 12:16:31', 'garcables', 'marcos', 80, 25, true, 0.1, 60);
 
 
 insert into venta (fecha, ov_fecha, ov_usuario, usuario_compra, cantidad)
-values ('2021-02-02 17:32:41', '2021-01-30 19:52:33', 'marcos', 'manuel', 60);
+values ('2021-02-02 17:32:41', '2021-01-30 19:52:33', 'marcos', 'manuel', 30);
 insert into venta (fecha, ov_fecha, ov_usuario, usuario_compra, cantidad)
-values ('2021-02-17 11:15:03', '2021-02-16 16:48:02', 'marcos', 'manuel', 100);
+values ('2021-02-17 11:15:03', '2021-02-16 16:48:02', 'marcos', 'manuel', 30);
 insert into venta (fecha, ov_fecha, ov_usuario, usuario_compra, cantidad)
-values ('2021-02-18 19:10:44', '2021-02-18 18:55:54', 'garcables', 'manuel', 50);
+values ('2021-02-18 19:10:44', '2021-02-18 18:55:54', 'garcables', 'manuel', 30);
 insert into venta (fecha, ov_fecha, ov_usuario, usuario_compra, cantidad)
 values ('2021-03-24 12:01:50', '2021-03-14 14:16:10', 'manuel', 'marcos', 10);
 insert into venta (fecha, ov_fecha, ov_usuario, usuario_compra, cantidad)

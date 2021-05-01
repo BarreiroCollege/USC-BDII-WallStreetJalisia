@@ -4,24 +4,16 @@ import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.OfertaVenta;
 import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.model.Usuario;
-import gal.sdc.usc.wallstreet.model.Participacion;
-import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.repository.helpers.DAO;
 import gal.sdc.usc.wallstreet.util.Mapeador;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class OfertaVentaDAO extends DAO<OfertaVenta> {
 
@@ -32,13 +24,15 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
 
     public List<OfertaVenta> getOfertasVenta(String empresa, Float precioMax) {
         List<OfertaVenta> ofertas = new ArrayList<>();
-        try (PreparedStatement ps = conexion.prepareStatement(
-                "SELECT * FROM oferta_venta " +
-                        "WHERE confirmado is true and empresa=? and precio_venta<=? and num_participaciones>0 " +
-                        "ORDER BY precio_venta asc"
-        )) {
-            ps.setString(1, empresa);
-            ps.setFloat(2, precioMax);
+        try{
+            String statement = "SELECT * FROM oferta_venta " +
+                                "WHERE confirmado is true and empresa=? ";
+            if(!precioMax.equals(0f)) statement += "and precio_venta<=? ";
+            statement += "and restantes>0 ORDER BY precio_venta asc fecha desc";
+
+            PreparedStatement ps = conexion.prepareStatement(statement);
+            ps.setString(1,empresa);
+            if(!precioMax.equals(0f)) ps.setFloat(2,precioMax);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 OfertaVenta oferta = Mapeador.map(rs, OfertaVenta.class);
@@ -50,6 +44,28 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
 
         return ofertas;
     }
+
+    public List<OfertaVenta> getOfertasVentaUsuario(String empresa, String usuario) {
+        List<OfertaVenta> ofertas = new ArrayList<>();
+            try{
+                String statement = "SELECT * FROM oferta_venta WHERE usuario=? and restantes>0 ";
+                if(empresa != null) statement +=  "and empresa = ?  ";
+                statement += "ORDER BY precio_venta asc";
+
+            PreparedStatement ps = conexion.prepareStatement(statement);
+            ps.setString(1,usuario);
+            if(empresa!=null) ps.setString(2,empresa);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                ofertas.add(Mapeador.map(rs, OfertaVenta.class));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return ofertas;
+    }
+
 
     /**
      * Devuelve todas las ofertas de venta de un usuario indicado.

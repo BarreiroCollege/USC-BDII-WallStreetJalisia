@@ -22,7 +22,7 @@
 
     <HBox alignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
           prefHeight="150.0" maxHeight="150.0" minHeight="150.0">
-        <Label text="Wall Street Jalisia">
+        <Label text="eMercado de Abastos">
             <font>
                 <Font name="System Bold" size="36.0"/>
             </font>

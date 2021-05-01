@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class GoogleAuth {
-    private final static String HOST = "Wall Street Jalisia";
+    private final static String HOST = "eMercado de Abastos";
 
     /**
      * Genera una clave secreta para usar como OTP

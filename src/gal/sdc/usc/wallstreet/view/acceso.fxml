@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import java.net.URL?>
-<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0"
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="450.0"
             xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="gal.sdc.usc.wallstreet.controller.AccesoController"
             fx:id="anchor">
@@ -20,7 +20,7 @@
 
     <HBox alignment="CENTER" AnchorPane.bottomAnchor="350.0" AnchorPane.leftAnchor="0.0"
           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" prefHeight="150.0">
-        <Label text="Wall Street Jalisia">
+        <Label text="eMercado de Abastos">
             <font>
                 <Font name="System Bold" size="36.0"/>
             </font>
