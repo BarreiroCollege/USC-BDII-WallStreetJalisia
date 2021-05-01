@@ -173,7 +173,7 @@ public class PrincipalController extends DatabaseLinker {
     }
 
     public void mostrarSaldo() {
-        txtSaldo.setText(usuario.getSaldo() + " €");
+        txtSaldo.setText(usuario.getSaldo() - usuario.getSaldoBloqueado() + " €");
     }
 
 

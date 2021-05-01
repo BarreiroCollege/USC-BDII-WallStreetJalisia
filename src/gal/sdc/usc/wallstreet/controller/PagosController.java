@@ -6,6 +6,7 @@ import gal.sdc.usc.wallstreet.model.*;
 import gal.sdc.usc.wallstreet.repository.PagoDAO;
 import gal.sdc.usc.wallstreet.repository.PagoUsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.ParticipacionDAO;
+import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import javafx.beans.property.SimpleStringProperty;
 
@@ -15,11 +16,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 
@@ -525,12 +523,12 @@ public class PagosController extends DatabaseLinker {
         pagosAUsuarios = obtenerPagosUsuarios(super.getDAO(ParticipacionDAO.class).getParticipacionesPorEmpresa(super.getUsuarioSesion().getUsuario().getSuperUsuario().getIdentificador()) ,p);
 
 
-        super.getUsuarioSesion().getUsuario().setSaldo(super.getUsuarioSesion().getUsuario().getSaldo() - Float.valueOf(txtDinero.getText()) * pagosAUsuarios.size());
-
-        if (!super.getDAO(PagoUsuarioDAO.class).insertarListaPagos(pagosAUsuarios, super.getUsuarioSesion().getUsuario().getSuperUsuario().getIdentificador())){
-            return false;
+        List<Participacion> listaParticipacionUsuarios = super.getDAO(ParticipacionDAO.class).getParticipacionesPorEmpresa(super.getUsuarioSesion().getUsuario().getSuperUsuario().getIdentificador());
+        if(super.getDAO(PagoDAO.class).actualizarSaldos(p, txtDinero.getText().isEmpty() ? 0.0f : Float.parseFloat(txtDinero.getText()) * p.getPorcentajeBeneficio(), listaParticipacionUsuarios) && super.getDAO(PagoDAO.class).repartirParticipaciones(p, listaParticipacionUsuarios, txtParticipaciones.getText().isEmpty() ? 0 : Integer.parseInt(txtParticipaciones.getText()) * p.getPorcentajeParticipacion().intValue())){
+            Main.mensaje("Se ha realizado el pago con éxito", 3);
         }
-        return true;
+
+            return super.getDAO(PagoUsuarioDAO.class).insertarListaPagos(pagosAUsuarios, super.getUsuarioSesion().getUsuario().getSuperUsuario().getIdentificador());
     }
 
     public void limpiarCampos(){

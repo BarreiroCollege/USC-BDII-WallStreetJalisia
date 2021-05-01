@@ -1,5 +1,6 @@
 package gal.sdc.usc.wallstreet.repository;
 
+import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.*;
 import gal.sdc.usc.wallstreet.repository.helpers.DAO;
 
@@ -72,5 +73,94 @@ public class PagoDAO extends DAO<Pago> {
         }
         return false;
     }
-    //pa los funcionarios
+
+    public boolean actualizarSaldos(Pago p, float dinero, List<Participacion> participacions){
+        if((p.getEmpresa().getUsuario().getSaldo() - p.getEmpresa().getUsuario().getSaldoBloqueado()) - (dinero * participacions.size()) < 0){
+            Main.mensaje("No se dispone del saldo suficiente", 3);
+            return false;
+        }
+        if(p.getFechaAnuncio() == null) {
+            try (PreparedStatement ps = conexion.prepareStatement(
+                    "UPDATE usuario SET saldo = ? WHERE usuario.identificador = ?"
+            )) {
+                ps.setFloat(1, p.getEmpresa().getUsuario().getSaldo() - dinero * participacions.size());
+                ps.setString(2, p.getEmpresa().getUsuario().getSuperUsuario().getIdentificador());
+                ps.executeUpdate();
+                for(Participacion participacion : participacions) {
+                    System.out.println(participacion.getUsuario().getSuperUsuario().getIdentificador());
+                    try (PreparedStatement ps2 = conexion.prepareStatement(
+                            "UPDATE usuario SET saldo = ? WHERE usuario.identificador = ?"
+                    )) {
+                        ps2.setFloat(1, participacion.getUsuario().getSaldo() + dinero * p.getPorcentajeBeneficio() * participacion.getCantidad());
+                        ps2.setString(2, participacion.getUsuario().getSuperUsuario().getIdentificador());
+                        ps2.executeUpdate();
+                    } catch (SQLException e) {
+                        System.err.println(e.getMessage());
+                    }
+                }
+                return true;
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+            }
+            return false;
+        } else{
+            try (PreparedStatement ps = conexion.prepareStatement(
+                    "UPDATE usuario SET saldo_bloqueado = ? WHERE usuario.identificador = ?"
+            )) {
+                ps.setFloat(1, p.getEmpresa().getUsuario().getSaldoBloqueado() + dinero * participacions.size());
+                ps.setString(2, p.getEmpresa().getUsuario().getSuperUsuario().getIdentificador());
+                ps.executeUpdate();
+                for(Participacion participacion : participacions) {
+                    System.out.println(participacion.getUsuario().getSuperUsuario().getIdentificador());
+                    try (PreparedStatement ps2 = conexion.prepareStatement(
+                            "UPDATE usuario SET saldo = ? WHERE usuario.identificador = ?"
+                    )) {
+                        ps2.setFloat(1, participacion.getUsuario().getSaldo() + dinero * p.getPorcentajeBeneficio() * participacion.getCantidad());
+                        ps2.setString(2, participacion.getUsuario().getSuperUsuario().getIdentificador());
+                        ps2.executeUpdate();
+                    } catch (SQLException e) {
+                        System.err.println(e.getMessage());
+                    }
+                }
+                return true;
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+            }
+            return false;
+        }
+    }
+
+    public boolean repartirParticipaciones(Pago p, List<Participacion> participacions, int cantidad){
+        if(p.getFechaAnuncio() == null) {
+            for (Participacion pa : participacions) {
+                try (PreparedStatement ps2 = conexion.prepareStatement(
+                        "UPDATE participacion SET cantidad = ? WHERE participacion.usuario = ? AND participacion.empresa = ?"
+                )) {
+                    ps2.setFloat(1, pa.getCantidad() + cantidad);
+                    ps2.setString(2, pa.getUsuario().getSuperUsuario().getIdentificador());
+                    ps2.setString(3, pa.getEmpresa().getUsuario().getSuperUsuario().getIdentificador());
+                    ps2.executeUpdate();
+                } catch (SQLException e) {
+                    System.err.println(e.getMessage());
+                    return false;
+                }
+            }
+            return true;
+        } else{
+            for (Participacion pa : participacions) {
+                try (PreparedStatement ps2 = conexion.prepareStatement(
+                        "UPDATE participacion SET cantidad = ? WHERE participacion.usuario = ? AND participacion.empresa = ?"
+                )) {
+                    ps2.setFloat(1, pa.getCantidad() + cantidad);
+                    ps2.setString(2, pa.getUsuario().getSuperUsuario().getIdentificador());
+                    ps2.setString(3, pa.getEmpresa().getUsuario().getSuperUsuario().getIdentificador());
+                    ps2.executeUpdate();
+                } catch (SQLException e) {
+                    System.err.println(e.getMessage());
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
 }
