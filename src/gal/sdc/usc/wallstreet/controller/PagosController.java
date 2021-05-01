@@ -477,7 +477,7 @@ public class PagosController extends DatabaseLinker {
                     break;
             }
         } catch (NumberFormatException e) {
-            // TODO: Mostrar mensaje y cancelar o petarlo
+            Main.mensaje("Los valores introducidos no son válidos", 3);
         }
 
         if (cbPagoProgramado.isSelected()) {
@@ -510,12 +510,14 @@ public class PagosController extends DatabaseLinker {
         }
 
         if (pago.getEmpresa().getUsuario().getSaldoDisponible() < saldoAQuitar) {
-            // TODO: Mostrar mensaje y cancelar o petarlo
+            Main.mensaje("El saldo disponible no es suficiente", 3);
+            return false;
         }
 
         Participacion participacion = super.getDAO(ParticipacionDAO.class).seleccionar(pago.getEmpresa().getUsuario().getSuperUsuario(), pago.getEmpresa());
         if (participacionesAQuitar > 0.0f && (participacion == null || participacion.getCantidad() < participacionesAQuitar)) {
-            // TODO: Mostrar mensaje y cancelar o petarlo
+            Main.mensaje("Las participaciones disponibles no son suficientes", 3);
+            return false;
         }
 
         super.iniciarTransaccion();
