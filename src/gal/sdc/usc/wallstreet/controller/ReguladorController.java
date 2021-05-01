@@ -1,8 +1,6 @@
 package gal.sdc.usc.wallstreet.controller;
 
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXSnackbar;
-import com.jfoenix.controls.JFXSnackbarLayout;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.IntegerValidator;
 import gal.sdc.usc.wallstreet.Main;
@@ -10,7 +8,6 @@ import gal.sdc.usc.wallstreet.model.OfertaVenta;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.*;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
-import gal.sdc.usc.wallstreet.util.ErrorValidator;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,13 +16,17 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class ReguladorController extends DatabaseLinker {
@@ -33,6 +34,7 @@ public class ReguladorController extends DatabaseLinker {
     public static final Integer HEIGHT = 500;
     public static final Integer WIDTH = 700;
     public static final String TITULO = "Administración";
+
 
     //<editor-fold defaultstate="collapsed" desc="Variables desde FXML">
     // Pestaña de pendientes
@@ -62,6 +64,8 @@ public class ReguladorController extends DatabaseLinker {
 
     @FXML
     private Label txtSaldo;
+    @FXML
+    private MenuItem menuItemCerrarSesion;
 
 
     // Pestaña de transferencias
@@ -189,6 +193,14 @@ public class ReguladorController extends DatabaseLinker {
         btnDeTabla.setVisible(false);
         btnParaTabla.setVisible(false);
         btnTransferir.setVisible(false);
+
+        // Icon en el menú item
+        Image iconoCerrarSesion = new javafx.scene.image.Image(getClass().getResourceAsStream("/resources/sign_out.png"));
+        ImageView menuIcon = new javafx.scene.image.ImageView(iconoCerrarSesion);
+        menuIcon.setOpacity(0.5);
+        menuIcon.setFitHeight(25);
+        menuIcon.setFitWidth(40);
+        menuItemCerrarSesion.setGraphic(menuIcon);
 
         // Opciones ComboBox
         List<String> opcionesComboBox = new ArrayList<>(Arrays.asList("---", "Empresas", "Inversores"));
@@ -501,5 +513,10 @@ public class ReguladorController extends DatabaseLinker {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void cerrarSesion(){
+        super.cerrarSesion();
+        ((Stage) btnTransferir.getScene().getWindow()).close();
     }
 }

@@ -3,14 +3,18 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXTabPane?>
 <?import com.jfoenix.controls.JFXTextField?>
+<?import java.net.URL?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
-<?import java.net.URL?>
 
 <AnchorPane prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.ReguladorController">
     <stylesheets>
@@ -84,6 +88,11 @@
                            <font>
                               <Font size="14.0" />
                            </font></JFXButton>
+                        <MenuButton layoutX="600.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: #adbde0;" text="Menú">
+                          <items>
+                            <MenuItem fx:id="menuItemCerrarSesion" mnemonicParsing="false" text="Cerrar sesión" onAction="#cerrarSesion" />
+                          </items>
+                        </MenuButton>
                      </children>
                   </AnchorPane>
               </content>
