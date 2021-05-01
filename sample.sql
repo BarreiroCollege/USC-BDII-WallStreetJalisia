@@ -32,7 +32,7 @@ insert into sociedad(identificador, saldo_comunal, tolerancia)
 values ('urrs',0,2);
 
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
-values ('manuel', 'sha1:64000:18:SVe0FlPbMUEQY71rlvaYveyCUSgFXhLz:HOrb28zdabCt2xaWdl5fKyla', 'Calle del olmo, 27', '28012', 'Madrid', 617483290, 529.0, 0.0, null, null,'H3MSFZO7X7A3OKZOA4OYOJXBN3C4ED5Q','aaI', true );
+values ('manuel', 'sha1:64000:18:SVe0FlPbMUEQY71rlvaYveyCUSgFXhLz:HOrb28zdabCt2xaWdl5fKyla', 'Calle del olmo, 27', '28012', 'Madrid', 617483290, 529.0, 0.0, null, null,'H3MSFZO7X7A3OKZOA4OYOJXBN3C4ED5Q','aai', true );
 insert into inversor (usuario, dni, nombre, apellidos)
 values ('manuel', '14782689F', 'Manuel', 'Iglesias Suárez');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
