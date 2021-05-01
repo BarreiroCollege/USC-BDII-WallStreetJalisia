@@ -32,53 +32,53 @@ insert into sociedad(identificador, saldo_comunal, tolerancia)
 values ('urrs',0,2);
 
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
-values ('manuel', 'sha1:64000:18:gQh8DgIBEwFWNANA16hiluLqCTYsMIwG:p+2PGzw91P3g/ysi6XBLc6NJ', 'Calle del olmo, 27', '28012', 'Madrid', 617483290, 529.0, 0.0, null, null,'H3MSFZO7X7A3OKZOA4OYOJXBN3C4ED5Q','aaI', true );
+values ('manuel', 'sha1:64000:18:SVe0FlPbMUEQY71rlvaYveyCUSgFXhLz:HOrb28zdabCt2xaWdl5fKyla', 'Calle del olmo, 27', '28012', 'Madrid', 617483290, 529.0, 0.0, null, null,'H3MSFZO7X7A3OKZOA4OYOJXBN3C4ED5Q','aaI', true );
 insert into inversor (usuario, dni, nombre, apellidos)
 values ('manuel', '14782689F', 'Manuel', 'Iglesias Suárez');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
-values ('marcos', 'sha1:64000:18:xN6xzXXuxSzqbrpnHJIqv1FZWdTLYRCc:5ngoCRSKBJwbQ8nSm4jVwZip', 'Calle Abedul, 12', '28036', 'Madrid', 628714222, 1067.0, 0.0, null, null,'QZ3YM24E7KHVUIQTFNZIKZ2FIKNT6FTW','invemena', false);
+values ('marcos', 'sha1:64000:18:nt7r6x4PAJtz7hzGRYeWXNnMGyok+h++:d6zcs5/whc/aroAWWaSw1edA', 'Calle Abedul, 12', '28036', 'Madrid', 628714222, 1067.0, 0.0, null, null,'QZ3YM24E7KHVUIQTFNZIKZ2FIKNT6FTW','invemena', false);
 insert into inversor (usuario, dni, nombre, apellidos)
 values ('marcos', '47157847C', 'Marcos', 'Vázquez García');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
-values ('sara', 'sha1:64000:18:7Vjvu9VX0GGKPBVgQ/LuhGiKAw8dtY6p:7qV7nXM1IIn5oA49kmN0x/Wt', 'Calle del Palomar, 31', '15701', 'Santiago de Compostela', 615237989, 513.15, 0.0, null, '2021-02-18 18:00:34','OJEAZFGLPKOAOHTM5ILNRTTQOL6DS6YP','urrs', false);
+values ('sara', 'sha1:64000:18:SVe0FlPbMUEQY71rlvaYveyCUSgFXhLz:HOrb28zdabCt2xaWdl5fKyla', 'Calle del Palomar, 31', '15701', 'Santiago de Compostela', 615237989, 513.15, 0.0, null, '2021-02-18 18:00:34','OJEAZFGLPKOAOHTM5ILNRTTQOL6DS6YP','urrs', false);
 insert into inversor (usuario, dni, nombre, apellidos)
 values ('sara', '20416592K', 'Sara', 'Sousa Álvarez');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
-values ('eva', 'sha1:64000:18:fRyIy2KpkOhXIkFl9+OCu6BPq32xY2+Y:d5j3M7amOsYqisxLDk6VbSL3', 'Calle del mar, 78', '15701', 'Santiago de Compostela', 678910344, 1485.30, 0.0, null, null,'SEBID4GBR4WBHL5TMS2KYQRZ735UECJS','hampa', true);
+values ('eva', 'sha1:64000:18:3ncoaUfAAVLd+IG3Qv+j0PElWxtutDm4:qAGZjZUZM/AmmtK6jbD/kwhW', 'Calle del mar, 78', '15701', 'Santiago de Compostela', 678910344, 1485.30, 0.0, null, null,'SEBID4GBR4WBHL5TMS2KYQRZ735UECJS','hampa', true);
 insert into inversor (usuario, dni, nombre, apellidos)
 values ('eva', '10024875E', 'Eva', 'Doural Méndez');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
-values ('pepe', 'sha1:64000:18:fRyIy2KpkOhXIkFl9+OCu6BPq32xY2+Y:d5j3M7amOsYqisxLDk6VbSL3', 'Calle del mar, 78', '15701', 'Santiago de Compostela', 678910344, 1485.30, 0.0, null, null,'U4NREHH3F4LJONAIBGOD3YT66CHVZFKR','urrs', true);
+values ('pepe', 'sha1:64000:18:8W/C96qh9kWpqAwQExVLdhWvr7mJXJcO:z2BBAChRZJuSSryfMy1qtwA+', 'Calle del mar, 78', '15701', 'Santiago de Compostela', 678910344, 1485.30, 0.0, null, null,'U4NREHH3F4LJONAIBGOD3YT66CHVZFKR','urrs', true);
 insert into inversor (usuario, dni, nombre, apellidos)
 values ('pepe', '10024875E', 'Eva', 'Doural Méndez');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
-values ('alex', 'sha1:64000:18:X3VP9nH9e1I22k867DfORqwyZbkAcbGc:auveQ6rmVBCsYT/tsEFaB8d7', 'Gran Vía, 15', '15701', 'Santiago de Compostela', 648512326, 0.0, 0.0, '2021-01-01 12:51:42', null, null, null, false);
+values ('alex', 'sha1:64000:18:Aj0ahywTxknu45mSPx6WD2XojNkY7eox:0VDmaXTHXYzDIc8vCtO/qe4q', 'Gran Vía, 15', '15701', 'Santiago de Compostela', 648512326, 0.0, 0.0, '2021-01-01 12:51:42', null, null, null, false);
 insert into inversor (usuario, dni, nombre, apellidos)
 values ('alex', '95214724B', 'Álex', 'Castro Pérez');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
-values ('sherlock', 'sha1:64000:18:BOmExqs4iWQxxY5mB4ogKoCaai4l8D1F:bmBSjmSzez/Ml7CNDmFhPuJF', 'Baker Street 221B', 'NW1', 'Londres', null, 0.0, 0.0, '2021-03-14 15:22:33', null, null, null, false);
+values ('sherlock', 'sha1:64000:18:DkxtFkqdJgthfzufgtXk2cUtgc0beHP7:gl6FXkP8ho9sIJkV19bVW2GU', 'Baker Street 221B', 'NW1', 'Londres', null, 0.0, 0.0, '2021-03-14 15:22:33', null, null, null, false);
 insert into inversor (usuario, dni, nombre, apellidos)
 values ('sherlock', '10011001S', 'Shelock', 'Holmes');
 
 
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
-values ('teceric', 'sha1:64000:18:0WoocFp8pqjWuMP/72KFmGE62xjlBsP6:MEB75nM5A3WfLS10Bj5DTu6A', 'Calle 10 de Marzo', '36210', 'Vigo', 986331724, 7012.0, 0.0, null, null,'GWI7QDYNDQZQ3BZU7I6WTGPCIK5S5Q75','aaI', false );
+values ('teceric', 'sha1:64000:18:amY24vKwv1SJGpgjVpdLsWWx9qc69qMl:2AidJweG25zNE4orrhkVxkMF', 'Calle 10 de Marzo', '36210', 'Vigo', 986331724, 7012.0, 0.0, null, null,'GWI7QDYNDQZQ3BZU7I6WTGPCIK5S5Q75','aaI', false );
 insert into empresa (usuario, cif, nombre)
 values ('teceric', 'B-76365789', 'Teclados Eric');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
-values ('garcables', 'sha1:64000:18:0cUa4PNwAG+HJvz3JD5Zg4Ru08Bo0J/Y:djo94B5Vc1r5gPasgWM6B88K', 'Avenida Ramón y Cajal, 79', '28016', 'Madrid', 677100888, 2410.0, 0.0, null, null,'UXIUSTUQRMMPN4UO2GNJIQWQPJENVLBM','invemena', true );
+values ('garcables', 'sha1:64000:18:66YcELkG9EpMakgQj8xzGHJANDIzW+Sm:yuMuFHuREUlSIyM6SlEg30tp', 'Avenida Ramón y Cajal, 79', '28016', 'Madrid', 677100888, 2410.0, 0.0, null, null,'UXIUSTUQRMMPN4UO2GNJIQWQPJENVLBM','invemena', true );
 insert into empresa (usuario, cif, nombre)
 values ('garcables', 'A-70012249', 'Garaje de cables');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
-values ('fruLuis', 'sha1:64000:18:lNI/FgENoXpD23en+RSumH2ZkdBeC+ga:Xb5ptBI+UaD7VdLBiG0GU25E', 'Camino sombrío, 14', '39212', 'Fontecha', 147025316, 1000.0, 0.0, null, null,'VTFQD7DQE2ZGTCIDKNBFZ3MNKWKE5NYO',null, false );
+values ('fruLuis', 'sha1:64000:18:D1sx4K1DesoJlhcJdMmO6MSm8wGJfxsI:0p8rOhTfdBtyuah0bOF6II0Y', 'Camino sombrío, 14', '39212', 'Fontecha', 147025316, 1000.0, 0.0, null, null,'VTFQD7DQE2ZGTCIDKNBFZ3MNKWKE5NYO',null, false );
 insert into empresa (usuario, cif, nombre)
 values ('fruLuis', 'A-48216592', 'Frutas Luis');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
-values ('libjaim', 'sha1:64000:18:0krmbeQFU13IagFzaqTMnsU+gBUchFH6:GyWDhmCGNAmArXe7PyP9uZlW', 'Calle Baja, 14', '15701', 'Santiago de Compostela', 648572333, 200.0, 0.0, null, null,'P52ZHRYQK2VA7ZARQGJ34HBUKPZ5KRVW','urrs', false );
+values ('libjaim', 'sha1:64000:18:F6FSExk6qPHHWVo0oJbFbYXzY5BSv9cb:LLFrrCJ9XXzmmtvJgpTHrMHR', 'Calle Baja, 14', '15701', 'Santiago de Compostela', 648572333, 200.0, 0.0, null, null,'P52ZHRYQK2VA7ZARQGJ34HBUKPZ5KRVW','urrs', false );
 insert into empresa (usuario, cif, nombre)
 values ('libjaim', 'P-19752648', 'Libros Jaime');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
-values ('zapPaco', 'sha1:64000:18:0krmbeQFU13IagFzaqTMnsU+gBUchFH6:GyWDhmCGNAmArXe7PyP9uZlW', 'Calle Alta, 41', '17501', 'Santiago de Compostela', 648572333, 200.0, 0.0, null, null,'EXI2KZIUCCGMR4EGYXEJJEXDN2GNMIUD','ubicorp', true );
+values ('zapPaco', 'sha1:64000:18:OSzPTY/zeDfGLB2iz2qYB7cyTmISEryN:f1yCiK+grKN/F+BbiKn/QTq8', 'Calle Alta, 41', '17501', 'Santiago de Compostela', 648572333, 200.0, 0.0, null, null,'EXI2KZIUCCGMR4EGYXEJJEXDN2GNMIUD','ubicorp', true );
 insert into empresa (usuario, cif, nombre)
 values ('zapPaco', 'B-32552648', 'Zapatos Paco');
 
