@@ -3,8 +3,6 @@ package gal.sdc.usc.wallstreet;
 import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXSnackbarLayout;
 import gal.sdc.usc.wallstreet.controller.AccesoController;
-import gal.sdc.usc.wallstreet.controller.VCompraController;
-import gal.sdc.usc.wallstreet.controller.VVentaController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -49,7 +47,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         Main.primaryStage = primaryStage;
-        Main.ventana(VCompraController.VIEW, VCompraController.WIDTH, VCompraController.HEIGHT, VCompraController.TITULO);
+        Main.ventana(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT, AccesoController.TITULO);
     }
 
     public static void dialogo(String view, int width, int height, String titulo) {

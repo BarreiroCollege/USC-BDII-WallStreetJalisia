@@ -71,8 +71,7 @@ public class VCompraController extends DatabaseLinker {
         datosTabla = FXCollections.observableArrayList();
 
         // Recuperamos el usuario
-        // TODO Recoger el usuario de la sesion
-        usr = super.getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder("eva").build());
+        usr = super.getUsuarioSesion().getUsuario();
 
         // Setup de las columnas de la tabla
         tablaOfertas.setOnSort(Event::consume); // Impedimos reordenamiento

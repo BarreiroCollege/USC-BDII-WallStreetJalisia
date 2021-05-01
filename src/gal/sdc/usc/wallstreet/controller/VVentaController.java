@@ -70,9 +70,8 @@ public class VVentaController extends DatabaseLinker {
 
         datosTabla = FXCollections.observableArrayList();
 
-        // TODO recoger usuario sesion
         // Recuperamos el usuario
-        usr = super.getDAO(UsuarioDAO.class).seleccionar(new SuperUsuario.Builder("pepePhone").build());
+        usr = super.getUsuarioSesion().getUsuario();
 
         // Setup de las columnas de la tabla
         tablaOfertas.setOnSort(Event::consume); // Impedimos reordenamiento
