@@ -160,7 +160,7 @@ public class RevisarRegistrosController extends DatabaseLinker {
         // Dado que un usuario no puede realizar ninguna acción hasta ser aceptada su solicitud, no va a haber
         // conflictos, y se puede utilizar un nivel de lecturas no comprometidas para acelerar la ejecución.
         super.iniciarTransaccion(Connection.TRANSACTION_READ_UNCOMMITTED);
-        super.getDAO(UsuarioDAO.class).darDeBajaUsuario(usuarioActual);
+        super.getDAO(UsuarioDAO.class).rechazarSolicitud(usuarioActual.getSuperUsuario().getIdentificador());
         super.ejecutarTransaccion();
 
         // Se deja de mostrar la solicitud y se determina qué botones deben ser visibles

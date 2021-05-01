@@ -147,9 +147,11 @@ public class RevisarBajasController extends DatabaseLinker {
         if (usuariosBajas.indexOf(usuarioActual) != usuariosBajas.size() - 1) {
             siguiente();
             usuariosBajas.remove(usuariosBajas.get(usuariosBajas.indexOf(usuarioActual) - 1));
+            controlarVisibilidadesAnteriorPosterior();      // Se vuelve a comprobar después de la eliminación
         } else if (usuariosBajas.indexOf(usuarioActual) != 0) {
             anterior();
             usuariosBajas.remove(usuariosBajas.get(usuariosBajas.indexOf(usuarioActual) + 1));
+            controlarVisibilidadesAnteriorPosterior();      // Se vuelve a comprobar después de la eliminación
         } else {
             try {
                 Main.aviso("No quedan usuarios con bajas pendientes");
@@ -173,9 +175,11 @@ public class RevisarBajasController extends DatabaseLinker {
         if (usuariosBajas.indexOf(usuarioActual) != usuariosBajas.size() - 1) {
             siguiente();
             usuariosBajas.remove(usuariosBajas.get(usuariosBajas.indexOf(usuarioActual) - 1));
+            controlarVisibilidadesAnteriorPosterior();      // Se vuelve a comprobar después de la eliminación
         } else if (usuariosBajas.indexOf(usuarioActual) != 0) {
             anterior();
             usuariosBajas.remove(usuariosBajas.get(usuariosBajas.indexOf(usuarioActual) + 1));
+            controlarVisibilidadesAnteriorPosterior();      // Se vuelve a comprobar después de la eliminación
         } else {
             Main.aviso("No quedan usuarios con bajas pendientes");
             cerrarVentana();

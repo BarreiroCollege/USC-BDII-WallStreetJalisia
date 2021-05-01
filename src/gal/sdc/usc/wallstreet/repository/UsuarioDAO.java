@@ -239,6 +239,30 @@ public class UsuarioDAO extends DAO<Usuario> {
     }
 
     /***
+     * Devuelve una lista de usuarios que han solicitado darse de baja
+     *
+     * @return Lista de usuarios que pidieron baja; null en caso de error
+     */
+    public List<Usuario> getPendientesBaja() {
+        List<Usuario> inactivos = new ArrayList<>();
+        try (PreparedStatement ps = super.conexion.prepareStatement(
+                "SELECT * " +
+                        "FROM usuario " +
+                        "WHERE baja is not null"
+        )) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                inactivos.add(Mapeador.map(rs, Usuario.class));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return inactivos;
+    }
+
+    /***
      * Devuelve el número de usuarios que han solicitado darse de baja
      *
      * @return Número de usuarios que quieren darse de baja; null en caso de error
@@ -275,6 +299,47 @@ public class UsuarioDAO extends DAO<Usuario> {
             ps.setString(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /***
+     * Rechaza un usuario de la aplicación (elimina sus datos)
+     *
+     * @param id Identificador del usuario del que se ha rechazado la solicitud
+     */
+    public void rechazarSolicitud(String id) {
+        try (PreparedStatement psInversor = conexion.prepareStatement(
+                "DELETE FROM inversor " +
+                        "WHERE usuario = ?"
+        )){
+            psInversor.setString(1, id);
+            psInversor.executeUpdate();
+
+            try (PreparedStatement psEmpresa = conexion.prepareStatement(
+                    "DELETE FROM empresa " +
+                            "WHERE usuario = ?"
+            )){
+                psEmpresa.setString(1, id);
+                psEmpresa.executeUpdate();
+            }
+
+            try (PreparedStatement psUsuario = conexion.prepareStatement(
+                    "DELETE FROM usuario " +
+                            "WHERE identificador = ?"
+            )){
+                psUsuario.setString(1, id);
+                psUsuario.executeUpdate();
+            }
+
+            try (PreparedStatement psSuperusuario = conexion.prepareStatement(
+                    "DELETE FROM superusuario " +
+                            "WHERE identificador = ?"
+            )){
+                psSuperusuario.setString(1, id);
+                psSuperusuario.executeUpdate();
+            }
+        } catch (SQLException e){
             e.printStackTrace();
         }
     }
@@ -406,7 +471,7 @@ public class UsuarioDAO extends DAO<Usuario> {
     public void darDeBajaUsuarios(List<String> identificadores) {
         try (PreparedStatement ps = conexion.prepareStatement(
                 "UPDATE usuario " +
-                        "SET alta = now () " +
+                        "SET alta = now() " +
                         "WHERE identificador = ?"
         )) {
             for (String identificador : identificadores) {

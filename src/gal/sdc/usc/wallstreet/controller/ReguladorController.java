@@ -112,7 +112,7 @@ public class ReguladorController extends DatabaseLinker {
     private Usuario campoPara;          // Usuario que recibe transferencia (null indica que se retira saldo)
 
     /*
-     * Si el regulador pulsa "aceptar tod_o", se debería ejecutar la acción solo sobre aquellas tuplas de las que tenga
+     * Si el regulador pulsa "aceptar tod0", se debería ejecutar la acción solo sobre aquellas tuplas de las que tenga
      * constancia. Ejemplo: puede que se esté mostrando que únicamente hay 2 ofertas de venta pendientes, pero que, en
      * el intervalo de tiempo entre que se muestra esa información y el regulador pulsa aceptar, lleguen 100 ofertas
      * de venta. En ese caso, podría ocurrir que el regulador quisiera revisarlas una a una al ser un número tan
@@ -120,7 +120,8 @@ public class ReguladorController extends DatabaseLinker {
      */
     private List<OfertaVenta> ofertasPendientes;
     private List<Usuario> usuariosRegistroPendientes;
-    // No se hace lo mismo para las bajas porque el proceso requiere pasos intermedios que ya aseguran esto
+    private List<Usuario> usuariosBajasPendientes;
+    private List<OfertaVenta> ofertaVentaPendientes;
 
 
     /** No existe un botón de actualización de la tabla porque filtrar también refresca los datos **/
@@ -150,18 +151,19 @@ public class ReguladorController extends DatabaseLinker {
         // Se muestra dicha información si no ha habido un error
         txtSolicitudesRegistro.setText(usuariosRegistroPendientes == null? error : String.valueOf(usuariosRegistroPendientes.size()));
         // Se muestran los botones de revisión y aceptar si no ha habido un error y hay registros pendientes
-        btnVerRegistros.setVisible(usuariosRegistroPendientes.size() != 0);
-        btnAceptarTodoRegistros.setVisible(usuariosRegistroPendientes.size() != 0);
+        btnVerRegistros.setVisible(usuariosRegistroPendientes != null && usuariosRegistroPendientes.size() != 0);
+        btnAceptarTodoRegistros.setVisible(usuariosRegistroPendientes != null && usuariosRegistroPendientes.size() != 0);
     }
 
     public void actualizarBajasPendientes() {
-        // Número de usuarios que han solicitado darse de baja y están pendientes de ser revisados
-        Integer bajasPendientes = super.getDAO(UsuarioDAO.class).getNumSolicitudesBaja();
+        // Usuarios que han solicitado darse de baja y están pendientes de ser revisados
+        usuariosBajasPendientes = super.getDAO(UsuarioDAO.class).getPendientesBaja();
+
         // Se muestra dicha información si no ha habido un error
-        txtSolicitudesBaja.setText(bajasPendientes == null ? error : bajasPendientes.toString());
+        txtSolicitudesBaja.setText(usuariosBajasPendientes == null ? error : String.valueOf(usuariosBajasPendientes.size()));
         // Se muestran los botones de revisión y aceptar si no ha habido un error y hay bajas pendientes
-        btnVerBajas.setVisible(bajasPendientes != null && !bajasPendientes.equals(0));
-        btnAceptarTodoBajas.setVisible(bajasPendientes != null && !bajasPendientes.equals(0));
+        btnVerBajas.setVisible(usuariosBajasPendientes != null && usuariosBajasPendientes.size() != 0);
+        btnAceptarTodoBajas.setVisible(usuariosBajasPendientes != null && usuariosBajasPendientes.size() != 0);
     }
 
     public void actualizarOfertasPendientes() {
@@ -171,8 +173,8 @@ public class ReguladorController extends DatabaseLinker {
         // Se muestra dicha información si no ha habido un error
         txtSolicitudesOferta.setText(ofertasPendientes == null? error : String.valueOf(ofertasPendientes.size()));
         // Se muestran los botones de revisión y aceptar si no ha habido un error y hay ofertas pendientes
-        btnVerOfertas.setVisible(ofertasPendientes.size() != 0);
-        btnAceptarTodoOfertas.setVisible(ofertasPendientes.size() != 0);
+        btnVerOfertas.setVisible(ofertasPendientes != null && ofertasPendientes.size() != 0);
+        btnAceptarTodoOfertas.setVisible(ofertasPendientes != null && ofertasPendientes.size() != 0);
     }
 
     public void actualizarSaldo() {
@@ -252,13 +254,10 @@ public class ReguladorController extends DatabaseLinker {
          */
         super.iniciarTransaccion(Connection.TRANSACTION_SERIALIZABLE);
 
-        // Se recogen todos los identificadores de los usuarios a dar de baja
-        List<String> identificadores = super.getDAO(EmpresaDAO.class).getEmpresasBajasPendientes().stream().map(
-                empresa -> empresa.getUsuario().getSuperUsuario().getIdentificador()
+        // Se recogen todos los identificadores de los usuarios a dar de baja (ya buscados)
+        List<String> identificadores = usuariosBajasPendientes.stream().map(
+                usuario -> usuario.getSuperUsuario().getIdentificador()
         ).collect(Collectors.toList());
-        identificadores.addAll(super.getDAO(InversorDAO.class).getInversoresBajasPendientes().stream().map(
-                inversor -> inversor.getUsuario().getSuperUsuario().getIdentificador()
-        ).collect(Collectors.toList()));
 
         // Iterador para poder quitar elementos de identificadores mientras se recorre la lista
         Iterator<String> iterator = identificadores.iterator();
