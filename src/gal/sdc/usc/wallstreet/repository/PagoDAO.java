@@ -1,11 +1,18 @@
 package gal.sdc.usc.wallstreet.repository;
 
-import gal.sdc.usc.wallstreet.Main;
-import gal.sdc.usc.wallstreet.model.*;
+import gal.sdc.usc.wallstreet.model.Empresa;
+import gal.sdc.usc.wallstreet.model.Pago;
+import gal.sdc.usc.wallstreet.model.SuperUsuario;
+import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.helpers.DAO;
+import gal.sdc.usc.wallstreet.util.Mapeador;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class PagoDAO extends DAO<Pago> {
@@ -50,117 +57,96 @@ public class PagoDAO extends DAO<Pago> {
 
         return pagos;
     }
-    public boolean insertarPago(Pago p){
-        try (PreparedStatement ps = conexion.prepareStatement(
-            "INSERT INTO pago (fecha, empresa, beneficio_por_participacion, participacion_por_participacion, fecha_anuncio, porcentaje_beneficio, porcentaje_participacion)" +
-                    " VALUES (?, ?, ?, ?, ?, ?, ?)"
-        )){
-            ps.setTimestamp(1, new Timestamp((p.getFecha()).getTime()));
-            ps.setString(2, p.getEmpresa().getUsuario().getSuperUsuario().getIdentificador());
-            ps.setFloat(3, p.getBeneficioPorParticipacion());
-            ps.setFloat(4, p.getParticipacionPorParticipacion());
-            if(p.getFechaAnuncio() != null) {
-                ps.setTimestamp(5, new Timestamp((p.getFechaAnuncio()).getTime()));
-            } else{
-                ps.setTimestamp(5, null);
+
+    public List<Pago> getPagosProgramadosPendientesDeEjecutar() {
+        List<Pago> pagos = new LinkedList<>();
+
+        try (PreparedStatement ps = super.conexion.prepareStatement(
+                "SELECT * FROM pago WHERE fecha_anuncio IS NOT NULL AND fecha < NOW()"
+        )) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                pagos.add(Mapeador.map(rs, Pago.class));
             }
-            ps.setFloat(6, p.getPorcentajeBeneficio());
-            ps.setFloat(7, p.getPorcentajeParticipacion());
-            ps.executeUpdate();
-            return true;
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         }
-        return false;
+
+        return pagos;
     }
 
-    public boolean actualizarSaldos(Pago p, float dinero, List<Participacion> participacions){
-        if((p.getEmpresa().getUsuario().getSaldo() - p.getEmpresa().getUsuario().getSaldoBloqueado()) - (dinero * participacions.size()) < 0){
-            Main.mensaje("No se dispone del saldo suficiente", 3);
-            return false;
-        }
-        if(p.getFechaAnuncio() == null) {
-            try (PreparedStatement ps = conexion.prepareStatement(
-                    "UPDATE usuario SET saldo = ? WHERE usuario.identificador = ?"
-            )) {
-                ps.setFloat(1, p.getEmpresa().getUsuario().getSaldo() - dinero * participacions.size());
-                ps.setString(2, p.getEmpresa().getUsuario().getSuperUsuario().getIdentificador());
-                ps.executeUpdate();
-                for(Participacion participacion : participacions) {
-                    System.out.println(participacion.getUsuario().getSuperUsuario().getIdentificador());
-                    try (PreparedStatement ps2 = conexion.prepareStatement(
-                            "UPDATE usuario SET saldo = ? WHERE usuario.identificador = ?"
-                    )) {
-                        ps2.setFloat(1, participacion.getUsuario().getSaldo() + dinero * p.getPorcentajeBeneficio() * participacion.getCantidad());
-                        ps2.setString(2, participacion.getUsuario().getSuperUsuario().getIdentificador());
-                        ps2.executeUpdate();
-                    } catch (SQLException e) {
-                        System.err.println(e.getMessage());
-                    }
-                }
-                return true;
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-            }
-            return false;
-        } else{
-            try (PreparedStatement ps = conexion.prepareStatement(
-                    "UPDATE usuario SET saldo_bloqueado = ? WHERE usuario.identificador = ?"
-            )) {
-                ps.setFloat(1, p.getEmpresa().getUsuario().getSaldoBloqueado() + dinero * participacions.size());
-                ps.setString(2, p.getEmpresa().getUsuario().getSuperUsuario().getIdentificador());
-                ps.executeUpdate();
-                for(Participacion participacion : participacions) {
-                    System.out.println(participacion.getUsuario().getSuperUsuario().getIdentificador());
-                    try (PreparedStatement ps2 = conexion.prepareStatement(
-                            "UPDATE usuario SET saldo = ? WHERE usuario.identificador = ?"
-                    )) {
-                        ps2.setFloat(1, participacion.getUsuario().getSaldo() + dinero * p.getPorcentajeBeneficio() * participacion.getCantidad());
-                        ps2.setString(2, participacion.getUsuario().getSuperUsuario().getIdentificador());
-                        ps2.executeUpdate();
-                    } catch (SQLException e) {
-                        System.err.println(e.getMessage());
-                    }
-                }
-                return true;
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-            }
-            return false;
+    public void bloquearSaldo(Pago pago, float saldoABloquear) {
+        try (PreparedStatement ps = super.conexion.prepareStatement(
+                "UPDATE usuario SET saldo_bloqueado = (saldo_bloqueado + ?) WHERE usuario = ?"
+        )) {
+            ps.setFloat(1, saldoABloquear);
+            ps.setString(2, pago.getEmpresa().getUsuario().getSuperUsuario().getIdentificador());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
         }
     }
 
-    public boolean repartirParticipaciones(Pago p, List<Participacion> participacions, int cantidad){
-        if(p.getFechaAnuncio() == null) {
-            for (Participacion pa : participacions) {
-                try (PreparedStatement ps2 = conexion.prepareStatement(
-                        "UPDATE participacion SET cantidad = ? WHERE participacion.usuario = ? AND participacion.empresa = ?"
-                )) {
-                    ps2.setFloat(1, pa.getCantidad() + cantidad);
-                    ps2.setString(2, pa.getUsuario().getSuperUsuario().getIdentificador());
-                    ps2.setString(3, pa.getEmpresa().getUsuario().getSuperUsuario().getIdentificador());
-                    ps2.executeUpdate();
-                } catch (SQLException e) {
-                    System.err.println(e.getMessage());
-                    return false;
-                }
-            }
-            return true;
-        } else{
-            for (Participacion pa : participacions) {
-                try (PreparedStatement ps2 = conexion.prepareStatement(
-                        "UPDATE participacion SET cantidad = ? WHERE participacion.usuario = ? AND participacion.empresa = ?"
-                )) {
-                    ps2.setFloat(1, pa.getCantidad() + cantidad);
-                    ps2.setString(2, pa.getUsuario().getSuperUsuario().getIdentificador());
-                    ps2.setString(3, pa.getEmpresa().getUsuario().getSuperUsuario().getIdentificador());
-                    ps2.executeUpdate();
-                } catch (SQLException e) {
-                    System.err.println(e.getMessage());
-                    return false;
-                }
-            }
-            return true;
+    public void bloquearParticipaciones(Pago pago, int participacionesABloquear) {
+        try (PreparedStatement ps = super.conexion.prepareStatement(
+                "UPDATE participacion SET cantidad_bloqueada = (cantidad_bloqueada + ?) WHERE usuario = ? AND empresa = ?"
+        )) {
+            ps.setInt(1, participacionesABloquear);
+            ps.setString(2, pago.getEmpresa().getUsuario().getSuperUsuario().getIdentificador());
+            ps.setString(3, pago.getEmpresa().getUsuario().getSuperUsuario().getIdentificador());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public void quitarSaldo(Pago pago, float saldoABloquear) {
+        try (PreparedStatement ps = super.conexion.prepareStatement(
+                "UPDATE usuario SET saldo = (saldo - ?) WHERE usuario = ?"
+        )) {
+            ps.setFloat(1, saldoABloquear);
+            ps.setString(2, pago.getEmpresa().getUsuario().getSuperUsuario().getIdentificador());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public void quitarParticipaciones(Pago pago, int participacionesABloquear) {
+        try (PreparedStatement ps = super.conexion.prepareStatement(
+                "UPDATE participacion SET cantidad = (cantidad - ?) WHERE usuario = ? AND empresa = ?"
+        )) {
+            ps.setInt(1, participacionesABloquear);
+            ps.setString(2, pago.getEmpresa().getUsuario().getSuperUsuario().getIdentificador());
+            ps.setString(3, pago.getEmpresa().getUsuario().getSuperUsuario().getIdentificador());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public void quitarSaldoBloqueado(Pago pago, float saldoABloquear) {
+        try (PreparedStatement ps = super.conexion.prepareStatement(
+                "UPDATE usuario SET saldo_bloqueado = (saldo_bloqueado - ?) WHERE usuario = ?"
+        )) {
+            ps.setFloat(1, saldoABloquear);
+            ps.setString(2, pago.getEmpresa().getUsuario().getSuperUsuario().getIdentificador());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public void quitarParticipacionesBloqueadas(Pago pago, int participacionesABloquear) {
+        try (PreparedStatement ps = super.conexion.prepareStatement(
+                "UPDATE participacion SET cantidad_bloqueada = (cantidad_bloqueada - ?) WHERE usuario = ? AND empresa = ?"
+        )) {
+            ps.setInt(1, participacionesABloquear);
+            ps.setString(2, pago.getEmpresa().getUsuario().getSuperUsuario().getIdentificador());
+            ps.setString(3, pago.getEmpresa().getUsuario().getSuperUsuario().getIdentificador());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
         }
     }
 }

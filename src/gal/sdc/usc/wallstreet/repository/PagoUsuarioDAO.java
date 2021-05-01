@@ -1,12 +1,18 @@
 package gal.sdc.usc.wallstreet.repository;
 
-import gal.sdc.usc.wallstreet.model.Empresa;
+import gal.sdc.usc.wallstreet.model.Pago;
 import gal.sdc.usc.wallstreet.model.PagoUsuario;
+import gal.sdc.usc.wallstreet.model.Sociedad;
+import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.helpers.DAO;
 import gal.sdc.usc.wallstreet.util.Mapeador;
 
-import java.sql.*;
-import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.LinkedList;
 import java.util.List;
 
 public class PagoUsuarioDAO extends DAO<PagoUsuario> {
@@ -14,42 +20,65 @@ public class PagoUsuarioDAO extends DAO<PagoUsuario> {
         super(conexion, PagoUsuario.class);
     }
 
-    public List<PagoUsuario> getPagosHastaAhora() {
-        List<PagoUsuario> pagos = new ArrayList<>();
-        try (PreparedStatement ps = conexion.prepareStatement(
-                "SELECT * FROM pago_usuario WHERE pago_fecha < NOW()"
+    public List<PagoUsuario> getPagoUsarios(Pago pago) {
+        List<PagoUsuario> pagos = new LinkedList<>();
+
+        try (PreparedStatement ps = super.conexion.prepareStatement(
+                "SELECT * FROM pago_usuario WHERE pago_fecha = ? AND pago_empresa = ?"
         )) {
+            ps.setTimestamp(1, new Timestamp(pago.getFecha().getTime()));
+            ps.setString(2, pago.getEmpresa().getUsuario().getSuperUsuario().getIdentificador());
+
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                PagoUsuario pago = Mapeador.map(rs, PagoUsuario.class);
-                pagos.add(pago);
+                pagos.add(Mapeador.map(rs, PagoUsuario.class));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
 
         return pagos;
     }
 
-    public boolean insertarListaPagos(List<PagoUsuario> pagoUsuarios, String nombreEmpresa){
-        for(PagoUsuario p: pagoUsuarios){
-            try (PreparedStatement ps = conexion.prepareStatement(
-                    "INSERT INTO pago_usuario (usuario, pago_fecha, pago_empresa, num_participaciones)" +
-                            " VALUES (?, ?, ?, ?)"
-            )){
-                ps.setString(1, p.getUsuario().getIdentificador());
-                ps.setTimestamp(2, new Timestamp(( p.getPago().getFecha()).getTime()));
-                ps.setString(3, nombreEmpresa);
-                ps.setInt(4, p.getNumParticipaciones());
-                ps.executeUpdate();
+    public void recibirPago(PagoUsuario pu, UsuarioDAO usuarioDAO, SociedadDAO sociedadDAO) {
+        Usuario u = usuarioDAO.seleccionar(pu.getUsuario());
+        Sociedad s = sociedadDAO.seleccionar(pu.getUsuario());
+
+        // Detectar si el poseedor es sociedad o usuario
+        if (u != null) {
+            try (PreparedStatement ps = super.conexion.prepareStatement(
+                    "UPDATE usuario SET saldo = (saldo + ?) WHERE identificador = ?"
+            )) {
+                ps.setFloat(1, pu.getNumParticipaciones()
+                        * pu.getPago().getPorcentajeBeneficio()
+                        * pu.getBeneficioRecibir());
+                ps.setString(2, u.getSuperUsuario().getIdentificador());
             } catch (SQLException e) {
                 System.err.println(e.getMessage());
-                return false;
+            }
+        } else if (s != null) {
+            try (PreparedStatement ps = super.conexion.prepareStatement(
+                    "UPDATE sociedad SET saldo_comunal = (saldo_comunal + ?) WHERE identificador = ?"
+            )) {
+                ps.setFloat(1, pu.getNumParticipaciones()
+                        * pu.getPago().getPorcentajeBeneficio()
+                        * pu.getBeneficioRecibir());
+                ps.setString(2, s.getSuperUsuario().getIdentificador());
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
             }
         }
-        return true;
+
+        try (PreparedStatement ps = super.conexion.prepareStatement(
+                "UPDATE participacion SET cantidad = (cantidad + ?) WHERE usuario = ? AND empresa = ?"
+        )) {
+            ps.setInt(1, (int) (pu.getNumParticipaciones()
+                                * pu.getPago().getPorcentajeParticipacion()
+                                * pu.getParticipacionesRecibir()));
+            ps.setString(2, pu.getUsuario().getIdentificador());
+            ps.setString(3, pu.getPago().getEmpresa().getUsuario().getSuperUsuario().getIdentificador());
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
     }
-
-
-
 }
