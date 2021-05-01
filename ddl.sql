@@ -135,7 +135,7 @@ create table oferta_venta
     precio_venta        double precision               not null,
     confirmado          boolean          default false not null,
     comision            double precision default 0.05  not null,
-    restantes           integer                        not null,
+    restantes           integer,
     constraint oferta_venta_pk
         primary key (fecha, usuario)
 );
@@ -216,4 +216,36 @@ create table regulador
 alter table regulador
     owner to postgres;
 
+-- Función asociada al trigger actualizarNumParticipaciones.
+-- Disminuye restantes según el número de participaciones vendidas
+-- de la venta.
+create or replace function actualizar_participaciones_restantes() returns trigger language plpgsql as $trigger$
+begin
+    -- Reducimos las restantes en la oferta
+    update oferta_venta
+    set restantes = restantes - NEW.cantidad
+    where fecha = NEW.ov_fecha and usuario = NEW.ov_usuario;
+    return new;
+end;
+$trigger$;
+
+
+-- Trigger que se activa al insertar una nueva venta y actualiza oferta_venta
+create trigger actualizarRestantes after insert on venta
+    for each row execute procedure actualizar_participaciones_restantes();
+
+-- =================================================================================================
+
+-- Función asociada al trigger insertarNumParticipaciones.
+-- Cuando se lanza una oferta se establece restantes = num_participaciones
+create or replace function insertar_participaciones_restantes() returns trigger language plpgsql as $trigger$
+begin
+    NEW.restantes := NEW.num_participaciones;
+    return new;
+end;
+$trigger$;
+
+-- Trigger que se activa al insertar una nueva oferta y actualiza oferta_venta
+create trigger insertarRestantes before insert on oferta_venta
+    for each row execute procedure insertar_participaciones_restantes();
 
