@@ -33,7 +33,7 @@ public class VVentaController extends DatabaseLinker {
     public static final String VIEW = "VVenta";
     public static final Integer HEIGHT = 500;
     public static final Integer WIDTH = 800;
-    public static final String TITULO = "Venta";
+    public static final String TITULO = "Vender participaciones";
 
     private Usuario usr;
     private ObservableList<OfertaVenta> datosTabla;
