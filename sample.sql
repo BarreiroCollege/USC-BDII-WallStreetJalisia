@@ -8,20 +8,20 @@ insert into superusuario(identificador) values('sherlock');
 
 insert into superusuario(identificador) values('teceric');
 insert into superusuario(identificador) values('garcables');
-insert into superusuario(identificador) values('fruLuis');
+insert into superusuario(identificador) values('fruluis');
 insert into superusuario(identificador) values('libjaim');
-insert into superusuario(identificador) values('zapPaco');
+insert into superusuario(identificador) values('zappaco');
 
 insert into superusuario(identificador) values ('regulador');
 
-insert into superusuario(identificador) values('aaI');
+insert into superusuario(identificador) values('aai');
 insert into superusuario(identificador) values('hampa');
 insert into superusuario(identificador) values('invemena');
 insert into superusuario(identificador) values('ubicorp');
 insert into superusuario(identificador) values('urrs');
 
 insert into sociedad(identificador, saldo_comunal, tolerancia)
-values ('aaI',0,2);
+values ('aai',0,2);
 insert into sociedad(identificador, saldo_comunal, tolerancia)
 values ('hampa',0,2);
 insert into sociedad(identificador, saldo_comunal, tolerancia)
@@ -70,17 +70,17 @@ values ('garcables', 'sha1:64000:18:66YcELkG9EpMakgQj8xzGHJANDIzW+Sm:yuMuFHuREUl
 insert into empresa (usuario, cif, nombre)
 values ('garcables', 'A-70012249', 'Garaje de cables');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
-values ('fruLuis', 'sha1:64000:18:D1sx4K1DesoJlhcJdMmO6MSm8wGJfxsI:0p8rOhTfdBtyuah0bOF6II0Y', 'Camino sombrío, 14', '39212', 'Fontecha', 147025316, 1000.0, 0.0, null, null,'VTFQD7DQE2ZGTCIDKNBFZ3MNKWKE5NYO',null, false );
+values ('fruluis', 'sha1:64000:18:D1sx4K1DesoJlhcJdMmO6MSm8wGJfxsI:0p8rOhTfdBtyuah0bOF6II0Y', 'Camino sombrío, 14', '39212', 'Fontecha', 147025316, 1000.0, 0.0, null, null,'VTFQD7DQE2ZGTCIDKNBFZ3MNKWKE5NYO',null, false );
 insert into empresa (usuario, cif, nombre)
-values ('fruLuis', 'A-48216592', 'Frutas Luis');
+values ('fruluis', 'A-48216592', 'Frutas Luis');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
 values ('libjaim', 'sha1:64000:18:F6FSExk6qPHHWVo0oJbFbYXzY5BSv9cb:LLFrrCJ9XXzmmtvJgpTHrMHR', 'Calle Baja, 14', '15701', 'Santiago de Compostela', 648572333, 200.0, 0.0, null, null,'P52ZHRYQK2VA7ZARQGJ34HBUKPZ5KRVW','urrs', false );
 insert into empresa (usuario, cif, nombre)
 values ('libjaim', 'P-19752648', 'Libros Jaime');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
-values ('zapPaco', 'sha1:64000:18:OSzPTY/zeDfGLB2iz2qYB7cyTmISEryN:f1yCiK+grKN/F+BbiKn/QTq8', 'Calle Alta, 41', '17501', 'Santiago de Compostela', 648572333, 200.0, 0.0, null, null,'EXI2KZIUCCGMR4EGYXEJJEXDN2GNMIUD','ubicorp', true );
+values ('zappaco', 'sha1:64000:18:OSzPTY/zeDfGLB2iz2qYB7cyTmISEryN:f1yCiK+grKN/F+BbiKn/QTq8', 'Calle Alta, 41', '17501', 'Santiago de Compostela', 648572333, 200.0, 0.0, null, null,'EXI2KZIUCCGMR4EGYXEJJEXDN2GNMIUD','ubicorp', true );
 insert into empresa (usuario, cif, nombre)
-values ('zapPaco', 'B-32552648', 'Zapatos Paco');
+values ('zappaco', 'B-32552648', 'Zapatos Paco');
 
 
 insert into usuario(identificador,clave)
@@ -150,14 +150,14 @@ values ('pepe', '2021-01-15 10:00:00', 'teceric', 20);
 
 
 insert into propuesta_compra(sociedad, fecha_inicio, cantidad, empresa, precio_max)
-values('urrs', '2021-01-06 13:19:42', 20, 'fruLuis', 50.0 );
+values('urrs', '2021-01-06 13:19:42', 20, 'fruluis', 50.0 );
 insert into propuesta_compra(sociedad, fecha_inicio, cantidad, empresa, precio_max)
-values('aaI', '2021-01-15 10:00:00', 40, 'teceric', 68.40 );
+values('aai', '2021-01-15 10:00:00', 40, 'teceric', 68.40 );
 insert into propuesta_compra(sociedad, fecha_inicio, cantidad, empresa, precio_max)
 values('hampa','2021-01-14 10:00:00', 60, 'garcables', 78.50 );
 insert into propuesta_compra(sociedad, fecha_inicio, cantidad, empresa, precio_max)
 values('invemena', '2021-01-04 13:29:32', 2000, 'teceric', 3.80 );
 insert into propuesta_compra(sociedad, fecha_inicio, cantidad, empresa, precio_max)
-values('ubicorp', '2021-01-07 12:29:32', 4560, 'fruLuis', 7.75 );
+values('ubicorp', '2021-01-07 12:29:32', 4560, 'fruluis', 7.75 );
 
 
