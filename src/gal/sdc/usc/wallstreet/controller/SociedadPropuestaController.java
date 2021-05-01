@@ -74,7 +74,7 @@ public class SociedadPropuestaController extends DatabaseLinker implements Initi
         } */
 
         ErrorValidator empresaNoHay = Validadores.personalizado("Selecciona una empresa");
-        ErrorValidator numeroNoValido = Validadores.personalizado("Introduce un precio válido o nada");
+        ErrorValidator numeroNoValido = Validadores.personalizado("Introduce un número positivo válido");
         Empresa e = cmbEmpresa.getValue();
 
         float precioMax;
@@ -90,6 +90,18 @@ public class SociedadPropuestaController extends DatabaseLinker implements Initi
         try {
             cantidad = txtCantidad.getText().length() == 0 ? 0 : Integer.parseInt(txtCantidad.getText());
         } catch (NumberFormatException ex) {
+            if (txtCantidad.getValidators().size() == 1) txtCantidad.getValidators().add(numeroNoValido);
+            txtCantidad.validate();
+            return;
+        }
+
+        if (precioMax <= 0) {
+            if (txtPrecioMax.getValidators().size() == 1) txtPrecioMax.getValidators().add(numeroNoValido);
+            txtPrecioMax.validate();
+            return;
+        }
+
+        if (cantidad <= 0) {
             if (txtCantidad.getValidators().size() == 1) txtCantidad.getValidators().add(numeroNoValido);
             txtCantidad.validate();
             return;
