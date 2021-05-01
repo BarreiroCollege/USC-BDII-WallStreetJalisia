@@ -217,7 +217,7 @@ public class UsuarioDAO extends DAO<Usuario> {
     /***
      * Devuelve una lista de usuarios que aún no están activos, pero lo han solicitado
      *
-     * @return Lista de usuarios inactivos
+     * @return Lista de usuarios inactivos; null en caso de error
      */
     public List<Usuario> getInactivos() {
         List<Usuario> inactivos = new ArrayList<>();
@@ -232,6 +232,7 @@ public class UsuarioDAO extends DAO<Usuario> {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
 
         return inactivos;

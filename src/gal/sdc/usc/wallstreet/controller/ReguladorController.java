@@ -146,13 +146,12 @@ public class ReguladorController extends DatabaseLinker {
     public void actualizarRegistrosPendientes() {
         // Usuarios que han solicitado registrarse y están pendientes de ser revisados
         usuariosRegistroPendientes = super.getDAO(UsuarioDAO.class).getInactivos();
-        int numUsuariosPendientes = usuariosRegistroPendientes.size();
 
         // Se muestra dicha información si no ha habido un error
-        txtSolicitudesRegistro.setText(numUsuariosPendientes == 0? error : String.valueOf(numUsuariosPendientes));
+        txtSolicitudesRegistro.setText(usuariosRegistroPendientes == null? error : String.valueOf(usuariosRegistroPendientes.size()));
         // Se muestran los botones de revisión y aceptar si no ha habido un error y hay registros pendientes
-        btnVerRegistros.setVisible(numUsuariosPendientes != 0);
-        btnAceptarTodoRegistros.setVisible(numUsuariosPendientes != 0);
+        btnVerRegistros.setVisible(usuariosRegistroPendientes.size() != 0);
+        btnAceptarTodoRegistros.setVisible(usuariosRegistroPendientes.size() != 0);
     }
 
     public void actualizarBajasPendientes() {
@@ -168,13 +167,12 @@ public class ReguladorController extends DatabaseLinker {
     public void actualizarOfertasPendientes() {
         // Ofertas de venta que no han sido aprobadas
         ofertasPendientes = super.getDAO(OfertaVentaDAO.class).getOfertasPendientes();
-        int numOfertasPendientes = ofertasPendientes.size();
 
         // Se muestra dicha información si no ha habido un error
-        txtSolicitudesOferta.setText(numOfertasPendientes == 0 ? error : String.valueOf(numOfertasPendientes));
+        txtSolicitudesOferta.setText(ofertasPendientes == null? error : String.valueOf(ofertasPendientes.size()));
         // Se muestran los botones de revisión y aceptar si no ha habido un error y hay ofertas pendientes
-        btnVerOfertas.setVisible(numOfertasPendientes != 0);
-        btnAceptarTodoOfertas.setVisible(numOfertasPendientes != 0);
+        btnVerOfertas.setVisible(ofertasPendientes.size() != 0);
+        btnAceptarTodoOfertas.setVisible(ofertasPendientes.size() != 0);
     }
 
     public void actualizarSaldo() {
@@ -366,7 +364,6 @@ public class ReguladorController extends DatabaseLinker {
     /**
      * Realizar una transferencia desde campoDe a campoPara con la cantidad indicada
      */
-    // TODO: darle una vuelta a la comprobación de saldo. Read uncomitted?
     public void onClickBtnTransferir(){
         if (campoPara == null){                   // Los fondos se retiran de la cuenta
             // Se comprueba que haya saldo suficiente
@@ -383,7 +380,11 @@ public class ReguladorController extends DatabaseLinker {
                 tablaUsuarios.getColumns().get(0).setVisible(true);
             }
         } else if (campoDe == null){          // Se depositan fondos
+            // Como depositar fondos no supone peligros respecto a comprobaciones, se puede hacer con un nivel de
+            // aislamiento de lecturas no comprometidas
+            super.iniciarTransaccion(Connection.TRANSACTION_READ_UNCOMMITTED);
             super.getDAO(UsuarioDAO.class).depositarSaldo(Integer.parseInt(txtCantidad.getText()), campoPara);
+            super.ejecutarTransaccion();
         } else {                                // Transferencia de una cuenta a otra
             // Se comprueba que haya saldo suficiente
             if ((Float.parseFloat(txtCantidad.getText()) > campoDe.getSaldo())){

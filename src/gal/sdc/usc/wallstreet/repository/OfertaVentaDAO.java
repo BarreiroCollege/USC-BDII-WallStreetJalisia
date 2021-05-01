@@ -175,7 +175,7 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
     /***
      * Devuelve los datos de todas aquellas ofertas que aún no han sido revisadas y aceptadas por el regulador.
      *
-     * @return Lista de ofertas de venta que no están confirmadas.
+     * @return Lista de ofertas de venta que no están confirmadas; null en caso de error
      */
     public List<OfertaVenta> getOfertasPendientes() {
         List<OfertaVenta> ofertasPendientes = new ArrayList<>();
@@ -191,6 +191,7 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
 
         return ofertasPendientes;
