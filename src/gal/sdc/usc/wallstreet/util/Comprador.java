@@ -33,13 +33,10 @@ public class Comprador extends DatabaseLinker {
         return c.comprar();
     }
 
-    public Integer comprar() {
+    private Integer comprar() {
         // Variables de estado
         float saldo, precio;
         int acomprar, partPosibles, compradas = 0;
-
-        // INICIAMOS TRANSACCION
-        super.iniciarTransaccion();
 
         //Recojemos los datos actualizados
         Regulador regulador = super.getDAO(ReguladorDAO.class).getRegulador();
@@ -116,10 +113,7 @@ public class Comprador extends DatabaseLinker {
             super.getDAO(SociedadDAO.class).actualizar(so);
         }
 
-        // Tratamos de comprometer la transacción e informamos al usuario
-        if (super.ejecutarTransaccion()) {
-            return compradas;
-        }
-        return -1;
+        // Devolvemos el numero de participaciones compradas
+        return compradas;
     }
 }

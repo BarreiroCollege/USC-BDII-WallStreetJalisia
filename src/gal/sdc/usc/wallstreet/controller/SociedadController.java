@@ -187,7 +187,7 @@ public class SociedadController extends DatabaseLinker implements Initializable 
         Comunicador comunicador = new Comunicador() {
             @Override
             public Object[] getData() {
-                return new Object[] {s};
+                return new Object[]{s};
             }
 
             @Override
@@ -215,7 +215,7 @@ public class SociedadController extends DatabaseLinker implements Initializable 
         Comunicador comunicador = new Comunicador() {
             @Override
             public Object[] getData() {
-                return new Object[] {s};
+                return new Object[]{s};
             }
 
             @Override
@@ -270,7 +270,7 @@ public class SociedadController extends DatabaseLinker implements Initializable 
         Comunicador comunicador = new Comunicador() {
             @Override
             public Object[] getData() {
-                return new Object[] {SociedadController.super.getUsuarioSesion().getUsuario().getSociedad()};
+                return new Object[]{SociedadController.super.getUsuarioSesion().getUsuario().getSociedad()};
             }
 
             @Override
@@ -333,19 +333,24 @@ public class SociedadController extends DatabaseLinker implements Initializable 
 
     public void onBtnAccion(PropuestaCompra pc, boolean ejecutar) {
         if (ejecutar) {
-            if (super.getDAO(PropuestaCompraDAO.class).eliminar(pc)) {
-                actualizarTablaPropuestas(pc.getSociedad());
-                List<OfertaVenta> ofertas =  super.getDAO(OfertaVentaDAO.class).getOfertasVenta(
-                                pc.getEmpresa().getUsuario().getSuperUsuario().getIdentificador(),
-                                pc.getPrecioMax() == null ? 0.0f : pc.getPrecioMax()
-                );
-                Integer res = Comprador.comprar(
-                        super.getUsuarioSesion().getUsuario().getSociedad(),
-                        ofertas,
-                        pc.getCantidad()
-                );
-                if (res == -1) Main.mensaje("Hubo un error procesando la compra");
-                else if (res == 0) Main.mensaje("No había participaciones a la venta");
+            super.iniciarTransaccion();
+            super.getDAO(PropuestaCompraDAO.class).eliminar(pc);
+
+            actualizarTablaPropuestas(pc.getSociedad());
+
+            List<OfertaVenta> ofertas = super.getDAO(OfertaVentaDAO.class).getOfertasVenta(
+                    pc.getEmpresa().getUsuario().getSuperUsuario().getIdentificador(),
+                    pc.getPrecioMax() == null ? 0.0f : pc.getPrecioMax()
+            );
+
+            Integer res = Comprador.comprar(
+                    super.getUsuarioSesion().getUsuario().getSociedad(),
+                    ofertas,
+                    pc.getCantidad()
+            );
+
+            if (super.ejecutarTransaccion()) {
+                if (res == 0) Main.mensaje("No había participaciones a la venta");
                 else Main.mensaje("Se han comprado " + res + " participaciones");
             } else {
                 Main.mensaje("Hubo un error realizando la compra");
@@ -436,7 +441,7 @@ public class SociedadController extends DatabaseLinker implements Initializable 
         TableColumn<UsuarioSesion, Node> colLider = new TableColumn<>("");
         // colIdentificador.setPrefWidth(150);
         colLider.setCellValueFactory((TableColumn.CellDataFeatures<UsuarioSesion, Node> param)
-                -> param.getValue().getUsuario().getLider() ? new IconoObservable(FontAwesomeIcon.SHIELD): null);
+                -> param.getValue().getUsuario().getLider() ? new IconoObservable(FontAwesomeIcon.SHIELD) : null);
         colLider.setStyle("-fx-alignment: CENTER;");
 
         TableColumn<UsuarioSesion, String> colIdentificador = new TableColumn<>("Identificador");
