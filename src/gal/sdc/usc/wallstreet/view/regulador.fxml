@@ -6,13 +6,9 @@
 <?import java.net.URL?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
@@ -88,11 +84,7 @@
                            <font>
                               <Font size="14.0" />
                            </font></JFXButton>
-                        <MenuButton layoutX="600.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: #adbde0;" text="Menú">
-                          <items>
-                            <MenuItem fx:id="menuItemCerrarSesion" mnemonicParsing="false" text="Cerrar sesión" onAction="#cerrarSesion" />
-                          </items>
-                        </MenuButton>
+                        <JFXButton fx:id="btnCerrarSesion" layoutX="618.0" layoutY="12.0" onAction="#cerrarSesion" ripplerFill="#606463" style="-fx-background-color: #939292;" />
                      </children>
                   </AnchorPane>
               </content>
@@ -109,18 +101,33 @@
                         </TableView>
                         <ChoiceBox fx:id="cbTipo" layoutX="188.0" layoutY="53.0" onAction="#onActionComboBoxTipo" prefHeight="25.0" prefWidth="159.0" />
                         <JFXTextField fx:id="txtId" labelFloat="true" layoutX="22.0" layoutY="51.0" promptText="ID" />
-                        <JFXTextField fx:id="txtDniCif" labelFloat="true" layoutX="372.0" layoutY="101.0" prefHeight="25.0" prefWidth="98.0" promptText="DNI" />
-                        <JFXTextField fx:id="txtNombre" labelFloat="true" layoutX="372.0" layoutY="148.0" prefHeight="25.0" prefWidth="99.0" promptText="Nombre" />
-                        <JFXTextField fx:id="txtApellidos" labelFloat="true" layoutX="500.0" layoutY="148.0" prefHeight="25.0" prefWidth="127.0" promptText="Apellidos" />
-                        <JFXButton fx:id="btnDeExterior" layoutX="369.0" layoutY="205.0" onAction="#onClickBtnDeExterior" ripplerFill="#4059a9" style="-fx-background-color: #becdee;" text="Exterior" />
-                        <JFXButton fx:id="btnDeTabla" layoutX="369.0" layoutY="236.0" onAction="#onClickBtnDeTabla" ripplerFill="#4059a9" style="-fx-background-color: #becdee;" text="Tabla" />
-                        <JFXButton fx:id="btnParaTabla" layoutX="369.0" layoutY="314.0" onAction="#onClickBtnParaTabla" ripplerFill="#4059a9" style="-fx-background-color: #becdee;" text="Tabla" />
-                        <JFXButton fx:id="btnParaExterior" layoutX="369.0" layoutY="283.0" onAction="#onClickBtnParaExterior" ripplerFill="#4059a9" style="-fx-background-color: #becdee;" text="Exterior" />
+                        <JFXTextField fx:id="txtDniCif" labelFloat="true" layoutX="372.0" layoutY="93.0" prefHeight="25.0" prefWidth="98.0" promptText="DNI" />
+                        <JFXTextField fx:id="txtNombre" labelFloat="true" layoutX="372.0" layoutY="140.0" prefHeight="25.0" prefWidth="99.0" promptText="Nombre" />
+                        <JFXTextField fx:id="txtApellidos" labelFloat="true" layoutX="500.0" layoutY="140.0" prefHeight="25.0" prefWidth="127.0" promptText="Apellidos" />
+                        <JFXButton fx:id="btnDeExterior" layoutX="369.0" layoutY="218.0" onAction="#onClickBtnDeExterior" ripplerFill="#4059a9" style="-fx-background-color: #becdee;" text="Exterior" />
+                        <JFXButton fx:id="btnDeTabla" layoutX="370.0" layoutY="246.0" onAction="#onClickBtnDeTabla" prefHeight="25.0" prefWidth="56.0" ripplerFill="#4059a9" style="-fx-background-color: #becdee;" text="Tabla" />
+                        <JFXButton fx:id="btnParaTabla" layoutX="369.0" layoutY="324.0" onAction="#onClickBtnParaTabla" prefHeight="25.0" prefWidth="57.0" ripplerFill="#4059a9" style="-fx-background-color: #becdee;" text="Tabla" />
+                        <JFXButton fx:id="btnParaExterior" layoutX="369.0" layoutY="296.0" onAction="#onClickBtnParaExterior" ripplerFill="#4059a9" style="-fx-background-color: #becdee;" text="Exterior" />
                         <JFXButton fx:id="btnTransferir" layoutX="562.0" layoutY="376.0" onAction="#onClickBtnTransferir" prefHeight="25.0" prefWidth="98.0" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;" text="Transferir" />
-                        <JFXTextField fx:id="txtCantidad" labelFloat="true" layoutX="370.0" layoutY="369.0" prefHeight="31.0" prefWidth="145.0" promptText="Cantidad" />
-                        <JFXTextField fx:id="txtCampoDe" editable="false" layoutX="440.0" layoutY="214.0" prefHeight="31.0" prefWidth="110.0" />
-                        <JFXTextField fx:id="txtCampoPara" editable="false" layoutX="440.0" layoutY="297.0" prefHeight="31.0" prefWidth="108.0" />
+                        <JFXTextField fx:id="txtCantidad" labelFloat="true" layoutX="370.0" layoutY="369.0" prefHeight="31.0" prefWidth="145.0" promptText="Cantidad a transferir" />
+                        <JFXTextField fx:id="txtCampoDe" editable="false" layoutX="440.0" layoutY="237.0" prefHeight="31.0" prefWidth="110.0" />
+                        <JFXTextField fx:id="txtCampoPara" editable="false" layoutX="440.0" layoutY="315.0" prefHeight="31.0" prefWidth="108.0" />
                         <JFXButton fx:id="btnFiltrar" layoutX="569.0" layoutY="53.0" mnemonicParsing="false" onAction="#onClickFiltrar" prefHeight="25.0" prefWidth="90.0" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;" text="Buscar" />
+                        <Label layoutX="559.0" layoutY="245.0" text="Origen">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="559.0" layoutY="323.0" text="Destino">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="447.0" layoutY="192.0" text="Transferencias">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
                      </children>
                   </AnchorPane>
               </content>

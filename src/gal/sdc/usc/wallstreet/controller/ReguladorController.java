@@ -65,7 +65,7 @@ public class ReguladorController extends DatabaseLinker {
     @FXML
     private Label txtSaldo;
     @FXML
-    private MenuItem menuItemCerrarSesion;
+    private JFXButton btnCerrarSesion;
 
 
     // Pestaña de transferencias
@@ -200,7 +200,7 @@ public class ReguladorController extends DatabaseLinker {
         menuIcon.setOpacity(0.5);
         menuIcon.setFitHeight(25);
         menuIcon.setFitWidth(40);
-        menuItemCerrarSesion.setGraphic(menuIcon);
+        btnCerrarSesion.setGraphic(menuIcon);
 
         // Opciones ComboBox
         List<String> opcionesComboBox = new ArrayList<>(Arrays.asList("---", "Empresas", "Inversores"));
@@ -518,6 +518,6 @@ public class ReguladorController extends DatabaseLinker {
 
     public void cerrarSesion(){
         super.cerrarSesion();
-        ((Stage) btnTransferir.getScene().getWindow()).close();
+        Main.ventana(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT, AccesoController.TITULO);
     }
 }
