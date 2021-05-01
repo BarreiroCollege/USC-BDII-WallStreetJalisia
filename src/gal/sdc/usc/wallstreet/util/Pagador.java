@@ -2,6 +2,9 @@ package gal.sdc.usc.wallstreet.util;
 
 import gal.sdc.usc.wallstreet.model.Pago;
 import gal.sdc.usc.wallstreet.model.PagoUsuario;
+import gal.sdc.usc.wallstreet.model.Sociedad;
+import gal.sdc.usc.wallstreet.model.Usuario;
+import gal.sdc.usc.wallstreet.model.UsuarioComprador;
 import gal.sdc.usc.wallstreet.repository.PagoDAO;
 import gal.sdc.usc.wallstreet.repository.PagoUsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.SociedadDAO;
@@ -42,11 +45,9 @@ public class Pagador extends DatabaseLinker {
             super.getDAO(PagoDAO.class).quitarParticipacionesBloqueadas(pago, participacionesAQuitar);
 
             for (PagoUsuario pu : pagoUsuarios) {
-                super.getDAO(PagoUsuarioDAO.class).recibirPago(
-                        pu,
-                        super.getDAO(UsuarioDAO.class),
-                        super.getDAO(SociedadDAO.class)
-                );
+                UsuarioComprador uc = super.getDAO(UsuarioDAO.class).seleccionar(pu.getUsuario());
+                if (uc == null) uc = super.getDAO(SociedadDAO.class).seleccionar(pu.getUsuario());
+                super.getDAO(PagoUsuarioDAO.class).recibirPago(pu, uc);
             }
 
             pago.setFechaAnuncio(null);

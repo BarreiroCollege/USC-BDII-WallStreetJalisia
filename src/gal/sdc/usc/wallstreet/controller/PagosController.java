@@ -12,6 +12,7 @@ import gal.sdc.usc.wallstreet.model.Pago;
 import gal.sdc.usc.wallstreet.model.PagoUsuario;
 import gal.sdc.usc.wallstreet.model.Participacion;
 import gal.sdc.usc.wallstreet.model.Usuario;
+import gal.sdc.usc.wallstreet.model.UsuarioComprador;
 import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
 import gal.sdc.usc.wallstreet.repository.PagoDAO;
 import gal.sdc.usc.wallstreet.repository.PagoUsuarioDAO;
@@ -540,11 +541,9 @@ public class PagosController extends DatabaseLinker {
             super.getDAO(PagoDAO.class).quitarParticipaciones(pago, participacionesAQuitar);
 
             for (PagoUsuario pagoUsuario : pagoUsuarios) {
-                super.getDAO(PagoUsuarioDAO.class).recibirPago(
-                        pagoUsuario,
-                        super.getDAO(UsuarioDAO.class),
-                        super.getDAO(SociedadDAO.class)
-                );
+                UsuarioComprador uc = super.getDAO(UsuarioDAO.class).seleccionar(pagoUsuario.getUsuario());
+                if (uc == null) uc = super.getDAO(SociedadDAO.class).seleccionar(pagoUsuario.getUsuario());
+                super.getDAO(PagoUsuarioDAO.class).recibirPago(pagoUsuario, uc);
             }
         }
 

@@ -4,6 +4,7 @@ import gal.sdc.usc.wallstreet.model.Pago;
 import gal.sdc.usc.wallstreet.model.PagoUsuario;
 import gal.sdc.usc.wallstreet.model.Sociedad;
 import gal.sdc.usc.wallstreet.model.Usuario;
+import gal.sdc.usc.wallstreet.model.UsuarioComprador;
 import gal.sdc.usc.wallstreet.repository.helpers.DAO;
 import gal.sdc.usc.wallstreet.util.Mapeador;
 
@@ -40,30 +41,27 @@ public class PagoUsuarioDAO extends DAO<PagoUsuario> {
         return pagos;
     }
 
-    public void recibirPago(PagoUsuario pu, UsuarioDAO usuarioDAO, SociedadDAO sociedadDAO) {
-        Usuario u = usuarioDAO.seleccionar(pu.getUsuario());
-        Sociedad s = sociedadDAO.seleccionar(pu.getUsuario());
-
+    public void recibirPago(PagoUsuario pu, UsuarioComprador uc) {
         // Detectar si el poseedor es sociedad o usuario
-        if (u != null) {
+        if (uc instanceof Usuario) {
             try (PreparedStatement ps = super.conexion.prepareStatement(
                     "UPDATE usuario SET saldo = (saldo + ?) WHERE identificador = ?"
             )) {
                 ps.setFloat(1, pu.getNumParticipaciones()
                         * pu.getPago().getPorcentajeBeneficio()
                         * pu.getBeneficioRecibir());
-                ps.setString(2, u.getSuperUsuario().getIdentificador());
+                ps.setString(2, uc.getSuperUsuario().getIdentificador());
             } catch (SQLException e) {
                 System.err.println(e.getMessage());
             }
-        } else if (s != null) {
+        } else if (uc instanceof Sociedad) {
             try (PreparedStatement ps = super.conexion.prepareStatement(
                     "UPDATE sociedad SET saldo_comunal = (saldo_comunal + ?) WHERE identificador = ?"
             )) {
                 ps.setFloat(1, pu.getNumParticipaciones()
                         * pu.getPago().getPorcentajeBeneficio()
                         * pu.getBeneficioRecibir());
-                ps.setString(2, s.getSuperUsuario().getIdentificador());
+                ps.setString(2, uc.getSuperUsuario().getIdentificador());
             } catch (SQLException e) {
                 System.err.println(e.getMessage());
             }
