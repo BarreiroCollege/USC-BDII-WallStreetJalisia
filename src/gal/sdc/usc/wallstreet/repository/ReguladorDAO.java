@@ -27,19 +27,25 @@ public class ReguladorDAO extends DAO<Regulador> {
     }
 
     /***
-     * Devuelve el saldo acumulado en la cuenta del regulador
+     * Devuelve uno de los atributos accesibles del regulador (usa una función).
      *
-     * @return Entero con el saldo; null en caso de error.
+     * @param atributo Atributo a recuperar (identificador, saldo o comision)
+     * @return Correspondiente valor en formato String. Null si el atributo es no válido o en caso de error.
      */
-    public Integer getSaldoRegulador(){
+    public String getDatoRegulador(String atributo){
+        String valor = null;
         try (PreparedStatement ps = conexion.prepareStatement(
-                "SELECT saldo " +
-                        "FROM regulador r JOIN usuario u ON r.usuario = u.identificador "
+                "SELECT * FROM dato_regulador(?)"
         )){
+            ps.setString(1, atributo);
             ResultSet rs = ps.executeQuery();
-            if (rs.)
+            if (rs.next()){
+                valor = rs.getString(1);
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
         }
 
-
+        return valor;
     }
 }
