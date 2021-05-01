@@ -30,7 +30,7 @@ public class InversorDAO extends DAO<Inversor> {
         try (PreparedStatement ps = super.conexion.prepareStatement(
                 "SELECT * " +
                         "FROM usuario u JOIN inversor i ON u.identificador = i.usuario " +
-                        "WHERE u.alta is not null"
+                        "WHERE u.alta is not null AND u.baja is null"
         )) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()){
@@ -79,7 +79,7 @@ public class InversorDAO extends DAO<Inversor> {
         try(PreparedStatement ps = super.conexion.prepareStatement(
                 "SELECT * " +
                         "FROM usuario u JOIN inversor i ON u.identificador = i.usuario " +
-                        "WHERE u.baja is not null"
+                        "WHERE u.baja is not null AND u.alta is null"
         )){
             ResultSet rs = ps.executeQuery();
             while (rs.next()){

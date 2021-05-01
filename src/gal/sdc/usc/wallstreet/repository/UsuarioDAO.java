@@ -87,7 +87,7 @@ public class UsuarioDAO extends DAO<Usuario> {
 
         // Se construye el where de la consulta en función de los filtros indicados
         if (!filtro.isEmpty()) sql += construirWherePersonalizado(filtro);
-        sql += " LIMIT ?";
+        sql += " ORDER BY saldo DESC LIMIT ?";
 
         try (PreparedStatement ps = conexion.prepareStatement(sql)) {
             llenarPreparedStatement(ps, filtro, limite);
@@ -263,7 +263,7 @@ public class UsuarioDAO extends DAO<Usuario> {
         try (PreparedStatement ps = super.conexion.prepareStatement(
                 "SELECT * " +
                         "FROM usuario " +
-                        "WHERE baja is not null"
+                        "WHERE alta is null AND baja is not null"
         )) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -275,29 +275,6 @@ public class UsuarioDAO extends DAO<Usuario> {
         }
 
         return inactivos;
-    }
-
-    /***
-     * Devuelve el número de usuarios que han solicitado darse de baja
-     *
-     * @return Número de usuarios que quieren darse de baja; null en caso de error
-     */
-    public Integer getNumSolicitudesBaja() {
-        Integer solicitudesBaja = null;
-        try (PreparedStatement ps = super.conexion.prepareStatement(
-                "SELECT count(*) as bajas " +
-                        "FROM usuario " +
-                        "WHERE baja is not null"
-        )) {
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                solicitudesBaja = rs.getInt("bajas");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return solicitudesBaja;
     }
 
     /***

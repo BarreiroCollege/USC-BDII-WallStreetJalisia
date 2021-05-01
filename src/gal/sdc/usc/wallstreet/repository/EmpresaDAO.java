@@ -77,7 +77,7 @@ public class EmpresaDAO extends DAO<Empresa> {
         try (PreparedStatement ps = super.conexion.prepareStatement(
                 "SELECT * " +
                         "FROM usuario u JOIN empresa e ON u.identificador = e.usuario " +
-                        "WHERE u.alta is not null"
+                        "WHERE u.alta is not null AND u.baja is null"
         )) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()){
@@ -102,7 +102,7 @@ public class EmpresaDAO extends DAO<Empresa> {
         try (PreparedStatement ps = super.conexion.prepareStatement(
                 "SELECT * " +
                         "FROM usuario u JOIN empresa e ON u.identificador = e.usuario " +
-                        "WHERE u.baja is not null"
+                        "WHERE u.baja is not null AND u.alta is null"
         )){
             ResultSet rs = ps.executeQuery();
             while (rs.next()){
