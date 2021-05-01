@@ -9,6 +9,10 @@ values ('eva');
 insert into superusuario(identificador)
 values ('pepe');
 insert into superusuario(identificador)
+values ('alex');
+insert into superusuario(identificador)
+values ('sherlock');
+insert into superusuario(identificador)
 values ('regulador');
 
 insert into superusuario(identificador)
@@ -22,8 +26,6 @@ values ('libjaim');
 insert into superusuario(identificador)
 values ('zapPaco');
 
-insert into superusuario(identificador)
-values ('alex');
 insert into superusuario(identificador)
 values ('aaI');
 insert into superusuario(identificador)
