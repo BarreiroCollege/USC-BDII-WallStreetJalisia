@@ -222,3 +222,20 @@ select m.identificador, m.saldo, i.usuario as usuario_inversor, i.dni, i.nombre,
 from (empresa e RIGHT JOIN usuario u ON e.usuario = u.identificador) as m LEFT JOIN inversor i ON m.identificador = i.usuario
 where (m.usuario is not null or i.usuario is not null) and m.alta is null;
 
+-- text no limita el número de caracteres máximo, a diferencia de varchar
+create or replace function dato_regulador(atributo text) returns text as $dr$
+declare
+    dato text;
+begin
+    -- Solo algunos datos del regulador son accesibles
+	select case
+	    when (atributo = 'identificador') then identificador
+	    when (atributo = 'saldo') then cast(saldo as text)
+	    when (atributo = 'comision') then cast(comision as text)
+	    else null
+	end into dato
+	from regulador r JOIN usuario u ON r.usuario = u.identificador;
+	return dato;
+end;
+$dr$ Language plpgsql;
+

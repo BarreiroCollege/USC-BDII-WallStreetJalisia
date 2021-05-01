@@ -25,4 +25,21 @@ public class ReguladorDAO extends DAO<Regulador> {
         }
         return null;
     }
+
+    /***
+     * Devuelve el saldo acumulado en la cuenta del regulador
+     *
+     * @return Entero con el saldo; null en caso de error.
+     */
+    public Integer getSaldoRegulador(){
+        try (PreparedStatement ps = conexion.prepareStatement(
+                "SELECT saldo " +
+                        "FROM regulador r JOIN usuario u ON r.usuario = u.identificador "
+        )){
+            ResultSet rs = ps.executeQuery();
+            if (rs.)
+        }
+
+
+    }
 }

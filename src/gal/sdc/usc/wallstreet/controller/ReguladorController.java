@@ -173,7 +173,7 @@ public class ReguladorController extends DatabaseLinker {
     }
 
     public void actualizarSaldo() {
-
+        txtSaldo.setText(super.getDAO(ReguladorDAO.class).getSaldoRegulador().toString());
     }
 
     public void registrarDatosTabla(){
