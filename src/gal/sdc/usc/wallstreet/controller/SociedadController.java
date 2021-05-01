@@ -184,6 +184,11 @@ public class SociedadController extends DatabaseLinker implements Initializable 
 
     private void onBtnEditarPropuesta(ActionEvent e) {
         Sociedad s = super.getUsuarioSesion().getUsuario().getSociedad();
+        if (super.getDAO(UsuarioDAO.class).getUsuariosPorSociedad(s).size() < 2) {
+            Main.mensaje("La sociedad es demasiado pequeña como para realizar compras");
+            return;
+        }
+
         Comunicador comunicador = new Comunicador() {
             @Override
             public Object[] getData() {
