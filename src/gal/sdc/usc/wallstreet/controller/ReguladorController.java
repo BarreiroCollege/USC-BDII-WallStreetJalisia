@@ -189,9 +189,15 @@ public class ReguladorController extends DatabaseLinker {
         btnParaTabla.setVisible(false);
         btnTransferir.setVisible(false);
 
+        // Opciones ComboBox
         List<String> opcionesComboBox = new ArrayList<>(Arrays.asList("---", "Empresas", "Inversores"));
         cbTipo.setItems(FXCollections.observableArrayList(opcionesComboBox));
+        // Aún no se ha seleccionado ninguna opción
+        txtDniCif.setVisible(false);
+        txtNombre.setVisible(false);
+        txtApellidos.setVisible(false);
     }
+
 
     public void addValidadores(){
         // Validadores de entrada numérica

@@ -217,3 +217,8 @@ alter table regulador
     owner to postgres;
 
 
+create view empresas_inversores_usuarios as
+select m.identificador, m.saldo, i.usuario as usuario_inversor, i.dni, i.nombre, i.apellidos, m.usuario as usuario_empresa, m.cif, m.nombre as nombre_comercial
+from (empresa e RIGHT JOIN usuario u ON e.usuario = u.identificador) as m LEFT JOIN inversor i ON m.identificador = i.usuario
+where (m.usuario is not null or i.usuario is not null) and m.alta is null;
+
