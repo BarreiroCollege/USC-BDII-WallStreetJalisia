@@ -5,6 +5,7 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXTextField;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.*;
 import gal.sdc.usc.wallstreet.repository.*;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
@@ -99,6 +100,13 @@ public class VVentaController extends DatabaseLinker {
 
         // Cargamos saldo y preparamos botones de refresh
         botonRefresh.setGraphic(Iconos.icono(FontAwesomeIcon.REFRESH, "1em"));
+
+        btnVolver.setOnAction(e -> Main.ventana(
+                PrincipalController.VIEW,
+                PrincipalController.WIDTH,
+                PrincipalController.HEIGHT,
+                PrincipalController.TITULO
+        ));
 
         actualizarVentana();
     }
