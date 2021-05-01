@@ -37,6 +37,9 @@
         <JFXTextField fx:id="campoParticipaciones" editable="false" labelFloat="true"
                       layoutX="428.0" layoutY="67.0" prefHeight="31.0" prefWidth="116.0" promptText="De esta empresa"
                       text="0"/>
+        <JFXTextField fx:id="campoComision" editable="false" labelFloat="true"
+                      layoutX="550.0" layoutY="67.0" prefHeight="31.0" prefWidth="116.0" promptText="Comision mercado"
+                      text="0"/>
         <JFXButton fx:id="botonRefresh" layoutX="14.0" layoutY="14.0" onAction="#actualizarVentana" prefHeight="35.0"
                    prefWidth="35.0"/>
         <JFXSnackbar fx:id="notificationBar" layoutX="55.0" layoutY="17.0"/>

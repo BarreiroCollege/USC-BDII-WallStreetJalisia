@@ -65,6 +65,8 @@ public class VVentaController extends DatabaseLinker {
     private JFXSnackbar notificationBar;
     @FXML
     private JFXComboBox<String> empresaComboBox;
+    @FXML
+    private JFXTextField campoComision;
 
     @FXML
     public void initialize() {
@@ -197,8 +199,13 @@ public class VVentaController extends DatabaseLinker {
         actualizarListaEmpresas();
         actualizarDatosTabla();
         actualizarParticipaciones();
+        actualizarComision();
         campoNumero.setText("");
         campoPrecio.setText("");
+    }
+
+    public void actualizarComision(){
+        campoComision.setText(String.valueOf(super.getDAO(ReguladorDAO.class).getRegulador().getComision()));
     }
 
 
