@@ -10,14 +10,14 @@ alter table superusuario
 
 create table sociedad
 (
-    identificador varchar(16)                not null
+    identificador varchar(16)                   not null
         constraint sociedad_pk
             primary key
         constraint sociedad_superusuario_identificador_fk
             references superusuario
             on update cascade,
-    saldo_comunal double precision default 0 not null,
-    tolerancia    integer          default 0 not null
+    saldo_comunal double precision default 0    not null,
+    tolerancia    integer          default 1440 not null
 );
 
 alter table sociedad
@@ -135,7 +135,7 @@ create table oferta_venta
     precio_venta        double precision               not null,
     confirmado          boolean          default false not null,
     comision            double precision default 0.05  not null,
-    restantes           integer,
+    restantes           integer                        not null,
     constraint oferta_venta_pk
         primary key (fecha, usuario)
 );

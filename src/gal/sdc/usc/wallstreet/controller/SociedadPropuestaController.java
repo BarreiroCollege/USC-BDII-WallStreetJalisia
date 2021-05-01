@@ -88,7 +88,7 @@ public class SociedadPropuestaController extends DatabaseLinker implements Initi
 
         int cantidad;
         try {
-            cantidad = Integer.parseInt(txtCantidad.getText());
+            cantidad = txtCantidad.getText().length() == 0 ? 0 : Integer.parseInt(txtCantidad.getText());
         } catch (NumberFormatException ex) {
             if (txtCantidad.getValidators().size() == 1) txtCantidad.getValidators().add(numeroNoValido);
             txtCantidad.validate();
@@ -99,7 +99,7 @@ public class SociedadPropuestaController extends DatabaseLinker implements Initi
                 .withSociedad((Sociedad) comunicador.getData()[0])
                 .withEmpresa(e)
                 .withFechaInicio(new Date())
-                .withCantidad(cantidad)
+                .withCantidad(cantidad == 0 ? null : cantidad)
                 .withPrecioMax(precioMax)
                 .build();
 
@@ -144,7 +144,7 @@ public class SociedadPropuestaController extends DatabaseLinker implements Initi
         RequiredFieldValidator rfv = Validadores.requerido();
         // txtEmpresa.getValidators().add(rfv);
         txtCantidad.getValidators().add(rfv);
-        txtPrecioMax.getValidators().add(rfv);
+        // txtPrecioMax.getValidators().add(rfv);
 
         /* txtEmpresa.textProperty().addListener((observable, oldValue, newValue) -> {
             // Limitar a 16 caracteres
@@ -182,8 +182,8 @@ public class SociedadPropuestaController extends DatabaseLinker implements Initi
 
             // Si hay más de un validador, es porque se ha insertado el "forzado" para mostrar error de
             // usuario ya existe, y por ello, se ha de eliminar cuando se actualice el campo
-            if (txtPrecioMax.getValidators().size() > 1) {
-                txtPrecioMax.getValidators().remove(1);
+            if (txtPrecioMax.getValidators().size() > 0) {
+                txtPrecioMax.getValidators().remove(0);
                 txtPrecioMax.validate();
             }
         });
