@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXCheckBox?>
 <?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXDatePicker?>
 <?import com.jfoenix.controls.JFXTabPane?>
@@ -110,10 +109,9 @@
                            </font>
                         </Label>
                         <JFXButton fx:id="btnEliminarPago" disable="true" layoutX="314.0" layoutY="382.0" onAction="#eliminarPago" prefHeight="25.0" prefWidth="148.0" ripplerFill="#a95b5a" style="-fx-background-color: #e0adad;" text="Eliminar pago" />
-                        <JFXComboBox fx:id="cbEmpresa" layoutX="488.0" layoutY="128.0" prefHeight="25.0" prefWidth="149.0" promptText="Empresa" />
-                        <JFXDatePicker fx:id="datePagoAntes" layoutX="489.0" layoutY="188.0" prefHeight="25.0" prefWidth="154.0" promptText="Pago antes del" />
-                        <JFXDatePicker fx:id="datePagoDespues" layoutX="489.0" layoutY="223.0" prefHeight="25.0" prefWidth="153.0" promptText="Pago después del" />
-                        <JFXCheckBox fx:id="chkAnunciados" layoutX="489.0" layoutY="279.0" text="Solo pagos anunciados" />
+                        <JFXComboBox fx:id="cbEmpresa" editable="true" layoutX="488.0" layoutY="136.0" prefHeight="25.0" prefWidth="149.0" promptText="Empresa" />
+                        <JFXDatePicker fx:id="datePagoAntes" layoutX="489.0" layoutY="207.0" prefHeight="25.0" prefWidth="154.0" promptText="Pago antes del" />
+                        <JFXDatePicker fx:id="datePagoDespues" layoutX="489.0" layoutY="253.0" prefHeight="25.0" prefWidth="153.0" promptText="Pago después del" />
                         <Label layoutX="486.0" layoutY="91.0" text="Filtros de la tabla">
                            <font>
                               <Font name="System Bold" size="14.0" />

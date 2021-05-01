@@ -5,12 +5,15 @@ import com.jfoenix.validation.IntegerValidator;
 import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.OfertaVenta;
 import gal.sdc.usc.wallstreet.model.Pago;
+import gal.sdc.usc.wallstreet.model.Participacion;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.*;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -30,6 +33,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ReguladorController extends DatabaseLinker {
@@ -128,8 +132,6 @@ public class ReguladorController extends DatabaseLinker {
     private JFXDatePicker datePagoAntes;
     @FXML
     private JFXDatePicker datePagoDespues;
-    @FXML
-    private JFXCheckBox chkAnunciados;
 
     //</editor-fold>
 
@@ -140,6 +142,8 @@ public class ReguladorController extends DatabaseLinker {
 
     private Usuario campoDe;            // Usuario que transfiere (null indica un agente externo)
     private Usuario campoPara;          // Usuario que recibe transferencia (null indica que se retira saldo)
+
+    private FilteredList<String> empresas; // Lista donde se aplican filtros a las empresas
 
     /*
      * Si el regulador pulsa "aceptar tod0", se debería ejecutar la acción solo sobre aquellas tuplas de las que tenga
@@ -165,6 +169,7 @@ public class ReguladorController extends DatabaseLinker {
         addValidadores();
         registrarDatosTabla();              // Se busca a los usuarios activos, que pueden realizar transferencias
         establecerColumnasTabla();          // Se establece la estructura de la tabla
+        setupListeners();
     }
 
     public void actualizarDatosPendientes() {
@@ -220,6 +225,13 @@ public class ReguladorController extends DatabaseLinker {
         List<Pago> pagos = super.getDAO(PagoDAO.class).getPagosProgramados();
         datosTablaPagos.setAll(pagos);
         tablaPagos.setItems(datosTablaPagos);
+
+        datosTablaPagos.forEach(pago -> {
+            if (!cbEmpresa.getItems().contains(pago.getEmpresa().getNombre() ))
+                cbEmpresa.getItems().add(pago.getEmpresa().getNombre() );
+        });
+
+        empresas = cbEmpresa.getItems().filtered(null);
     }
 
     public void setupComponentes(){
@@ -386,8 +398,61 @@ public class ReguladorController extends DatabaseLinker {
         return datosFiltrado;
     }
 
+    private void setupListeners(){
+        cbEmpresa.valueProperty().addListener((observable, oldValue, newValue) -> {
+            FilteredList<String> empresasFiltradas = empresas;
+            empresasFiltradas.setPredicate(empresa -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    // Corrige bug cuando se intentan borrar caracteres
+                    return true;
+                }
+                return empresa.toLowerCase().contains(newValue.toLowerCase());
+            });
+            cbEmpresa.setItems(empresasFiltradas);
+        });
+    }
     public void filtrarTablaPagos(){
         tablaPagos.setPlaceholder(new Label("No existen pagos con los parámetros indicados"));
+
+        // Se guardan todos los pagos sin filtrar
+        FilteredList<Pago> pagosFiltrados = new FilteredList<>(datosTablaPagos, p -> true);
+
+        // Se eliminan los pagos que no queremos mostrar
+        Predicate<Pago> predicadoFiltro = pagoFilterPredicates();
+        pagosFiltrados.setPredicate( predicadoFiltro );
+
+        SortedList<Pago> pagosOrdenados = new SortedList<>(pagosFiltrados);
+        pagosOrdenados.comparatorProperty().bind(tablaPagos.comparatorProperty());
+
+        // Se borra la antigua información de la tabla y se muestra la nueva.
+        tablaPagos.setItems(pagosOrdenados);
+    }
+
+    private Predicate<Pago> pagoFilterPredicates() {
+
+        Predicate<Pago> combobox = pago -> {
+            if (cbEmpresa.getValue() != null && !cbEmpresa.getValue().isEmpty()) {
+                // El nombre comercial de la empresa del pago debe contener la selección
+                return pago.getEmpresa().getNombre().toLowerCase().contains(cbEmpresa.getValue().toLowerCase());
+            }
+            return true;
+        };
+
+        Predicate<Pago> fechaAntes = pago -> {
+            if ( datePagoAntes.getValue() != null && !datePagoAntes.getValue().toString().isEmpty() ){
+                return pago.getFecha().compareTo( java.sql.Date.valueOf( datePagoAntes.getValue() ) ) <= 0;
+            }
+            return true;
+        };
+
+        Predicate<Pago> fechaDespues = pago -> {
+            if ( datePagoDespues.getValue() != null && !datePagoDespues.getValue().toString().isEmpty() ){
+                return pago.getFecha().compareTo( java.sql.Date.valueOf( datePagoDespues.getValue() ) ) >= 0;
+            }
+            return true;
+        };
+
+        return combobox.and(fechaAntes).and(fechaDespues);
     }
 
     /**
