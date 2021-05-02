@@ -309,7 +309,7 @@ public class SociedadController extends DatabaseLinker implements Initializable 
                 Usuario usuario = SociedadController.super.getUsuarioSesion().getUsuario();
                 usuario.setSociedad(null);
                 if (SociedadController.super.getDAO(UsuarioDAO.class).actualizar(usuario)) {
-                    Main.ventana(PrincipalController.TITULO, PrincipalController.WIDTH, PrincipalController.HEIGHT, PrincipalController.TITULO);
+                    Main.ventana(PrincipalController.VIEW, PrincipalController.WIDTH, PrincipalController.HEIGHT, PrincipalController.TITULO);
                     Main.mensaje("Se ha solicitado la baja en el sistema");
                 } else {
                     Main.mensaje("Hubo un error solicitando la baja");
