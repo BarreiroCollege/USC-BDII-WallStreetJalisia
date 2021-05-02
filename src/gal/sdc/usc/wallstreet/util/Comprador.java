@@ -72,7 +72,7 @@ public class Comprador extends DatabaseLinker {
                     .withUsuarioCompra(u.getSuperUsuario())
                     .build());
 
-            float comision = esSociedad ? regulador.getComisionSociedad() : regulador.getComision();
+            float comision = oferta.getComision();
 
             // Aumentamos el saldo del vendedor (menos comision), que puede ser un Usuario o Sociedad
             Usuario usuario = super.getDAO(UsuarioDAO.class).seleccionar(oferta.getUsuario());

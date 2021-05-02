@@ -155,7 +155,7 @@ public class VCompraController extends DatabaseLinker {
         actualizarSaldo();
 
         // Variables de estado
-        float saldoInicial = Float.parseFloat(campoSaldo.getText());
+        float saldoInicial = usr.getSaldoDisponible();
 
         Integer compradas = Comprador.comprar(usr, datosTabla, Integer.parseInt(campoNumero.getText()));
 
