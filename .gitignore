@@ -117,3 +117,4 @@ nbdist/
 .nb-gradle/
 
 ### ======================== ###
+.idea/discord.xml

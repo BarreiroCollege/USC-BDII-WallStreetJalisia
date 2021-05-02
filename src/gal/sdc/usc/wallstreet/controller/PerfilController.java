@@ -91,6 +91,33 @@ public class PerfilController extends DatabaseLinker implements Initializable {
     public PerfilController() {
     }
 
+    private void limitarCaracteres() {
+        txtDireccion.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() > 64) txtDireccion.setText(oldValue);
+        });
+        txtCp.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() > 10) txtCp.setText(oldValue);
+        });
+        txtLocalidad.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() > 32) txtLocalidad.setText(oldValue);
+        });
+        txtDni.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() > 16) txtDni.setText(oldValue);
+        });
+        txtNombre.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() > 16) txtNombre.setText(oldValue);
+        });
+        txtApellidos.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() > 32) txtApellidos.setText(oldValue);
+        });
+        txtCif.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() > 16) txtCif.setText(oldValue);
+        });
+        txtEmpresa.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() > 32) txtEmpresa.setText(oldValue);
+        });
+    }
+
     private void cambiarTextoBotonOtp() {
         if (super.getUsuarioSesion().getUsuario().getOtp() != null) {
             btnOtp.setText("Desactivar 2FA");
@@ -249,6 +276,8 @@ public class PerfilController extends DatabaseLinker implements Initializable {
 
         btnOtp.visibleProperty().bind(editando.not());
         btnBaja.visibleProperty().bind(editando.not());
+
+        limitarCaracteres();
 
         if (super.getUsuarioSesion().getUsuario().getEstado().equals(UsuarioEstado.PENDIENTE_BAJA)) {
             btnBaja.setDisable(true);

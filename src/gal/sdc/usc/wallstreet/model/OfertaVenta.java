@@ -94,14 +94,6 @@ public class OfertaVenta extends Entidad {
         this.restantes = restantes;
     }
 
-    public Integer getParticipacionesSinVender() {
-        return participacionesSinVender;
-    }
-
-    public void setParticipacionesSinVender(Integer participacionesSinVender) {
-        this.participacionesSinVender = participacionesSinVender;
-    }
-
     /***
      * Indica si una oferta de venta sigue disponible (todavía no se han vendido todas sus participaciones) o si ya se
      * ha completado.
@@ -109,8 +101,8 @@ public class OfertaVenta extends Entidad {
      * @return true, si la oferta no se ha completado; false, si ya no está activa; null, en caso de error.
      */
     public Boolean isOfertaActiva(){
-        if (participacionesSinVender == null) return null;
-        return !participacionesSinVender.equals(0);
+        if (restantes == null) return null;
+        return !restantes.equals(0);
     }
 
     @Override

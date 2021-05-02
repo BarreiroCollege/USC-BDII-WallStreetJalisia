@@ -12,6 +12,7 @@ import gal.sdc.usc.wallstreet.model.Pago;
 import gal.sdc.usc.wallstreet.model.PagoUsuario;
 import gal.sdc.usc.wallstreet.model.Participacion;
 import gal.sdc.usc.wallstreet.model.Usuario;
+import gal.sdc.usc.wallstreet.model.UsuarioComprador;
 import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
 import gal.sdc.usc.wallstreet.repository.PagoDAO;
 import gal.sdc.usc.wallstreet.repository.PagoUsuarioDAO;
@@ -477,7 +478,7 @@ public class PagosController extends DatabaseLinker {
                     break;
             }
         } catch (NumberFormatException e) {
-            // TODO: Mostrar mensaje y cancelar o petarlo
+            Main.mensaje("Los valores introducidos no son válidos", 3);
         }
 
         if (cbPagoProgramado.isSelected()) {
@@ -501,21 +502,19 @@ public class PagosController extends DatabaseLinker {
                     .build();
             pagoUsuarios.add(pu);
 
-            saldoAQuitar = pu.getNumParticipaciones()
-                    * pu.getPago().getPorcentajeBeneficio()
-                    * pu.getBeneficioRecibir();
-            participacionesAQuitar += pu.getNumParticipaciones()
-                    * pu.getPago().getPorcentajeParticipacion()
-                    * pu.getParticipacionesRecibir();
+            saldoAQuitar = pu.getBeneficioRecibir();
+            participacionesAQuitar += pu.getParticipacionesRecibir();
         }
 
-        if (pago.getEmpresa().getUsuario().getSaldoDisponible() < saldoAQuitar) {
-            // TODO: Mostrar mensaje y cancelar o petarlo
+        if (saldoAQuitar > 0.0f && pago.getEmpresa().getUsuario().getSaldoDisponible() < saldoAQuitar) {
+            Main.mensaje("No dispones del saldo suficiente", 3);
+            return false;
         }
 
         Participacion participacion = super.getDAO(ParticipacionDAO.class).seleccionar(pago.getEmpresa().getUsuario().getSuperUsuario(), pago.getEmpresa());
         if (participacionesAQuitar > 0.0f && (participacion == null || participacion.getCantidad() < participacionesAQuitar)) {
-            // TODO: Mostrar mensaje y cancelar o petarlo
+            Main.mensaje("No dispones de suficientes participaciones", 3);
+            return false;
         }
 
         super.iniciarTransaccion();
@@ -538,11 +537,9 @@ public class PagosController extends DatabaseLinker {
             super.getDAO(PagoDAO.class).quitarParticipaciones(pago, participacionesAQuitar);
 
             for (PagoUsuario pagoUsuario : pagoUsuarios) {
-                super.getDAO(PagoUsuarioDAO.class).recibirPago(
-                        pagoUsuario,
-                        super.getDAO(UsuarioDAO.class),
-                        super.getDAO(SociedadDAO.class)
-                );
+                UsuarioComprador uc = super.getDAO(UsuarioDAO.class).seleccionar(pagoUsuario.getUsuario());
+                if (uc == null) uc = super.getDAO(SociedadDAO.class).seleccionar(pagoUsuario.getUsuario());
+                super.getDAO(PagoUsuarioDAO.class).recibirPago(pagoUsuario, uc);
             }
         }
 
