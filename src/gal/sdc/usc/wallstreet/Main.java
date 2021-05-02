@@ -44,12 +44,6 @@ public class Main extends Application {
         alert.showAndWait();
     }
 
-    @Override
-    public void start(Stage primaryStage) {
-        Main.primaryStage = primaryStage;
-        Main.ventana(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT, AccesoController.TITULO);
-    }
-
     public static void dialogo(String view, int width, int height, String titulo) {
         Main.setScene(view, width, height, titulo, true);
     }
@@ -87,5 +81,11 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        Main.primaryStage = primaryStage;
+        Main.ventana(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT, AccesoController.TITULO);
     }
 }

@@ -71,8 +71,8 @@ public class PagoUsuarioDAO extends DAO<PagoUsuario> {
                 "UPDATE participacion SET cantidad = (cantidad + ?) WHERE usuario = ? AND empresa = ?"
         )) {
             ps.setInt(1, (int) (pu.getNumParticipaciones()
-                                * pu.getPago().getPorcentajeParticipacion()
-                                * pu.getParticipacionesRecibir()));
+                    * pu.getPago().getPorcentajeParticipacion()
+                    * pu.getParticipacionesRecibir()));
             ps.setString(2, pu.getUsuario().getIdentificador());
             ps.setString(3, pu.getPago().getEmpresa().getUsuario().getSuperUsuario().getIdentificador());
         } catch (SQLException e) {

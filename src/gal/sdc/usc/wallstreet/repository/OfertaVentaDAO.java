@@ -7,11 +7,11 @@ import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.helpers.DAO;
 import gal.sdc.usc.wallstreet.util.Mapeador;
 
-import java.sql.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,15 +24,15 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
 
     public List<OfertaVenta> getOfertasVenta(String empresa, Float precioMax) {
         List<OfertaVenta> ofertas = new ArrayList<>();
-        try{
+        try {
             String statement = "SELECT * FROM oferta_venta " +
-                                "WHERE confirmado is true and empresa=? ";
-            if(!precioMax.equals(0f)) statement += "and precio_venta<=? ";
+                    "WHERE confirmado is true and empresa=? ";
+            if (!precioMax.equals(0f)) statement += "and precio_venta<=? ";
             statement += "and restantes>0 ORDER BY precio_venta asc, fecha desc";
 
             PreparedStatement ps = conexion.prepareStatement(statement);
-            ps.setString(1,empresa);
-            if(!precioMax.equals(0f)) ps.setFloat(2,precioMax);
+            ps.setString(1, empresa);
+            if (!precioMax.equals(0f)) ps.setFloat(2, precioMax);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 OfertaVenta oferta = Mapeador.map(rs, OfertaVenta.class);
@@ -47,14 +47,14 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
 
     public List<OfertaVenta> getOfertasVentaUsuario(String empresa, String usuario) {
         List<OfertaVenta> ofertas = new ArrayList<>();
-            try{
-                String statement = "SELECT * FROM oferta_venta WHERE usuario=? and restantes>0 ";
-                if(empresa != null) statement +=  "and empresa = ?  ";
-                statement += "ORDER BY precio_venta asc";
+        try {
+            String statement = "SELECT * FROM oferta_venta WHERE usuario=? and restantes>0 ";
+            if (empresa != null) statement += "and empresa = ?  ";
+            statement += "ORDER BY precio_venta asc";
 
             PreparedStatement ps = conexion.prepareStatement(statement);
-            ps.setString(1,usuario);
-            if(empresa!=null) ps.setString(2,empresa);
+            ps.setString(1, usuario);
+            if (empresa != null) ps.setString(2, empresa);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 ofertas.add(Mapeador.map(rs, OfertaVenta.class));
@@ -201,16 +201,16 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
      *
      * @param ofertaVenta Oferta de venta a activar.
      */
-    public void aceptarOfertaVenta(OfertaVenta ofertaVenta){
+    public void aceptarOfertaVenta(OfertaVenta ofertaVenta) {
         try (PreparedStatement ps = conexion.prepareStatement(
                 "UPDATE oferta_venta " +
                         "SET confirmado = true " +
                         "WHERE fecha = ? AND usuario = ?"
-        )){
+        )) {
             ps.setTimestamp(1, new Timestamp(ofertaVenta.getFecha().getTime()));
             ps.setString(2, ofertaVenta.getUsuario().getIdentificador());
             ps.executeUpdate();
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -220,18 +220,18 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
      *
      * @param pendientes Lista de ofertas de venta a ser activadas
      */
-    public void aceptarOfertasVentaPendientes(List<OfertaVenta> pendientes){
+    public void aceptarOfertasVentaPendientes(List<OfertaVenta> pendientes) {
         try (PreparedStatement ps = conexion.prepareStatement(
                 "UPDATE oferta_venta " +
                         "SET confirmado = true " +
                         "WHERE fecha = ? AND usuario = ?"
-        )){
-            for (OfertaVenta oferta : pendientes){
+        )) {
+            for (OfertaVenta oferta : pendientes) {
                 ps.setTimestamp(1, new Timestamp(oferta.getFecha().getTime()));
                 ps.setString(2, oferta.getUsuario().getIdentificador());
                 ps.executeUpdate();
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -241,15 +241,15 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
      *
      * @param ofertaVenta Oferta de venta a rechazar.
      */
-    public void rechazarOfertaVenta(OfertaVenta ofertaVenta){
+    public void rechazarOfertaVenta(OfertaVenta ofertaVenta) {
         try (PreparedStatement ps = conexion.prepareStatement(
                 "DELETE FROM oferta_venta " +
                         "WHERE fecha = ? AND usuario = ?"
-        )){
+        )) {
             ps.setTimestamp(1, new Timestamp(ofertaVenta.getFecha().getTime()));
             ps.setString(2, ofertaVenta.getUsuario().getIdentificador());
             ps.executeUpdate();
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

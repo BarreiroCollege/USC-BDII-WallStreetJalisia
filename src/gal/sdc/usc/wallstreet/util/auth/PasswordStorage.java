@@ -9,35 +9,11 @@ import java.util.Base64;
 
 public class PasswordStorage {
 
-    @SuppressWarnings("serial")
-    static public class InvalidHashException extends Exception {
-        public InvalidHashException(String message) {
-            super(message);
-        }
-
-        public InvalidHashException(String message, Throwable source) {
-            super(message, source);
-        }
-    }
-
-    @SuppressWarnings("serial")
-    static public class CannotPerformOperationException extends Exception {
-        public CannotPerformOperationException(String message) {
-            super(message);
-        }
-
-        public CannotPerformOperationException(String message, Throwable source) {
-            super(message, source);
-        }
-    }
-
     private static final String PBKDF2_ALGORITHM = "PBKDF2WithHmacSHA1";
-
     // These constants may be changed without breaking existing hashes.
     private static final int SALT_BYTE_SIZE = 24;
     private static final int HASH_BYTE_SIZE = 18;
     private static final int PBKDF2_ITERATIONS = 64000;
-
     // These constants define the encoding and may not be changed.
     private static final int HASH_SECTIONS = 5;
     private static final int HASH_ALGORITHM_INDEX = 0;
@@ -190,6 +166,28 @@ public class PasswordStorage {
 
     private static String toBase64(byte[] array) {
         return Base64.getEncoder().encodeToString(array);
+    }
+
+    @SuppressWarnings("serial")
+    static public class InvalidHashException extends Exception {
+        public InvalidHashException(String message) {
+            super(message);
+        }
+
+        public InvalidHashException(String message, Throwable source) {
+            super(message, source);
+        }
+    }
+
+    @SuppressWarnings("serial")
+    static public class CannotPerformOperationException extends Exception {
+        public CannotPerformOperationException(String message) {
+            super(message);
+        }
+
+        public CannotPerformOperationException(String message, Throwable source) {
+            super(message, source);
+        }
     }
 
 }

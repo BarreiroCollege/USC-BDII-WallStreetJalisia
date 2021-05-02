@@ -8,7 +8,10 @@ import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.OfertaVenta;
 import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.model.ddl.Entidad;
-import gal.sdc.usc.wallstreet.repository.*;
+import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
+import gal.sdc.usc.wallstreet.repository.InversorDAO;
+import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
+import gal.sdc.usc.wallstreet.repository.ReguladorDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.Comunicador;
 import javafx.fxml.FXML;
@@ -31,6 +34,7 @@ import java.util.Optional;
 
 public class RevisarOfertasVentaController extends DatabaseLinker {
 
+    private static JFXSnackbar snackbar;
     @FXML
     private AnchorPane anchorPane;
     @FXML
@@ -57,11 +61,9 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
     private Label txtNumPart;
     @FXML
     private Label txtPrecioVenta;
-
     private List<OfertaVenta> ofertasPendientes;
     private OfertaVenta ofertaActual;            // Oferta que el regulador está viendo
     private String ordenElegido;
-    private static JFXSnackbar snackbar;
 
     public static void mensaje(String mensaje) {
         mensaje(mensaje, null);
@@ -110,7 +112,7 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
 
         if (Math.abs(
                 ofertaActual.getComision() - super.getDAO(ReguladorDAO.class).getRegulador().getComision()
-                ) < 0.005){       // La comisión es un punto flotante
+        ) < 0.005) {       // La comisión es un punto flotante
             txtUsuarioSociedad.setText("Usuario");
             btnVerUsuario.setVisible(true);
         } else {        // Comision no corresponde a un usuario -> La oferta de venta fue creada por una sociedad
@@ -141,15 +143,15 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
 
     /**
      * Rechaza la oferta que se está mostrando.
-     *
+     * <p>
      * Se admite un nivel de aislamiento con lecturas no comprometidas, puesto que es imposible que se produzcan cambios
      * sobre la oferta de venta si el regulador aún no la ha aceptado/rechazado. Esto acelera la ejecución concurrente.
      */
-    public void rechazar(){
+    public void rechazar() {
         super.iniciarTransaccion(Connection.TRANSACTION_READ_UNCOMMITTED);
         super.getDAO(OfertaVentaDAO.class).rechazarOfertaVenta(ofertaActual);
         if (super.ejecutarTransaccion()) mensaje("Oferta rechazada correctamente", 3);
-        else{
+        else {
             mensaje("Error al rechazar la oferta", 3);
             return;
         }
@@ -159,7 +161,7 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
 
     /**
      * Se acepta la oferta de venta actual.
-     *
+     * <p>
      * Se admite un nivel de aislamiento con lecturas no comprometidas, puesto que es imposible que se produzcan cambios
      * sobre la oferta de venta si el regulador aún no la ha aceptado/rechazado. Esto acelera la ejecución concurrente.
      */
@@ -167,7 +169,7 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
         super.iniciarTransaccion(Connection.TRANSACTION_READ_UNCOMMITTED);
         super.getDAO(OfertaVentaDAO.class).aceptarOfertaVenta(ofertaActual);
         if (super.ejecutarTransaccion()) mensaje("Oferta aceptada correctamente", 3);
-        else{
+        else {
             mensaje("Error al aceptar la oferta", 3);
             return;
         }
@@ -179,13 +181,13 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
      * Cambia de oferta. La actual se elimina y se pasa a la siguiente, si la hay. Si no, se retrocede a la anterior.
      * Si esta era la última oferta, se cierra la ventana.
      */
-    public void cambiarOferta(){
+    public void cambiarOferta() {
         // Se retira la oferta de la lista de pendientes y se determina qué botones mostrar
-        if (ofertasPendientes.indexOf(ofertaActual) != ofertasPendientes.size() - 1){
+        if (ofertasPendientes.indexOf(ofertaActual) != ofertasPendientes.size() - 1) {
             siguiente();
             ofertasPendientes.remove(ofertasPendientes.get(ofertasPendientes.indexOf(ofertaActual) - 1));
             controlarVisibilidadesAnteriorPosterior();
-        } else if (ofertasPendientes.indexOf(ofertaActual) != 0){
+        } else if (ofertasPendientes.indexOf(ofertaActual) != 0) {
             anterior();
             ofertasPendientes.remove(ofertasPendientes.get(ofertasPendientes.indexOf(ofertaActual) + 1));
             controlarVisibilidadesAnteriorPosterior();
@@ -216,11 +218,11 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
         dialog.close();
     }
 
-    public void reordenar(){
-        if (ordenElegido == null || ordenElegido.equals("Orden de creación")){
+    public void reordenar() {
+        if (ordenElegido == null || ordenElegido.equals("Orden de creación")) {
             // Orden en el que llegaron las ofertas a la aplicación
             ofertasPendientes.sort(Comparator.comparing(OfertaVenta::getFecha));
-        } else if (ordenElegido.equals("Número de participaciones")){
+        } else if (ordenElegido.equals("Número de participaciones")) {
             ofertasPendientes.sort(Comparator.comparing(OfertaVenta::getNumParticipaciones));
         } else {        // Se ordenan por precio de venta
             ofertasPendientes.sort(Comparator.comparing(OfertaVenta::getPrecioVenta));
@@ -230,7 +232,7 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
     /**
      * Se abre una nueva ventana que muestra los datos de la empresa referenciada por la oferta actual.
      */
-    public void mostrarEmpresa(){
+    public void mostrarEmpresa() {
         Comunicador comunicador = new Comunicador() {
             @Override
             public Object[] getData() {
@@ -249,7 +251,7 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(btnAceptar.getScene().getWindow());
             stage.show();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -257,7 +259,7 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
     /**
      * Se abre una nueva ventana que muestra los datos del usuario que creó la oferta de venta actual.
      */
-    public void mostrarUsuario(){
+    public void mostrarUsuario() {
         SuperUsuario superUsuarioOferta = ofertaActual.getUsuario();
         Entidad usuario = super.getDAO(InversorDAO.class).getInversor(superUsuarioOferta.getIdentificador());
         if (usuario == null) {
@@ -284,7 +286,7 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(btnAceptar.getScene().getWindow());
             stage.show();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

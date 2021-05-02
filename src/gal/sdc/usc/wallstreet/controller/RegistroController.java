@@ -15,21 +15,16 @@ import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
 import gal.sdc.usc.wallstreet.repository.InversorDAO;
 import gal.sdc.usc.wallstreet.repository.SuperUsuarioDAO;
-import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.ErrorValidator;
-import gal.sdc.usc.wallstreet.util.auth.PasswordStorage;
 import gal.sdc.usc.wallstreet.util.Validadores;
+import gal.sdc.usc.wallstreet.util.auth.PasswordStorage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputControl;
 
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class RegistroController extends DatabaseLinker implements Initializable {
@@ -147,7 +142,7 @@ public class RegistroController extends DatabaseLinker implements Initializable 
             if (!newValue.matches("[a-zA-Z0-9_]{0,16}")) {
                 txtUsuario.setText(oldValue);
             }
-            
+
             // Si hay más de un validador, es porque se ha insertado el "forzado" para mostrar error de
             // usuario ya existe, y por ello, se ha de eliminar cuando se actualice el campo
             if (txtUsuario.getValidators().size() > 1) {

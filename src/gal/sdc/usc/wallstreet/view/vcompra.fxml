@@ -8,8 +8,8 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import java.net.URL?>
-<AnchorPane prefHeight="400.0" prefWidth="760.0"
-            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="400.0"
+            prefWidth="760.0" xmlns="http://javafx.com/javafx/8"
             fx:controller="gal.sdc.usc.wallstreet.controller.VCompraController">
     <stylesheets>
         <URL value="@styles/base.css"/>
@@ -35,7 +35,7 @@
         <JFXComboBox fx:id="empresaComboBox" layoutX="57.0" layoutY="67.0" onAction="#btnEmpresaEvent" prefHeight="31.0"
                      prefWidth="347.0" promptText="Empresa" visibleRowCount="8"/>
         <JFXTextField fx:id="campoNumero" labelFloat="true" layoutX="387.0" layoutY="320.0"
-                      prefHeight="31.0" prefWidth="198.0" promptText="Número de participaciones" />
+                      prefHeight="31.0" prefWidth="198.0" promptText="Número de participaciones"/>
         <JFXTextField fx:id="campoSaldo" editable="false" labelFloat="true" layoutX="589.0"
                       layoutY="36.0" onAction="#actualizarSaldo" prefHeight="31.0" prefWidth="116.0"
                       promptText="Saldo disponible" text="0"/>

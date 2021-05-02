@@ -23,27 +23,22 @@ public class OtpQrController extends DatabaseLinker implements Initializable {
     public static final String TITULO = "Código QR";
 
     private static Comunicador comunicador;
-
-    public static void setComunicador(Comunicador comunicador) {
-        OtpQrController.comunicador = comunicador;
-    }
-
     @FXML
     public AnchorPane anchor;
-
-    @FXML
-    private ImageView imgQr;
-
     @FXML
     public JFXTextField txtClavePrivada;
-
+    @FXML
+    private ImageView imgQr;
     @FXML
     private JFXButton btnCancelar;
-
     @FXML
     private JFXButton btnSiguiente;
 
     public OtpQrController() {
+    }
+
+    public static void setComunicador(Comunicador comunicador) {
+        OtpQrController.comunicador = comunicador;
     }
 
     @FXML

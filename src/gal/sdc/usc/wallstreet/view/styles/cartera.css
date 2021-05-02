@@ -1,4 +1,4 @@
-.jfx.date-picker:editable .date-picker-display-node{
+.jfx.date-picker:editable .date-picker-display-node {
     -fx-font-size: 11;
 }
 
@@ -14,14 +14,14 @@
 }
 
 .table-view .virtual-flow .scroll-bar:horizontal .thumb {
-    -fx-background-color: #4059a9 ;
+    -fx-background-color: #4059a9;
 }
 
-.column-header{
+.column-header {
     -fx-background-color: #adbde0;
 }
 
-.date-picker{
+.date-picker {
     -jfx-default-color: #4059a9;
     -fx-show-week-numbers: true;
 }

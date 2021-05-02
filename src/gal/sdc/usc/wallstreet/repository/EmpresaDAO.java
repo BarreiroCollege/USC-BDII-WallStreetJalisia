@@ -1,9 +1,6 @@
 package gal.sdc.usc.wallstreet.repository;
 
 import gal.sdc.usc.wallstreet.model.Empresa;
-import gal.sdc.usc.wallstreet.model.Inversor;
-import gal.sdc.usc.wallstreet.model.OfertaVenta;
-import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.helpers.DAO;
 import gal.sdc.usc.wallstreet.util.Mapeador;
 
@@ -25,7 +22,7 @@ public class EmpresaDAO extends DAO<Empresa> {
      *
      * @return Lista de empresas dadas de alta.
      */
-    public List<Empresa> getEmpresas(){
+    public List<Empresa> getEmpresas() {
         List<Empresa> empresas = new ArrayList<>();
         try (PreparedStatement ps = conexion.prepareStatement(
                 "SELECT e.* FROM empresa as e join usuario as u ON(e.usuario=u.identificador) WHERE alta is null"
@@ -48,18 +45,18 @@ public class EmpresaDAO extends DAO<Empresa> {
      * @param identificador Clave primaria.
      * @return Empresa con todos sus datos.
      */
-    public Empresa getEmpresa(String identificador){
+    public Empresa getEmpresa(String identificador) {
         try (PreparedStatement ps = conexion.prepareStatement(
                 "SELECT * " +
                         "FROM empresa e JOIN usuario u ON e.usuario = u.identificador " +
                         "WHERE e.usuario = ?"
-        )){
+        )) {
             ps.setString(1, identificador);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()){
+            if (rs.next()) {
                 return Mapeador.map(rs, Empresa.class);
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -80,7 +77,7 @@ public class EmpresaDAO extends DAO<Empresa> {
                         "WHERE u.alta is not null AND u.baja is null"
         )) {
             ResultSet rs = ps.executeQuery();
-            while (rs.next()){
+            while (rs.next()) {
                 Empresa empresa = Mapeador.map(rs, Empresa.class);
                 pendientes.add(empresa);
             }
@@ -96,20 +93,20 @@ public class EmpresaDAO extends DAO<Empresa> {
      *
      * @return Lista con las empresas que desean darse de baja.
      */
-    public List<Empresa> getEmpresasBajasPendientes(){
+    public List<Empresa> getEmpresasBajasPendientes() {
         List<Empresa> bajas = new ArrayList<>();
 
         try (PreparedStatement ps = super.conexion.prepareStatement(
                 "SELECT * " +
                         "FROM usuario u JOIN empresa e ON u.identificador = e.usuario " +
                         "WHERE u.baja is not null AND u.alta is null"
-        )){
+        )) {
             ResultSet rs = ps.executeQuery();
-            while (rs.next()){
+            while (rs.next()) {
                 Empresa empresa = Mapeador.map(rs, Empresa.class);
                 bajas.add(empresa);
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 

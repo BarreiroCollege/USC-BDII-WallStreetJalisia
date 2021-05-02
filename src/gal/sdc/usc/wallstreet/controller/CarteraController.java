@@ -1,34 +1,32 @@
 package gal.sdc.usc.wallstreet.controller;
 
-import com.jfoenix.controls.*;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXTabPane;
+import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.JFXToggleButton;
 import com.jfoenix.validation.IntegerValidator;
 import gal.sdc.usc.wallstreet.Main;
-import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.OfertaVenta;
 import gal.sdc.usc.wallstreet.model.Participacion;
 import gal.sdc.usc.wallstreet.model.Usuario;
-import gal.sdc.usc.wallstreet.model.UsuarioTipo;
 import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
 import gal.sdc.usc.wallstreet.repository.ParticipacionDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.util.Duration;
 
-import java.io.IOException;
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -43,7 +41,11 @@ public class CarteraController extends DatabaseLinker {
     public static final Integer HEIGHT = 480;
     public static final Integer WIDTH = 897;
     public static final String TITULO = "Cartera";
-
+    private final ObservableList<Participacion> datosTabla = FXCollections.observableArrayList();
+    private final ObservableList<OfertaVenta> datosTablaOfertas = FXCollections.observableArrayList();
+    // Opciones de filtrado en la tabla de ofertas de venta
+    @FXML
+    public JFXComboBox<String> cb_empresa_ofertas;
     //<editor-fold defaultstate="collapsed" desc="Variables desde FXML">
     // Tabla y columnas de la tabla de participaciones
     @FXML
@@ -58,7 +60,6 @@ public class CarteraController extends DatabaseLinker {
     private TableColumn<Participacion, Integer> cartera_tabla_cant_bloq;
     @FXML
     private TableColumn<Participacion, String> cartera_tabla_pago;
-
     // Tabla y columnas de la tabla de ofertas de venta
     @FXML
     private TableView<OfertaVenta> cartera_tablaOferta;
@@ -74,16 +75,13 @@ public class CarteraController extends DatabaseLinker {
     private TableColumn<OfertaVenta, Integer> cartera_tablaOferta_sin_vender;
     @FXML
     private TableColumn<OfertaVenta, String> cartera_tablaOferta_precio;
-
     // Textos de saldo del usuario
     @FXML
     private Label txt_saldo;
     @FXML
     private Label txt_saldo_real;
-
     @FXML
     private JFXTabPane menu_pestanas;
-
     // Opciones de filtrado de la tabla de participaciones
     @FXML
     private JFXToggleButton toggle_filtro;
@@ -105,10 +103,6 @@ public class CarteraController extends DatabaseLinker {
     private DatePicker datepck_despues_pago;
     @FXML
     private DatePicker datepck_antes_pago;
-
-    // Opciones de filtrado en la tabla de ofertas de venta
-    @FXML
-    public JFXComboBox<String> cb_empresa_ofertas;
     @FXML
     private JFXTextField txt_min_part_ofertas;
     @FXML
@@ -122,17 +116,12 @@ public class CarteraController extends DatabaseLinker {
     @FXML
     private DatePicker datepck_antes_oferta;
 
+    //</editor-fold>
     @FXML
     private CheckBox CheckOfertasActivas;
-
     // Botón para dar de baja una oferta de venta
     @FXML
     private JFXButton cartera_btn_dar_de_baja;
-
-    //</editor-fold>
-
-    private final ObservableList<Participacion> datosTabla = FXCollections.observableArrayList();
-    private final ObservableList<OfertaVenta> datosTablaOfertas = FXCollections.observableArrayList();
     private String cbTexto;         // Valor seleccionado actualmente en la ComboBox de la pestaña de participaciones
     private String cbTextoOfertas;  // Valor seleccionado actualmente en la ComboBox de la pestaña de ofertas de venta
     private FilteredList<String> empresas;
@@ -162,7 +151,7 @@ public class CarteraController extends DatabaseLinker {
         });
         datosTablaOfertas.forEach(oferta -> {
             if (!cb_empresa_ofertas.getItems().contains(oferta.getEmpresa().getNombre()))
-            cb_empresa_ofertas.getItems().add(oferta.getEmpresa().getNombre());
+                cb_empresa_ofertas.getItems().add(oferta.getEmpresa().getNombre());
         });
         // Se guardan todas las empresas de las que hay participaciones
         empresas = cb_empresa.getItems().filtered(null);
@@ -187,8 +176,8 @@ public class CarteraController extends DatabaseLinker {
         datosTabla.setAll(participaciones);
         datosTablaOfertas.setAll(ofertas);
         // Actualizamos el saldo del usuario consultado
-        txt_saldo.setText( usuario.getSaldo()-usuario.getSaldoBloqueado() + " €");
-        txt_saldo_real.setText( usuario.getSaldo() + " €");
+        txt_saldo.setText(usuario.getSaldo() - usuario.getSaldoBloqueado() + " €");
+        txt_saldo_real.setText(usuario.getSaldo() + " €");
 
         cartera_tabla.setItems(datosTabla);
         cartera_tablaOferta.setItems(datosTablaOfertas);
@@ -220,7 +209,7 @@ public class CarteraController extends DatabaseLinker {
      * @param entrada Campo de texto a verificar
      * @return resultado de la verificación, una vez el usuario haya cerrado la alerta en caso de haberla
      */
-    public boolean regexPrecio(JFXTextField entrada){
+    public boolean regexPrecio(JFXTextField entrada) {
         // La entrada acepta uno o más números, que pueden ir seguidos de un punto y hasta 2 números decimales.
         if (entrada.getText() != null && !entrada.getText().isEmpty()) {
             if (!entrada.getText().matches("[0-9]+([.][0-9]{1,2})?")) {
@@ -268,7 +257,6 @@ public class CarteraController extends DatabaseLinker {
     }
 
 
-
     /**
      * Filtra los datos mostradas en la tabla de ofertas de venta en función de:
      * - Límite inferior para la fecha del último pago de la empresa
@@ -305,7 +293,7 @@ public class CarteraController extends DatabaseLinker {
         cartera_tablaOferta.setItems(partOrdenadasOfertas);
     }
 
-    public void darDeBajaOferta(){
+    public void darDeBajaOferta() {
         // Se toma la oferta a dar de baja
         OfertaVenta oferta = cartera_tablaOferta.getSelectionModel().getSelectedItem();
 
@@ -323,7 +311,7 @@ public class CarteraController extends DatabaseLinker {
         // Se guardan los cambios de la oferta
         super.getDAO(OfertaVentaDAO.class).actualizar(oferta);
 
-        if (super.ejecutarTransaccion()){
+        if (super.ejecutarTransaccion()) {
             Main.mensaje("Oferta de venta retirada");
         } else {
             Main.mensaje("Error; no se ha podido retirar la oferta");
@@ -332,8 +320,8 @@ public class CarteraController extends DatabaseLinker {
         // Se actualiza la ComboBox. No se puede eliminar la empresa directamente porque puede haber otras ofertas de la misma
         int i = 0;
         String empresaAEliminar = cartera_tablaOferta.getSelectionModel().getSelectedItem().getEmpresa().getNombre();
-        for (OfertaVenta ofertaVenta : datosTablaOfertas){
-            if (ofertaVenta.getEmpresa().getNombre().equals(empresaAEliminar)){
+        for (OfertaVenta ofertaVenta : datosTablaOfertas) {
+            if (ofertaVenta.getEmpresa().getNombre().equals(empresaAEliminar)) {
                 i++;
                 if (i == 2) {       // Si hay más de una oferta de la misma empresa, no será necesario borarla
                     break;
@@ -347,7 +335,7 @@ public class CarteraController extends DatabaseLinker {
         datosTablaOfertas.remove(cartera_tablaOferta.getSelectionModel().getSelectedItem());
     }
 
-    private void establecerColumnasTablas(){
+    private void establecerColumnasTablas() {
         final DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("d/L/y"); // Asigna el formato de fecha para la tabla de participaciones
         final DateFormat formatoFechaTabla = new SimpleDateFormat("d/L/y");   // Asigna el formato de fecha para la tabla de ofertas de venta
 
@@ -368,7 +356,7 @@ public class CarteraController extends DatabaseLinker {
         cartera_tablaOferta_precio.setCellValueFactory(new PropertyValueFactory<>("precioVenta"));
     }
 
-    private void addValidadores(){
+    private void addValidadores() {
         // Validadores de entrada numérica
         IntegerValidator iv = new IntegerValidator("");
         txt_min_part.getValidators().add(iv);
@@ -398,7 +386,7 @@ public class CarteraController extends DatabaseLinker {
         });
     }
 
-    private void addListeners(){
+    private void addListeners() {
         // Las ComboBox son editables y actualizan sus opciones en función de lo escrito por el usuario.
         cb_empresa.valueProperty().addListener((observable, oldValue, newValue) -> {
             FilteredList<String> empresasFiltradas = empresas;
@@ -436,11 +424,11 @@ public class CarteraController extends DatabaseLinker {
         // Cuando se selecciona una fila en la tabla de ofertas de venta, si la oferta de venta está activa, se puede dar de baja.
         cartera_tablaOferta.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldSelection, newSelection) -> {
-                if (newSelection.isOfertaActiva()){
-                    cartera_btn_dar_de_baja.setDisable(false);
-                    return;
-                }
-                cartera_btn_dar_de_baja.setDisable(true);
+                    if (newSelection.isOfertaActiva()) {
+                        cartera_btn_dar_de_baja.setDisable(false);
+                        return;
+                    }
+                    cartera_btn_dar_de_baja.setDisable(true);
                 });
     }
 
@@ -585,7 +573,7 @@ public class CarteraController extends DatabaseLinker {
         };
 
         Predicate<OfertaVenta> predOfertaActiva = ofertaVenta -> {
-            if ( CheckOfertasActivas.isSelected() ) {
+            if (CheckOfertasActivas.isSelected()) {
                 return ofertaVenta.isOfertaActiva();
             }
             return true;

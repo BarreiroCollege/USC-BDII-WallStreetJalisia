@@ -8,11 +8,8 @@ import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.PropuestaCompra;
 import gal.sdc.usc.wallstreet.model.Sociedad;
-import gal.sdc.usc.wallstreet.model.SuperUsuario;
-import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
 import gal.sdc.usc.wallstreet.repository.PropuestaCompraDAO;
-import gal.sdc.usc.wallstreet.repository.SuperUsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.Comunicador;
 import gal.sdc.usc.wallstreet.util.ErrorValidator;
@@ -20,7 +17,6 @@ import gal.sdc.usc.wallstreet.util.Validadores;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
@@ -37,10 +33,13 @@ public class SociedadPropuestaController extends DatabaseLinker implements Initi
     public static final Integer HEIGHT = 200;
     public static final Integer WIDTH = 500;
     public static final String TITULO = "Nueva Propuesta";
-
+    private static Comunicador comunicador;
+    @FXML
+    public JFXButton btnCancelar;
+    @FXML
+    public JFXButton btnCrear;
     @FXML
     private AnchorPane anchor;
-
     // @FXML
     // private JFXTextField txtEmpresa;
     @FXML
@@ -49,13 +48,6 @@ public class SociedadPropuestaController extends DatabaseLinker implements Initi
     private JFXTextField txtCantidad;
     @FXML
     private JFXTextField txtPrecioMax;
-
-    @FXML
-    public JFXButton btnCancelar;
-    @FXML
-    public JFXButton btnCrear;
-
-    private static Comunicador comunicador;
 
     public static void setComunicador(Comunicador comunicador) {
         SociedadPropuestaController.comunicador = comunicador;
@@ -145,7 +137,7 @@ public class SociedadPropuestaController extends DatabaseLinker implements Initi
                             setText(item.getNombre() + " | " + item.getCif());
                         }
                     }
-                } ;
+                };
             }
         };
         cmbEmpresa.setButtonCell(cellFactory.call(null));

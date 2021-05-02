@@ -36,15 +36,15 @@ public class PartEmpresaController extends DatabaseLinker {
     private Integer participaciones;
 
     @FXML
-    public void initialize(){
+    public void initialize() {
         // Recuperamos el usuario con sesion, así como su objeto empresa
         usuario = super.getUsuarioSesion().getUsuario();
         empresa = super.getDAO(EmpresaDAO.class).getEmpresa(usuario.getSuperUsuario().getIdentificador());
 
         // Funciones de los botones
-        btnEliminar.setOnAction( e -> this.eliminarParticip() );
-        btnAnadir.setOnAction( e -> this.anadirParticip() );
-        btnCerrarVentana.setOnAction( e -> this.cerrarVentana() );
+        btnEliminar.setOnAction(e -> this.eliminarParticip());
+        btnAnadir.setOnAction(e -> this.anadirParticip());
+        btnCerrarVentana.setOnAction(e -> this.cerrarVentana());
 
         // Evitamos que se escriban caracteres que no sean numeros
         txtParticip.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -56,18 +56,18 @@ public class PartEmpresaController extends DatabaseLinker {
         updateButtons();
     }
 
-    private void updateWindow(){
+    private void updateWindow() {
         participaciones = super.getDAO(ParticipacionDAO.class).getParticipacionesUsuarioEmpresa(usuario.getSuperUsuario().getIdentificador(), usuario.getSuperUsuario().getIdentificador());
         labelParticip.setText(participaciones.toString());
     }
 
-    private void updateButtons(){
-        btnAnadir.setDisable( txtParticip.getText().isEmpty() );
-        if ( txtParticip == null || txtParticip.getText().isEmpty() ) btnEliminar.setDisable(true);
-        else btnEliminar.setDisable( participaciones < Integer.parseInt(txtParticip.getText()) );
+    private void updateButtons() {
+        btnAnadir.setDisable(txtParticip.getText().isEmpty());
+        if (txtParticip == null || txtParticip.getText().isEmpty()) btnEliminar.setDisable(true);
+        else btnEliminar.setDisable(participaciones < Integer.parseInt(txtParticip.getText()));
     }
 
-    public void anadirParticip(){
+    public void anadirParticip() {
 
         if (txtParticip == null || txtParticip.getText().isEmpty()) return;
 
@@ -78,7 +78,7 @@ public class PartEmpresaController extends DatabaseLinker {
         Participacion part = new Participacion.Builder().withUsuario(usuario.getSuperUsuario()).withEmpresa(empresa).withCantidad(cantidad).withCantidadBloqueada(0).build();
 
         // Miramos si tiene o no registro de sus propias participaciones ya
-        if ( super.getDAO(ParticipacionDAO.class).tieneParticipacionesPropias(usuario.getSuperUsuario().getIdentificador()) ){
+        if (super.getDAO(ParticipacionDAO.class).tieneParticipacionesPropias(usuario.getSuperUsuario().getIdentificador())) {
             // Si ya tiene participaciones, tenemos que modificar el valor
             super.getDAO(ParticipacionDAO.class).actualizar(part);
         } else {
@@ -90,7 +90,7 @@ public class PartEmpresaController extends DatabaseLinker {
         updateButtons();
     }
 
-    public void eliminarParticip(){
+    public void eliminarParticip() {
 
         if (txtParticip == null || txtParticip.getText().isEmpty()) return;
 
@@ -101,7 +101,7 @@ public class PartEmpresaController extends DatabaseLinker {
         // Recuperamos el valor de entrada
         Integer input = Integer.parseInt(txtParticip.getText());
 
-        if ( participaciones < input ){
+        if (participaciones < input) {
             Main.mensaje("No hay participaciones suficientes para borrar");
             return;
         }
@@ -117,7 +117,7 @@ public class PartEmpresaController extends DatabaseLinker {
         updateButtons();
     }
 
-    public void cerrarVentana(){
+    public void cerrarVentana() {
         Main.ventana(
                 PrincipalController.VIEW,
                 PrincipalController.WIDTH,

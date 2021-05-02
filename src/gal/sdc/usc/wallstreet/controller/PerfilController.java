@@ -13,6 +13,7 @@ import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.model.UsuarioEstado;
 import gal.sdc.usc.wallstreet.model.UsuarioSesion;
+import gal.sdc.usc.wallstreet.model.UsuarioTipo;
 import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
 import gal.sdc.usc.wallstreet.repository.InversorDAO;
 import gal.sdc.usc.wallstreet.repository.SuperUsuarioDAO;
@@ -20,7 +21,6 @@ import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.Comunicador;
 import gal.sdc.usc.wallstreet.util.ErrorValidator;
-import gal.sdc.usc.wallstreet.model.UsuarioTipo;
 import gal.sdc.usc.wallstreet.util.Validadores;
 import gal.sdc.usc.wallstreet.util.auth.GoogleAuth;
 import gal.sdc.usc.wallstreet.util.auth.PasswordStorage;
@@ -42,7 +42,12 @@ public class PerfilController extends DatabaseLinker implements Initializable {
     public static final String TITULO = "Mi Perfil";
 
     private final BooleanProperty editando = new SimpleBooleanProperty(false);
-
+    @FXML
+    public VBox divInversor;
+    @FXML
+    public VBox divEmpresa;
+    @FXML
+    public JFXButton btnOtp;
     @FXML
     private JFXTextField txtUsuario;
     @FXML
@@ -55,30 +60,20 @@ public class PerfilController extends DatabaseLinker implements Initializable {
     private JFXTextField txtCp;
     @FXML
     private JFXTextField txtTelefono;
-
-    @FXML
-    public VBox divInversor;
-    @FXML
-    public VBox divEmpresa;
-
     @FXML
     private JFXTextField txtNombre;
     @FXML
     private JFXTextField txtApellidos;
     @FXML
     private JFXTextField txtDni;
-
     @FXML
     private JFXTextField txtEmpresa;
     @FXML
     private JFXTextField txtCif;
-
     @FXML
     private JFXButton btnVolver;
     @FXML
     private JFXButton btnBaja;
-    @FXML
-    public JFXButton btnOtp;
     @FXML
     private JFXButton btnEditar;
 
@@ -143,7 +138,7 @@ public class PerfilController extends DatabaseLinker implements Initializable {
         Comunicador comunicador = new Comunicador() {
             @Override
             public Object[] getData() {
-                return new Object[] {usuario};
+                return new Object[]{usuario};
             }
 
             @Override
@@ -215,7 +210,7 @@ public class PerfilController extends DatabaseLinker implements Initializable {
         ConfirmacionController.setComunicador(new Comunicador() {
             @Override
             public Object[] getData() {
-                return new Object[] {"¿Estás seguro que quieres solicitar la baja en el sistema?"};
+                return new Object[]{"¿Estás seguro que quieres solicitar la baja en el sistema?"};
             }
 
             @Override

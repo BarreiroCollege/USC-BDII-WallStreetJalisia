@@ -28,17 +28,15 @@ public class SociedadNuevaController extends DatabaseLinker implements Initializ
     public static final Integer HEIGHT = 200;
     public static final Integer WIDTH = 500;
     public static final String TITULO = "Crear Sociedad";
-
-    @FXML
-    private AnchorPane anchor;
-    @FXML
-    private JFXTextField txtIdentificador;
+    private static Comunicador comunicador;
     @FXML
     public JFXButton btnCancelar;
     @FXML
     public JFXButton btnCrear;
-
-    private static Comunicador comunicador;
+    @FXML
+    private AnchorPane anchor;
+    @FXML
+    private JFXTextField txtIdentificador;
 
     public static void setComunicador(Comunicador comunicador) {
         SociedadNuevaController.comunicador = comunicador;

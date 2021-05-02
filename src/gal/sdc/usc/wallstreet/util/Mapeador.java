@@ -33,7 +33,23 @@ public class Mapeador extends DatabaseLinker {
     }
 
     /**
+     * Dado un ResultSet, lo convertirá automáticamente a la clase de salida
+     * resolviendo todas sus dependencias automáticamente.
+     *
+     * @param rs       datos de entrada de SQL
+     * @param claseObj clase resultante
+     * @param <D>      tipo de clase a sacar
+     * @return clase entidad especificada
+     * @throws SQLException
+     */
+    public static <D extends Entidad> D map(final ResultSet rs, Class<D> claseObj) throws SQLException {
+        Mapeador mapeador = new Mapeador(rs, claseObj);
+        return (D) mapeador.castear();
+    }
+
+    /**
      * Crea un Builder de la clase de la entidad resultante
+     *
      * @return Builder creado
      */
     private Object crearBuilder() {
@@ -52,8 +68,9 @@ public class Mapeador extends DatabaseLinker {
 
     /**
      * Obtener los datos de la subentidad presente, y parsear solicitando en el DAO
+     *
      * @param nombre columna
-     * @param e clase de la entidad
+     * @param e      clase de la entidad
      * @return entidad resuelta
      * @throws SQLException
      */
@@ -113,6 +130,7 @@ public class Mapeador extends DatabaseLinker {
     /**
      * De cada parámetro de la clase, obtener del result set su elemento respectivo en función de
      * su nombre de columna usando un Builder
+     *
      * @return entidad creada
      * @throws SQLException
      */
@@ -153,20 +171,5 @@ public class Mapeador extends DatabaseLinker {
         }
 
         return null;
-    }
-
-    /**
-     * Dado un ResultSet, lo convertirá automáticamente a la clase de salida
-     * resolviendo todas sus dependencias automáticamente.
-     *
-     * @param rs       datos de entrada de SQL
-     * @param claseObj clase resultante
-     * @param <D>      tipo de clase a sacar
-     * @return clase entidad especificada
-     * @throws SQLException
-     */
-    public static <D extends Entidad> D map(final ResultSet rs, Class<D> claseObj) throws SQLException {
-        Mapeador mapeador = new Mapeador(rs, claseObj);
-        return (D) mapeador.castear();
     }
 }

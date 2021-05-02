@@ -1,16 +1,11 @@
 package gal.sdc.usc.wallstreet.controller;
 
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.RequiredFieldValidator;
 import gal.sdc.usc.wallstreet.Main;
-import gal.sdc.usc.wallstreet.model.Empresa;
-import gal.sdc.usc.wallstreet.model.PropuestaCompra;
 import gal.sdc.usc.wallstreet.model.Sociedad;
 import gal.sdc.usc.wallstreet.model.Usuario;
-import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
-import gal.sdc.usc.wallstreet.repository.PropuestaCompraDAO;
 import gal.sdc.usc.wallstreet.repository.SociedadDAO;
 import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
@@ -20,15 +15,10 @@ import gal.sdc.usc.wallstreet.util.Validadores;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 import java.net.URL;
-import java.util.Date;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class SociedadSaldoController extends DatabaseLinker implements Initializable {
@@ -36,21 +26,17 @@ public class SociedadSaldoController extends DatabaseLinker implements Initializ
     public static final Integer HEIGHT = 200;
     public static final Integer WIDTH = 500;
     public static final String TITULO = "Transferir Saldo";
-
-    @FXML
-    private AnchorPane anchor;
-
-    @FXML
-    private JFXTextField txtSaldoDisponible;
-    @FXML
-    private JFXTextField txtSaldo;
-
+    private static Comunicador comunicador;
     @FXML
     public JFXButton btnCancelar;
     @FXML
     public JFXButton btnTransferir;
-
-    private static Comunicador comunicador;
+    @FXML
+    private AnchorPane anchor;
+    @FXML
+    private JFXTextField txtSaldoDisponible;
+    @FXML
+    private JFXTextField txtSaldo;
 
     public static void setComunicador(Comunicador comunicador) {
         SociedadSaldoController.comunicador = comunicador;

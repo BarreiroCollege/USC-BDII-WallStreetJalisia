@@ -1,9 +1,6 @@
 package gal.sdc.usc.wallstreet.repository;
 
-import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Inversor;
-import gal.sdc.usc.wallstreet.model.SuperUsuario;
-import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.helpers.DAO;
 import gal.sdc.usc.wallstreet.util.Mapeador;
 
@@ -33,7 +30,7 @@ public class InversorDAO extends DAO<Inversor> {
                         "WHERE u.alta is not null AND u.baja is null"
         )) {
             ResultSet rs = ps.executeQuery();
-            while (rs.next()){
+            while (rs.next()) {
                 Inversor inversor = Mapeador.map(rs, Inversor.class);
                 pendientes.add(inversor);
             }
@@ -50,18 +47,18 @@ public class InversorDAO extends DAO<Inversor> {
      * @param identificador Clave primaria.
      * @return Inversor con todos sus datos.
      */
-    public Inversor getInversor(String identificador){
+    public Inversor getInversor(String identificador) {
         try (PreparedStatement ps = conexion.prepareStatement(
                 "SELECT * " +
                         "FROM inversor i JOIN usuario u ON i.usuario = u.identificador " +
                         "WHERE i.usuario = ?"
-        )){
+        )) {
             ps.setString(1, identificador);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()){
+            if (rs.next()) {
                 return Mapeador.map(rs, Inversor.class);
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -73,20 +70,20 @@ public class InversorDAO extends DAO<Inversor> {
      *
      * @return Lista con los inversores que desean darse de baja.
      */
-    public List<Inversor> getInversoresBajasPendientes(){
+    public List<Inversor> getInversoresBajasPendientes() {
         List<Inversor> bajas = new ArrayList<>();
 
-        try(PreparedStatement ps = super.conexion.prepareStatement(
+        try (PreparedStatement ps = super.conexion.prepareStatement(
                 "SELECT * " +
                         "FROM usuario u JOIN inversor i ON u.identificador = i.usuario " +
                         "WHERE u.baja is not null AND u.alta is null"
-        )){
+        )) {
             ResultSet rs = ps.executeQuery();
-            while (rs.next()){
+            while (rs.next()) {
                 Inversor inversor = Mapeador.map(rs, Inversor.class);
                 bajas.add(inversor);
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 

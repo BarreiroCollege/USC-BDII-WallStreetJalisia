@@ -2,90 +2,123 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXTextField?>
-<?import java.net.URL?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
-
-<AnchorPane fx:id="anchorPane" prefHeight="350.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.RevisarOfertasVentaController">
+<?import java.net.URL?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="anchorPane" prefHeight="350.0" prefWidth="550.0"
+            xmlns="http://javafx.com/javafx/8"
+            fx:controller="gal.sdc.usc.wallstreet.controller.RevisarOfertasVentaController">
     <stylesheets>
-        <URL value="@styles/base.css" />
-        <URL value="@styles/cartera.css" />
+        <URL value="@styles/base.css"/>
+        <URL value="@styles/cartera.css"/>
     </stylesheets>
     <children>
-        <JFXButton fx:id="btnAceptar" layoutX="301.0" layoutY="281.0" mnemonicParsing="false" onAction="#aceptar" prefHeight="30.0" prefWidth="86.0" ripplerFill="#52984a" style="-fx-background-color: #ade0ba;" text="Aceptar">
-         <font>
-            <Font size="14.0" />
-         </font></JFXButton>
-        <JFXButton fx:id="btnRechazar" layoutX="429.0" layoutY="280.0" mnemonicParsing="false" onAction="#rechazar" prefHeight="30.0" prefWidth="86.0" ripplerFill="#a95b5a" style="-fx-background-color: #e0adad;" text="Rechazar">
-         <font>
-            <Font size="14.0" />
-         </font></JFXButton>
-        <JFXButton fx:id="btnSiguiente" layoutX="443.0" layoutY="19.0" mnemonicParsing="false" onAction="#siguiente" prefHeight="30.0" prefWidth="86.0" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;" text="Siguiente">
-         <font>
-            <Font size="14.0" />
-         </font></JFXButton>
-        <JFXButton fx:id="btnAnterior" layoutX="20.0" layoutY="17.0" mnemonicParsing="false" onAction="#anterior" prefHeight="30.0" prefWidth="86.0" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;" text="Anterior">
-         <font>
-            <Font size="14.0" />
-         </font></JFXButton>
+        <JFXButton fx:id="btnAceptar" layoutX="301.0" layoutY="281.0" mnemonicParsing="false" onAction="#aceptar"
+                   prefHeight="30.0" prefWidth="86.0" ripplerFill="#52984a" style="-fx-background-color: #ade0ba;"
+                   text="Aceptar">
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </JFXButton>
+        <JFXButton fx:id="btnRechazar" layoutX="429.0" layoutY="280.0" mnemonicParsing="false" onAction="#rechazar"
+                   prefHeight="30.0" prefWidth="86.0" ripplerFill="#a95b5a" style="-fx-background-color: #e0adad;"
+                   text="Rechazar">
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </JFXButton>
+        <JFXButton fx:id="btnSiguiente" layoutX="443.0" layoutY="19.0" mnemonicParsing="false" onAction="#siguiente"
+                   prefHeight="30.0" prefWidth="86.0" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;"
+                   text="Siguiente">
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </JFXButton>
+        <JFXButton fx:id="btnAnterior" layoutX="20.0" layoutY="17.0" mnemonicParsing="false" onAction="#anterior"
+                   prefHeight="30.0" prefWidth="86.0" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;"
+                   text="Anterior">
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </JFXButton>
         <Label layoutX="207.0" layoutY="21.0" text="Ofertas de venta">
-         <font>
-            <Font name="System Bold" size="18.0" />
-         </font></Label>
+            <font>
+                <Font name="System Bold" size="18.0"/>
+            </font>
+        </Label>
         <Label layoutX="122.0" layoutY="88.0" text="Fecha:">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font></Label>
+            <font>
+                <Font name="System Bold" size="14.0"/>
+            </font>
+        </Label>
         <Label layoutX="104.0" layoutY="136.0" text="Empresa:">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font></Label>
+            <font>
+                <Font name="System Bold" size="14.0"/>
+            </font>
+        </Label>
         <Label fx:id="txtUsuarioSociedad" layoutX="107.0" layoutY="184.0" text="Usuario:">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font></Label>
-        <Label layoutX="57.0" layoutY="225.0" prefHeight="42.0" prefWidth="106.0" text="Número de participaciones:" wrapText="true">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font></Label>
+            <font>
+                <Font name="System Bold" size="14.0"/>
+            </font>
+        </Label>
+        <Label layoutX="57.0" layoutY="225.0" prefHeight="42.0" prefWidth="106.0" text="Número de participaciones:"
+               wrapText="true">
+            <font>
+                <Font name="System Bold" size="14.0"/>
+            </font>
+        </Label>
         <Label layoutX="74.0" layoutY="288.0" text="Precio venta:">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font></Label>
+            <font>
+                <Font name="System Bold" size="14.0"/>
+            </font>
+        </Label>
         <Label fx:id="txtFecha" layoutX="172.0" layoutY="89.0" text="fecha">
-         <font>
-            <Font size="14.0" />
-         </font></Label>
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </Label>
         <Label fx:id="txtEmpresa" layoutX="172.0" layoutY="136.0" text="Label">
-         <font>
-            <Font size="14.0" />
-         </font></Label>
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </Label>
         <Label fx:id="txtUsuario" layoutX="172.0" layoutY="186.0" text="Label">
-         <font>
-            <Font size="14.0" />
-         </font></Label>
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </Label>
         <Label fx:id="txtNumPart" layoutX="173.0" layoutY="242.0" text="Label">
-         <font>
-            <Font size="14.0" />
-         </font></Label>
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </Label>
         <Label fx:id="txtPrecioVenta" layoutX="173.0" layoutY="289.0" text="Label">
-         <font>
-            <Font size="14.0" />
-         </font></Label>
-      <Label layoutX="333.0" layoutY="234.0" text="Comisión:">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font></Label>
-      <JFXTextField fx:id="txtComisionPorDefecto" layoutX="415.0" layoutY="230.0" prefHeight="26.0" prefWidth="84.0" text="0.05" />
-      <JFXButton fx:id="btnVerEmpresa" layoutX="27.0" layoutY="130.0" mnemonicParsing="false" onAction="#mostrarEmpresa" prefHeight="30.0" prefWidth="66.0" ripplerFill="#4059a9" style="-fx-background-color: #becdee;" text="Ver">
-         <font>
-            <Font size="14.0" />
-         </font></JFXButton>
-      <JFXButton fx:id="btnVerUsuario" layoutX="28.0" layoutY="178.0" mnemonicParsing="false" onAction="#mostrarUsuario" prefHeight="30.0" prefWidth="66.0" ripplerFill="#4059a9" style="-fx-background-color: #becdee;" text="Ver">
-         <font>
-            <Font size="14.0" />
-         </font></JFXButton>
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </Label>
+        <Label layoutX="333.0" layoutY="234.0" text="Comisión:">
+            <font>
+                <Font name="System Bold" size="14.0"/>
+            </font>
+        </Label>
+        <JFXTextField fx:id="txtComisionPorDefecto" layoutX="415.0" layoutY="230.0" prefHeight="26.0" prefWidth="84.0"
+                      text="0.05"/>
+        <JFXButton fx:id="btnVerEmpresa" layoutX="27.0" layoutY="130.0" mnemonicParsing="false"
+                   onAction="#mostrarEmpresa" prefHeight="30.0" prefWidth="66.0" ripplerFill="#4059a9"
+                   style="-fx-background-color: #becdee;" text="Ver">
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </JFXButton>
+        <JFXButton fx:id="btnVerUsuario" layoutX="28.0" layoutY="178.0" mnemonicParsing="false"
+                   onAction="#mostrarUsuario" prefHeight="30.0" prefWidth="66.0" ripplerFill="#4059a9"
+                   style="-fx-background-color: #becdee;" text="Ver">
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </JFXButton>
     </children>
 
 </AnchorPane>

@@ -6,6 +6,7 @@ package gal.sdc.usc.wallstreet.model;
 public interface UsuarioComprador {
     /**
      * Devuelve el SuperUsuario asociado al comprador
+     *
      * @return SuperUsuario
      */
     SuperUsuario getSuperUsuario();

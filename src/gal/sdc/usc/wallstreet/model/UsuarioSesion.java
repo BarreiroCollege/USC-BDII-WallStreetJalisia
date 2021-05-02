@@ -7,6 +7,7 @@ public interface UsuarioSesion {
 
     /**
      * Devuelve el usuario con la sesión iniciada
+     *
      * @return Usuario
      */
     Usuario getUsuario();

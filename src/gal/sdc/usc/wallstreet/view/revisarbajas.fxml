@@ -5,101 +5,132 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 <?import java.net.URL?>
-
-<AnchorPane fx:id="anchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.RevisarBajasController">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="anchorPane" prefHeight="400.0" prefWidth="600.0"
+            xmlns="http://javafx.com/javafx/8"
+            fx:controller="gal.sdc.usc.wallstreet.controller.RevisarBajasController">
     <stylesheets>
-        <URL value="@styles/base.css" />
-        <URL value="@styles/cartera.css" />
+        <URL value="@styles/base.css"/>
+        <URL value="@styles/cartera.css"/>
     </stylesheets>
     <children>
-        <JFXButton fx:id="btn_aceptar" layoutX="102.0" layoutY="351.0" mnemonicParsing="false" onAction="#aceptar" prefHeight="30.0" prefWidth="98.0" ripplerFill="#52984a" style="-fx-background-color: #ade0ba;" text="Aceptar">
-         <font>
-            <Font size="14.0" />
-         </font></JFXButton>
-        <JFXButton fx:id="btn_rechazar" layoutX="393.0" layoutY="352.0" mnemonicParsing="false" onAction="#rechazar" prefHeight="30.0" prefWidth="98.0" ripplerFill="#a95b5a" style="-fx-background-color: #e0adad;" text="Rechazar">
-         <font>
-            <Font size="14.0" />
-         </font></JFXButton>
-        <JFXButton fx:id="btn_siguiente" layoutX="496.0" layoutY="17.0" mnemonicParsing="false" onAction="#siguiente" prefHeight="25.0" prefWidth="84.0" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;" text="Siguiente">
-         <font>
-            <Font size="14.0" />
-         </font></JFXButton>
-        <JFXButton fx:id="btn_anterior" layoutX="18.0" layoutY="17.0" mnemonicParsing="false" onAction="#anterior" prefHeight="25.0" prefWidth="84.0" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;" text="Anterior">
-         <font>
-            <Font size="14.0" />
-         </font></JFXButton>
+        <JFXButton fx:id="btn_aceptar" layoutX="102.0" layoutY="351.0" mnemonicParsing="false" onAction="#aceptar"
+                   prefHeight="30.0" prefWidth="98.0" ripplerFill="#52984a" style="-fx-background-color: #ade0ba;"
+                   text="Aceptar">
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </JFXButton>
+        <JFXButton fx:id="btn_rechazar" layoutX="393.0" layoutY="352.0" mnemonicParsing="false" onAction="#rechazar"
+                   prefHeight="30.0" prefWidth="98.0" ripplerFill="#a95b5a" style="-fx-background-color: #e0adad;"
+                   text="Rechazar">
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </JFXButton>
+        <JFXButton fx:id="btn_siguiente" layoutX="496.0" layoutY="17.0" mnemonicParsing="false" onAction="#siguiente"
+                   prefHeight="25.0" prefWidth="84.0" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;"
+                   text="Siguiente">
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </JFXButton>
+        <JFXButton fx:id="btn_anterior" layoutX="18.0" layoutY="17.0" mnemonicParsing="false" onAction="#anterior"
+                   prefHeight="25.0" prefWidth="84.0" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;"
+                   text="Anterior">
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </JFXButton>
         <Label layoutX="229.0" layoutY="22.0" text="Solicitudes de baja">
-         <font>
-            <Font name="System Bold" size="18.0" />
-         </font></Label>
+            <font>
+                <Font name="System Bold" size="18.0"/>
+            </font>
+        </Label>
         <Label layoutX="123.0" layoutY="100.0" text="ID:">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font></Label>
+            <font>
+                <Font name="System Bold" size="14.0"/>
+            </font>
+        </Label>
         <Label layoutX="76.0" layoutY="145.0" text="Dirección:">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font></Label>
+            <font>
+                <Font name="System Bold" size="14.0"/>
+            </font>
+        </Label>
         <Label layoutX="119.0" layoutY="189.0" text="CP:">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font></Label>
+            <font>
+                <Font name="System Bold" size="14.0"/>
+            </font>
+        </Label>
         <Label layoutX="77.0" layoutY="229.0" text="Localidad:">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font></Label>
+            <font>
+                <Font name="System Bold" size="14.0"/>
+            </font>
+        </Label>
         <Label layoutX="80.0" layoutY="273.0" text="Teléfono:">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font></Label>
+            <font>
+                <Font name="System Bold" size="14.0"/>
+            </font>
+        </Label>
         <Label fx:id="txt_id" layoutX="151.0" layoutY="101.0" text="id">
-         <font>
-            <Font size="14.0" />
-         </font></Label>
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </Label>
         <Label fx:id="txt_direccion" layoutX="150.0" layoutY="146.0" text="Label">
-         <font>
-            <Font size="14.0" />
-         </font></Label>
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </Label>
         <Label fx:id="txt_cp" layoutX="151.0" layoutY="190.0" text="Label">
-         <font>
-            <Font size="14.0" />
-         </font></Label>
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </Label>
         <Label fx:id="txt_localidad" layoutX="152.0" layoutY="230.0" text="Label">
-         <font>
-            <Font size="14.0" />
-         </font></Label>
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </Label>
         <Label fx:id="txt_tlf" layoutX="152.0" layoutY="275.0" text="Label">
-         <font>
-            <Font size="14.0" />
-         </font></Label>
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </Label>
         <Label fx:id="txt_subusuario" layoutX="380.0" layoutY="99.0" text="Empresa/Inversor">
-         <font>
-            <Font name="System Bold" size="16.0" />
-         </font></Label>
+            <font>
+                <Font name="System Bold" size="16.0"/>
+            </font>
+        </Label>
         <Label fx:id="txt_titulo_id_subclase" layoutX="402.0" layoutY="153.0" text="DNI:">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font></Label>
+            <font>
+                <Font name="System Bold" size="14.0"/>
+            </font>
+        </Label>
         <Label layoutX="373.0" layoutY="204.0" text="Nombre:">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font></Label>
+            <font>
+                <Font name="System Bold" size="14.0"/>
+            </font>
+        </Label>
         <Label layoutX="367.0" layoutY="257.0" text="Apellidos:">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font></Label>
+            <font>
+                <Font name="System Bold" size="14.0"/>
+            </font>
+        </Label>
         <Label fx:id="txt_id_subclase" layoutX="446.0" layoutY="153.0" text="dni">
-         <font>
-            <Font size="14.0" />
-         </font></Label>
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </Label>
         <Label fx:id="txt_nombre" layoutX="444.0" layoutY="205.0" text="nombre">
-         <font>
-            <Font size="14.0" />
-         </font></Label>
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </Label>
         <Label fx:id="txt_apellidos" layoutX="444.0" layoutY="257.0" text="apellidos">
-         <font>
-            <Font size="14.0" />
-         </font></Label>
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </Label>
     </children>
 
 </AnchorPane>

@@ -44,7 +44,7 @@ public class PackageScanner {
     /**
      * Recursive method used to find all classes in a given directory and subdirs.
      *
-     * @param directory   The base directory
+     * @param directory The base directory
      * @return The classes
      * @throws ClassNotFoundException
      */
@@ -65,6 +65,7 @@ public class PackageScanner {
 
     /**
      * Load a list of .class files from a JAR file
+     *
      * @return list of class names
      */
     private static List<String> loadFromJar() {
@@ -92,6 +93,7 @@ public class PackageScanner {
 
     /**
      * Load a list of .class files from a directory
+     *
      * @param directory the base directory
      * @return list of class names
      */

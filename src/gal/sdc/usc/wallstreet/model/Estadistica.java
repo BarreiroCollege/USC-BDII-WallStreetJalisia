@@ -82,29 +82,31 @@ public class Estadistica extends Entidad {
         public Builder() {
         }
 
-        public Builder(String idEmpresa){ estadistica.identificadorEmpresa = idEmpresa; }
+        public Builder(String idEmpresa) {
+            estadistica.identificadorEmpresa = idEmpresa;
+        }
 
         public Estadistica.Builder withEmpresa(String idEmpresa) {
             estadistica.identificadorEmpresa = idEmpresa;
             return this;
         }
 
-        public Estadistica.Builder withBeneficioMedio(Float beneficioMedio){
+        public Estadistica.Builder withBeneficioMedio(Float beneficioMedio) {
             estadistica.beneficioMedio = beneficioMedio;
             return this;
         }
 
-        public Estadistica.Builder withParticipacionesMedias(Float participacionesMedias){
+        public Estadistica.Builder withParticipacionesMedias(Float participacionesMedias) {
             estadistica.participacionesMedias = participacionesMedias;
             return this;
         }
 
-        public Estadistica.Builder withNumPagosMes(Integer numPagosMes){
+        public Estadistica.Builder withNumPagosMes(Integer numPagosMes) {
             estadistica.numPagosMes = numPagosMes;
             return this;
         }
 
-        public Estadistica.Builder withPrecioMedioMes(Float precioMedioMes){
+        public Estadistica.Builder withPrecioMedioMes(Float precioMedioMes) {
             estadistica.precioMedioMes = precioMedioMes;
             return this;
         }

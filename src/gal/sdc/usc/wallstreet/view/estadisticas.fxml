@@ -5,42 +5,44 @@
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.layout.AnchorPane?>
-
-<AnchorPane prefHeight="650.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.EstadisticasController">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="650.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8"
+            fx:controller="gal.sdc.usc.wallstreet.controller.EstadisticasController">
     <children>
-      <JFXButton fx:id="btnVolver" onAction="#onClickVolver" layoutX="42.0" layoutY="24.0" prefHeight="25.0" prefWidth="68.0" text="Volver" />
-      <BarChart fx:id="barChartBeneficioMedio" layoutX="34.0" layoutY="63.0" prefHeight="248.0" prefWidth="387.0">
-        <xAxis>
-          <CategoryAxis fx:id="ejeXBeneficioMedio" side="BOTTOM" />
-        </xAxis>
-        <yAxis>
-          <NumberAxis side="LEFT" />
-        </yAxis>
-      </BarChart>
-      <BarChart fx:id="barChartPartMedias" layoutX="446.0" layoutY="63.0" prefHeight="248.0" prefWidth="412.0">
-        <xAxis>
-          <CategoryAxis fx:id="ejeXPartMedias" side="BOTTOM" />
-        </xAxis>
-        <yAxis>
-          <NumberAxis side="LEFT" />
-        </yAxis>
-      </BarChart>
-      <BarChart fx:id="barChartNumPagos" layoutX="31.0" layoutY="332.0" prefHeight="269.0" prefWidth="393.0">
-        <xAxis>
-          <CategoryAxis fx:id="ejeXNumPagos" side="BOTTOM" />
-        </xAxis>
-        <yAxis>
-          <NumberAxis side="LEFT" />
-        </yAxis>
-      </BarChart>
-      <BarChart fx:id="barChartPrecioMedio" layoutX="446.0" layoutY="332.0" prefHeight="269.0" prefWidth="412.0">
-        <xAxis>
-          <CategoryAxis fx:id="ejeXPrecioMedio" side="BOTTOM" />
-        </xAxis>
-        <yAxis>
-          <NumberAxis side="LEFT" />
-        </yAxis>
-      </BarChart>
-      <JFXButton buttonType="RAISED" layoutX="778.0" layoutY="24.0" onAction="#refrescar" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;" text="Actualizar" />
-   </children>
+        <JFXButton fx:id="btnVolver" onAction="#onClickVolver" layoutX="42.0" layoutY="24.0" prefHeight="25.0"
+                   prefWidth="68.0" text="Volver"/>
+        <BarChart fx:id="barChartBeneficioMedio" layoutX="34.0" layoutY="63.0" prefHeight="248.0" prefWidth="387.0">
+            <xAxis>
+                <CategoryAxis fx:id="ejeXBeneficioMedio" side="BOTTOM"/>
+            </xAxis>
+            <yAxis>
+                <NumberAxis side="LEFT"/>
+            </yAxis>
+        </BarChart>
+        <BarChart fx:id="barChartPartMedias" layoutX="446.0" layoutY="63.0" prefHeight="248.0" prefWidth="412.0">
+            <xAxis>
+                <CategoryAxis fx:id="ejeXPartMedias" side="BOTTOM"/>
+            </xAxis>
+            <yAxis>
+                <NumberAxis side="LEFT"/>
+            </yAxis>
+        </BarChart>
+        <BarChart fx:id="barChartNumPagos" layoutX="31.0" layoutY="332.0" prefHeight="269.0" prefWidth="393.0">
+            <xAxis>
+                <CategoryAxis fx:id="ejeXNumPagos" side="BOTTOM"/>
+            </xAxis>
+            <yAxis>
+                <NumberAxis side="LEFT"/>
+            </yAxis>
+        </BarChart>
+        <BarChart fx:id="barChartPrecioMedio" layoutX="446.0" layoutY="332.0" prefHeight="269.0" prefWidth="412.0">
+            <xAxis>
+                <CategoryAxis fx:id="ejeXPrecioMedio" side="BOTTOM"/>
+            </xAxis>
+            <yAxis>
+                <NumberAxis side="LEFT"/>
+            </yAxis>
+        </BarChart>
+        <JFXButton buttonType="RAISED" layoutX="778.0" layoutY="24.0" onAction="#refrescar" ripplerFill="#4059a9"
+                   style="-fx-background-color: #adbde0;" text="Actualizar"/>
+    </children>
 </AnchorPane>

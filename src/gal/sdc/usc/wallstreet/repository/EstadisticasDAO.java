@@ -1,9 +1,7 @@
 package gal.sdc.usc.wallstreet.repository;
 
 import gal.sdc.usc.wallstreet.model.Estadistica;
-import gal.sdc.usc.wallstreet.model.Inversor;
 import gal.sdc.usc.wallstreet.repository.helpers.DAO;
-import gal.sdc.usc.wallstreet.util.Mapeador;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,21 +21,21 @@ public class EstadisticasDAO extends DAO<Estadistica> {
      *
      * @return Lista de empresas con sus correspondientes atributos; null en caso de error
      */
-    public List<Estadistica> getDatos(){
+    public List<Estadistica> getDatos() {
         List<Estadistica> estadisticas = new ArrayList<>();
 
         try (PreparedStatement ps = conexion.prepareStatement(
                 "SELECT * FROM estadistica"
-        )){
+        )) {
             ResultSet rs = ps.executeQuery();
-            while (rs.next()){
+            while (rs.next()) {
                 estadisticas.add(new Estadistica.Builder().withEmpresa(rs.getString(1)).withBeneficioMedio(
                         rs.getFloat(2)).withParticipacionesMedias(rs.getFloat(3))
                         .withNumPagosMes(rs.getInt(4))
                         .withPrecioMedioMes(rs.getFloat(5)).build());
                 //estadisticas.add(Mapeador.map(rs, Estadistica.class));
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
@@ -48,12 +46,12 @@ public class EstadisticasDAO extends DAO<Estadistica> {
     /***
      * Actualiza los datos de la materialized view
      */
-    public void refrescarEstadisticas(){
+    public void refrescarEstadisticas() {
         try (PreparedStatement ps = conexion.prepareStatement(
                 "REFRESH MATERIALIZED VIEW estadistica"
-        )){
+        )) {
             ps.executeUpdate();
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

@@ -8,29 +8,27 @@ import gal.sdc.usc.wallstreet.model.Inversor;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
 import gal.sdc.usc.wallstreet.repository.InversorDAO;
-import gal.sdc.usc.wallstreet.repository.SuperUsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
-import java.io.IOException;
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 public class RevisarRegistrosController extends DatabaseLinker {
 
+    private static JFXSnackbar snackbar;
     @FXML
     private AnchorPane anchorPane;
     @FXML
@@ -57,13 +55,11 @@ public class RevisarRegistrosController extends DatabaseLinker {
     private Button btn_siguiente;
     @FXML
     private Button btn_anterior;
-
     private List<Usuario> usuariosPendientes = new ArrayList<>();
     private HashMap<String, Empresa> empresasPendientes = new HashMap<>();      // identificador -> empresa
     private HashMap<String, Inversor> inversoresPendientes = new HashMap<>();   // identificador -> inversor
     private Usuario usuarioActual;
     private String ordenElegido;
-    private static JFXSnackbar snackbar;
 
     public static void mensaje(String mensaje) {
         mensaje(mensaje, null);
@@ -193,7 +189,7 @@ public class RevisarRegistrosController extends DatabaseLinker {
      * Cambia de usuario. El actual se elimina y se pasa al siguiente, si lo hay. Si no, se retrocede al anterior.
      * Si este era el último usuario, se cierra la ventana.
      */
-    public void cambiarUsuario(){
+    public void cambiarUsuario() {
         // Se deja de mostrar la solicitud y se determina qué botones deben ser visibles
         if (usuariosPendientes.indexOf(usuarioActual) != usuariosPendientes.size() - 1) {
             siguiente();

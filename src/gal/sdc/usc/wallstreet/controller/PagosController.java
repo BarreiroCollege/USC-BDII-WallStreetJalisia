@@ -51,78 +51,53 @@ public class PagosController extends DatabaseLinker {
     public static final Integer HEIGHT = 555;
     public static final Integer WIDTH = 867;
     public static final String TITULO = "Ventana pagos participaciones";
-
+    private final ObservableList<Pago> datosTablaPagos = FXCollections.observableArrayList();
     @FXML
     private JFXButton buttonVolverPagosProgramados;
-
     @FXML
     private JFXButton buttonVolverPagos;
-
     @FXML
     private JFXButton buttonBuscar;
-
     @FXML
     private Pane paneFiltro;
-
     @FXML
     private JFXButton buttonPagar;
-
     @FXML
     private JFXToggleButton toggleFiltrado;
-
     @FXML
     private TableView<Pago> tablaPagosProgramados;
-
     @FXML
     private TableColumn<Pago, String> colBeneficio;
-
     @FXML
     private TableColumn<Pago, String> colFechaAnuncio;
-
     @FXML
     private TableColumn<Pago, String> colFechaPago;
-
     @FXML
     private TableColumn<Pago, String> colParticipacion;
-
     @FXML
     private JFXDatePicker dPagoDespuesDe;
-
     @FXML
     private JFXDatePicker dPagoAntesDe;
-
     @FXML
     private JFXDatePicker dAnuncioPagoDespuesDe;
-
     @FXML
     private JFXDatePicker dAnuncioPagoAntesDe;
-
     @FXML
     private JFXComboBox cbMetodoPago;
-
     @FXML
     private JFXTextField txtDinero;
-
     @FXML
     private JFXTextField txtParticipaciones;
-
     @FXML
     private JFXCheckBox cbPagoProgramado;
-
     @FXML
     private JFXDatePicker dFechaPago;
-
     @FXML
     private Spinner<Integer> sPorcentajeBeneficios;
-
     @FXML
     private Spinner<Integer> sPorcentajeParticipaciones;
-
     @FXML
     private ScrollBar scrollVertical;
-
-    private final ObservableList<Pago> datosTablaPagos = FXCollections.observableArrayList();
-
 
     @FXML
     public void initialize() {

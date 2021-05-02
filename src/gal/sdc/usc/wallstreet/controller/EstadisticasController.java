@@ -1,7 +1,6 @@
 package gal.sdc.usc.wallstreet.controller;
 
 import gal.sdc.usc.wallstreet.Main;
-import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Estadistica;
 import gal.sdc.usc.wallstreet.repository.EstadisticasDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
@@ -12,9 +11,7 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.XYChart;
 
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class EstadisticasController extends DatabaseLinker {

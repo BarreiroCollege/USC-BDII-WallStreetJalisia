@@ -32,17 +32,17 @@ public class ReguladorDAO extends DAO<Regulador> {
      * @param atributo Atributo a recuperar (identificador, saldo o comision)
      * @return Correspondiente valor en formato String. Null si el atributo es no válido o en caso de error.
      */
-    public String getDatoRegulador(String atributo){
+    public String getDatoRegulador(String atributo) {
         String valor = null;
         try (PreparedStatement ps = conexion.prepareStatement(
                 "SELECT * FROM dato_regulador(?)"
-        )){
+        )) {
             ps.setString(1, atributo);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()){
+            if (rs.next()) {
                 valor = rs.getString(1);
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 

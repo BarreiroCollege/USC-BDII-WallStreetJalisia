@@ -100,7 +100,7 @@ public class OfertaVenta extends Entidad {
      *
      * @return true, si la oferta no se ha completado; false, si ya no está activa; null, en caso de error.
      */
-    public Boolean isOfertaActiva(){
+    public Boolean isOfertaActiva() {
         if (restantes == null) return null;
         return !restantes.equals(0);
     }
@@ -184,7 +184,7 @@ public class OfertaVenta extends Entidad {
             return this;
         }
 
-        public Builder withParticipacionesSinVender(Integer participacionesSinVender){
+        public Builder withParticipacionesSinVender(Integer participacionesSinVender) {
             ofertaVenta.participacionesSinVender = participacionesSinVender;
             return this;
         }

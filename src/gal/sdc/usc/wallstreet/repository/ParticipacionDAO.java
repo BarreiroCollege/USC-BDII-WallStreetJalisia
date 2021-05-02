@@ -95,7 +95,8 @@ public class ParticipacionDAO extends DAO<Participacion> {
         }
         return participaciones;
     }
-    public Boolean tieneParticipaciones(Usuario usuario){
+
+    public Boolean tieneParticipaciones(Usuario usuario) {
         return tieneParticipaciones(usuario.getSuperUsuario().getIdentificador());
     }
 
@@ -106,21 +107,21 @@ public class ParticipacionDAO extends DAO<Participacion> {
      * @param idSuperUsuario Clave primaria.
      * @return true, si el superusuario tiene participaciones; false, si no las tiene; null, en caso de error.
      */
-    public Boolean tieneParticipaciones(String idSuperUsuario){
-        try(PreparedStatement ps = conexion.prepareStatement(
+    public Boolean tieneParticipaciones(String idSuperUsuario) {
+        try (PreparedStatement ps = conexion.prepareStatement(
                 "SELECT count(*) " +
                         "FROM participacion " +
                         "WHERE (usuario = ? OR empresa = ?) AND (cantidad != ? OR cantidad_bloqueada != ?)"
-        )){
+        )) {
             ps.setString(1, idSuperUsuario);
             ps.setString(2, idSuperUsuario);
             ps.setInt(3, 0);
             ps.setInt(4, 0);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()){
+            if (rs.next()) {
                 return rs.getInt(1) != 0;
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -133,26 +134,26 @@ public class ParticipacionDAO extends DAO<Participacion> {
      * @param idSuperUsuario Clave primaria.
      * @return true, si el superusuario tiene participaciones; false, si no las tiene; null, en caso de error.
      */
-    public Boolean tieneParticipacionesPropias(String idSuperUsuario){
-        try(PreparedStatement ps = conexion.prepareStatement(
+    public Boolean tieneParticipacionesPropias(String idSuperUsuario) {
+        try (PreparedStatement ps = conexion.prepareStatement(
                 "SELECT count(*)" +
                         " FROM participacion" +
                         " WHERE usuario = ? AND empresa = ?"
-        )){
+        )) {
             ps.setString(1, idSuperUsuario);
             ps.setString(2, idSuperUsuario);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()){
+            if (rs.next()) {
                 return rs.getInt(1) > 0;
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
 
     public Integer getParticipacionesUsuarioEmpresa(String nombreUsuario, String empresa) {
-        Integer participaciones=0;
+        Integer participaciones = 0;
         try (PreparedStatement ps = super.conexion.prepareStatement(
                 "SELECT participacion.cantidad -participacion.cantidad_bloqueada " +
                         "as cuenta FROM participacion where usuario = ? and empresa= ?"
@@ -160,7 +161,7 @@ public class ParticipacionDAO extends DAO<Participacion> {
             ps.setString(1, nombreUsuario);
             ps.setString(2, empresa);
             ResultSet rs = ps.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 participaciones = Integer.parseInt(rs.getString("cuenta"));
             }
 
@@ -172,19 +173,20 @@ public class ParticipacionDAO extends DAO<Participacion> {
 
     /**
      * Permite obtener el numero de particicpaciones bloqueadas de un usuario con una empresa especifica
+     *
      * @param nombreUsuario identificador del usuario a consultar
-     * @param empresa identificador de la empresa de la que se poseen participaciones
+     * @param empresa       identificador de la empresa de la que se poseen participaciones
      * @return
      */
     public Integer getParticipacionesBloqueadasUsuarioEmpresa(String nombreUsuario, String empresa) {
-        int participaciones=0;
+        int participaciones = 0;
         try (PreparedStatement ps = super.conexion.prepareStatement(
                 "SELECT cantidad_bloqueada FROM participacion where usuario = ? and empresa= ?"
         )) {
             ps.setString(1, nombreUsuario);
             ps.setString(2, empresa);
             ResultSet rs = ps.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 participaciones = Integer.parseInt(rs.getString("cantidad_bloqueada"));
             }
 
@@ -194,7 +196,7 @@ public class ParticipacionDAO extends DAO<Participacion> {
         return participaciones;
     }
 
-    public List<Participacion> getParticipacionesPorEmpresa(String nombreEmpresa){
+    public List<Participacion> getParticipacionesPorEmpresa(String nombreEmpresa) {
         List<Participacion> participaciones = new ArrayList<>();
         try (PreparedStatement ps = super.conexion.prepareStatement(
                 "SELECT p.* FROM participacion as p WHERE p.empresa = ? AND p.empresa NOT LIKE p.usuario"

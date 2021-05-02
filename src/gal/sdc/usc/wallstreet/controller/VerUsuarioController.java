@@ -2,7 +2,6 @@ package gal.sdc.usc.wallstreet.controller;
 
 import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Inversor;
-import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.util.Comunicador;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -10,6 +9,7 @@ import javafx.stage.Stage;
 
 public class VerUsuarioController {
 
+    private static Comunicador comunicador;         // A través de él se recibe la información del usuario a mostrar
     @FXML
     private Label txtPrincipalNombre;
     @FXML
@@ -39,21 +39,18 @@ public class VerUsuarioController {
     @FXML
     private Label txtApellidos;                // Apellidos del inversor
 
-
-    private static Comunicador comunicador;         // A través de él se recibe la información del usuario a mostrar
-
-    public static void setComunicador(Comunicador comunicador){
+    public static void setComunicador(Comunicador comunicador) {
         VerUsuarioController.comunicador = comunicador;
     }
 
-    public void initialize(){
+    public void initialize() {
         // Si no se ha recibido información, no se puede mostrar nada
         if (comunicador == null) ((Stage) txtApellidos.getScene().getWindow()).close();
 
         Object[] objeto = comunicador.getData();
 
         // El layout varía en función de si el usuario es un inversor o una empresa
-        if (objeto[0] instanceof Empresa){
+        if (objeto[0] instanceof Empresa) {
             mostrarDatosUsuario((Empresa) objeto[0]);
             mostrarDatosEmpresa((Empresa) objeto[0]);
         } else {
@@ -63,7 +60,7 @@ public class VerUsuarioController {
     }
 
     // Datos comunes a todos los usuarios
-    private void mostrarDatosUsuario(Inversor inversor){
+    private void mostrarDatosUsuario(Inversor inversor) {
         txtId.setText(inversor.getUsuario().getSuperUsuario().getIdentificador());
         txtDireccion.setText(inversor.getUsuario().getDireccion());
         txtCp.setText(inversor.getUsuario().getCp());
@@ -74,7 +71,7 @@ public class VerUsuarioController {
     }
 
     // Datos comunes a todos los usuarios
-    private void mostrarDatosUsuario(Empresa empresa){
+    private void mostrarDatosUsuario(Empresa empresa) {
         txtId.setText(empresa.getUsuario().getSuperUsuario().getIdentificador());
         txtDireccion.setText(empresa.getUsuario().getDireccion());
         txtCp.setText(empresa.getUsuario().getCp());
@@ -85,7 +82,7 @@ public class VerUsuarioController {
     }
 
     // Datos propios de las empresas
-    private void mostrarDatosEmpresa(Empresa empresa){
+    private void mostrarDatosEmpresa(Empresa empresa) {
         txtPrincipalNombre.setText(empresa.getNombre());
         txtTipo.setText("Empresa");
         txtTituloDniCif.setText("CIF:");
@@ -96,7 +93,7 @@ public class VerUsuarioController {
     }
 
     // Datos propios del inversor
-    private void mostrarDatosInversor(Inversor inversor){
+    private void mostrarDatosInversor(Inversor inversor) {
         txtPrincipalNombre.setText(inversor.getNombre() + " " + inversor.getApellidos());
         txtTipo.setText("Inversor");
         txtTituloDniCif.setText("DNI:");

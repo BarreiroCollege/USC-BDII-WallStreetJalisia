@@ -19,24 +19,20 @@ public class ConfirmacionController extends DatabaseLinker implements Initializa
     public static final String TITULO = "Confirmar";
 
     private static Comunicador comunicador;
-
-    public static void setComunicador(Comunicador comunicador) {
-        ConfirmacionController.comunicador = comunicador;
-    }
-
     @FXML
     public AnchorPane anchor;
-
     @FXML
     private Label lblTitulo;
-
     @FXML
     private JFXButton btnCancelar;
-
     @FXML
     private JFXButton btnAceptar;
 
     public ConfirmacionController() {
+    }
+
+    public static void setComunicador(Comunicador comunicador) {
+        ConfirmacionController.comunicador = comunicador;
     }
 
     @FXML

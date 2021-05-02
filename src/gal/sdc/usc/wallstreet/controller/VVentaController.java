@@ -25,15 +25,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.converter.IntegerStringConverter;
 
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.function.UnaryOperator;
-import java.util.regex.Pattern;
 
 public class VVentaController extends DatabaseLinker {
 
@@ -212,7 +208,7 @@ public class VVentaController extends DatabaseLinker {
             getDAO(OfertaVentaDAO.class).insertar(oferta);
             // Incrementamos su saldo de participaciones bloqueadas
             Participacion cartera = super.getDAO(ParticipacionDAO.class).seleccionar(usr.getSuperUsuario(), empresa);
-            if(cartera == null){
+            if (cartera == null) {
                 cartera = new Participacion.Builder()
                         .withEmpresa(empresa)
                         .withUsuario(usr.getSuperUsuario())

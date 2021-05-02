@@ -6,9 +6,10 @@ import java.lang.reflect.Method;
 public class LectorDinamico {
     /**
      * Llama al método "getX" de una clase
+     *
      * @param nombre atributo a fijar
-     * @param o objeto sobre el que fijar
-     * @param <E> tipo de objeto
+     * @param o      objeto sobre el que fijar
+     * @param <E>    tipo de objeto
      * @return objeto actualizado
      */
     public static <E> E llamarGetter(String nombre, Object o) {
@@ -25,11 +26,12 @@ public class LectorDinamico {
 
     /**
      * Llama al método "withX" de un Builder
+     *
      * @param nombre atributo a fijar
-     * @param o objeto sobre el que fijar
-     * @param tipo clase del atributo
-     * @param valor objeto del atributo
-     * @param <E> tipo de objeto
+     * @param o      objeto sobre el que fijar
+     * @param tipo   clase del atributo
+     * @param valor  objeto del atributo
+     * @param <E>    tipo de objeto
      * @return objeto actualizado
      */
     public static <E> E llamarWither(String nombre, Object o, Class<?> tipo, Object valor) {

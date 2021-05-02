@@ -4,7 +4,6 @@ import gal.sdc.usc.wallstreet.model.ddl.Columna;
 import gal.sdc.usc.wallstreet.model.ddl.Entidad;
 import gal.sdc.usc.wallstreet.model.ddl.Tabla;
 
-import java.sql.Timestamp;
 import java.util.Objects;
 
 @Tabla("regulador")

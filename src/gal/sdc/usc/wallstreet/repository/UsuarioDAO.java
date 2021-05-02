@@ -9,7 +9,10 @@ import gal.sdc.usc.wallstreet.model.UsuarioSesion;
 import gal.sdc.usc.wallstreet.repository.helpers.DAO;
 import gal.sdc.usc.wallstreet.util.Mapeador;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +43,7 @@ public class UsuarioDAO extends DAO<Usuario> {
      * El número de usuarios se regula con el parámetro límite.
      * No se incluye al regulador en el resultado.
      *
-     * @param limite Número de usuarios máximo de la lista.
+     * @param limite       Número de usuarios máximo de la lista.
      * @param reguladorDAO DAO del regulador (permite eliminarlo del resultado)
      * @return Lista con los usuarios de mayor saldo con tamaño máximo limite.
      */
@@ -176,7 +179,7 @@ public class UsuarioDAO extends DAO<Usuario> {
         ps.setInt(indice, limite);
     }
 
-    public List<Usuario> getUsuariosParticipacionEmpresa(String empresa){
+    public List<Usuario> getUsuariosParticipacionEmpresa(String empresa) {
         List<Usuario> usuarios = new ArrayList<>();
         try (PreparedStatement ps = super.conexion.prepareStatement(
                 "SELECT * FROM usuario u, participacion p WHERE u.identificador = p.usuario AND p.empresa = ?"
@@ -304,14 +307,14 @@ public class UsuarioDAO extends DAO<Usuario> {
         try (PreparedStatement psInversor = conexion.prepareStatement(
                 "DELETE FROM inversor " +
                         "WHERE usuario = ?"
-        )){
+        )) {
             psInversor.setString(1, id);
             psInversor.executeUpdate();
 
             try (PreparedStatement psEmpresa = conexion.prepareStatement(
                     "DELETE FROM empresa " +
                             "WHERE usuario = ?"
-            )){
+            )) {
                 psEmpresa.setString(1, id);
                 psEmpresa.executeUpdate();
             }
@@ -319,7 +322,7 @@ public class UsuarioDAO extends DAO<Usuario> {
             try (PreparedStatement psUsuario = conexion.prepareStatement(
                     "DELETE FROM usuario " +
                             "WHERE identificador = ?"
-            )){
+            )) {
                 psUsuario.setString(1, id);
                 psUsuario.executeUpdate();
             }
@@ -327,11 +330,11 @@ public class UsuarioDAO extends DAO<Usuario> {
             try (PreparedStatement psSuperusuario = conexion.prepareStatement(
                     "DELETE FROM superusuario " +
                             "WHERE identificador = ?"
-            )){
+            )) {
                 psSuperusuario.setString(1, id);
                 psSuperusuario.executeUpdate();
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

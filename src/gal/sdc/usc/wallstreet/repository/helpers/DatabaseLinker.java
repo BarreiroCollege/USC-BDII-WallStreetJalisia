@@ -1,8 +1,23 @@
 package gal.sdc.usc.wallstreet.repository.helpers;
 
-import gal.sdc.usc.wallstreet.model.*;
+import gal.sdc.usc.wallstreet.model.Empresa;
+import gal.sdc.usc.wallstreet.model.Inversor;
+import gal.sdc.usc.wallstreet.model.UsuarioSesion;
+import gal.sdc.usc.wallstreet.model.UsuarioTipo;
 import gal.sdc.usc.wallstreet.model.ddl.Entidad;
-import gal.sdc.usc.wallstreet.repository.*;
+import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
+import gal.sdc.usc.wallstreet.repository.EstadisticasDAO;
+import gal.sdc.usc.wallstreet.repository.InversorDAO;
+import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
+import gal.sdc.usc.wallstreet.repository.PagoDAO;
+import gal.sdc.usc.wallstreet.repository.PagoUsuarioDAO;
+import gal.sdc.usc.wallstreet.repository.ParticipacionDAO;
+import gal.sdc.usc.wallstreet.repository.PropuestaCompraDAO;
+import gal.sdc.usc.wallstreet.repository.ReguladorDAO;
+import gal.sdc.usc.wallstreet.repository.SociedadDAO;
+import gal.sdc.usc.wallstreet.repository.SuperUsuarioDAO;
+import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
+import gal.sdc.usc.wallstreet.repository.VentaDAO;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -18,16 +33,14 @@ import java.util.Properties;
  * clase al usar variables estáticas.
  */
 public abstract class DatabaseLinker {
+    public static boolean DEBUG = false;
     // Indica que la conexión se ha inicializado
     private static Connection conexion;
     // Lista de DAOs disponibles
     private static HashMap<Class<? extends DAO<? extends Entidad>>, DAO<? extends Entidad>> daos;
     // Nivel de aislamiento por defecto
     private static int nivelAislamiento = -1;
-
     private static UsuarioSesion usuario;
-
-    public static boolean DEBUG = false;
 
     static {
         // Inicializar el hashmap
@@ -36,6 +49,17 @@ public abstract class DatabaseLinker {
 
     public DatabaseLinker() {
         if (conexion == null) cargarLinker();
+    }
+
+    /**
+     * Devuelve un DAO que haya sido inicializado
+     *
+     * @param clase clase del DAO a buscar
+     * @param <D>   DAO de salida
+     * @return DAO instanciado
+     */
+    public static <D extends DAO<? extends Entidad>> D getSDAO(Class<D> clase) {
+        return (D) DatabaseLinker.daos.get(clase);
     }
 
     /**
@@ -121,17 +145,6 @@ public abstract class DatabaseLinker {
      */
     public <D extends DAO<? extends Entidad>> D getDAO(Class<D> clase) {
         return DatabaseLinker.getSDAO(clase);
-    }
-
-    /**
-     * Devuelve un DAO que haya sido inicializado
-     *
-     * @param clase clase del DAO a buscar
-     * @param <D>   DAO de salida
-     * @return DAO instanciado
-     */
-    public static <D extends DAO<? extends Entidad>> D getSDAO(Class<D> clase) {
-        return (D) DatabaseLinker.daos.get(clase);
     }
 
     /**

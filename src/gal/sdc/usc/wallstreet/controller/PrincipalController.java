@@ -34,7 +34,10 @@ public class PrincipalController extends DatabaseLinker {
     public static final Integer HEIGHT = 555;
     public static final Integer WIDTH = 867;
     public static final String TITULO = "Ventana principal";
-
+    Scene scene;
+    Usuario usuario;
+    List<Participacion> participacionesUsuario;
+    List<OfertaVenta> ofertaVentaUsuario;
     @FXML
     private JFXButton buttonParticipaciones;
     @FXML
@@ -43,53 +46,34 @@ public class PrincipalController extends DatabaseLinker {
     private JFXButton buttonComprar;
     @FXML
     private JFXButton buttonVender;
-
     @FXML
     private JFXButton buttonMostrarMas;
-
     @FXML
     private TableView<Participacion> tablaParticipaciones;
-
     @FXML
     private TableView<OfertaVenta> tablaOfertasVenta;
-
     @FXML
     private TableColumn<Participacion, String> colEmpresa;
-
     @FXML
     private TableColumn<Participacion, Integer> colCantidad;
-
-
     @FXML
     private TableColumn<OfertaVenta, String> colEmpresa2;
-
     @FXML
     private TableColumn<OfertaVenta, Float> colPrecio;
-
     @FXML
     private TableColumn<OfertaVenta, Integer> colNParticipaciones;
-
     @FXML
     private Label txtSaldo;
-
     @FXML
     private Menu buttonPerfil;
-
     @FXML
     private Menu buttonEstadisticas;
-
     @FXML
     private MenuItem buttonCerrarSesion;
     @FXML
     private MenuItem buttonVerPerfil;
     @FXML
     private MenuItem buttonSociedad;
-
-
-    Scene scene;
-    Usuario usuario;
-    List<Participacion> participacionesUsuario;
-    List<OfertaVenta> ofertaVentaUsuario;
 
     @FXML
     public void initialize() {
@@ -124,7 +108,7 @@ public class PrincipalController extends DatabaseLinker {
         });
 
         buttonComprar.setOnAction(e -> {
-                    Main.ventana(VCompraController.VIEW, VCompraController.WIDTH, VCompraController.HEIGHT, VCompraController.TITULO);
+            Main.ventana(VCompraController.VIEW, VCompraController.WIDTH, VCompraController.HEIGHT, VCompraController.TITULO);
         });
         buttonPagos.setOnAction(event -> {
             Main.ventana(PagosController.VIEW, PagosController.WIDTH, PagosController.HEIGHT, PagosController.TITULO);
@@ -221,8 +205,6 @@ public class PrincipalController extends DatabaseLinker {
     public void mostrarSaldo() {
         txtSaldo.setText(usuario.getSaldo() - usuario.getSaldoBloqueado() + " €");
     }
-
-
 
 
 }

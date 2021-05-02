@@ -3,8 +3,13 @@ package gal.sdc.usc.wallstreet.controller;
 import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXSnackbarLayout;
 import gal.sdc.usc.wallstreet.Main;
-import gal.sdc.usc.wallstreet.model.*;
-import gal.sdc.usc.wallstreet.repository.*;
+import gal.sdc.usc.wallstreet.model.Empresa;
+import gal.sdc.usc.wallstreet.model.Inversor;
+import gal.sdc.usc.wallstreet.model.Usuario;
+import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
+import gal.sdc.usc.wallstreet.repository.InversorDAO;
+import gal.sdc.usc.wallstreet.repository.ParticipacionDAO;
+import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -15,10 +20,16 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.sql.Connection;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 public class RevisarBajasController extends DatabaseLinker {
 
+    private static JFXSnackbar snackbar;
     @FXML
     private AnchorPane anchorPane;
     @FXML
@@ -45,13 +56,11 @@ public class RevisarBajasController extends DatabaseLinker {
     private Label txt_nombre;
     @FXML
     private Label txt_apellidos;
-
     private List<Usuario> usuariosBajas = new ArrayList<>();
     private HashMap<String, Empresa> empresasBajas = new HashMap<>();      // identificador -> empresa
     private HashMap<String, Inversor> inversoresBajas = new HashMap<>();   // identificador -> inversor
     private Usuario usuarioActual;
     private String ordenElegido;
-    private static JFXSnackbar snackbar;
 
     public static void mensaje(String mensaje) {
         mensaje(mensaje, null);
@@ -151,7 +160,7 @@ public class RevisarBajasController extends DatabaseLinker {
          */
         super.iniciarTransaccion(Connection.TRANSACTION_SERIALIZABLE);
 
-        if (super.getDAO(ParticipacionDAO.class).tieneParticipaciones(usuarioActual)){
+        if (super.getDAO(ParticipacionDAO.class).tieneParticipaciones(usuarioActual)) {
             // Si el usuario tiene participaciones (poseedor o como empresa), se cancela la solicitud de baja.
             super.getDAO(UsuarioDAO.class).rechazarBaja(usuarioActual.getSuperUsuario().getIdentificador());
             super.ejecutarTransaccion();
@@ -167,7 +176,7 @@ public class RevisarBajasController extends DatabaseLinker {
         // Se da de baja el usuario (alta y baja quedan ambos nulos -> ver UsuarioEstado)
         super.getDAO(UsuarioDAO.class).darDeBajaUsuario(usuarioActual);
         if (super.ejecutarTransaccion()) mensaje("Baja realizada correctamente", 3);
-        else{
+        else {
             mensaje("Error en el proceso de la baja", 3);
             return;
         }
@@ -184,7 +193,7 @@ public class RevisarBajasController extends DatabaseLinker {
      * Rechaza la baja del usuario mostrado.
      */
     public void rechazar() {
-        if(super.getDAO(UsuarioDAO.class).rechazarBaja(usuarioActual.getSuperUsuario().getIdentificador())) {
+        if (super.getDAO(UsuarioDAO.class).rechazarBaja(usuarioActual.getSuperUsuario().getIdentificador())) {
             mensaje("Baja rechazada correctamente", 3);
             cambiarUsuario();
         } else {
@@ -196,7 +205,7 @@ public class RevisarBajasController extends DatabaseLinker {
      * Cambia de usuario. El actual se elimina y se pasa al siguiente, si lo hay. Si no, se retrocede al anterior.
      * Si este era el último usuario, se cierra la ventana.
      */
-    public void cambiarUsuario(){
+    public void cambiarUsuario() {
         if (usuariosBajas.indexOf(usuarioActual) != usuariosBajas.size() - 1) {
             siguiente();
             usuariosBajas.remove(usuariosBajas.get(usuariosBajas.indexOf(usuarioActual) - 1));

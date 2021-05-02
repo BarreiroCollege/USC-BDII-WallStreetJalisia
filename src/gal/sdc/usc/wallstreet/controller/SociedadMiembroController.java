@@ -27,17 +27,15 @@ public class SociedadMiembroController extends DatabaseLinker implements Initial
     public static final Integer HEIGHT = 200;
     public static final Integer WIDTH = 500;
     public static final String TITULO = "Invitar Miembro";
-
-    @FXML
-    private AnchorPane anchor;
-    @FXML
-    private JFXTextField txtIdentificador;
+    private static Comunicador comunicador;
     @FXML
     public JFXButton btnCancelar;
     @FXML
     public JFXButton btnInvitar;
-
-    private static Comunicador comunicador;
+    @FXML
+    private AnchorPane anchor;
+    @FXML
+    private JFXTextField txtIdentificador;
 
     public static void setComunicador(Comunicador comunicador) {
         SociedadMiembroController.comunicador = comunicador;

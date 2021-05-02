@@ -26,24 +26,20 @@ public class OtpController extends DatabaseLinker implements Initializable {
     public static final String TITULO = "Verificación";
 
     private static Comunicador comunicador;
-
-    public static void setComunicador(Comunicador comunicador) {
-        OtpController.comunicador = comunicador;
-    }
-
     @FXML
     public AnchorPane anchor;
-
     @FXML
     private JFXTextField txtOtp;
-
     @FXML
     private JFXButton btnCancelar;
-
     @FXML
     private JFXButton btnConfirmar;
 
     public OtpController() {
+    }
+
+    public static void setComunicador(Comunicador comunicador) {
+        OtpController.comunicador = comunicador;
     }
 
     private void confirmar() {

@@ -13,8 +13,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import java.net.URL?>
-<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="600.0"
-            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0"
+            prefWidth="600.0" xmlns="http://javafx.com/javafx/8"
             fx:controller="gal.sdc.usc.wallstreet.controller.RegistroController">
     <stylesheets>
         <URL value="@styles/base.css"/>
@@ -62,7 +62,7 @@
                             <JFXTextField promptText="Nombre" labelFloat="true" fx:id="txtNombre"/>
                             <Label minWidth="10.0"/>
                             <JFXTextField promptText="Apellidos" labelFloat="true" fx:id="txtApellidos"
-                                              HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                                          HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
                         </HBox>
                         <Label minHeight="40.0"/>
                         <JFXTextField promptText="DNI/NIF" labelFloat="true" fx:id="txtDni"/>
