@@ -155,7 +155,6 @@ public class ReguladorController extends DatabaseLinker {
     private List<OfertaVenta> ofertasPendientes;
     private List<Usuario> usuariosRegistroPendientes;
     private List<Usuario> usuariosBajasPendientes;
-    private List<OfertaVenta> ofertaVentaPendientes;
 
 
     /** No existe un botón de actualización de la tabla porque filtrar también refresca los datos **/
@@ -301,7 +300,8 @@ public class ReguladorController extends DatabaseLinker {
         // la lista usuariosRegistroPendientes.
         super.iniciarTransaccion(Connection.TRANSACTION_READ_UNCOMMITTED);
         super.getDAO(UsuarioDAO.class).aceptarUsuariosTodos(usuariosRegistroPendientes);
-        super.ejecutarTransaccion();
+        if (super.ejecutarTransaccion()) Main.mensaje("Solicitudes aceptadas correctamente", 3);
+        else Main.mensaje("Se ha producido un error", 3);
         actualizarRegistrosPendientes();
     }
 
@@ -342,12 +342,12 @@ public class ReguladorController extends DatabaseLinker {
 
         if (super.ejecutarTransaccion()){
             if (hayRechazos) {
-                Main.mensaje("Las bajas de cuentas con participaciones se han rechazado.", 5);
+                Main.mensaje("Las bajas de cuentas con participaciones se han rechazado.", 3);
             } else {
-                Main.mensaje("Todas las bajas de cuentas han sido aceptadas", 5);
+                Main.mensaje("Todas las bajas de cuentas han sido aceptadas", 3);
             }
         } else  {
-            Main.mensaje("Error en la gestión de bajas", 5);
+            Main.mensaje("Error en la gestión de bajas", 3);
         }
         actualizarBajasPendientes();            // Se actualizan los datos mostrados
     }
@@ -358,7 +358,8 @@ public class ReguladorController extends DatabaseLinker {
     public void aceptarTodoOfertas() {
         super.iniciarTransaccion(Connection.TRANSACTION_READ_UNCOMMITTED);
         super.getDAO(OfertaVentaDAO.class).aceptarOfertasVentaPendientes(ofertasPendientes);
-        super.ejecutarTransaccion();
+        if (super.ejecutarTransaccion()) Main.mensaje("Ofertas aceptadas correctamente", 3);
+        else Main.mensaje("Se ha producido un error", 3);
         actualizarOfertasPendientes();      // Se actualizan los datos
     }
 
@@ -623,7 +624,7 @@ public class ReguladorController extends DatabaseLinker {
             // La ventana del regulador es la ventana padre. Queda visible, pero desactivada.
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(btnAceptarTodoBajas.getScene().getWindow());
-            stage.setOnCloseRequest(event -> actualizarRegistrosPendientes());
+            stage.setOnHidden(event -> actualizarRegistrosPendientes());
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -643,7 +644,7 @@ public class ReguladorController extends DatabaseLinker {
             // La ventana del regulador es la ventana padre. Queda visible, pero desactivada.
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(btnAceptarTodoBajas.getScene().getWindow());
-            stage.setOnCloseRequest(event -> actualizarBajasPendientes());
+            stage.setOnHidden(event -> actualizarBajasPendientes());
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -663,7 +664,7 @@ public class ReguladorController extends DatabaseLinker {
             // La ventana del regulador es la ventana padre. Queda visible, pero desactivada.
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(btnAceptarTodoBajas.getScene().getWindow());
-            stage.setOnCloseRequest(event -> actualizarOfertasPendientes());
+            stage.setOnHidden(event -> actualizarOfertasPendientes());
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();

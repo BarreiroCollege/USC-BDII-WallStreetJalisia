@@ -139,7 +139,7 @@ public class PrincipalController extends DatabaseLinker {
         });
 
         // No se puede poner un listener de click al menú, pero sí a su imagen
-        buttonEstadisticas.setOnAction(event -> {
+        buttonEstadisticas.getGraphic().setOnMouseClicked(event -> {
             Main.ventana(EstadisticasController.VIEW, EstadisticasController.WIDTH, EstadisticasController.HEIGHT, EstadisticasController.TITULO);
         });
 

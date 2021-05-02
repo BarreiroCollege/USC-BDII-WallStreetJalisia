@@ -211,8 +211,17 @@ public class VVentaController extends DatabaseLinker {
             getDAO(OfertaVentaDAO.class).insertar(oferta);
             // Incrementamos su saldo de participaciones bloqueadas
             Participacion cartera = super.getDAO(ParticipacionDAO.class).seleccionar(usr.getSuperUsuario(), empresa);
-            cartera.setCantidadBloqueada(cartera.getCantidadBloqueada() + oferta.getNumParticipaciones());
-            super.getDAO(ParticipacionDAO.class).actualizar(cartera);
+            if(cartera == null){
+                cartera = new Participacion.Builder()
+                        .withEmpresa(empresa)
+                        .withUsuario(usr.getSuperUsuario())
+                        .build();
+                cartera.setCantidadBloqueada(cartera.getCantidadBloqueada() + oferta.getNumParticipaciones());
+                super.getDAO(ParticipacionDAO.class).insertar(cartera);
+            } else {
+                cartera.setCantidadBloqueada(cartera.getCantidadBloqueada() + oferta.getNumParticipaciones());
+                super.getDAO(ParticipacionDAO.class).actualizar(cartera);
+            }
         }
         // Tratamos de comprometer la transacción e informamos al usuario
         String mensaje;

@@ -1,24 +1,26 @@
 package gal.sdc.usc.wallstreet.controller;
 
+import com.jfoenix.controls.JFXSnackbar;
+import com.jfoenix.controls.JFXSnackbarLayout;
 import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.*;
 import gal.sdc.usc.wallstreet.repository.*;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.util.*;
 
 public class RevisarBajasController extends DatabaseLinker {
 
+    @FXML
+    private AnchorPane anchorPane;
     @FXML
     private Button btn_siguiente;
     @FXML
@@ -44,11 +46,30 @@ public class RevisarBajasController extends DatabaseLinker {
     @FXML
     private Label txt_apellidos;
 
-    public List<Usuario> usuariosBajas = new ArrayList<>();
-    public HashMap<String, Empresa> empresasBajas = new HashMap<>();      // identificador -> empresa
-    public HashMap<String, Inversor> inversoresBajas = new HashMap<>();   // identificador -> inversor
-    public Usuario usuarioActual;
-    public String ordenElegido;
+    private List<Usuario> usuariosBajas = new ArrayList<>();
+    private HashMap<String, Empresa> empresasBajas = new HashMap<>();      // identificador -> empresa
+    private HashMap<String, Inversor> inversoresBajas = new HashMap<>();   // identificador -> inversor
+    private Usuario usuarioActual;
+    private String ordenElegido;
+    private static JFXSnackbar snackbar;
+
+    public static void mensaje(String mensaje) {
+        mensaje(mensaje, null);
+    }
+
+    public static void mensaje(String mensaje, Integer duracion) {
+        mensaje(new JFXSnackbarLayout(mensaje), duracion);
+    }
+
+    private static void mensaje(JFXSnackbarLayout layout, Integer duracion) {
+        JFXSnackbarLayout finalLayout = new JFXSnackbarLayout(layout.getToast(), "Cerrar", e -> snackbar.close());
+        if (duracion != null) {
+            snackbar.enqueue(new JFXSnackbar.SnackbarEvent(finalLayout, Duration.seconds(duracion)));
+        } else {
+            snackbar.enqueue(new JFXSnackbar.SnackbarEvent(finalLayout));
+        }
+    }
+
 
     @FXML
     public void initialize() {
@@ -61,6 +82,9 @@ public class RevisarBajasController extends DatabaseLinker {
         usuarioActual = usuariosBajas.get(0);       // Usuario del que se van a mostrar datos
         mostrarDatos();
         controlarVisibilidadesAnteriorPosterior();
+
+        // Se registra la snackbar
+        snackbar = new JFXSnackbar(anchorPane);
     }
 
     public void obtenerDatos() {
@@ -132,7 +156,8 @@ public class RevisarBajasController extends DatabaseLinker {
             super.getDAO(UsuarioDAO.class).rechazarBaja(usuarioActual.getSuperUsuario().getIdentificador());
             super.ejecutarTransaccion();
             // El regulador recibe una notificación.
-            Main.aviso("El usuario tenía participaciones. La baja ha sido rechazada.");
+            mensaje("El usuario tenía participaciones. La baja ha sido rechazada.", 3);
+            cambiarUsuario();
             return;
         }
 
@@ -141,29 +166,13 @@ public class RevisarBajasController extends DatabaseLinker {
 
         // Se da de baja el usuario (alta y baja quedan ambos nulos -> ver UsuarioEstado)
         super.getDAO(UsuarioDAO.class).darDeBajaUsuario(usuarioActual);
-        if (super.ejecutarTransaccion()) Main.mensaje("Baja realizada correctamente");
+        if (super.ejecutarTransaccion()) mensaje("Baja realizada correctamente", 3);
         else{
-            Main.mensaje("Error en el proceso de la baja");
+            mensaje("Error en el proceso de la baja", 3);
             return;
         }
 
-        // Se actualizan los datos guardados y se determina qué botones mostrar.
-        if (usuariosBajas.indexOf(usuarioActual) != usuariosBajas.size() - 1) {
-            siguiente();
-            usuariosBajas.remove(usuariosBajas.get(usuariosBajas.indexOf(usuarioActual) - 1));
-            controlarVisibilidadesAnteriorPosterior();      // Se vuelve a comprobar después de la eliminación
-        } else if (usuariosBajas.indexOf(usuarioActual) != 0) {
-            anterior();
-            usuariosBajas.remove(usuariosBajas.get(usuariosBajas.indexOf(usuarioActual) + 1));
-            controlarVisibilidadesAnteriorPosterior();      // Se vuelve a comprobar después de la eliminación
-        } else {
-            try {
-                Main.aviso("No quedan usuarios con bajas pendientes");
-                cerrarVentana();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        cambiarUsuario();
     }
 
     public void cerrarVentana() {
@@ -175,7 +184,19 @@ public class RevisarBajasController extends DatabaseLinker {
      * Rechaza la baja del usuario mostrado.
      */
     public void rechazar() {
-        super.getDAO(UsuarioDAO.class).rechazarBaja(usuarioActual.getSuperUsuario().getIdentificador());
+        if(super.getDAO(UsuarioDAO.class).rechazarBaja(usuarioActual.getSuperUsuario().getIdentificador())) {
+            mensaje("Baja rechazada correctamente", 3);
+            cambiarUsuario();
+        } else {
+            mensaje("Error al rechazar la baja", 3);
+        }
+    }
+
+    /***
+     * Cambia de usuario. El actual se elimina y se pasa al siguiente, si lo hay. Si no, se retrocede al anterior.
+     * Si este era el último usuario, se cierra la ventana.
+     */
+    public void cambiarUsuario(){
         if (usuariosBajas.indexOf(usuarioActual) != usuariosBajas.size() - 1) {
             siguiente();
             usuariosBajas.remove(usuariosBajas.get(usuariosBajas.indexOf(usuarioActual) - 1));
