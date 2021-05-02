@@ -131,8 +131,10 @@ public class VVentaController extends DatabaseLinker {
 
             if (tglSociedad.isSelected()) {
                 usr = super.getUsuarioSesion().getUsuario().getSociedad();
+                tglSociedad.setText("Sociedad");
             } else {
                 usr = super.getUsuarioSesion().getUsuario();
+                tglSociedad.setText("Usuario");
             }
 
             actualizarVentana();
