@@ -1,5 +1,6 @@
 package gal.sdc.usc.wallstreet.controller;
 
+import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Estadistica;
 import gal.sdc.usc.wallstreet.repository.EstadisticasDAO;
@@ -47,7 +48,7 @@ public class EstadisticasController extends DatabaseLinker {
     private ObservableList<Estadistica> estadPrecioMedio = FXCollections.observableArrayList();
 
     @FXML
-    public void initialize(){
+    public void initialize() {
         // Obtener datos estadísticos sobre las empresas
         construirDatos();
         // Se indican los valores del eje X
@@ -58,7 +59,7 @@ public class EstadisticasController extends DatabaseLinker {
         personalizarDiagramas();
     }
 
-    private void construirDatos(){
+    private void construirDatos() {
         // Se obtienen todos los datos de la materialized view
         estadisticas.addAll(super.getDAO(EstadisticasDAO.class).getDatos());
 
@@ -83,7 +84,7 @@ public class EstadisticasController extends DatabaseLinker {
                 .limit(5).collect(Collectors.toCollection(FXCollections::observableArrayList));
     }
 
-    private void construirEjesX(){
+    private void construirEjesX() {
         // Para cada diagrama, se muestra el identificador de la empresa
         ejeXBeneficioMedio.setCategories(estadBeneficioMedio.stream().map(Estadistica::getIdentificadorEmpresa)
                 .collect(Collectors.toCollection(FXCollections::observableArrayList)));
@@ -95,23 +96,23 @@ public class EstadisticasController extends DatabaseLinker {
                 .collect(Collectors.toCollection(FXCollections::observableArrayList)));
     }
 
-    private void construirEjesY(){
+    private void construirEjesY() {
         XYChart.Series<String, Float> serieBenMedio = new XYChart.Series<>();
         XYChart.Series<String, Float> seriePartMedias = new XYChart.Series<>();
         XYChart.Series<String, Integer> serieNumPagos = new XYChart.Series<>();
         XYChart.Series<String, Float> seriePrecioMedio = new XYChart.Series<>();
 
         // Se construye un XYChart.Data para cada empresa de cada diagrama y es añade a su serie
-        for (Estadistica estad : estadBeneficioMedio){
+        for (Estadistica estad : estadBeneficioMedio) {
             serieBenMedio.getData().add(new XYChart.Data<>(estad.getIdentificadorEmpresa(), estad.getBeneficioMedio()));
         }
-        for (Estadistica estad : estadPartMedias){
+        for (Estadistica estad : estadPartMedias) {
             seriePartMedias.getData().add(new XYChart.Data<>(estad.getIdentificadorEmpresa(), estad.getParticipacionesMedias()));
         }
-        for (Estadistica estad : estadNumPagos){
+        for (Estadistica estad : estadNumPagos) {
             serieNumPagos.getData().add(new XYChart.Data<>(estad.getIdentificadorEmpresa(), estad.getNumPagosMes()));
         }
-        for (Estadistica estad : estadPrecioMedio){
+        for (Estadistica estad : estadPrecioMedio) {
             seriePrecioMedio.getData().add(new XYChart.Data<>(estad.getIdentificadorEmpresa(), estad.getPrecioMedioMes()));
         }
 
@@ -123,7 +124,7 @@ public class EstadisticasController extends DatabaseLinker {
     }
 
     // Aspectos estéticos
-    private void personalizarDiagramas(){
+    private void personalizarDiagramas() {
         // Título
         barChartBeneficioMedio.setTitle("Media de beneficio en pagos");
         barChartPartMedias.setTitle("Media de participaciones por participación en pagos");
@@ -164,7 +165,7 @@ public class EstadisticasController extends DatabaseLinker {
     }
 
     // On click en el botón actualizar. Se actualizan los datos de las estadísticas
-    public void refrescar(){
+    public void refrescar() {
         super.getDAO(EstadisticasDAO.class).refrescarEstadisticas();
 
         // Se reconstruyen los diagramas
@@ -181,5 +182,10 @@ public class EstadisticasController extends DatabaseLinker {
         construirEjesX();
         construirEjesY();
         personalizarDiagramas();
+    }
+
+    // Se vuelve a la ventana principal
+    public void onClickVolver() {
+        Main.ventana(PrincipalController.VIEW, PrincipalController.WIDTH, PrincipalController.HEIGHT, PrincipalController.TITULO);
     }
 }
