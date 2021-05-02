@@ -129,9 +129,6 @@ public class CarteraController extends DatabaseLinker {
     @FXML
     private JFXButton cartera_btn_dar_de_baja;
 
-    @FXML
-    private JFXButton btnGestionParticipEmpresas;
-
     //</editor-fold>
 
     private final ObservableList<Participacion> datosTabla = FXCollections.observableArrayList();
@@ -179,28 +176,8 @@ public class CarteraController extends DatabaseLinker {
         Main.ventana(PrincipalController.VIEW, PrincipalController.WIDTH, PrincipalController.HEIGHT, PrincipalController.TITULO);
     }
 
-    public void clickGestionParticipEmpresas(){
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("../view/partEmpresa.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle(PartEmpresaController.TITULO);
-            stage.setResizable(false);
-            stage.setScene(new Scene(root, PartEmpresaController.WIDTH, PartEmpresaController.HEIGHT));
-            // La ventana del regulador es la ventana padre. Queda visible, pero desactivada.
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(btnGestionParticipEmpresas.getScene().getWindow());
-            stage.setOnHidden(event -> actualizarDatos()); // Acualiza las tablas al cerrar la ventana de gestion
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void actualizarDatos() {
         Usuario usuario = super.getUsuarioSesion().getUsuario();
-
-        // Si el usuario es inversor, eliminamos la pestaña de gestión de participaciones
-        if(super.getTipoUsuario().equals(UsuarioTipo.INVERSOR)){ btnGestionParticipEmpresas.setVisible(false); }
 
         // Accedemos a los DAOs para obtener los datos del usuario actual
         List<Participacion> participaciones = super.getDAO(ParticipacionDAO.class).getParticipaciones(usuario);
