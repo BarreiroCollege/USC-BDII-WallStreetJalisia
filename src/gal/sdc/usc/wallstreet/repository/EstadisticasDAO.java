@@ -32,7 +32,8 @@ public class EstadisticasDAO extends DAO<Estadistica> {
             ResultSet rs = ps.executeQuery();
             while (rs.next()){
                 estadisticas.add(new Estadistica.Builder().withEmpresa(rs.getString(1)).withBeneficioMedio(
-                        rs.getFloat(2)).withParticipacionesMedias(rs.getFloat(3)).withNumPagosMes(rs.getFloat(4))
+                        rs.getFloat(2)).withParticipacionesMedias(rs.getFloat(3))
+                        .withNumPagosMes(rs.getInt(4))
                         .withPrecioMedioMes(rs.getFloat(5)).build());
                 //estadisticas.add(Mapeador.map(rs, Estadistica.class));
             }

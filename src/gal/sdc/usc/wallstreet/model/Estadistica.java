@@ -19,7 +19,7 @@ public class Estadistica extends Entidad {
     private Float participacionesMedias;
 
     @Columna("num_pagos_mes")
-    private Float numPagosMes;
+    private Integer numPagosMes;
 
     @Columna("precio_medio_mes")
     private Float precioMedioMes;
@@ -47,11 +47,11 @@ public class Estadistica extends Entidad {
         this.participacionesMedias = participacionesMedias;
     }
 
-    public Float getNumPagosMes() {
+    public Integer getNumPagosMes() {
         return numPagosMes;
     }
 
-    public void setNumPagosMes(Float numPagosMes) {
+    public void setNumPagosMes(Integer numPagosMes) {
         this.numPagosMes = numPagosMes;
     }
 
@@ -99,7 +99,7 @@ public class Estadistica extends Entidad {
             return this;
         }
 
-        public Estadistica.Builder withNumPagosMes(Float numPagosMes){
+        public Estadistica.Builder withNumPagosMes(Integer numPagosMes){
             estadistica.numPagosMes = numPagosMes;
             return this;
         }
