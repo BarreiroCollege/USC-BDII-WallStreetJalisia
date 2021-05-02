@@ -15,7 +15,7 @@ create table sociedad
             primary key
         constraint sociedad_superusuario_identificador_fk
             references superusuario
-            on update cascade,
+            on delete restrict on update cascade,
     saldo_comunal double precision default 0    not null
         CHECK (saldo_comunal >= 0),
     tolerancia    integer          default 1440 not null
@@ -32,7 +32,7 @@ create table usuario
             primary key
         constraint usuario_superusuario_identificador_fk
             references superusuario
-            on update cascade,
+            on delete cascade on update cascade,
     clave           varchar(128)                   not null,
     direccion       varchar(64),
     cp              varchar(10),
@@ -48,7 +48,7 @@ create table usuario
     sociedad        varchar(16)      default NULL::character varying
         constraint usuario_sociedad_identificador_fk
             references sociedad
-            on update cascade,
+            on delete set null on update cascade,
     lider           boolean          default false not null
 );
 
@@ -62,7 +62,7 @@ create table inversor
             primary key
         constraint inversor_usuario_identificador_fk
             references usuario
-            on update cascade,
+            on delete cascade on update cascade,
     dni       varchar(16) not null,
     nombre    varchar(16) not null,
     apellidos varchar(32) not null
@@ -78,7 +78,7 @@ create table empresa
             primary key
         constraint empresa_usuario_identificador_fk
             references usuario
-            on update cascade,
+            on delete cascade on update cascade,
     cif     varchar(16) not null,
     nombre  varchar(32) not null
 );
@@ -114,7 +114,7 @@ create table pago_usuario
     usuario             varchar(16) not null
         constraint pago_usuario_superusuario_identificador_fk
             references superusuario
-            on update cascade,
+            on delete restrict on update cascade,
     pago_fecha          timestamp   not null,
     pago_empresa        varchar(16) not null,
     num_participaciones integer     not null CHECK (num_participaciones >= 0),
@@ -122,7 +122,7 @@ create table pago_usuario
         primary key (usuario, pago_fecha, pago_empresa),
     constraint pago_usuario_pago_fecha_pago_empresa_fk
         foreign key (pago_fecha, pago_empresa) references pago
-            on update cascade
+            on delete cascade on update cascade
 );
 
 alter table pago_usuario
@@ -134,11 +134,11 @@ create table oferta_venta
     empresa             varchar(16)                    not null
         constraint oferta_venta_empresa_identificador_fk
             references empresa
-            on update cascade,
+            on delete restrict on update cascade,
     usuario             varchar(16)                    not null
         constraint oferta_venta_superusuario_identificador_fk
             references superusuario
-            on update cascade,
+            on delete restrict on update cascade,
     num_participaciones integer                        not null CHECK (num_participaciones >= 0),
     precio_venta        double precision               not null CHECK (precio_venta >= 0),
     confirmado          boolean          default false not null,
@@ -156,11 +156,11 @@ create table participacion
     usuario            varchar(16)       not null
         constraint poseer_participacion_usuario_identificador_fk
             references superusuario
-            on update cascade,
+            on delete restrict on update cascade,
     empresa            varchar(16)       not null
         constraint poseer_participacion_empresa_identificador_fk
             references empresa
-            on update cascade,
+            on delete restrict on update cascade,
     cantidad           integer default 0 not null CHECK (cantidad >= 0),
     cantidad_bloqueada integer default 0 not null,
     constraint poseer_participacion_pk
@@ -178,13 +178,13 @@ create table venta
     usuario_compra varchar(16)             not null
         constraint comprar_usuario_identificador_fk
             references superusuario
-            on update cascade,
+            on delete restrict on update cascade,
     cantidad       integer                 not null CHECK (cantidad >= 0),
     constraint comprar_pk
         primary key (fecha, ov_fecha, ov_usuario, usuario_compra),
     constraint comprar_oferta_venta_fecha_anuncio_usuario_fk
         foreign key (ov_fecha, ov_usuario) references oferta_venta
-            on update cascade
+            on delete restrict on update cascade
 );
 
 alter table venta
@@ -195,14 +195,14 @@ create table propuesta_compra
     sociedad     varchar(16)             not null
         constraint propuesta_compra_sociedad_identificador_fk
             references sociedad
-            on update cascade,
+            on delete cascade on update cascade,
     fecha_inicio timestamp default now() not null,
     cantidad     integer                 not null CHECK (cantidad >= 0),
     precio_max   double precision CHECK (precio_max >= 0),
     empresa      varchar(16)             not null
         constraint propuesta_compra_empresa_usuario_fk
             references empresa
-            on update cascade,
+            on delete set null on update cascade,
     constraint propuesta_compra_pk
         primary key (sociedad, fecha_inicio)
 );
@@ -217,7 +217,7 @@ create table regulador
             primary key
         constraint regulador_usuario_identificador_fk
             references usuario
-            on update cascade,
+            on delete restrict on update restrict,
     comision          double precision default 0.05 not null,
     comision_sociedad double precision default 0.04 not null
 );

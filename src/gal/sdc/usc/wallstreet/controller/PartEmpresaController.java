@@ -2,6 +2,7 @@ package gal.sdc.usc.wallstreet.controller;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
+import com.sun.xml.internal.ws.wsdl.writer.document.Part;
 import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Participacion;
@@ -34,6 +35,7 @@ public class PartEmpresaController extends DatabaseLinker {
     private Usuario usuario;
     private Empresa empresa;
     private Integer participaciones;
+    private Integer participacionesTotales;
 
     @FXML
     public void initialize() {
@@ -58,7 +60,9 @@ public class PartEmpresaController extends DatabaseLinker {
 
     private void updateWindow() {
         participaciones = super.getDAO(ParticipacionDAO.class).getParticipacionesUsuarioEmpresa(usuario.getSuperUsuario().getIdentificador(), usuario.getSuperUsuario().getIdentificador());
+        participacionesTotales = super.getDAO(ParticipacionDAO.class).getParticipacionesEmpresa(usuario.getSuperUsuario().getIdentificador());
         labelParticip.setText(participaciones.toString());
+
     }
 
     private void updateButtons() {
@@ -73,7 +77,8 @@ public class PartEmpresaController extends DatabaseLinker {
 
         // Si la empresa no tenía ninguna participación propia, particip será 0, con lo que no se modifica la cantidad inicial
         updateWindow();
-        Integer cantidad = Integer.parseInt(txtParticip.getText()) + participaciones;
+
+        Integer cantidad = Integer.parseInt(txtParticip.getText()) + participacionesTotales;
 
         Participacion part = super.getDAO(ParticipacionDAO.class).seleccionar(usuario.getSuperUsuario(), empresa);
 
@@ -115,7 +120,7 @@ public class PartEmpresaController extends DatabaseLinker {
         }
 
         // Actualizamos la cantidad
-        Integer cantidad = participaciones - input;
+        Integer cantidad = participacionesTotales - input;
 
         // Y lo guardamos en la base de datos
         Participacion part = new Participacion.Builder().withUsuario(usuario.getSuperUsuario()).withEmpresa(empresa).withCantidad(cantidad).withCantidadBloqueada(partBloq).build();
