@@ -186,7 +186,6 @@ public class CarteraController extends DatabaseLinker {
         // Introducimos los datos leidos de la bd a nuestra ObservableList
         datosTabla.setAll(participaciones);
         datosTablaOfertas.setAll(ofertas);
-        System.out.println(ofertas);
         // Actualizamos el saldo del usuario consultado
         txt_saldo.setText( usuario.getSaldo()-usuario.getSaldoBloqueado() + " €");
         txt_saldo_real.setText( usuario.getSaldo() + " €");
