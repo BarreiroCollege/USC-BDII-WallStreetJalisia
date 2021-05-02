@@ -44,6 +44,19 @@ public class EstadisticasDAO extends DAO<Estadistica> {
 
         return estadisticas;
     }
+
+    /***
+     * Actualiza los datos de la materialized view
+     */
+    public void refrescarEstadisticas(){
+        try (PreparedStatement ps = conexion.prepareStatement(
+                "REFRESH MATERIALIZED VIEW estadistica"
+        )){
+            ps.executeUpdate();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
 }
 
 

@@ -128,7 +128,7 @@ public class EstadisticasController extends DatabaseLinker {
         barChartBeneficioMedio.setTitle("Media de beneficio en pagos");
         barChartPartMedias.setTitle("Media de participaciones por participación en pagos");
         barChartNumPagos.setTitle("Número de pagos en el último mes");
-        barChartPrecioMedio.setTitle("Precio medio en ventas de participaciones estte mes");
+        barChartPrecioMedio.setTitle("Precio medio en ventas de participaciones este mes");
 
         // Ejes
         ejeXBeneficioMedio.setLabel("Empresas");
@@ -161,5 +161,25 @@ public class EstadisticasController extends DatabaseLinker {
                 item.getNode().setStyle("-fx-background-color: #4059a9"));
         barChartPrecioMedio.getData().get(0).getData().forEach(item ->
                 item.getNode().setStyle("-fx-background-color: #4059a9"));
+    }
+
+    // On click en el botón actualizar. Se actualizan los datos de las estadísticas
+    public void refrescar(){
+        super.getDAO(EstadisticasDAO.class).refrescarEstadisticas();
+
+        // Se reconstruyen los diagramas
+        estadisticas.clear();
+        barChartBeneficioMedio.getData().clear();
+        barChartPartMedias.getData().clear();
+        barChartNumPagos.getData().clear();
+        barChartPrecioMedio.getData().clear();
+        ejeXBeneficioMedio.getCategories().clear();
+        ejeXPartMedias.getCategories().clear();
+        ejeXNumPagos.getCategories().clear();
+        ejeXPrecioMedio.getCategories().clear();
+        construirDatos();
+        construirEjesX();
+        construirEjesY();
+        personalizarDiagramas();
     }
 }
