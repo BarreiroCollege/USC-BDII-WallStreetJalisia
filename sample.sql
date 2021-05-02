@@ -60,10 +60,12 @@ values ('sherlock', 'sha1:64000:18:DkxtFkqdJgthfzufgtXk2cUtgc0beHP7:gl6FXkP8ho9s
 insert into inversor (usuario, dni, nombre, apellidos)
 values ('sherlock', '10011001S', 'Shelock', 'Holmes');
 
-insert into usuario(identificador, clave)
-values ('regulador', 'sha1:64000:18:fRyIy2KpkOhXIkFl9+OCu6BPq32xY2+Y:d5j3M7amOsYqisxLDk6VbSL3');
+
+insert into usuario(identificador,clave)
+values('regulador','sha1:64000:18:uuqgRLKOUbYT/r2zESN5CWus/xOZWTM4:nyDuvYpnE7gFwOOHT1wJmDX8');
 insert into regulador(usuario, comision)
-values ('regulador', 0.05);
+values ('regulador',0.05);
+
 
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
 values ('teceric', 'sha1:64000:18:amY24vKwv1SJGpgjVpdLsWWx9qc69qMl:2AidJweG25zNE4orrhkVxkMF', 'Calle 10 de Marzo', '36210', 'Vigo', 986331724, 7012.0, 0.0, null, null,'GWI7QDYNDQZQ3BZU7I6WTGPCIK5S5Q75','aaI', false );
@@ -85,12 +87,6 @@ insert into usuario (identificador, clave, direccion, cp, localidad, telefono, s
 values ('zappaco', 'sha1:64000:18:OSzPTY/zeDfGLB2iz2qYB7cyTmISEryN:f1yCiK+grKN/F+BbiKn/QTq8', 'Calle Alta, 41', '17501', 'Santiago de Compostela', 648572333, 200.0, 0.0, null, null,'EXI2KZIUCCGMR4EGYXEJJEXDN2GNMIUD','ubicorp', true );
 insert into empresa (usuario, cif, nombre)
 values ('zappaco', 'B-32552648', 'Zapatos Paco');
-
-
-insert into usuario(identificador,clave)
-values('regulador','sha1:64000:18:uuqgRLKOUbYT/r2zESN5CWus/xOZWTM4:nyDuvYpnE7gFwOOHT1wJmDX8');
-insert into regulador(usuario, comision)
-values ('regulador',0.05);
 
 
 insert into participacion (usuario, empresa, cantidad, cantidad_bloqueada)
