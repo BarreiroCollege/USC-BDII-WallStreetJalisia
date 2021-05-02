@@ -338,6 +338,11 @@ public class SociedadController extends DatabaseLinker implements Initializable 
 
     public void onBtnAccion(PropuestaCompra pc, boolean ejecutar) {
         if (ejecutar) {
+            if (super.getDAO(UsuarioDAO.class).getUsuariosPorSociedad(pc.getSociedad()).size() < 2) {
+                Main.mensaje("La sociedad es demasiado pequeña como para realizar compras");
+                return;
+            }
+
             super.iniciarTransaccion();
             super.getDAO(PropuestaCompraDAO.class).eliminar(pc);
 
