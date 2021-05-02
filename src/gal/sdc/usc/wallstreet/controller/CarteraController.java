@@ -3,6 +3,7 @@ package gal.sdc.usc.wallstreet.controller;
 import com.jfoenix.controls.*;
 import com.jfoenix.validation.IntegerValidator;
 import gal.sdc.usc.wallstreet.Main;
+import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.OfertaVenta;
 import gal.sdc.usc.wallstreet.model.Participacion;
 import gal.sdc.usc.wallstreet.model.Usuario;
@@ -19,6 +20,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
+import javafx.util.Duration;
 
 import java.sql.Date;
 import java.text.DateFormat;
@@ -296,20 +298,41 @@ public class CarteraController extends DatabaseLinker {
     }
 
     public void darDeBajaOferta(){
+        // Se toma la oferta a dar de baja
+        OfertaVenta oferta = cartera_tablaOferta.getSelectionModel().getSelectedItem();
+
         // Se borra la oferta de la base de datos
-        super.getDAO(OfertaVentaDAO.class).darDeBajaOferta(cartera_tablaOferta.getSelectionModel().getSelectedItem());
+        super.iniciarTransaccion();
+
+        // Se recuperan los datos de la cartera (participaciones) asociadas al usuario y a la empresa de la oferta
+        Participacion saldo = super.getDAO(ParticipacionDAO.class).seleccionar(getUsuarioSesion().getUsuario().getSuperUsuario(), oferta.getEmpresa());
+        // Las participaciones restantes se descuentan de la cantidad que tenía bloqueada
+        saldo.setCantidadBloqueada(saldo.getCantidadBloqueada() - oferta.getRestantes());
+        // Se guarda la información en la cartera
+        super.getDAO(ParticipacionDAO.class).actualizar(saldo);
+        // La oferta de venta queda como si se hubiera finalizado
+        oferta.setRestantes(0);
+        // Se guardan los cambios de la oferta
+        super.getDAO(OfertaVentaDAO.class).actualizar(oferta);
+
+        if (super.ejecutarTransaccion()){
+            Main.mensaje("Oferta de venta retirada");
+        } else {
+            Main.mensaje("Error; no se ha podido retirar la oferta");
+        }
 
         // Se actualiza la ComboBox. No se puede eliminar la empresa directamente porque puede haber otras ofertas de la misma
         int i = 0;
         String empresaAEliminar = cartera_tablaOferta.getSelectionModel().getSelectedItem().getEmpresa().getNombre();
-        for (OfertaVenta oferta : datosTablaOfertas){
-            if (oferta.getEmpresa().getNombre().equals(empresaAEliminar)){
+        for (OfertaVenta ofertaVenta : datosTablaOfertas){
+            if (ofertaVenta.getEmpresa().getNombre().equals(empresaAEliminar)){
                 i++;
-                if (i == 2) {
+                if (i == 2) {       // Si hay más de una oferta de la misma empresa, no será necesario borarla
                     break;
                 }
             }
         }
+        // Si la empresa solo tenía una oferta de venta asociada, se elimina de la ComboBox
         if (i == 1) cb_empresa_ofertas.getItems().remove(empresaAEliminar);
 
         // Se elimina la oferta de la tabla

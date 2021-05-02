@@ -153,23 +153,6 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
         return sinVender;
     }
 
-    /***
-     * Elimina una oferta de venta.
-     *
-     * @param ov Oferta de venta a dar de baja.
-     */
-    public void darDeBajaOferta(OfertaVenta ov) {
-        try (PreparedStatement ps = conexion.prepareStatement(
-                "DELETE FROM oferta_venta " +
-                        "WHERE fecha = ? and usuario = ?")) {
-            ps.setTimestamp(1, new Timestamp(ov.getFecha().getTime()));
-            ps.setString(2, ov.getUsuario().getIdentificador());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     public List<OfertaVenta> getOfertasVentaPorUsuario(String nombreUsuario, int numero) {
         List<OfertaVenta> ofertaVenta = new ArrayList<>();
         int limit = numero;
