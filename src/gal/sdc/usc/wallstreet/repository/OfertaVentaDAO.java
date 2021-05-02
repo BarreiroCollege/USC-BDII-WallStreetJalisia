@@ -157,7 +157,7 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
         List<OfertaVenta> ofertaVenta = new ArrayList<>();
         int limit = numero;
         try (PreparedStatement ps = super.conexion.prepareStatement(
-                "SELECT * FROM oferta_venta where usuario = ? limit ?"
+                "SELECT * FROM oferta_venta where usuario = ? and restantes>0 limit ?"
         )) {
             ps.setString(1, nombreUsuario);
             ps.setInt(2, limit);
