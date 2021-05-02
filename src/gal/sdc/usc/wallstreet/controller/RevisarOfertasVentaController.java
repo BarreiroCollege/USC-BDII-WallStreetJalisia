@@ -1,6 +1,8 @@
 package gal.sdc.usc.wallstreet.controller;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXSnackbar;
+import com.jfoenix.controls.JFXSnackbarLayout;
 import com.jfoenix.controls.JFXTextField;
 import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.OfertaVenta;
@@ -16,8 +18,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -27,6 +31,8 @@ import java.util.Optional;
 
 public class RevisarOfertasVentaController extends DatabaseLinker {
 
+    @FXML
+    private AnchorPane anchorPane;
     @FXML
     private JFXButton btnVerUsuario;
     @FXML
@@ -52,9 +58,27 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
     @FXML
     private Label txtPrecioVenta;
 
-    public List<OfertaVenta> ofertasPendientes;
-    public OfertaVenta ofertaActual;            // Oferta que el regulador está viendo
-    public String ordenElegido;
+    private List<OfertaVenta> ofertasPendientes;
+    private OfertaVenta ofertaActual;            // Oferta que el regulador está viendo
+    private String ordenElegido;
+    private static JFXSnackbar snackbar;
+
+    public static void mensaje(String mensaje) {
+        mensaje(mensaje, null);
+    }
+
+    public static void mensaje(String mensaje, Integer duracion) {
+        mensaje(new JFXSnackbarLayout(mensaje), duracion);
+    }
+
+    private static void mensaje(JFXSnackbarLayout layout, Integer duracion) {
+        JFXSnackbarLayout finalLayout = new JFXSnackbarLayout(layout.getToast(), "Cerrar", e -> snackbar.close());
+        if (duracion != null) {
+            snackbar.enqueue(new JFXSnackbar.SnackbarEvent(finalLayout, Duration.seconds(duracion)));
+        } else {
+            snackbar.enqueue(new JFXSnackbar.SnackbarEvent(finalLayout));
+        }
+    }
 
     public void initialize() {
         obtenerDatos();                 // Se buscan las ofertas pendientes
@@ -66,6 +90,9 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
         ofertaActual = ofertasPendientes.get(0);
         mostrarDatos();             // Se muestran los datos de la oferta actual
         controlarVisibilidadesAnteriorPosterior();
+
+        // Se registra la snackbar
+        snackbar = new JFXSnackbar(anchorPane);
     }
 
     public void obtenerDatos() {
@@ -121,19 +148,13 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
     public void rechazar(){
         super.iniciarTransaccion(Connection.TRANSACTION_READ_UNCOMMITTED);
         super.getDAO(OfertaVentaDAO.class).rechazarOfertaVenta(ofertaActual);
-        super.ejecutarTransaccion();
-
-        // Se retira la oferta de la lista de pendientes y se determina qué botones mostrar
-        if (ofertasPendientes.indexOf(ofertaActual) != ofertasPendientes.size() - 1){
-            siguiente();
-            ofertasPendientes.remove(ofertasPendientes.get(ofertasPendientes.indexOf(ofertaActual) - 1));
-        } else if (ofertasPendientes.indexOf(ofertaActual) != 0){
-            anterior();
-            ofertasPendientes.remove(ofertasPendientes.get(ofertasPendientes.indexOf(ofertaActual) + 1));
-        } else {
-            Main.aviso("No quedan ofertas de venta por revisar");
-            cerrarVentana();
+        if (super.ejecutarTransaccion()) mensaje("Oferta rechazada correctamente", 3);
+        else{
+            mensaje("Error al rechazar la oferta", 3);
+            return;
         }
+
+        cambiarOferta();
     }
 
     /**
@@ -145,15 +166,29 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
     public void aceptar() {
         super.iniciarTransaccion(Connection.TRANSACTION_READ_UNCOMMITTED);
         super.getDAO(OfertaVentaDAO.class).aceptarOfertaVenta(ofertaActual);
-        super.ejecutarTransaccion();
+        if (super.ejecutarTransaccion()) mensaje("Oferta aceptada correctamente", 3);
+        else{
+            mensaje("Error al aceptar la oferta", 3);
+            return;
+        }
 
+        cambiarOferta();
+    }
+
+    /***
+     * Cambia de oferta. La actual se elimina y se pasa a la siguiente, si la hay. Si no, se retrocede a la anterior.
+     * Si esta era la última oferta, se cierra la ventana.
+     */
+    public void cambiarOferta(){
         // Se retira la oferta de la lista de pendientes y se determina qué botones mostrar
         if (ofertasPendientes.indexOf(ofertaActual) != ofertasPendientes.size() - 1){
             siguiente();
             ofertasPendientes.remove(ofertasPendientes.get(ofertasPendientes.indexOf(ofertaActual) - 1));
+            controlarVisibilidadesAnteriorPosterior();
         } else if (ofertasPendientes.indexOf(ofertaActual) != 0){
             anterior();
             ofertasPendientes.remove(ofertasPendientes.get(ofertasPendientes.indexOf(ofertaActual) + 1));
+            controlarVisibilidadesAnteriorPosterior();
         } else {
             Main.aviso("No quedan ofertas de venta por revisar");
             cerrarVentana();

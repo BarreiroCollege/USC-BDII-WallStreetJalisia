@@ -1,5 +1,7 @@
 package gal.sdc.usc.wallstreet.controller;
 
+import com.jfoenix.controls.JFXSnackbar;
+import com.jfoenix.controls.JFXSnackbarLayout;
 import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Inversor;
@@ -17,8 +19,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -27,6 +31,8 @@ import java.util.*;
 
 public class RevisarRegistrosController extends DatabaseLinker {
 
+    @FXML
+    private AnchorPane anchorPane;
     @FXML
     private Label txt_id;
     @FXML
@@ -52,11 +58,29 @@ public class RevisarRegistrosController extends DatabaseLinker {
     @FXML
     private Button btn_anterior;
 
-    public List<Usuario> usuariosPendientes = new ArrayList<>();
-    public HashMap<String, Empresa> empresasPendientes = new HashMap<>();      // identificador -> empresa
-    public HashMap<String, Inversor> inversoresPendientes = new HashMap<>();   // identificador -> inversor
-    public Usuario usuarioActual;
-    public String ordenElegido;
+    private List<Usuario> usuariosPendientes = new ArrayList<>();
+    private HashMap<String, Empresa> empresasPendientes = new HashMap<>();      // identificador -> empresa
+    private HashMap<String, Inversor> inversoresPendientes = new HashMap<>();   // identificador -> inversor
+    private Usuario usuarioActual;
+    private String ordenElegido;
+    private static JFXSnackbar snackbar;
+
+    public static void mensaje(String mensaje) {
+        mensaje(mensaje, null);
+    }
+
+    public static void mensaje(String mensaje, Integer duracion) {
+        mensaje(new JFXSnackbarLayout(mensaje), duracion);
+    }
+
+    private static void mensaje(JFXSnackbarLayout layout, Integer duracion) {
+        JFXSnackbarLayout finalLayout = new JFXSnackbarLayout(layout.getToast(), "Cerrar", e -> snackbar.close());
+        if (duracion != null) {
+            snackbar.enqueue(new JFXSnackbar.SnackbarEvent(finalLayout, Duration.seconds(duracion)));
+        } else {
+            snackbar.enqueue(new JFXSnackbar.SnackbarEvent(finalLayout));
+        }
+    }
 
     public void initialize() {
         obtenerDatos();             // Se buacan datos de las solicitudes de registro
@@ -68,6 +92,9 @@ public class RevisarRegistrosController extends DatabaseLinker {
         usuarioActual = usuariosPendientes.get(0);
         mostrarDatos();             // Se muestran los datos del usuario que aparece primero en la lista
         controlarVisibilidadesAnteriorPosterior();
+
+        // Se registra la snackbar
+        snackbar = new JFXSnackbar(anchorPane);
     }
 
     private void obtenerDatos() {
@@ -139,25 +166,13 @@ public class RevisarRegistrosController extends DatabaseLinker {
         // conflictos, y se puede utilizar un nivel de lecturas no comprometidas para acelerar la ejecución.
         super.iniciarTransaccion(Connection.TRANSACTION_READ_UNCOMMITTED);
         super.getDAO(UsuarioDAO.class).aceptarUsuario(usuarioActual.getSuperUsuario().getIdentificador());
-        if (super.ejecutarTransaccion()) Main.mensaje("Solicitud aceptada correctamente");
+        if (super.ejecutarTransaccion()) mensaje("Solicitud aceptada correctamente", 3);
         else {
-            Main.mensaje("Error al aceptar la solicitud");
+            mensaje("Error al aceptar la solicitud", 3);
             return;
         }
 
-        // Se deja de mostrar la solicitud y se determina qué botones deben ser visibles
-        if (usuariosPendientes.indexOf(usuarioActual) != usuariosPendientes.size() - 1) {
-            siguiente();
-            usuariosPendientes.remove(usuariosPendientes.get(usuariosPendientes.indexOf(usuarioActual) - 1));
-            controlarVisibilidadesAnteriorPosterior();
-        } else if (usuariosPendientes.indexOf(usuarioActual) != 0) {
-            anterior();
-            usuariosPendientes.remove(usuariosPendientes.get(usuariosPendientes.indexOf(usuarioActual) + 1));
-            controlarVisibilidadesAnteriorPosterior();
-        } else {
-            Main.aviso("No quedan registros pendientes");
-            cerrarVentana();
-        }
+        cambiarUsuario();
     }
 
     public void rechazar() {
@@ -165,12 +180,20 @@ public class RevisarRegistrosController extends DatabaseLinker {
         // conflictos, y se puede utilizar un nivel de lecturas no comprometidas para acelerar la ejecución.
         super.iniciarTransaccion(Connection.TRANSACTION_READ_UNCOMMITTED);
         super.getDAO(UsuarioDAO.class).rechazarSolicitud(usuarioActual.getSuperUsuario().getIdentificador());
-        if (super.ejecutarTransaccion()) Main.mensaje("Solicitud rechazada correctamente");
+        if (super.ejecutarTransaccion()) mensaje("Solicitud rechazada correctamente", 3);
         else {
-            Main.mensaje("Error al aceptar la solicitud");
+            mensaje("Error al aceptar la solicitud", 3);
             return;
         }
 
+        cambiarUsuario();
+    }
+
+    /***
+     * Cambia de usuario. El actual se elimina y se pasa al siguiente, si lo hay. Si no, se retrocede al anterior.
+     * Si este era el último usuario, se cierra la ventana.
+     */
+    public void cambiarUsuario(){
         // Se deja de mostrar la solicitud y se determina qué botones deben ser visibles
         if (usuariosPendientes.indexOf(usuarioActual) != usuariosPendientes.size() - 1) {
             siguiente();

@@ -360,8 +360,9 @@ public class UsuarioDAO extends DAO<Usuario> {
      * Se rechaza la baja de un superusuario (su cuenta no sufre mayores cambios).
      *
      * @param id Identificador del superusuario.
+     * @return True, si no ha habido fallos; false, en caso contrario
      */
-    public void rechazarBaja(String id) {
+    public boolean rechazarBaja(String id) {
         try (PreparedStatement ps = conexion.prepareStatement(
                 "UPDATE usuario " +
                         "SET baja = null " +
@@ -371,7 +372,9 @@ public class UsuarioDAO extends DAO<Usuario> {
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
     public boolean retirarSaldo(float cantidad, Usuario usuario) {
