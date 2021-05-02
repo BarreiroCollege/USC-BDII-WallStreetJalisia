@@ -10,6 +10,8 @@ import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.OfertaVenta;
 import gal.sdc.usc.wallstreet.model.Participacion;
+import gal.sdc.usc.wallstreet.model.Regulador;
+import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.model.UsuarioComprador;
 import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
 import gal.sdc.usc.wallstreet.repository.ParticipacionDAO;
@@ -201,12 +203,13 @@ public class VVentaController extends DatabaseLinker {
             ejecutada = false;
         } else {
             Empresa empresa = listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getEmpresa();
+            Regulador r = super.getDAO(ReguladorDAO.class).getRegulador();
             OfertaVenta oferta = new OfertaVenta.Builder().withPrecioVenta(Float.parseFloat(campoPrecio.getText())).
                     withEmpresa(empresa).
                     withUsuario(usr.getSuperUsuario()).
                     withConfirmado(false).
                     withNumParticipaciones(Integer.parseInt(campoNumero.getText())).
-                    withComision(super.getDAO(ReguladorDAO.class).getRegulador().getComision())
+                    withComision(usr instanceof Usuario ? r.getComision() : r.getComisionSociedad())
                     .build();
             // Insertamos la oferta
             getDAO(OfertaVentaDAO.class).insertar(oferta);
@@ -239,7 +242,9 @@ public class VVentaController extends DatabaseLinker {
     }
 
     public void actualizarComision() {
-        campoComision.setText(new DecimalFormat("0.00").format(super.getDAO(ReguladorDAO.class).getRegulador().getComision() * 100) + " %");
+        Regulador r = super.getDAO(ReguladorDAO.class).getRegulador();
+        float comision = usr instanceof Usuario ? r.getComision() : r.getComisionSociedad();
+        campoComision.setText(new DecimalFormat("0.00").format(comision * 100) + " %");
     }
 
 
