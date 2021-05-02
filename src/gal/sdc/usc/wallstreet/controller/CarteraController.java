@@ -157,8 +157,6 @@ public class CarteraController extends DatabaseLinker {
 
         // Indicamos a la tabla que sus contenidos serán los de la lista datosTabla
         actualizarDatos();
-        cartera_tabla.setItems(datosTabla);
-        cartera_tablaOferta.setItems(datosTablaOfertas);
 
         // Las ComboBox muestran los nombres de las empresas que les correspondan.
         datosTabla.forEach(part -> {
@@ -191,12 +189,11 @@ public class CarteraController extends DatabaseLinker {
             // La ventana del regulador es la ventana padre. Queda visible, pero desactivada.
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(btnGestionParticipEmpresas.getScene().getWindow());
-            stage.setOnCloseRequest(event -> actualizarDatos());
+            stage.setOnHidden(event -> actualizarDatos()); // Acualiza las tablas al cerrar la ventana de gestion
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //Main.ventana(PartEmpresaController.VIEW,PartEmpresaController.WIDTH,PartEmpresaController.HEIGHT,PartEmpresaController.TITULO);
     }
 
     public void actualizarDatos() {
@@ -216,6 +213,9 @@ public class CarteraController extends DatabaseLinker {
         // Actualizamos el saldo del usuario consultado
         txt_saldo.setText( usuario.getSaldo()-usuario.getSaldoBloqueado() + " €");
         txt_saldo_real.setText( usuario.getSaldo() + " €");
+
+        cartera_tabla.setItems(datosTabla);
+        cartera_tablaOferta.setItems(datosTablaOfertas);
     }
 
     /**

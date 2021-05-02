@@ -13,25 +13,25 @@
             <Font name="System Bold" size="24.0" />
          </font>
       </Label>
-      <JFXButton layoutX="312.0" layoutY="253.0" prefHeight="30.0" prefWidth="97.0" ripplerFill="#52984a" style="-fx-background-color: #ade0ba;" text="Añadir">
+      <JFXButton fx:id="btnAnadir" disable="true" layoutX="312.0" layoutY="253.0" prefHeight="30.0" prefWidth="97.0" ripplerFill="#52984a" style="-fx-background-color: #ade0ba;" text="Añadir">
          <font>
             <Font name="System Bold" size="14.0" />
          </font></JFXButton>
-      <JFXButton layoutX="209.0" layoutY="253.0" prefHeight="30.0" prefWidth="97.0" ripplerFill="#a95b5a" style="-fx-background-color: #e0adad;" text="Eliminar">
+      <JFXButton fx:id="btnEliminar" disable="true" layoutX="209.0" layoutY="253.0" prefHeight="30.0" prefWidth="97.0" ripplerFill="#a95b5a" style="-fx-background-color: #e0adad;" text="Eliminar">
          <font>
             <Font name="System Bold" size="14.0" />
          </font></JFXButton>
-      <JFXTextField layoutX="43.0" layoutY="254.0" prefHeight="25.0" prefWidth="155.0" promptText="Numero de participaciones" />
+      <JFXTextField fx:id="txtParticip" layoutX="41.0" layoutY="254.0" prefHeight="25.0" prefWidth="155.0" promptText="Numero de participaciones" />
       <Label layoutX="67.0" layoutY="113.0" text="Cantidad de participaciones propias en cartera">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
-      <Label layoutX="199.0" layoutY="138.0" text="NUM">
+      <Label fx:id="labelParticip" layoutX="199.0" layoutY="138.0" text="NUM">
          <font>
             <Font size="24.0" />
          </font>
       </Label>
-      <JFXButton fx:id="btnCerrarVentana" layoutX="42.0" layoutY="363.0" onAction="#cerrarVentana" prefHeight="25.0" prefWidth="132.0" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;" text="Cerrar ventana" />
+      <JFXButton fx:id="btnCerrarVentana" layoutX="42.0" layoutY="363.0" prefHeight="25.0" prefWidth="132.0" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;" text="Cerrar ventana" />
    </children>
 </AnchorPane>
