@@ -128,28 +128,22 @@ public class ParticipacionDAO extends DAO<Participacion> {
         return null;
     }
 
-    /***
-     * Comprueba si un superusuario tiene participaciones de si mismo, como empresa de las participaciones.
-     *
-     * @param idSuperUsuario Clave primaria.
-     * @return true, si el superusuario tiene participaciones; false, si no las tiene; null, en caso de error.
-     */
-    public Boolean tieneParticipacionesPropias(String idSuperUsuario) {
-        try (PreparedStatement ps = conexion.prepareStatement(
-                "SELECT count(*)" +
-                        " FROM participacion" +
-                        " WHERE usuario = ? AND empresa = ?"
+    public Integer getParticipacionesEmpresa(String empresa) {
+        int participaciones = 0;
+        try (PreparedStatement ps = super.conexion.prepareStatement(
+                "SELECT cantidad FROM participacion where usuario = ? and empresa= ?"
         )) {
-            ps.setString(1, idSuperUsuario);
-            ps.setString(2, idSuperUsuario);
+            ps.setString(1, empresa);
+            ps.setString(2, empresa);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return rs.getInt(1) > 0;
+                participaciones = Integer.parseInt(rs.getString("cantidad"));
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return participaciones;
     }
 
     public Integer getParticipacionesUsuarioEmpresa(String nombreUsuario, String empresa) {
