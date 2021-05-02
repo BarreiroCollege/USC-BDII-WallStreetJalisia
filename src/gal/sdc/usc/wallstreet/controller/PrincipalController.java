@@ -136,7 +136,11 @@ public class PrincipalController extends DatabaseLinker {
         });
 
         buttonMostrarMas.setOnAction(event -> {
-            Main.ventana(CarteraController.VIEW, CarteraController.WIDTH, CarteraController.HEIGHT, CarteraController.TITULO);
+            Main.ventana(EstadisticasController.VIEW, EstadisticasController.WIDTH, EstadisticasController.HEIGHT, EstadisticasController.TITULO);
+        });
+
+        buttonEstadisticas.setOnAction(event -> {
+
         });
 
         buttonSociedad.setOnAction(this::onBtnSociedad);
