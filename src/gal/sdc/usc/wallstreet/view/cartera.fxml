@@ -92,7 +92,6 @@
                              <TableColumn fx:id="cartera_tabla_pago" editable="false" prefWidth="90.0" text="Último pago" />
                           </columns>
                         </TableView>
-                        <JFXButton fx:id="btnGestionParticipEmpresas" layoutX="720.0" layoutY="16.0" onAction="#clickGestionParticipEmpresas" ripplerFill="#4059a9" style="-fx-background-color: #bfcae5;" text="Gestionar participaciones" />
                      </children>
                   </AnchorPane>
               </content>
