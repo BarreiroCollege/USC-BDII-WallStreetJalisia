@@ -13,19 +13,19 @@
         <URL value="@styles/cartera.css" />
     </stylesheets>
     <children>
-        <JFXButton fx:id="btn_aceptar" layoutX="301.0" layoutY="281.0" mnemonicParsing="false" onAction="#aceptar" prefHeight="30.0" prefWidth="86.0" ripplerFill="#52984a" style="-fx-background-color: #ade0ba;" text="Aceptar">
+        <JFXButton fx:id="btnAceptar" layoutX="301.0" layoutY="281.0" mnemonicParsing="false" onAction="#aceptar" prefHeight="30.0" prefWidth="86.0" ripplerFill="#52984a" style="-fx-background-color: #ade0ba;" text="Aceptar">
          <font>
             <Font size="14.0" />
          </font></JFXButton>
-        <JFXButton fx:id="btn_rechazar" layoutX="429.0" layoutY="280.0" mnemonicParsing="false" onAction="#rechazar" prefHeight="30.0" prefWidth="86.0" ripplerFill="#a95b5a" style="-fx-background-color: #e0adad;" text="Rechazar">
+        <JFXButton fx:id="btnRechazar" layoutX="429.0" layoutY="280.0" mnemonicParsing="false" onAction="#rechazar" prefHeight="30.0" prefWidth="86.0" ripplerFill="#a95b5a" style="-fx-background-color: #e0adad;" text="Rechazar">
          <font>
             <Font size="14.0" />
          </font></JFXButton>
-        <JFXButton fx:id="btn_siguiente" layoutX="443.0" layoutY="19.0" mnemonicParsing="false" onAction="#siguiente" prefHeight="30.0" prefWidth="86.0" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;" text="Siguiente">
+        <JFXButton fx:id="btnSiguiente" layoutX="443.0" layoutY="19.0" mnemonicParsing="false" onAction="#siguiente" prefHeight="30.0" prefWidth="86.0" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;" text="Siguiente">
          <font>
             <Font size="14.0" />
          </font></JFXButton>
-        <JFXButton fx:id="btn_anterior" layoutX="20.0" layoutY="17.0" mnemonicParsing="false" onAction="#anterior" prefHeight="30.0" prefWidth="86.0" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;" text="Anterior">
+        <JFXButton fx:id="btnAnterior" layoutX="20.0" layoutY="17.0" mnemonicParsing="false" onAction="#anterior" prefHeight="30.0" prefWidth="86.0" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;" text="Anterior">
          <font>
             <Font size="14.0" />
          </font></JFXButton>
@@ -41,7 +41,7 @@
          <font>
             <Font name="System Bold" size="14.0" />
          </font></Label>
-        <Label layoutX="107.0" layoutY="184.0" text="Usuario:">
+        <Label fx:id="txtUsuarioSociedad" layoutX="107.0" layoutY="184.0" text="Usuario:">
          <font>
             <Font name="System Bold" size="14.0" />
          </font></Label>
@@ -53,23 +53,23 @@
          <font>
             <Font name="System Bold" size="14.0" />
          </font></Label>
-        <Label fx:id="txt_fecha" layoutX="172.0" layoutY="89.0" text="fecha">
+        <Label fx:id="txtFecha" layoutX="172.0" layoutY="89.0" text="fecha">
          <font>
             <Font size="14.0" />
          </font></Label>
-        <Label fx:id="txt_empresa" layoutX="172.0" layoutY="136.0" text="Label">
+        <Label fx:id="txtEmpresa" layoutX="172.0" layoutY="136.0" text="Label">
          <font>
             <Font size="14.0" />
          </font></Label>
-        <Label fx:id="txt_usuario" layoutX="172.0" layoutY="186.0" text="Label">
+        <Label fx:id="txtUsuario" layoutX="172.0" layoutY="186.0" text="Label">
          <font>
             <Font size="14.0" />
          </font></Label>
-        <Label fx:id="txt_num_part" layoutX="173.0" layoutY="242.0" text="Label">
+        <Label fx:id="txtNumPart" layoutX="173.0" layoutY="242.0" text="Label">
          <font>
             <Font size="14.0" />
          </font></Label>
-        <Label fx:id="txt_precio_venta" layoutX="173.0" layoutY="289.0" text="Label">
+        <Label fx:id="txtPrecioVenta" layoutX="173.0" layoutY="289.0" text="Label">
          <font>
             <Font size="14.0" />
          </font></Label>
@@ -77,12 +77,12 @@
          <font>
             <Font name="System Bold" size="14.0" />
          </font></Label>
-      <JFXTextField layoutX="415.0" layoutY="230.0" prefHeight="26.0" prefWidth="84.0" text="0.05" />
-      <JFXButton fx:id="btn_ver_empresa" layoutX="27.0" layoutY="130.0" mnemonicParsing="false" onAction="#mostrarEmpresa" prefHeight="30.0" prefWidth="66.0" ripplerFill="#4059a9" style="-fx-background-color: #becdee;" text="Ver">
+      <JFXTextField fx:id="txtComisionPorDefecto" layoutX="415.0" layoutY="230.0" prefHeight="26.0" prefWidth="84.0" text="0.05" />
+      <JFXButton fx:id="btnVerEmpresa" layoutX="27.0" layoutY="130.0" mnemonicParsing="false" onAction="#mostrarEmpresa" prefHeight="30.0" prefWidth="66.0" ripplerFill="#4059a9" style="-fx-background-color: #becdee;" text="Ver">
          <font>
             <Font size="14.0" />
          </font></JFXButton>
-      <JFXButton fx:id="btn_ver_usuario" layoutX="28.0" layoutY="178.0" mnemonicParsing="false" onAction="#mostrarUsuario" prefHeight="30.0" prefWidth="66.0" ripplerFill="#4059a9" style="-fx-background-color: #becdee;" text="Ver">
+      <JFXButton fx:id="btnVerUsuario" layoutX="28.0" layoutY="178.0" mnemonicParsing="false" onAction="#mostrarUsuario" prefHeight="30.0" prefWidth="66.0" ripplerFill="#4059a9" style="-fx-background-color: #becdee;" text="Ver">
          <font>
             <Font size="14.0" />
          </font></JFXButton>
