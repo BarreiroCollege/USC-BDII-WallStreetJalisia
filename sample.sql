@@ -44,7 +44,7 @@ values ('sara', 'sha1:64000:18:TyWsDXrMKgzwDIh+XC4YtvpeGJ94zgM7:ht05Ayvb+hpgwanu
 insert into inversor (usuario, dni, nombre, apellidos)
 values ('sara', '20416592K', 'Sara', 'Sousa Álvarez');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
-values ('eva', 'sha1:64000:18:3ncoaUfAAVLd+IG3Qv+j0PElWxtutDm4:qAGZjZUZM/AmmtK6jbD/kwhW', 'Calle del mar, 78', '15701', 'Santiago de Compostela', 678910344, 1485.30, 0.0, null, null,'SEBID4GBR4WBHL5TMS2KYQRZ735UECJS','hampa', true);
+values ('eva', 'sha1:64000:18:3ncoaUfAAVLd+IG3Qv+j0PElWxtutDm4:qAGZjZUZM/AmmtK6jbD/kwhW', 'Calle del mar, 78', '15701', 'Santiago de Compostela', 678910344, 1485.30, 0.0, null, null,null,'hampa', true);
 insert into inversor (usuario, dni, nombre, apellidos)
 values ('eva', '10024875E', 'Eva', 'Doural Méndez');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
@@ -61,7 +61,7 @@ insert into inversor (usuario, dni, nombre, apellidos)
 values ('sherlock', '10011001S', 'Shelock', 'Holmes');
 
 insert into usuario(identificador, clave)
-values ('regulador', 'sha1:64000:18:ljlGzpCvRIM4hmOxwXAkHT2wNrjz8hk1:p92Hg6eQSjCEs0b10fo9lkUj');
+values ('regulador', 'sha1:64000:18:ukd7wDrodWFeIrmOf9O0ardIxeOF8bdk:UX6u4n+ok48h+bOVgUpg0GUA');
 insert into regulador(usuario, comision, comision_sociedad)
 values ('regulador', 0.05, 0.04);
 
@@ -112,21 +112,25 @@ values ('2021-03-20 12:16:31', 'garcables', 'marcos', 80, 25, true, 0.1, 60);
 
 
 insert into venta (fecha, ov_fecha, ov_usuario, usuario_compra, cantidad)
-values ('2021-02-02 17:32:41', '2021-01-30 19:52:33', 'marcos', 'manuel', 30);
+values ('2021-04-10 17:32:41', '2021-01-30 19:52:33', 'marcos', 'manuel', 30);
 insert into venta (fecha, ov_fecha, ov_usuario, usuario_compra, cantidad)
-values ('2021-02-17 11:15:03', '2021-02-16 16:48:02', 'marcos', 'manuel', 30);
+values ('2021-04-17 11:15:03', '2021-02-16 16:48:02', 'marcos', 'manuel', 30);
 insert into venta (fecha, ov_fecha, ov_usuario, usuario_compra, cantidad)
-values ('2021-02-18 19:10:44', '2021-02-18 18:55:54', 'garcables', 'manuel', 30);
+values ('2021-04-18 19:10:44', '2021-02-18 18:55:54', 'garcables', 'manuel', 30);
 insert into venta (fecha, ov_fecha, ov_usuario, usuario_compra, cantidad)
-values ('2021-03-24 12:01:50', '2021-03-14 14:16:10', 'manuel', 'marcos', 10);
+values ('2021-04-24 12:01:50', '2021-03-14 14:16:10', 'manuel', 'marcos', 10);
 insert into venta (fecha, ov_fecha, ov_usuario, usuario_compra, cantidad)
-values ('2021-03-25 12:16:29', '2021-03-20 12:16:31', 'marcos', 'manuel', 20);
+values ('2021-04-25 12:16:29', '2021-03-20 12:16:31', 'marcos', 'manuel', 20);
 
 
 insert into pago (fecha, empresa, beneficio_por_participacion, participacion_por_participacion, fecha_anuncio, porcentaje_beneficio, porcentaje_participacion)
-values ('2021-01-15 10:00:00', 'teceric', 5, 0, null, 1, 0);
+values ('2021-04-15 10:00:00', 'teceric', 5, 0, null, 1, 0);
 insert into pago (fecha, empresa, beneficio_por_participacion, participacion_por_participacion, fecha_anuncio, porcentaje_beneficio, porcentaje_participacion)
-values ('2021-01-04 13:29:32', 'teceric', 3, 0, null, 1, 0);
+values ('2021-04-14 13:29:32', 'fruluis', 3, 12, null, 1, 0);
+insert into pago (fecha, empresa, beneficio_por_participacion, participacion_por_participacion, fecha_anuncio, porcentaje_beneficio, porcentaje_participacion)
+values ('2021-04-14 13:29:32', 'libjaim', 6, 7, null, 1, 0);
+insert into pago (fecha, empresa, beneficio_por_participacion, participacion_por_participacion, fecha_anuncio, porcentaje_beneficio, porcentaje_participacion)
+values ('2021-04-14 13:29:32', 'garcables', 5, 2, null, 1, 0);
 insert into pago (fecha, empresa, beneficio_por_participacion, participacion_por_participacion, fecha_anuncio, porcentaje_beneficio, porcentaje_participacion)
 values ('2021-05-29 18:00:00', 'garcables', 3, 4, '2021-04-18 11:14:21', 0.75, 0.25);
 insert into pago (fecha, empresa, beneficio_por_participacion, participacion_por_participacion, fecha_anuncio, porcentaje_beneficio, porcentaje_participacion)
@@ -135,27 +139,25 @@ insert into pago (fecha, empresa, beneficio_por_participacion, participacion_por
 values ('2021-06-04 16:00:00', 'teceric', 2, 2, '2021-04-16 09:32:47', 0.5, 0.5);
 
 insert into pago_usuario (usuario, pago_fecha, pago_empresa, num_participaciones)
-values ('marcos', '2021-01-15 10:00:00', 'teceric', 570);
+values ('marcos', '2021-04-15 10:00:00', 'teceric', 420);
 insert into pago_usuario (usuario, pago_fecha, pago_empresa, num_participaciones)
-values ('manuel', '2021-01-15 10:00:00', 'teceric', 230);
+values ('manuel', '2021-04-15 10:00:00', 'teceric', 320);
 insert into pago_usuario (usuario, pago_fecha, pago_empresa, num_participaciones)
-values ('sara', '2021-01-15 10:00:00', 'teceric', 380);
+values ('sara', '2021-04-15 10:00:00', 'teceric', 380);
 insert into pago_usuario (usuario, pago_fecha, pago_empresa, num_participaciones)
-values ('eva', '2021-01-15 10:00:00', 'teceric', 420);
+values ('eva', '2021-04-15 10:00:00', 'teceric', 420);
 insert into pago_usuario (usuario, pago_fecha, pago_empresa, num_participaciones)
-values ('pepe', '2021-01-15 10:00:00', 'teceric', 20);
-
-
+values ('pepe', '2021-04-15 10:00:00', 'teceric', 20);
 
 insert into propuesta_compra(sociedad, fecha_inicio, cantidad, empresa, precio_max)
-values('urrs', '2021-01-06 13:19:42', 20, 'fruluis', 50.0 );
+values('urrs', '2021-04-06 13:19:42', 20, 'fruluis', 50.0 );
 insert into propuesta_compra(sociedad, fecha_inicio, cantidad, empresa, precio_max)
-values('aai', '2021-01-15 10:00:00', 40, 'teceric', 68.40 );
+values('aai', '2021-04-15 10:00:00', 40, 'teceric', 68.40 );
 insert into propuesta_compra(sociedad, fecha_inicio, cantidad, empresa, precio_max)
-values('hampa','2021-01-14 10:00:00', 60, 'garcables', 78.50 );
+values('hampa','2021-04-14 10:00:00', 60, 'garcables', 78.50 );
 insert into propuesta_compra(sociedad, fecha_inicio, cantidad, empresa, precio_max)
-values('invemena', '2021-01-04 13:29:32', 2000, 'teceric', 3.80 );
+values('invemena', '2021-04-04 13:29:32', 2000, 'teceric', 3.80 );
 insert into propuesta_compra(sociedad, fecha_inicio, cantidad, empresa, precio_max)
-values('ubicorp', '2021-01-07 12:29:32', 4560, 'fruluis', 7.75 );
+values('ubicorp', '2021-04-07 12:29:32', 4560, 'fruluis', 7.75 );
 
 
