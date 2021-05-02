@@ -2,13 +2,11 @@ package gal.sdc.usc.wallstreet.controller;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXTextField;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.OfertaVenta;
-import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
 import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
@@ -26,7 +24,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.Duration;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -61,8 +58,6 @@ public class VCompraController extends DatabaseLinker {
     private TableColumn<OfertaVenta, Integer> cantidadCol;
     @FXML
     private JFXButton botonRefresh;
-    @FXML
-    private JFXSnackbar notificationBar;
 
     private Usuario usr;
     private List<Empresa> listaEmpresas;
@@ -150,7 +145,7 @@ public class VCompraController extends DatabaseLinker {
     public void comprar() {
         // Si alguno de los campos necesarios está vacío o es 0 no se hace nada
         if (campoPrecio.getText().isEmpty() || Float.parseFloat(campoPrecio.getText()) == 0 || campoNumero.getText().isEmpty() || Integer.parseInt(campoNumero.getText()) == 0 || empresaComboBox.getSelectionModel().getSelectedIndex() == -1 || Float.parseFloat(campoSaldo.getText()) == 0) {
-            notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label("Introduzca valores válidos"), Duration.seconds(3.0), null));
+            Main.mensaje("Introduzca valores válidos", 3);
             return;
         }
 
@@ -166,18 +161,18 @@ public class VCompraController extends DatabaseLinker {
 
         String mensaje;
         // Tratamos de comprometer la transacción e informamos al usuario
-        if(super.ejecutarTransaccion()){
+        if (super.ejecutarTransaccion()) {
             if (compradas == 0) mensaje = "No dispone de suficiente saldo";
             else
                 mensaje = "Éxito. Se compraron " + compradas + " participaciones a una media de "
                         + new DecimalFormat("0.00").format((saldoInicial - usr.getSaldoDisponible()) / compradas)
                         + " €/participacion";
-        }else{
+        } else {
             mensaje = "Compra fallida!";
         }
 
         // Actualizamos los elementos gráficos
-        notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label(mensaje), Duration.seconds(3.0), null));
+        Main.mensaje(mensaje, 3);
         actualizarVentana();
     }
 
