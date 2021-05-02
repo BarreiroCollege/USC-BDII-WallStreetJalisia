@@ -6,9 +6,7 @@ import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.OfertaVenta;
 import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.model.ddl.Entidad;
-import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
-import gal.sdc.usc.wallstreet.repository.InversorDAO;
-import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
+import gal.sdc.usc.wallstreet.repository.*;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.Comunicador;
 import javafx.fxml.FXML;
@@ -83,10 +81,12 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
         // La comisión por defecto es 0.05 para usuarios y 0.04 para sociedades
         txtComisionPorDefecto.setText(ofertaActual.getComision().toString());
 
-        if (Math.abs(ofertaActual.getComision() - 0.05) < 0.005){       // La comisión es un punto flotante
+        if (Math.abs(
+                ofertaActual.getComision() - super.getDAO(ReguladorDAO.class).getRegulador().getComision()
+                ) < 0.005){       // La comisión es un punto flotante
             txtUsuarioSociedad.setText("Usuario");
             btnVerUsuario.setVisible(true);
-        } else {        // Comision vale 0.04 -> La oferta de venta fue creada por una sociedad
+        } else {        // Comision no corresponde a un usuario -> La oferta de venta fue creada por una sociedad
             txtUsuarioSociedad.setText("Sociedad");
             // Las sociedades no tienen atributos de interés más allá del saldo comunal y la tolerancia
             btnVerUsuario.setVisible(false);
