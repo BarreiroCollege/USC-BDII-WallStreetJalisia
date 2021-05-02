@@ -1,22 +1,8 @@
 package gal.sdc.usc.wallstreet.repository.helpers;
 
-import gal.sdc.usc.wallstreet.model.Empresa;
-import gal.sdc.usc.wallstreet.model.Inversor;
-import gal.sdc.usc.wallstreet.model.UsuarioSesion;
-import gal.sdc.usc.wallstreet.model.UsuarioTipo;
+import gal.sdc.usc.wallstreet.model.*;
 import gal.sdc.usc.wallstreet.model.ddl.Entidad;
-import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
-import gal.sdc.usc.wallstreet.repository.InversorDAO;
-import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
-import gal.sdc.usc.wallstreet.repository.PagoDAO;
-import gal.sdc.usc.wallstreet.repository.PagoUsuarioDAO;
-import gal.sdc.usc.wallstreet.repository.ParticipacionDAO;
-import gal.sdc.usc.wallstreet.repository.PropuestaCompraDAO;
-import gal.sdc.usc.wallstreet.repository.ReguladorDAO;
-import gal.sdc.usc.wallstreet.repository.SociedadDAO;
-import gal.sdc.usc.wallstreet.repository.SuperUsuarioDAO;
-import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
-import gal.sdc.usc.wallstreet.repository.VentaDAO;
+import gal.sdc.usc.wallstreet.repository.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -97,6 +83,7 @@ public abstract class DatabaseLinker {
             // Class<?>[] clases = PackageScanner.getClasses();
             Class<?>[] clases = new Class<?>[]{
                     EmpresaDAO.class,
+                    EstadisticasDAO.class,
                     InversorDAO.class,
                     OfertaVentaDAO.class,
                     PagoDAO.class,
