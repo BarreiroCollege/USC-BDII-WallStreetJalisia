@@ -128,7 +128,6 @@ public class PrincipalController extends DatabaseLinker {
         });
         buttonPagos.setOnAction(event -> {
             Main.ventana(PagosController.VIEW, PagosController.WIDTH, PagosController.HEIGHT, PagosController.TITULO);
-
         });
 
         buttonVender.setOnAction(e -> {
@@ -140,8 +139,12 @@ public class PrincipalController extends DatabaseLinker {
         });
 
         // No se puede poner un listener de click al menú, pero sí a su imagen
-        buttonEstadisticas.getGraphic().setOnMouseClicked(event -> {
+        buttonEstadisticas.setOnAction(event -> {
             Main.ventana(EstadisticasController.VIEW, EstadisticasController.WIDTH, EstadisticasController.HEIGHT, EstadisticasController.TITULO);
+        });
+
+        buttonParticipaciones.setOnAction(e -> {
+            Main.ventana(PartEmpresaController.VIEW, PartEmpresaController.WIDTH, PartEmpresaController.HEIGHT, PartEmpresaController.TITULO);
         });
 
         buttonSociedad.setOnAction(this::onBtnSociedad);
