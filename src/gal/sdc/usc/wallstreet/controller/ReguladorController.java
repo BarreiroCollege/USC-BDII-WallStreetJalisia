@@ -1,30 +1,39 @@
 package gal.sdc.usc.wallstreet.controller;
 
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXSnackbar;
-import com.jfoenix.controls.JFXSnackbarLayout;
-import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.*;
 import com.jfoenix.validation.IntegerValidator;
 import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.OfertaVenta;
+import gal.sdc.usc.wallstreet.model.Pago;
+import gal.sdc.usc.wallstreet.model.Participacion;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.*;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ReguladorController extends DatabaseLinker {
@@ -32,6 +41,7 @@ public class ReguladorController extends DatabaseLinker {
     public static final Integer HEIGHT = 500;
     public static final Integer WIDTH = 700;
     public static final String TITULO = "Administración";
+
 
     //<editor-fold defaultstate="collapsed" desc="Variables desde FXML">
     // Pestaña de pendientes
@@ -61,6 +71,8 @@ public class ReguladorController extends DatabaseLinker {
 
     @FXML
     private Label txtSaldo;
+    @FXML
+    private JFXButton btnCerrarSesion;
 
 
     // Pestaña de transferencias
@@ -97,17 +109,44 @@ public class ReguladorController extends DatabaseLinker {
     private JFXTextField txtApellidos;
     @FXML
     private JFXTextField txtCantidad;
+
+    // Pestaña de pagos pendientes
+    @FXML
+    private TableView<Pago> tablaPagos;
+    @FXML
+    private TableColumn<Pago, String> columnaEmpresa;
+    @FXML
+    private TableColumn<Pago, String> columnaAnuncio;
+    @FXML
+    private TableColumn<Pago, String> columnaPago;
+    @FXML
+    private TableColumn<Pago, Double> columnaBeneficio;
+    @FXML
+    private TableColumn<Pago, Double> columnaParticipaciones;
+
+    @FXML
+    private JFXButton btnEliminarPago;
+    @FXML
+    private JFXComboBox<String> cbEmpresa;
+    @FXML
+    private JFXDatePicker datePagoAntes;
+    @FXML
+    private JFXDatePicker datePagoDespues;
+
     //</editor-fold>
 
     private final String error = "error";       // Mensaje de error
     // Datos a mostrar en la tabla
     private final ObservableList<Usuario> datosTabla = FXCollections.observableArrayList();
+    private final ObservableList<Pago> datosTablaPagos = FXCollections.observableArrayList();
 
     private Usuario campoDe;            // Usuario que transfiere (null indica un agente externo)
     private Usuario campoPara;          // Usuario que recibe transferencia (null indica que se retira saldo)
 
+    private FilteredList<String> empresas; // Lista donde se aplican filtros a las empresas
+
     /*
-     * Si el regulador pulsa "aceptar tod_o", se debería ejecutar la acción solo sobre aquellas tuplas de las que tenga
+     * Si el regulador pulsa "aceptar tod0", se debería ejecutar la acción solo sobre aquellas tuplas de las que tenga
      * constancia. Ejemplo: puede que se esté mostrando que únicamente hay 2 ofertas de venta pendientes, pero que, en
      * el intervalo de tiempo entre que se muestra esa información y el regulador pulsa aceptar, lleguen 100 ofertas
      * de venta. En ese caso, podría ocurrir que el regulador quisiera revisarlas una a una al ser un número tan
@@ -115,7 +154,8 @@ public class ReguladorController extends DatabaseLinker {
      */
     private List<OfertaVenta> ofertasPendientes;
     private List<Usuario> usuariosRegistroPendientes;
-    // No se hace lo mismo para las bajas porque el proceso requiere pasos intermedios que ya aseguran esto
+    private List<Usuario> usuariosBajasPendientes;
+    private List<OfertaVenta> ofertaVentaPendientes;
 
 
     /** No existe un botón de actualización de la tabla porque filtrar también refresca los datos **/
@@ -129,6 +169,8 @@ public class ReguladorController extends DatabaseLinker {
         addValidadores();
         registrarDatosTabla();              // Se busca a los usuarios activos, que pueden realizar transferencias
         establecerColumnasTabla();          // Se establece la estructura de la tabla
+        updateListaPagos();                 // Actualizamos la lista de pagos en el sistema
+        setupListeners();
     }
 
     public void actualizarDatosPendientes() {
@@ -141,46 +183,58 @@ public class ReguladorController extends DatabaseLinker {
     public void actualizarRegistrosPendientes() {
         // Usuarios que han solicitado registrarse y están pendientes de ser revisados
         usuariosRegistroPendientes = super.getDAO(UsuarioDAO.class).getInactivos();
-        int numUsuariosPendientes = usuariosRegistroPendientes.size();
 
         // Se muestra dicha información si no ha habido un error
-        txtSolicitudesRegistro.setText(numUsuariosPendientes == 0? error : String.valueOf(numUsuariosPendientes));
+        txtSolicitudesRegistro.setText(usuariosRegistroPendientes == null? error : String.valueOf(usuariosRegistroPendientes.size()));
         // Se muestran los botones de revisión y aceptar si no ha habido un error y hay registros pendientes
-        btnVerRegistros.setVisible(numUsuariosPendientes != 0);
-        btnAceptarTodoRegistros.setVisible(numUsuariosPendientes != 0);
+        btnVerRegistros.setVisible(usuariosRegistroPendientes != null && usuariosRegistroPendientes.size() != 0);
+        btnAceptarTodoRegistros.setVisible(usuariosRegistroPendientes != null && usuariosRegistroPendientes.size() != 0);
     }
 
     public void actualizarBajasPendientes() {
-        // Número de usuarios que han solicitado darse de baja y están pendientes de ser revisados
-        Integer bajasPendientes = super.getDAO(UsuarioDAO.class).getNumSolicitudesBaja();
+        // Usuarios que han solicitado darse de baja y están pendientes de ser revisados
+        usuariosBajasPendientes = super.getDAO(UsuarioDAO.class).getPendientesBaja();
+
         // Se muestra dicha información si no ha habido un error
-        txtSolicitudesBaja.setText(bajasPendientes == null ? error : bajasPendientes.toString());
+        txtSolicitudesBaja.setText(usuariosBajasPendientes == null ? error : String.valueOf(usuariosBajasPendientes.size()));
         // Se muestran los botones de revisión y aceptar si no ha habido un error y hay bajas pendientes
-        btnVerBajas.setVisible(bajasPendientes != null && !bajasPendientes.equals(0));
-        btnAceptarTodoBajas.setVisible(bajasPendientes != null && !bajasPendientes.equals(0));
+        btnVerBajas.setVisible(usuariosBajasPendientes != null && usuariosBajasPendientes.size() != 0);
+        btnAceptarTodoBajas.setVisible(usuariosBajasPendientes != null && usuariosBajasPendientes.size() != 0);
     }
 
     public void actualizarOfertasPendientes() {
         // Ofertas de venta que no han sido aprobadas
         ofertasPendientes = super.getDAO(OfertaVentaDAO.class).getOfertasPendientes();
-        int numOfertasPendientes = ofertasPendientes.size();
 
         // Se muestra dicha información si no ha habido un error
-        txtSolicitudesOferta.setText(numOfertasPendientes == 0 ? error : String.valueOf(numOfertasPendientes));
+        txtSolicitudesOferta.setText(ofertasPendientes == null? error : String.valueOf(ofertasPendientes.size()));
         // Se muestran los botones de revisión y aceptar si no ha habido un error y hay ofertas pendientes
-        btnVerOfertas.setVisible(numOfertasPendientes != 0);
-        btnAceptarTodoOfertas.setVisible(numOfertasPendientes != 0);
+        btnVerOfertas.setVisible(ofertasPendientes != null && ofertasPendientes.size() != 0);
+        btnAceptarTodoOfertas.setVisible(ofertasPendientes != null && ofertasPendientes.size() != 0);
     }
 
     public void actualizarSaldo() {
-
+        txtSaldo.setText(super.getDAO(ReguladorDAO.class).getDatoRegulador("saldo"));
     }
 
     public void registrarDatosTabla(){
         // Inicialmente solo se muestran los 100 usuarios de más saldo (filtrar actualizará la tabla)
-        List<Usuario> usuarios = super.getDAO(UsuarioDAO.class).getUsuariosMasSaldo(100);
+        List<Usuario> usuarios = super.getDAO(UsuarioDAO.class).getUsuariosMasSaldo(100, super.getDAO(ReguladorDAO.class));
         datosTabla.setAll(usuarios);
         tablaUsuarios.setItems(datosTabla);
+    }
+
+    public void updateListaPagos(){
+        List<Pago> pagos = super.getDAO(PagoDAO.class).getPagosProgramados();
+        datosTablaPagos.setAll(pagos);
+        tablaPagos.setItems(datosTablaPagos);
+
+        datosTablaPagos.forEach(pago -> {
+            if (!cbEmpresa.getItems().contains(pago.getEmpresa().getNombre() ))
+                cbEmpresa.getItems().add(pago.getEmpresa().getNombre() );
+        });
+
+        empresas = cbEmpresa.getItems().filtered(null);
     }
 
     public void setupComponentes(){
@@ -189,36 +243,65 @@ public class ReguladorController extends DatabaseLinker {
         btnParaTabla.setVisible(false);
         btnTransferir.setVisible(false);
 
+        // Icon en el menú item
+        Image iconoCerrarSesion = new javafx.scene.image.Image(getClass().getResourceAsStream("/resources/sign_out.png"));
+        ImageView menuIcon = new javafx.scene.image.ImageView(iconoCerrarSesion);
+        menuIcon.setOpacity(0.5);
+        menuIcon.setFitHeight(25);
+        menuIcon.setFitWidth(40);
+        btnCerrarSesion.setGraphic(menuIcon);
+
+        // Opciones ComboBox
         List<String> opcionesComboBox = new ArrayList<>(Arrays.asList("---", "Empresas", "Inversores"));
         cbTipo.setItems(FXCollections.observableArrayList(opcionesComboBox));
+        // Aún no se ha seleccionado ninguna opción
+        txtDniCif.setVisible(false);
+        txtNombre.setVisible(false);
+        txtApellidos.setVisible(false);
     }
 
+
     public void addValidadores(){
-        // Validadores de entrada numérica
-        IntegerValidator iv = new IntegerValidator("");
+        // Validador de entrada numérica
+        IntegerValidator iv = new IntegerValidator("Valor no numérico");
         txtCantidad.getValidators().add(iv);
 
+        // Si lo introducido contiene caracteres no numéricos, aparece un error y no se muestra el botón de transferir
         txtCantidad.textProperty().addListener((observable, oldValue, newValue) -> {
-            txtCantidad.validate();
-            determinarActivacionBtnTransferencia();
+            if (txtCantidad.getText() != null && !txtCantidad.getText().isEmpty() && txtCantidad.validate()) {
+                determinarActivacionBtnTransferencia();
+            } else {
+                btnTransferir.setVisible(false);
+            }
         });
-        //TODO: fallo
     }
 
     public void establecerColumnasTabla() {
         // Establecemos los valores que contendrá cada columna de la tabla de participaciones
         columnaId.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getSuperUsuario().getIdentificador()));
         columnaSaldo.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getSaldo().toString()));
+
+        // Establecemos los valores que contendrá cada columna de la tabla de pagos
+        final DateFormat formatoFecha = new SimpleDateFormat("d/L/y");
+        tablaPagos.setPlaceholder(new Label("No existen pagos programados actualmente"));
+        columnaEmpresa.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().getEmpresa().getNombre()));
+        columnaAnuncio.setCellValueFactory(celda -> new SimpleStringProperty( celda.getValue().getFechaAnuncio() == null ? "Sin anunciar" : formatoFecha.format(celda.getValue().getFechaAnuncio()) ));
+        columnaPago.setCellValueFactory(celda -> new SimpleStringProperty( formatoFecha.format(celda.getValue().getFecha()) ));
+        columnaBeneficio.setCellValueFactory(new PropertyValueFactory<>("porcentajeBeneficio"));
+        columnaParticipaciones.setCellValueFactory(new PropertyValueFactory<>("porcentajeParticipacion"));
     }
-
-
 
     /**
      * Se aceptan los registros pendientes.
-     * No se admite read uncomitted para evitar que se acepten solicitudes de las que el regulador no tenía constancia.
      */
     public void aceptarTodoRegistros() {
+        // Dado que un usuario no puede realizar ninguna acción hasta ser aceptada su solicitud, no va a haber
+        // conflictos, y se puede utilizar un nivel de lecturas no comprometidas para acelerar la ejecución.
+        // No tenemos problemas de cara a admitir usuarios de los que el regulador no tenía constancia al pasar
+        // la lista usuariosRegistroPendientes.
+        super.iniciarTransaccion(Connection.TRANSACTION_READ_UNCOMMITTED);
         super.getDAO(UsuarioDAO.class).aceptarUsuariosTodos(usuariosRegistroPendientes);
+        super.ejecutarTransaccion();
         actualizarRegistrosPendientes();
     }
 
@@ -234,13 +317,10 @@ public class ReguladorController extends DatabaseLinker {
          */
         super.iniciarTransaccion(Connection.TRANSACTION_SERIALIZABLE);
 
-        // Se recogen todos los identificadores de los usuarios a dar de baja
-        List<String> identificadores = super.getDAO(EmpresaDAO.class).getEmpresasBajasPendientes().stream().map(
-                empresa -> empresa.getUsuario().getSuperUsuario().getIdentificador()
+        // Se recogen todos los identificadores de los usuarios a dar de baja (ya buscados)
+        List<String> identificadores = usuariosBajasPendientes.stream().map(
+                usuario -> usuario.getSuperUsuario().getIdentificador()
         ).collect(Collectors.toList());
-        identificadores.addAll(super.getDAO(InversorDAO.class).getInversoresBajasPendientes().stream().map(
-                inversor -> inversor.getUsuario().getSuperUsuario().getIdentificador()
-        ).collect(Collectors.toList()));
 
         // Iterador para poder quitar elementos de identificadores mientras se recorre la lista
         Iterator<String> iterator = identificadores.iterator();
@@ -286,6 +366,7 @@ public class ReguladorController extends DatabaseLinker {
      * Actualiza los datos de la tabla en función de los filtros indicados (se vuelven a cargar los saldos)
      */
     public void onClickFiltrar(){
+        tablaUsuarios.setPlaceholder(new Label("No existen usuarios con los parámetros indicados"));
         List<Usuario> usuariosFiltrados = super.getDAO(UsuarioDAO.class)
                 .getUsuariosFiltroPersonalizado(construirDatosFiltro(), 100);
         datosTabla.setAll(usuariosFiltrados);
@@ -320,6 +401,63 @@ public class ReguladorController extends DatabaseLinker {
         return datosFiltrado;
     }
 
+    private void setupListeners(){
+        cbEmpresa.valueProperty().addListener((observable, oldValue, newValue) -> {
+            FilteredList<String> empresasFiltradas = empresas;
+            empresasFiltradas.setPredicate(empresa -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    // Corrige bug cuando se intentan borrar caracteres
+                    return true;
+                }
+                return empresa.toLowerCase().contains(newValue.toLowerCase());
+            });
+            cbEmpresa.setItems(empresasFiltradas);
+        });
+    }
+    public void filtrarTablaPagos(){
+        tablaPagos.setPlaceholder(new Label("No existen pagos con los parámetros indicados"));
+
+        // Se guardan todos los pagos sin filtrar
+        FilteredList<Pago> pagosFiltrados = new FilteredList<>(datosTablaPagos, p -> true);
+
+        // Se eliminan los pagos que no queremos mostrar
+        Predicate<Pago> predicadoFiltro = pagoFilterPredicates();
+        pagosFiltrados.setPredicate( predicadoFiltro );
+
+        SortedList<Pago> pagosOrdenados = new SortedList<>(pagosFiltrados);
+        pagosOrdenados.comparatorProperty().bind(tablaPagos.comparatorProperty());
+
+        // Se borra la antigua información de la tabla y se muestra la nueva.
+        tablaPagos.setItems(pagosOrdenados);
+    }
+
+    private Predicate<Pago> pagoFilterPredicates() {
+
+        Predicate<Pago> combobox = pago -> {
+            if (cbEmpresa.getValue() != null && !cbEmpresa.getValue().isEmpty()) {
+                // El nombre comercial de la empresa del pago debe contener la selección
+                return pago.getEmpresa().getNombre().toLowerCase().contains(cbEmpresa.getValue().toLowerCase());
+            }
+            return true;
+        };
+
+        Predicate<Pago> fechaAntes = pago -> {
+            if ( datePagoAntes.getValue() != null && !datePagoAntes.getValue().toString().isEmpty() ){
+                return pago.getFecha().compareTo( java.sql.Date.valueOf( datePagoAntes.getValue() ) ) <= 0;
+            }
+            return true;
+        };
+
+        Predicate<Pago> fechaDespues = pago -> {
+            if ( datePagoDespues.getValue() != null && !datePagoDespues.getValue().toString().isEmpty() ){
+                return pago.getFecha().compareTo( java.sql.Date.valueOf( datePagoDespues.getValue() ) ) >= 0;
+            }
+            return true;
+        };
+
+        return combobox.and(fechaAntes).and(fechaDespues);
+    }
+
     /**
      * Filtrado por tipo de usuario (varían los campos que se pueden cubrir)
      */
@@ -346,7 +484,6 @@ public class ReguladorController extends DatabaseLinker {
     /**
      * Realizar una transferencia desde campoDe a campoPara con la cantidad indicada
      */
-    // TODO: darle una vuelta a la comprobación de saldo. Read uncomitted?
     public void onClickBtnTransferir(){
         if (campoPara == null){                   // Los fondos se retiran de la cuenta
             // Se comprueba que haya saldo suficiente
@@ -357,12 +494,30 @@ public class ReguladorController extends DatabaseLinker {
 
             // Hay saldo suficiente. Se retiran los fondos.
             if (super.getDAO(UsuarioDAO.class).retirarSaldo(Float.parseFloat(txtCantidad.getText()), campoDe)){
-                // Se actualiza la tabla.
+                // Se actualiza la tabla y se da un aviso
+                Main.mensaje("Transferencia realizada correctamente");
                 campoDe.setSaldo(campoDe.getSaldo() - Float.parseFloat(txtCantidad.getText()));
-                tablaUsuarios.refresh();
+                // Se refresca la tabla.
+                tablaUsuarios.getColumns().get(0).setVisible(false);
+                tablaUsuarios.getColumns().get(0).setVisible(true);
+            } else {
+                Main.mensaje("Error en la transferencia");
             }
         } else if (campoDe == null){          // Se depositan fondos
+            // Como depositar fondos no supone peligros respecto a comprobaciones, se puede hacer con un nivel de
+            // aislamiento de lecturas no comprometidas
+            super.iniciarTransaccion(Connection.TRANSACTION_READ_UNCOMMITTED);
             super.getDAO(UsuarioDAO.class).depositarSaldo(Integer.parseInt(txtCantidad.getText()), campoPara);
+            if (super.ejecutarTransaccion()){
+                // Se actualiza la tabla y se da un aviso
+                Main.mensaje("Transferencia realizada correctamente");
+                campoPara.setSaldo(campoPara.getSaldo() + Float.parseFloat(txtCantidad.getText()));
+                // Se refresca la tabla
+                tablaUsuarios.getColumns().get(0).setVisible(false);
+                tablaUsuarios.getColumns().get(0).setVisible(true);
+            } else {
+                Main.mensaje("Error en la transferencia");
+            }
         } else {                                // Transferencia de una cuenta a otra
             // Se comprueba que haya saldo suficiente
             if ((Float.parseFloat(txtCantidad.getText()) > campoDe.getSaldo())){
@@ -373,7 +528,17 @@ public class ReguladorController extends DatabaseLinker {
             super.iniciarTransaccion();
             super.getDAO(UsuarioDAO.class).retirarSaldo(Float.parseFloat(txtCantidad.getText()), campoDe);
             super.getDAO(UsuarioDAO.class).depositarSaldo(Float.parseFloat(txtCantidad.getText()), campoPara);
-            super.ejecutarTransaccion();
+            if (super.ejecutarTransaccion()){
+                // Se actualiza la tabla y se da un aviso
+                Main.mensaje("Transferencia realizada correctamente");
+                campoDe.setSaldo(campoDe.getSaldo() - Float.parseFloat(txtCantidad.getText()));
+                campoPara.setSaldo(campoPara.getSaldo() + Float.parseFloat(txtCantidad.getText()));
+                // Se refresca la tabla
+                tablaUsuarios.getColumns().get(0).setVisible(false);
+                tablaUsuarios.getColumns().get(0).setVisible(true);
+            } else {
+                Main.mensaje("Error en la transferencia");
+            }
         }
     }
 
@@ -386,12 +551,22 @@ public class ReguladorController extends DatabaseLinker {
     }
 
     /**
+     * Permite el borrado de un pago
+     */
+    public void onClickTablaPagos(){ btnEliminarPago.setDisable(false); }
+
+    /**
      * Elimina la opción de escoger un dato de la tabla.
      */
     public void onMouseReleasedTabla(){
         btnDeTabla.setVisible(false);
         btnParaTabla.setVisible(false);
     }
+
+    /**
+     * Impide el borrado de un pago
+     */
+    public void onMouseReleasedTablaPagos(){ btnEliminarPago.setDisable(true); }
 
     public void onClickBtnDeExterior(){
         campoDe = null;
@@ -493,5 +668,23 @@ public class ReguladorController extends DatabaseLinker {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void eliminarPago(){
+        Pago seleccion = tablaPagos.getSelectionModel().getSelectedItem(); // Leemos el pago seleccionado en la tabla
+
+        super.getDAO(PagoDAO.class).eliminar(seleccion); // Lo eliminamos de la base de datos
+
+        // Y actualizamos la tabla
+        updateListaPagos();
+        tablaPagos.getColumns().get(0).setVisible(false);
+        tablaPagos.getColumns().get(0).setVisible(true);
+
+        btnEliminarPago.setDisable(true); // Desactivamos el boton de borrado, puesto que la fila seleccionada no existe
+    }
+
+    public void cerrarSesion(){
+        super.cerrarSesion();
+        Main.ventana(AccesoController.VIEW, AccesoController.WIDTH, AccesoController.HEIGHT, AccesoController.TITULO);
     }
 }

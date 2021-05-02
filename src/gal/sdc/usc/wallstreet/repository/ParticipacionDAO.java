@@ -110,7 +110,7 @@ public class ParticipacionDAO extends DAO<Participacion> {
         try(PreparedStatement ps = conexion.prepareStatement(
                 "SELECT count(*) " +
                         "FROM participacion " +
-                        "WHERE (usuario = ? OR empresa = ?) AND (cantidad > ? OR cantidad_bloqueada > ?)"
+                        "WHERE (usuario = ? OR empresa = ?) AND (cantidad != ? OR cantidad_bloqueada != ?)"
         )){
             ps.setString(1, idSuperUsuario);
             ps.setString(2, idSuperUsuario);
@@ -127,6 +127,30 @@ public class ParticipacionDAO extends DAO<Participacion> {
         return null;
     }
 
+    /***
+     * Comprueba si un superusuario tiene participaciones de si mismo, como empresa de las participaciones.
+     *
+     * @param idSuperUsuario Clave primaria.
+     * @return true, si el superusuario tiene participaciones; false, si no las tiene; null, en caso de error.
+     */
+    public Boolean tieneParticipacionesPropias(String idSuperUsuario){
+        try(PreparedStatement ps = conexion.prepareStatement(
+                "SELECT count(*)" +
+                        " FROM participacion" +
+                        " WHERE usuario = ? AND empresa = ?"
+        )){
+            ps.setString(1, idSuperUsuario);
+            ps.setString(2, idSuperUsuario);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()){
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public Integer getParticipacionesUsuarioEmpresa(String nombreUsuario, String empresa) {
         Integer participaciones=0;
         try (PreparedStatement ps = super.conexion.prepareStatement(
@@ -138,6 +162,30 @@ public class ParticipacionDAO extends DAO<Participacion> {
             ResultSet rs = ps.executeQuery();
             if(rs.next()){
                 participaciones = Integer.parseInt(rs.getString("cuenta"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return participaciones;
+    }
+
+    /**
+     * Permite obtener el numero de particicpaciones bloqueadas de un usuario con una empresa especifica
+     * @param nombreUsuario identificador del usuario a consultar
+     * @param empresa identificador de la empresa de la que se poseen participaciones
+     * @return
+     */
+    public Integer getParticipacionesBloqueadasUsuarioEmpresa(String nombreUsuario, String empresa) {
+        int participaciones=0;
+        try (PreparedStatement ps = super.conexion.prepareStatement(
+                "SELECT cantidad_bloqueada FROM participacion where usuario = ? and empresa= ?"
+        )) {
+            ps.setString(1, nombreUsuario);
+            ps.setString(2, empresa);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                participaciones = Integer.parseInt(rs.getString("cantidad_bloqueada"));
             }
 
         } catch (SQLException e) {

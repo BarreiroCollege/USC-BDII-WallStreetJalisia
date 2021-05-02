@@ -38,20 +38,23 @@ public class UsuarioDAO extends DAO<Usuario> {
     /**
      * Devuelve una lista con los usuarios que poseen más saldo (no bloqueado) en el mercado.
      * El número de usuarios se regula con el parámetro límite.
+     * No se incluye al regulador en el resultado.
      *
      * @param limite Número de usuarios máximo de la lista.
+     * @param reguladorDAO DAO del regulador (permite eliminarlo del resultado)
      * @return Lista con los usuarios de mayor saldo con tamaño máximo limite.
      */
-    public List<Usuario> getUsuariosMasSaldo(int limite) {
+    public List<Usuario> getUsuariosMasSaldo(int limite, ReguladorDAO reguladorDAO) {
         List<Usuario> usuarios = new ArrayList<>();
         try (PreparedStatement ps = super.conexion.prepareStatement(
                 "SELECT * " +
                         "FROM usuario " +
-                        "WHERE alta is null " +
-                        "ORDER BY saldo " +
+                        "WHERE alta is null AND identificador != ? " +
+                        "ORDER BY saldo DESC " +
                         "LIMIT ?"
         )) {
-            ps.setInt(1, limite);
+            ps.setString(1, reguladorDAO.getDatoRegulador("identificador"));
+            ps.setInt(2, limite);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 usuarios.add(Mapeador.map(rs, Usuario.class));
@@ -70,159 +73,104 @@ public class UsuarioDAO extends DAO<Usuario> {
      * @param limite Máximo tamaño de la lista de usuarios a devolver.
      * @return Lista de hasta limite usuarios que cumplen las condiciones especificadas.
      */
-    public List<Usuario> getUsuariosFiltroPersonalizado(HashMap<String, String> filtro, int limite){
+    public List<Usuario> getUsuariosFiltroPersonalizado(HashMap<String, String> filtro, int limite) {
         List<Usuario> usuarios = new ArrayList<>();
 
+        /*
+         * Para simplificar la estructura de la query, se utiliza una view. Esta une las tablas de empresas e inversores
+         * con la tabla de usuarios. Los atributos de invesores quedan nulos para las empresas, y viceversa.
+         * Además, no se muestra ni a los usuarios inactivos ni al regulador.
+         */
+
         String sql = "SELECT * " +
-                "FROM (empresa e RIGHT JOIN usuario u ON e.usuario = u.identificador) as m LEFT JOIN inversor i ON m.identificador = i.usuario";
+                "FROM empresas_inversores_usuarios";
 
-        int longitud = filtro.size();
-        if (longitud == 1){
-            sql += construirWherePersonalizado1(filtro);
-        } else if (longitud > 1){
-            sql += construirWherePersonalizadoMultiple(filtro);
-        }
-        sql += " LIMIT ?";
+        // Se construye el where de la consulta en función de los filtros indicados
+        if (!filtro.isEmpty()) sql += construirWherePersonalizado(filtro);
+        sql += " ORDER BY saldo DESC LIMIT ?";
 
-        try (PreparedStatement ps = conexion.prepareStatement(sql)){
-            if (!filtro.isEmpty()){
-                llenarPreparedStatement(ps, filtro, limite);
-                ResultSet rs = ps.executeQuery();
-                while (rs.next()){
-                    usuarios.add(new Usuario.Builder().withSuperUsuario(
-                            new SuperUsuario.Builder().withIdentificador(rs.getString("identificador")).build()
-                            ).withSaldo(rs.getFloat("saldo")).build()
-                    );
-                }
+        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
+            llenarPreparedStatement(ps, filtro, limite);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                usuarios.add(new Usuario.Builder().withSuperUsuario(
+                        new SuperUsuario.Builder().withIdentificador(rs.getString("identificador")).build()
+                        ).withSaldo(rs.getFloat("saldo")).build()
+                );
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return usuarios;
     }
 
-    // Construye el where de la consulta cuando solo hay una condición.
-    private String construirWherePersonalizado1(HashMap<String, String> filtro) {
-        String sql = " WHERE";
-        if (filtro.containsKey("id")){
-            sql += " m.identificador = ?";
-            return sql;
-        }
-        if ("Inversores".equals(filtro.get("tipo"))) {
-            sql += " i.usuario is not null";
-            return sql;
-        }
-        if (filtro.containsKey("dni")) {
-            sql += " i.dni = ?";
-            return sql;
-        }
-        if (filtro.containsKey("nombre")) {
-            sql += " i.nombre = ?";
-            return sql;
-        }
-        if (filtro.containsKey("apellidos")) {
-            sql += " i.apellidos = ?";
-            return sql;
-        }
-        if ("Empresas".equals(filtro.get("tipo"))) {
-            sql += " m.usuario is not null";
-            return sql;
-        }
-        if (filtro.containsKey("cif")) {
-            sql += " m.cif = ?";
-            return sql;
-        }
-        if (filtro.containsKey("nombreComercial")) {
-            sql += " m.nombre = ?";
-        }
-        return sql;
-    }
-
-    // Construye el where de la consulta cunado hay más de una condición.
-    private String construirWherePersonalizadoMultiple(HashMap<String, String> filtro){
+    // Construye el where de la consulta.
+    private String construirWherePersonalizado(HashMap<String, String> filtro) {
         boolean primeroEncontrado = false;
         String sql = " WHERE";
-        if (filtro.containsKey("id")){
-            sql += " m.identificador = ?";
+
+        if (filtro.containsKey("id")) {
+            sql += " identificador LIKE LOWER(?)";
             primeroEncontrado = true;
         }
+
         if ("Inversores".equals(filtro.get("tipo"))) {
             if (primeroEncontrado) {
                 sql += " AND";
-            } else {
-                primeroEncontrado = true;
             }
-            sql += " i.usuario is not null";
-            primeroEncontrado = true;
+            sql += " usuario_inversor is not null";
+
+            if (filtro.containsKey("DNI")) {
+                sql += " AND LOWER(dni) LIKE LOWER(?)";
+            }
+
+            if (filtro.containsKey("nombre")) {
+                sql += " AND LOWER(nombre) LIKE LOWER(?)";
+            }
+
+            if (filtro.containsKey("apellidos")) {
+                sql += " AND LOWER(apellidos) LIKE LOWER(?)";
+            }
+
         } else if ("Empresas".equals(filtro.get("tipo"))) {
             if (primeroEncontrado) {
                 sql += " AND";
-            } else {
-                primeroEncontrado = true;
             }
-            sql += " m.usuario is not null";
-        }
-        if (filtro.containsKey("dni")) {
-            if (primeroEncontrado) {
-                sql += " AND";
-            } else {
-                primeroEncontrado = true;
+            sql += " usuario_empresa is not null";
+
+            if (filtro.containsKey("CIF")) {
+                sql += " AND LOWER(cif) LIKE LOWER(?)";
             }
-            sql += " i.dni = ?";
-        }
-        if (filtro.containsKey("nombre")) {
-            if (primeroEncontrado) {
-                sql += " AND";
-            } else {
-                primeroEncontrado = true;
+
+            if (filtro.containsKey("nombre")) {
+                sql += " AND LOWER(nombre_comercial) LIKE LOWER(?)";
             }
-            sql += " i.nombre = ?";
         }
-        if (filtro.containsKey("apellidos")) {
-            if (primeroEncontrado) {
-                sql += " AND";
-            } else {
-                primeroEncontrado = true;
-            }
-            sql += " i.apellidos = ?";
-        }
-        if (filtro.containsKey("cif")) {
-            if (primeroEncontrado) {
-                sql += " AND";
-            } else {
-                primeroEncontrado = true;
-            }
-            sql += " m.cif = ?";
-        }
-        if (filtro.containsKey("nombreComercial")) {
-            if (primeroEncontrado) {
-                sql += " AND";
-            }
-            sql += " m.nombre = ?";
-        }
+
         return sql;
     }
 
     // Rellena los campos de la consulta en el PreparedStatement.
     private void llenarPreparedStatement(PreparedStatement ps, HashMap<String, String> filtro, int limite) throws SQLException {
         int indice = 1;
-        if (filtro.containsKey("id")){
-            ps.setString(indice, filtro.get("id"));
+        if (filtro.containsKey("id")) {
+            ps.setString(indice, "%" + filtro.get("id") + "%");
             indice++;
         }
-        if (filtro.containsKey("DNI")){
-            ps.setString(indice, filtro.get("DNI"));
+        if (filtro.containsKey("DNI")) {
+            ps.setString(indice, "%" + filtro.get("DNI") + "%");
             indice++;
-        } else if (filtro.containsKey("CIF")){
-            ps.setString(indice, filtro.get("CIF"));
-            indice++;
-        }
-        if (filtro.containsKey("nombre")){
-            ps.setString(indice, filtro.get("nombre"));
+        } else if (filtro.containsKey("CIF")) {
+            ps.setString(indice, "%" + filtro.get("CIF") + "%");
             indice++;
         }
-        if (filtro.containsKey("apellidos")){
-            ps.setString(indice, filtro.get("apellidos"));
+        if (filtro.containsKey("nombre")) {
+            ps.setString(indice, "%" + filtro.get("nombre") + "%");
+            indice++;
+        }
+        if (filtro.containsKey("apellidos")) {
+            ps.setString(indice, "%" + filtro.get("apellidos") + "%");
             indice++;
         }
         ps.setInt(indice, limite);
@@ -280,12 +228,13 @@ public class UsuarioDAO extends DAO<Usuario> {
 
         return usuarios;
     }
+
     /***
      * Devuelve una lista de usuarios que aún no están activos, pero lo han solicitado
      *
-     * @return Lista de usuarios inactivos
+     * @return Lista de usuarios inactivos; null en caso de error
      */
-    public List<Usuario> getInactivos(){
+    public List<Usuario> getInactivos() {
         List<Usuario> inactivos = new ArrayList<>();
         try (PreparedStatement ps = super.conexion.prepareStatement(
                 "SELECT * " +
@@ -293,37 +242,39 @@ public class UsuarioDAO extends DAO<Usuario> {
                         "WHERE alta is not null AND baja is null"
         )) {
             ResultSet rs = ps.executeQuery();
-            if (rs.next()){
+            while (rs.next()) {
                 inactivos.add(Mapeador.map(rs, Usuario.class));
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
 
         return inactivos;
     }
 
     /***
-     * Devuelve el número de usuarios que han solicitado darse de baja
+     * Devuelve una lista de usuarios que han solicitado darse de baja
      *
-     * @return Número de usuarios que quieren darse de baja; null en caso de error
+     * @return Lista de usuarios que pidieron baja; null en caso de error
      */
-    public Integer getNumSolicitudesBaja(){
-        Integer solicitudesBaja = null;
+    public List<Usuario> getPendientesBaja() {
+        List<Usuario> inactivos = new ArrayList<>();
         try (PreparedStatement ps = super.conexion.prepareStatement(
-                "SELECT count(*) as bajas " +
+                "SELECT * " +
                         "FROM usuario " +
-                        "WHERE baja is not null"
+                        "WHERE alta is null AND baja is not null"
         )) {
             ResultSet rs = ps.executeQuery();
-            if (rs.next()){
-                solicitudesBaja = rs.getInt("bajas");
+            while (rs.next()) {
+                inactivos.add(Mapeador.map(rs, Usuario.class));
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
 
-        return solicitudesBaja;
+        return inactivos;
     }
 
     /***
@@ -331,7 +282,7 @@ public class UsuarioDAO extends DAO<Usuario> {
      *
      * @param id Identificador del usuario a activar
      */
-    public void aceptarUsuario(String id){
+    public void aceptarUsuario(String id) {
         try (PreparedStatement ps = conexion.prepareStatement(
                 "UPDATE usuario " +
                         "SET alta = null " +
@@ -345,11 +296,52 @@ public class UsuarioDAO extends DAO<Usuario> {
     }
 
     /***
+     * Rechaza un usuario de la aplicación (elimina sus datos)
+     *
+     * @param id Identificador del usuario del que se ha rechazado la solicitud
+     */
+    public void rechazarSolicitud(String id) {
+        try (PreparedStatement psInversor = conexion.prepareStatement(
+                "DELETE FROM inversor " +
+                        "WHERE usuario = ?"
+        )){
+            psInversor.setString(1, id);
+            psInversor.executeUpdate();
+
+            try (PreparedStatement psEmpresa = conexion.prepareStatement(
+                    "DELETE FROM empresa " +
+                            "WHERE usuario = ?"
+            )){
+                psEmpresa.setString(1, id);
+                psEmpresa.executeUpdate();
+            }
+
+            try (PreparedStatement psUsuario = conexion.prepareStatement(
+                    "DELETE FROM usuario " +
+                            "WHERE identificador = ?"
+            )){
+                psUsuario.setString(1, id);
+                psUsuario.executeUpdate();
+            }
+
+            try (PreparedStatement psSuperusuario = conexion.prepareStatement(
+                    "DELETE FROM superusuario " +
+                            "WHERE identificador = ?"
+            )){
+                psSuperusuario.setString(1, id);
+                psSuperusuario.executeUpdate();
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    /***
      * Se da de alta a los usuarios de la lista indicada.
      *
      * @param usuariosPendientes Lista de usuarios a dar de alta.
      */
-    public void aceptarUsuariosTodos(List<Usuario> usuariosPendientes){
+    public void aceptarUsuariosTodos(List<Usuario> usuariosPendientes) {
         try (PreparedStatement ps = conexion.prepareStatement(
                 "UPDATE usuario " +
                         "SET alta = null " +
@@ -359,7 +351,7 @@ public class UsuarioDAO extends DAO<Usuario> {
                 ps.setString(1, usuario.getSuperUsuario().getIdentificador());
                 ps.executeUpdate();
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -369,28 +361,28 @@ public class UsuarioDAO extends DAO<Usuario> {
      *
      * @param id Identificador del superusuario.
      */
-    public void rechazarBaja(String id){
+    public void rechazarBaja(String id) {
         try (PreparedStatement ps = conexion.prepareStatement(
                 "UPDATE usuario " +
                         "SET baja = null " +
                         "WHERE identificador = ?"
-        )){
+        )) {
             ps.setString(1, id);
             ps.executeUpdate();
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public boolean retirarSaldo(float cantidad, Usuario usuario){
+    public boolean retirarSaldo(float cantidad, Usuario usuario) {
         return retirarSaldo(cantidad, usuario.getSuperUsuario().getIdentificador());
     }
 
-    public boolean retirarSaldo(float cantidad, String id){
+    public boolean retirarSaldo(float cantidad, String id) {
         return depositarSaldo(-cantidad, id);
     }
 
-    public boolean depositarSaldo(float cantidad, Usuario usuario){
+    public boolean depositarSaldo(float cantidad, Usuario usuario) {
         return depositarSaldo(cantidad, usuario.getSuperUsuario().getIdentificador());
     }
 
@@ -401,23 +393,23 @@ public class UsuarioDAO extends DAO<Usuario> {
      * @param id Identificador del usuario.
      * @return true, si se ha realizado correctamente; false, en caso contrario.
      */
-    public boolean depositarSaldo(float cantidad, String id){
+    public boolean depositarSaldo(float cantidad, String id) {
         try (PreparedStatement ps = conexion.prepareStatement(
                 "UPDATE usuario " +
                         "SET saldo = saldo + ? " +
                         "WHERE identificador = ?"
-        )){
+        )) {
             ps.setFloat(1, cantidad);
             ps.setString(2, id);
             ps.executeUpdate();
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
         return true;
     }
 
-    public void vaciarSaldo(Usuario usuario){
+    public void vaciarSaldo(Usuario usuario) {
         vaciarSaldo(usuario.getSuperUsuario().getIdentificador());
     }
 
@@ -426,22 +418,23 @@ public class UsuarioDAO extends DAO<Usuario> {
      *
      * @param id Identificador del usuario.
      */
-    public void vaciarSaldo(String id){
+    public void vaciarSaldo(String id) {
         try (PreparedStatement ps = conexion.prepareStatement(
                 "UPDATE usuario " +
-                        "SET saldo = ? " +
+                        "SET saldo = ?, saldo_bloqueado = ? " +
                         "WHERE identificador = ?"
-        )){
+        )) {
             ps.setFloat(1, 0);
-            ps.setString(2, id);
+            ps.setFloat(2, 0);
+            ps.setString(3, id);
             ps.executeUpdate();
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
 
-    public void darDeBajaUsuario(Usuario usuario){
+    public void darDeBajaUsuario(Usuario usuario) {
         darDeBajaUsuario(usuario.getSuperUsuario().getIdentificador());
     }
 
@@ -450,15 +443,15 @@ public class UsuarioDAO extends DAO<Usuario> {
      *
      * @param id Identificador del usuario a dar de baja
      */
-    public void darDeBajaUsuario(String id){
+    public void darDeBajaUsuario(String id) {
         try (PreparedStatement ps = conexion.prepareStatement(
                 "UPDATE usuario " +
                         "SET alta = now() " +
                         "WHERE identificador = ?"
-        )){
+        )) {
             ps.setString(1, id);
             ps.executeUpdate();
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -468,17 +461,17 @@ public class UsuarioDAO extends DAO<Usuario> {
      *
      * @param identificadores Lista de identificadores de los usuarios a dar de baja.
      */
-    public void darDeBajaUsuarios(List<String> identificadores){
+    public void darDeBajaUsuarios(List<String> identificadores) {
         try (PreparedStatement ps = conexion.prepareStatement(
                 "UPDATE usuario " +
-                        "SET alta = now () " +
+                        "SET alta = now() " +
                         "WHERE identificador = ?"
-        )){
-            for (String identificador : identificadores){
+        )) {
+            for (String identificador : identificadores) {
                 ps.setString(1, identificador);
                 ps.executeUpdate();
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

@@ -3,9 +3,11 @@ package gal.sdc.usc.wallstreet.controller;
 import com.jfoenix.controls.*;
 import com.jfoenix.validation.IntegerValidator;
 import gal.sdc.usc.wallstreet.Main;
+import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.OfertaVenta;
 import gal.sdc.usc.wallstreet.model.Participacion;
 import gal.sdc.usc.wallstreet.model.Usuario;
+import gal.sdc.usc.wallstreet.model.UsuarioTipo;
 import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
 import gal.sdc.usc.wallstreet.repository.ParticipacionDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
@@ -16,10 +18,17 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.util.Duration;
 
+import java.io.IOException;
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -119,6 +128,10 @@ public class CarteraController extends DatabaseLinker {
     // Botón para dar de baja una oferta de venta
     @FXML
     private JFXButton cartera_btn_dar_de_baja;
+
+    @FXML
+    private JFXButton btnGestionParticipEmpresas;
+
     //</editor-fold>
 
     private final ObservableList<Participacion> datosTabla = FXCollections.observableArrayList();
@@ -144,8 +157,6 @@ public class CarteraController extends DatabaseLinker {
 
         // Indicamos a la tabla que sus contenidos serán los de la lista datosTabla
         actualizarDatos();
-        cartera_tabla.setItems(datosTabla);
-        cartera_tablaOferta.setItems(datosTablaOfertas);
 
         // Las ComboBox muestran los nombres de las empresas que les correspondan.
         datosTabla.forEach(part -> {
@@ -168,8 +179,28 @@ public class CarteraController extends DatabaseLinker {
         Main.ventana(PrincipalController.VIEW, PrincipalController.WIDTH, PrincipalController.HEIGHT, PrincipalController.TITULO);
     }
 
+    public void clickGestionParticipEmpresas(){
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("../view/partEmpresa.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle(PartEmpresaController.TITULO);
+            stage.setResizable(false);
+            stage.setScene(new Scene(root, PartEmpresaController.WIDTH, PartEmpresaController.HEIGHT));
+            // La ventana del regulador es la ventana padre. Queda visible, pero desactivada.
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(btnGestionParticipEmpresas.getScene().getWindow());
+            stage.setOnHidden(event -> actualizarDatos()); // Acualiza las tablas al cerrar la ventana de gestion
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void actualizarDatos() {
         Usuario usuario = super.getUsuarioSesion().getUsuario();
+
+        // Si el usuario es inversor, eliminamos la pestaña de gestión de participaciones
+        if(super.getTipoUsuario().equals(UsuarioTipo.INVERSOR)){ btnGestionParticipEmpresas.setVisible(false); }
 
         // Accedemos a los DAOs para obtener los datos del usuario actual
         List<Participacion> participaciones = super.getDAO(ParticipacionDAO.class).getParticipaciones(usuario);
@@ -182,6 +213,9 @@ public class CarteraController extends DatabaseLinker {
         // Actualizamos el saldo del usuario consultado
         txt_saldo.setText( usuario.getSaldo()-usuario.getSaldoBloqueado() + " €");
         txt_saldo_real.setText( usuario.getSaldo() + " €");
+
+        cartera_tabla.setItems(datosTabla);
+        cartera_tablaOferta.setItems(datosTablaOfertas);
     }
 
     /**
@@ -296,20 +330,41 @@ public class CarteraController extends DatabaseLinker {
     }
 
     public void darDeBajaOferta(){
+        // Se toma la oferta a dar de baja
+        OfertaVenta oferta = cartera_tablaOferta.getSelectionModel().getSelectedItem();
+
         // Se borra la oferta de la base de datos
-        super.getDAO(OfertaVentaDAO.class).darDeBajaOferta(cartera_tablaOferta.getSelectionModel().getSelectedItem());
+        super.iniciarTransaccion();
+
+        // Se recuperan los datos de la cartera (participaciones) asociadas al usuario y a la empresa de la oferta
+        Participacion saldo = super.getDAO(ParticipacionDAO.class).seleccionar(getUsuarioSesion().getUsuario().getSuperUsuario(), oferta.getEmpresa());
+        // Las participaciones restantes se descuentan de la cantidad que tenía bloqueada
+        saldo.setCantidadBloqueada(saldo.getCantidadBloqueada() - oferta.getRestantes());
+        // Se guarda la información en la cartera
+        super.getDAO(ParticipacionDAO.class).actualizar(saldo);
+        // La oferta de venta queda como si se hubiera finalizado
+        oferta.setRestantes(0);
+        // Se guardan los cambios de la oferta
+        super.getDAO(OfertaVentaDAO.class).actualizar(oferta);
+
+        if (super.ejecutarTransaccion()){
+            Main.mensaje("Oferta de venta retirada");
+        } else {
+            Main.mensaje("Error; no se ha podido retirar la oferta");
+        }
 
         // Se actualiza la ComboBox. No se puede eliminar la empresa directamente porque puede haber otras ofertas de la misma
         int i = 0;
         String empresaAEliminar = cartera_tablaOferta.getSelectionModel().getSelectedItem().getEmpresa().getNombre();
-        for (OfertaVenta oferta : datosTablaOfertas){
-            if (oferta.getEmpresa().getNombre().equals(empresaAEliminar)){
+        for (OfertaVenta ofertaVenta : datosTablaOfertas){
+            if (ofertaVenta.getEmpresa().getNombre().equals(empresaAEliminar)){
                 i++;
-                if (i == 2) {
+                if (i == 2) {       // Si hay más de una oferta de la misma empresa, no será necesario borarla
                     break;
                 }
             }
         }
+        // Si la empresa solo tenía una oferta de venta asociada, se elimina de la ComboBox
         if (i == 1) cb_empresa_ofertas.getItems().remove(empresaAEliminar);
 
         // Se elimina la oferta de la tabla

@@ -153,23 +153,6 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
         return sinVender;
     }
 
-    /***
-     * Elimina una oferta de venta.
-     *
-     * @param ov Oferta de venta a dar de baja.
-     */
-    public void darDeBajaOferta(OfertaVenta ov) {
-        try (PreparedStatement ps = conexion.prepareStatement(
-                "DELETE FROM oferta_venta " +
-                        "WHERE fecha = ? and usuario = ?")) {
-            ps.setTimestamp(1, new Timestamp(ov.getFecha().getTime()));
-            ps.setString(2, ov.getUsuario().getIdentificador());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     public List<OfertaVenta> getOfertasVentaPorUsuario(String nombreUsuario, int numero) {
         List<OfertaVenta> ofertaVenta = new ArrayList<>();
         int limit = numero;
@@ -191,7 +174,7 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
     /***
      * Devuelve los datos de todas aquellas ofertas que aún no han sido revisadas y aceptadas por el regulador.
      *
-     * @return Lista de ofertas de venta que no están confirmadas.
+     * @return Lista de ofertas de venta que no están confirmadas; null en caso de error
      */
     public List<OfertaVenta> getOfertasPendientes() {
         List<OfertaVenta> ofertasPendientes = new ArrayList<>();
@@ -207,6 +190,7 @@ public class OfertaVentaDAO extends DAO<OfertaVenta> {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
 
         return ofertasPendientes;
