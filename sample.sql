@@ -44,7 +44,7 @@ values ('sara', 'sha1:64000:18:TyWsDXrMKgzwDIh+XC4YtvpeGJ94zgM7:ht05Ayvb+hpgwanu
 insert into inversor (usuario, dni, nombre, apellidos)
 values ('sara', '20416592K', 'Sara', 'Sousa Álvarez');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
-values ('eva', 'sha1:64000:18:3ncoaUfAAVLd+IG3Qv+j0PElWxtutDm4:qAGZjZUZM/AmmtK6jbD/kwhW', 'Calle del mar, 78', '15701', 'Santiago de Compostela', 678910344, 1485.30, 0.0, null, null,'SEBID4GBR4WBHL5TMS2KYQRZ735UECJS','hampa', true);
+values ('eva', 'sha1:64000:18:3ncoaUfAAVLd+IG3Qv+j0PElWxtutDm4:qAGZjZUZM/AmmtK6jbD/kwhW', 'Calle del mar, 78', '15701', 'Santiago de Compostela', 678910344, 1485.30, 0.0, null, null,null,'hampa', true);
 insert into inversor (usuario, dni, nombre, apellidos)
 values ('eva', '10024875E', 'Eva', 'Doural Méndez');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
