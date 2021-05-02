@@ -102,7 +102,6 @@ public class SociedadSaldoController extends DatabaseLinker implements Initializ
         RequiredFieldValidator rfv = Validadores.requerido();
         txtSaldo.getValidators().add(rfv);
 
-        System.out.println(super.getUsuarioSesion().getUsuario());
         txtSaldoDisponible.setText(super.getUsuarioSesion().getUsuario().getSaldoDisponible().toString());
 
         txtSaldo.textProperty().addListener((observable, oldValue, newValue) -> {

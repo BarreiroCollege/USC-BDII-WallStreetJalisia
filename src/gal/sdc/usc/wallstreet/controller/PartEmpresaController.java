@@ -118,7 +118,12 @@ public class PartEmpresaController extends DatabaseLinker {
     }
 
     public void cerrarVentana(){
-        Main.ventana(PrincipalController.VIEW, PrincipalController.WIDTH, PrincipalController.HEIGHT, PrincipalController.TITULO);
+        Main.ventana(
+                PrincipalController.VIEW,
+                PrincipalController.WIDTH,
+                PrincipalController.HEIGHT,
+                PrincipalController.TITULO
+        );
     }
 
 }
