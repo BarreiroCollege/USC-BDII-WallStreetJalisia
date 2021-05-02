@@ -7,6 +7,7 @@ import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.OfertaVenta;
 import gal.sdc.usc.wallstreet.model.Participacion;
 import gal.sdc.usc.wallstreet.model.Usuario;
+import gal.sdc.usc.wallstreet.model.UsuarioTipo;
 import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
 import gal.sdc.usc.wallstreet.repository.ParticipacionDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
@@ -17,11 +18,17 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -121,6 +128,10 @@ public class CarteraController extends DatabaseLinker {
     // Botón para dar de baja una oferta de venta
     @FXML
     private JFXButton cartera_btn_dar_de_baja;
+
+    @FXML
+    private JFXButton btnGestionParticipEmpresas;
+
     //</editor-fold>
 
     private final ObservableList<Participacion> datosTabla = FXCollections.observableArrayList();
@@ -170,8 +181,29 @@ public class CarteraController extends DatabaseLinker {
         Main.ventana(PrincipalController.VIEW, PrincipalController.WIDTH, PrincipalController.HEIGHT, PrincipalController.TITULO);
     }
 
+    public void clickGestionParticipEmpresas(){
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("../view/partEmpresa.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle(PartEmpresaController.TITULO);
+            stage.setResizable(false);
+            stage.setScene(new Scene(root, PartEmpresaController.WIDTH, PartEmpresaController.HEIGHT));
+            // La ventana del regulador es la ventana padre. Queda visible, pero desactivada.
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(btnGestionParticipEmpresas.getScene().getWindow());
+            stage.setOnCloseRequest(event -> actualizarDatos());
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //Main.ventana(PartEmpresaController.VIEW,PartEmpresaController.WIDTH,PartEmpresaController.HEIGHT,PartEmpresaController.TITULO);
+    }
+
     public void actualizarDatos() {
         Usuario usuario = super.getUsuarioSesion().getUsuario();
+
+        // Si el usuario es inversor, eliminamos la pestaña de gestión de participaciones
+        if(super.getTipoUsuario().equals(UsuarioTipo.INVERSOR)){ btnGestionParticipEmpresas.setVisible(false); }
 
         // Accedemos a los DAOs para obtener los datos del usuario actual
         List<Participacion> participaciones = super.getDAO(ParticipacionDAO.class).getParticipaciones(usuario);

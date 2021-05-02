@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="431.0" prefWidth="439.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.PartEmpresaController">
+   <children>
+      <Label layoutX="80.0" layoutY="21.0" text="Gestionar participaciones">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </Label>
+      <JFXButton layoutX="312.0" layoutY="253.0" prefHeight="30.0" prefWidth="97.0" ripplerFill="#52984a" style="-fx-background-color: #ade0ba;" text="Añadir">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font></JFXButton>
+      <JFXButton layoutX="209.0" layoutY="253.0" prefHeight="30.0" prefWidth="97.0" ripplerFill="#a95b5a" style="-fx-background-color: #e0adad;" text="Eliminar">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font></JFXButton>
+      <JFXTextField layoutX="43.0" layoutY="254.0" prefHeight="25.0" prefWidth="155.0" promptText="Numero de participaciones" />
+      <Label layoutX="67.0" layoutY="113.0" text="Cantidad de participaciones propias en cartera">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="199.0" layoutY="138.0" text="NUM">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <JFXButton fx:id="btnCerrarVentana" layoutX="42.0" layoutY="363.0" onAction="#cerrarVentana" prefHeight="25.0" prefWidth="132.0" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;" text="Cerrar ventana" />
+   </children>
+</AnchorPane>
