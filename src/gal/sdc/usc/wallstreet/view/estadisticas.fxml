@@ -6,9 +6,9 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<?import java.awt.Font?>
 <AnchorPane prefHeight="650.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gal.sdc.usc.wallstreet.controller.EstadisticasController">
     <children>
+      <JFXButton fx:id="btnVolver" onAction="#onClickVolver" layoutX="42.0" layoutY="24.0" prefHeight="25.0" prefWidth="68.0" text="Volver" />
       <BarChart fx:id="barChartBeneficioMedio" layoutX="34.0" layoutY="63.0" prefHeight="248.0" prefWidth="387.0">
         <xAxis>
           <CategoryAxis fx:id="ejeXBeneficioMedio" side="BOTTOM" />
@@ -41,6 +41,6 @@
           <NumberAxis side="LEFT" />
         </yAxis>
       </BarChart>
-      <JFXButton layoutX="778.0" layoutY="24.0" buttonType="RAISED" onAction="#refrescar" text="Actualizar" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;"  />
+      <JFXButton buttonType="RAISED" layoutX="778.0" layoutY="24.0" onAction="#refrescar" ripplerFill="#4059a9" style="-fx-background-color: #adbde0;" text="Actualizar" />
    </children>
 </AnchorPane>
