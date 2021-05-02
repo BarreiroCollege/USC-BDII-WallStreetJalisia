@@ -120,7 +120,7 @@ public class PartEmpresaController extends DatabaseLinker {
     }
 
     public void cerrarVentana(){
-        ((Stage) btnCerrarVentana.getScene().getWindow()).close();
+        Main.ventana(PrincipalController.VIEW, PrincipalController.WIDTH, PrincipalController.HEIGHT, PrincipalController.TITULO);
     }
 
 }
