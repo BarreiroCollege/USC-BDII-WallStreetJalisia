@@ -75,13 +75,21 @@ public class PartEmpresaController extends DatabaseLinker {
         updateWindow();
         Integer cantidad = Integer.parseInt(txtParticip.getText()) + participaciones;
 
-        Participacion part = new Participacion.Builder().withUsuario(usuario.getSuperUsuario()).withEmpresa(empresa).withCantidad(cantidad).withCantidadBloqueada(0).build();
+        Participacion part = super.getDAO(ParticipacionDAO.class).seleccionar(usuario.getSuperUsuario(), empresa);
 
         // Miramos si tiene o no registro de sus propias participaciones ya
-        if (super.getDAO(ParticipacionDAO.class).tieneParticipacionesPropias(usuario.getSuperUsuario().getIdentificador())) {
+        if (part != null) {
+            part.setCantidad(cantidad);
             // Si ya tiene participaciones, tenemos que modificar el valor
             super.getDAO(ParticipacionDAO.class).actualizar(part);
         } else {
+            part = new Participacion.Builder()
+                    .withUsuario(usuario.getSuperUsuario())
+                    .withEmpresa(empresa)
+                    .withCantidad(cantidad)
+                    .withCantidadBloqueada(0)
+                    .build();
+
             // Si no tenía, tenemos que insertar un nuevo registro de participaciones
             super.getDAO(ParticipacionDAO.class).insertar(part);
         }
