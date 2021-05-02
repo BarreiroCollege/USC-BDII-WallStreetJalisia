@@ -2,7 +2,6 @@ package gal.sdc.usc.wallstreet.controller;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXToggleButton;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
@@ -28,7 +27,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.Duration;
 import javafx.util.converter.IntegerStringConverter;
 
 import java.text.DecimalFormat;
@@ -70,8 +68,6 @@ public class VVentaController extends DatabaseLinker {
     private JFXTextField campoParticipaciones;
     @FXML
     private JFXButton botonRefresh;
-    @FXML
-    private JFXSnackbar notificationBar;
     @FXML
     private JFXComboBox<String> empresaComboBox;
     @FXML
@@ -196,10 +192,10 @@ public class VVentaController extends DatabaseLinker {
         Boolean ejecutada = true;
         // Si no tiene suficientes o el precio es 0, se informa al usuario y se para
         if (Integer.parseInt(campoNumero.getText()) > Integer.parseInt(campoParticipaciones.getText()) || Integer.parseInt(campoNumero.getText()) <= 0) {
-            notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label("No dispone de suficientes"), Duration.seconds(3.0), null));
+            Main.mensaje("No dispone de suficientes", 3);
             ejecutada = false;
         } else if (Float.parseFloat(campoPrecio.getText()) <= 0) {
-            notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label("Introduzca un precio válido"), Duration.seconds(3.0), null));
+            Main.mensaje("Introduzca un precio válido", 3);
             ejecutada = false;
         } else {
             Empresa empresa = listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getEmpresa();
@@ -226,7 +222,7 @@ public class VVentaController extends DatabaseLinker {
             mensaje = "Lanzamiento fallido";
         }
         if (ejecutada)
-            notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label(mensaje), Duration.seconds(3.0), null));
+            Main.mensaje(mensaje, 3);
 
         actualizarVentana();
     }
@@ -274,7 +270,7 @@ public class VVentaController extends DatabaseLinker {
         } else {
             mensaje = "Error, no se pudo retirar";
         }
-        notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label(mensaje), Duration.seconds(3.0), null));
+        Main.mensaje(mensaje, 3);
 
         actualizarVentana();
     }
