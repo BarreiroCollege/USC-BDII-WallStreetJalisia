@@ -105,13 +105,14 @@ public class VVentaController extends DatabaseLinker {
             }
         });
 
-        // Formato Integer para campoNumero y Float para campoPrecio
-        campoNumero.setTextFormatter(new TextFormatter<>(
-                new IntegerStringConverter(),
-                null,
-                c -> Pattern.matches("\\d*", c.getText()) ? c : null));
-        campoPrecio.setTextFormatter(new TextFormatter((UnaryOperator<TextFormatter.Change>) change -> Pattern.compile("\\d*|\\d+\\.\\d{0,2}").matcher(change.getControlNewText()).matches() ? change : null));
-
+        // Formateo de los campos numericos
+        campoNumero.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) campoNumero.setText(oldValue);
+        });
+        campoPrecio.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*|\\d+\\.\\d{0,2}")) campoPrecio.setText(oldValue);
+        });
+        
         // Cargamos saldo y preparamos botones de refresh
         botonRefresh.setGraphic(Iconos.icono(FontAwesomeIcon.REFRESH, "1em"));
 
