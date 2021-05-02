@@ -66,7 +66,7 @@ insert into regulador(usuario, comision, comision_sociedad)
 values ('regulador', 0.05, 0.04);
 
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
-values ('teceric', 'sha1:64000:18:amY24vKwv1SJGpgjVpdLsWWx9qc69qMl:2AidJweG25zNE4orrhkVxkMF', 'Calle 10 de Marzo', '36210', 'Vigo', 986331724, 7012.0, 0.0, null, null,'GWI7QDYNDQZQ3BZU7I6WTGPCIK5S5Q75','aaI', false );
+values ('teceric', 'sha1:64000:18:amY24vKwv1SJGpgjVpdLsWWx9qc69qMl:2AidJweG25zNE4orrhkVxkMF', 'Calle 10 de Marzo', '36210', 'Vigo', 986331724, 7012.0, 0.0, null, null,'GWI7QDYNDQZQ3BZU7I6WTGPCIK5S5Q75','aai', false );
 insert into empresa (usuario, cif, nombre)
 values ('teceric', 'B-76365789', 'Teclados Eric');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
