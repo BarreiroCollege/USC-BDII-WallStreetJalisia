@@ -613,7 +613,7 @@ public class ReguladorController extends DatabaseLinker {
      */
     public void mostrarRevisarRegistros() {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("../view/revisarRegistros.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("../view/revisarregistros.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Peticiones de registro");
             stage.setResizable(false);
@@ -633,7 +633,7 @@ public class ReguladorController extends DatabaseLinker {
      */
     public void mostrarRevisarBajas() {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("../view/revisarBajas.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("../view/revisarbajas.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Peticiones de baja");
             stage.setResizable(false);
@@ -653,7 +653,7 @@ public class ReguladorController extends DatabaseLinker {
      */
     public void mostrarRevisarOfertasVenta() {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("../view/revisarOfertasVenta.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("../view/revisarofertasventa.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Ofertas de venta no confirmadas");
             stage.setResizable(false);

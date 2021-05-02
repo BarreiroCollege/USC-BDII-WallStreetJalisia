@@ -13,7 +13,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
 public class PartEmpresaController extends DatabaseLinker {
-    public static final String VIEW = "partEmpresa";
+    public static final String VIEW = "partempresa";
     public static final Integer HEIGHT = 431;
     public static final Integer WIDTH = 439;
     public static final String TITULO = "Gestión de participaciones";

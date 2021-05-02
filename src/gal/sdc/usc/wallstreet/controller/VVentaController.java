@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
 
 public class VVentaController extends DatabaseLinker {
 
-    public static final String VIEW = "VVenta";
+    public static final String VIEW = "vventa";
     public static final Integer HEIGHT = 500;
     public static final Integer WIDTH = 800;
     public static final String TITULO = "Vender participaciones";
@@ -112,7 +112,7 @@ public class VVentaController extends DatabaseLinker {
         campoPrecio.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*|\\d+\\.\\d{0,2}")) campoPrecio.setText(oldValue);
         });
-        
+
         // Cargamos saldo y preparamos botones de refresh
         botonRefresh.setGraphic(Iconos.icono(FontAwesomeIcon.REFRESH, "1em"));
 

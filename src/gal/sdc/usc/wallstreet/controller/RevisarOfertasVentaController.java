@@ -240,7 +240,7 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
         VerUsuarioController.setComunicador(comunicador);
 
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("../view/verUsuario.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("../view/verusuario.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Empresa de la oferta de venta");
             stage.setResizable(false);
@@ -275,7 +275,7 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
         VerUsuarioController.setComunicador(comunicador);
 
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("../view/verUsuario.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("../view/verusuario.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Usuario creador de la oferta de venta");
             stage.setResizable(false);
