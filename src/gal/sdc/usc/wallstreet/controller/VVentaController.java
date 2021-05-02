@@ -4,25 +4,34 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.JFXToggleButton;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import gal.sdc.usc.wallstreet.Main;
-import gal.sdc.usc.wallstreet.model.*;
-import gal.sdc.usc.wallstreet.repository.*;
+import gal.sdc.usc.wallstreet.model.Empresa;
+import gal.sdc.usc.wallstreet.model.OfertaVenta;
+import gal.sdc.usc.wallstreet.model.Participacion;
+import gal.sdc.usc.wallstreet.model.Regulador;
+import gal.sdc.usc.wallstreet.model.Usuario;
+import gal.sdc.usc.wallstreet.model.UsuarioComprador;
+import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
+import gal.sdc.usc.wallstreet.repository.ParticipacionDAO;
+import gal.sdc.usc.wallstreet.repository.ReguladorDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.Iconos;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.converter.IntegerStringConverter;
 
-import java.util.ArrayList;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.function.UnaryOperator;
@@ -35,7 +44,7 @@ public class VVentaController extends DatabaseLinker {
     public static final Integer WIDTH = 800;
     public static final String TITULO = "Vender participaciones";
 
-    private Usuario usr;
+    private UsuarioComprador usr;
     private ObservableList<OfertaVenta> datosTabla;
     private List<Participacion> listaEmpresas;
     @FXML
@@ -43,15 +52,15 @@ public class VVentaController extends DatabaseLinker {
     @FXML
     private TableView<OfertaVenta> tablaOfertas;
     @FXML
-    private TableColumn<OfertaVenta,String> empresaCol;
+    private TableColumn<OfertaVenta, String> empresaCol;
     @FXML
-    private TableColumn<OfertaVenta,Integer> restantesCol;
+    private TableColumn<OfertaVenta, Integer> restantesCol;
     @FXML
-    private TableColumn<OfertaVenta,Float> precioCol;
+    private TableColumn<OfertaVenta, Float> precioCol;
     @FXML
-    private TableColumn<OfertaVenta,Boolean> confirmadoCol;
+    private TableColumn<OfertaVenta, Boolean> confirmadoCol;
     @FXML
-    private TableColumn<OfertaVenta,Date> fechaCol;
+    private TableColumn<OfertaVenta, Date> fechaCol;
 
     @FXML
     private JFXTextField campoNumero;
@@ -67,6 +76,13 @@ public class VVentaController extends DatabaseLinker {
     private JFXComboBox<String> empresaComboBox;
     @FXML
     private JFXTextField campoComision;
+
+    @FXML
+    private JFXButton btnLanzar;
+    @FXML
+    private JFXButton btnRetirar;
+    @FXML
+    private JFXToggleButton tglSociedad;
 
     @FXML
     public void initialize() {
@@ -110,10 +126,29 @@ public class VVentaController extends DatabaseLinker {
                 PrincipalController.TITULO
         ));
 
+        if (super.getUsuarioSesion().getUsuario().getSociedad() == null) {
+            tglSociedad.setVisible(false);
+        }
+
+        tglSociedad.setOnAction(e -> {
+            if (!super.getUsuarioSesion().getUsuario().getLider()) {
+                btnRetirar.setDisable(tglSociedad.isSelected());
+                btnLanzar.setDisable(tglSociedad.isSelected());
+            }
+
+            if (tglSociedad.isSelected()) {
+                usr = super.getUsuarioSesion().getUsuario().getSociedad();
+            } else {
+                usr = super.getUsuarioSesion().getUsuario();
+            }
+
+            actualizarVentana();
+        });
+
         actualizarVentana();
     }
 
-    public void actualizarListaEmpresas(){
+    public void actualizarListaEmpresas() {
         // Se carga la nueva lista
         listaEmpresas = getDAO(ParticipacionDAO.class).getParticipaciones(usr.getSuperUsuario().getIdentificador());
         // Se limpia la comboBox y se vuelve a llenar
@@ -139,7 +174,7 @@ public class VVentaController extends DatabaseLinker {
     }
 
     // Actualiza el campo del saldo de participaciones que el usuario tiene de la empresa seleccionada
-    public void actualizarParticipaciones(){
+    public void actualizarParticipaciones() {
         // Si no hay ninguna empresa seleccionada, se pone a 0
         if (empresaComboBox.getSelectionModel().getSelectedIndex() == -1) {
             campoParticipaciones.setText("0");
@@ -150,9 +185,9 @@ public class VVentaController extends DatabaseLinker {
     }
 
 
-    public void nuevaOfertaVenta(){
+    public void nuevaOfertaVenta() {
         // Si alguno de los campos necesarios está vacio, se para
-        if(campoPrecio.getText().isEmpty() || campoNumero.getText().isEmpty() || empresaComboBox.getSelectionModel().getSelectedIndex() == -1){
+        if (campoPrecio.getText().isEmpty() || campoNumero.getText().isEmpty() || empresaComboBox.getSelectionModel().getSelectedIndex() == -1) {
             return;
         }
 
@@ -160,20 +195,21 @@ public class VVentaController extends DatabaseLinker {
         super.iniciarTransaccion();
         Boolean ejecutada = true;
         // Si no tiene suficientes o el precio es 0, se informa al usuario y se para
-        if(Integer.parseInt(campoNumero.getText())>Integer.parseInt(campoParticipaciones.getText()) || Integer.parseInt(campoNumero.getText())<=0){
-            notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label("No dispone de suficientes"),Duration.seconds(3.0),null));
+        if (Integer.parseInt(campoNumero.getText()) > Integer.parseInt(campoParticipaciones.getText()) || Integer.parseInt(campoNumero.getText()) <= 0) {
+            notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label("No dispone de suficientes"), Duration.seconds(3.0), null));
             ejecutada = false;
-        }else if(Float.parseFloat(campoPrecio.getText())<=0){
-            notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label("Introduzca un precio válido"),Duration.seconds(3.0),null));
+        } else if (Float.parseFloat(campoPrecio.getText()) <= 0) {
+            notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label("Introduzca un precio válido"), Duration.seconds(3.0), null));
             ejecutada = false;
-        }else {
+        } else {
             Empresa empresa = listaEmpresas.get(empresaComboBox.getSelectionModel().getSelectedIndex()).getEmpresa();
+            Regulador r = super.getDAO(ReguladorDAO.class).getRegulador();
             OfertaVenta oferta = new OfertaVenta.Builder().withPrecioVenta(Float.parseFloat(campoPrecio.getText())).
                     withEmpresa(empresa).
                     withUsuario(usr.getSuperUsuario()).
                     withConfirmado(false).
                     withNumParticipaciones(Integer.parseInt(campoNumero.getText())).
-                    withComision(super.getDAO(ReguladorDAO.class).getRegulador().getComision())
+                    withComision(usr instanceof Usuario ? r.getComision() : r.getComisionSociedad())
                     .build();
             // Insertamos la oferta
             getDAO(OfertaVentaDAO.class).insertar(oferta);
@@ -186,16 +222,17 @@ public class VVentaController extends DatabaseLinker {
         String mensaje;
         if (super.ejecutarTransaccion()) {
             mensaje = "Éxito, oferta lanzada!";
-        }else{
+        } else {
             mensaje = "Lanzamiento fallido";
         }
-        if(ejecutada) notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label(mensaje), Duration.seconds(3.0), null));
+        if (ejecutada)
+            notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label(mensaje), Duration.seconds(3.0), null));
 
         actualizarVentana();
     }
 
 
-    public void actualizarVentana(){
+    public void actualizarVentana() {
         actualizarListaEmpresas();
         actualizarDatosTabla();
         actualizarParticipaciones();
@@ -204,14 +241,16 @@ public class VVentaController extends DatabaseLinker {
         campoPrecio.setText("");
     }
 
-    public void actualizarComision(){
-        campoComision.setText(String.valueOf(super.getDAO(ReguladorDAO.class).getRegulador().getComision()*100)+" %");
+    public void actualizarComision() {
+        Regulador r = super.getDAO(ReguladorDAO.class).getRegulador();
+        float comision = usr instanceof Usuario ? r.getComision() : r.getComisionSociedad();
+        campoComision.setText(new DecimalFormat("0.00").format(comision * 100) + " %");
     }
 
 
-    public void retirarOferta(){
+    public void retirarOferta() {
         // SI no hay nada seleccionado se para
-        if(tablaOfertas.getSelectionModel().getSelectedIndex()==-1){
+        if (tablaOfertas.getSelectionModel().getSelectedIndex() == -1) {
             return;
         }
         OfertaVenta oferta = tablaOfertas.getSelectionModel().getSelectedItem();
@@ -222,8 +261,8 @@ public class VVentaController extends DatabaseLinker {
         super.iniciarTransaccion();
 
         // Se ponen las participaciones de la oferta a 0 y se le desbloquean de su saldo
-        Participacion saldo = super.getDAO(ParticipacionDAO.class).seleccionar(usr.getSuperUsuario(),empresa);
-        saldo.setCantidadBloqueada(saldo.getCantidadBloqueada()-oferta.getRestantes());
+        Participacion saldo = super.getDAO(ParticipacionDAO.class).seleccionar(usr.getSuperUsuario(), empresa);
+        saldo.setCantidadBloqueada(saldo.getCantidadBloqueada() - oferta.getRestantes());
         super.getDAO(ParticipacionDAO.class).actualizar(saldo);
         oferta.setRestantes(0);
         super.getDAO(OfertaVentaDAO.class).actualizar(oferta);
@@ -232,7 +271,7 @@ public class VVentaController extends DatabaseLinker {
         String mensaje;
         if (super.ejecutarTransaccion()) {
             mensaje = "Éxito, oferta retirada!";
-        }else{
+        } else {
             mensaje = "Error, no se pudo retirar";
         }
         notificationBar.enqueue(new JFXSnackbar.SnackbarEvent(new Label(mensaje), Duration.seconds(3.0), null));

@@ -184,6 +184,11 @@ public class SociedadController extends DatabaseLinker implements Initializable 
 
     private void onBtnEditarPropuesta(ActionEvent e) {
         Sociedad s = super.getUsuarioSesion().getUsuario().getSociedad();
+        if (super.getDAO(UsuarioDAO.class).getUsuariosPorSociedad(s).size() < 2) {
+            Main.mensaje("La sociedad es demasiado pequeña como para realizar compras");
+            return;
+        }
+
         Comunicador comunicador = new Comunicador() {
             @Override
             public Object[] getData() {
@@ -304,7 +309,7 @@ public class SociedadController extends DatabaseLinker implements Initializable 
                 Usuario usuario = SociedadController.super.getUsuarioSesion().getUsuario();
                 usuario.setSociedad(null);
                 if (SociedadController.super.getDAO(UsuarioDAO.class).actualizar(usuario)) {
-                    Main.ventana(PrincipalController.TITULO, PrincipalController.WIDTH, PrincipalController.HEIGHT, PrincipalController.TITULO);
+                    Main.ventana(PrincipalController.VIEW, PrincipalController.WIDTH, PrincipalController.HEIGHT, PrincipalController.TITULO);
                     Main.mensaje("Se ha solicitado la baja en el sistema");
                 } else {
                     Main.mensaje("Hubo un error solicitando la baja");
@@ -333,6 +338,11 @@ public class SociedadController extends DatabaseLinker implements Initializable 
 
     public void onBtnAccion(PropuestaCompra pc, boolean ejecutar) {
         if (ejecutar) {
+            if (super.getDAO(UsuarioDAO.class).getUsuariosPorSociedad(pc.getSociedad()).size() < 2) {
+                Main.mensaje("La sociedad es demasiado pequeña como para realizar compras");
+                return;
+            }
+
             super.iniciarTransaccion();
             super.getDAO(PropuestaCompraDAO.class).eliminar(pc);
 
@@ -346,7 +356,8 @@ public class SociedadController extends DatabaseLinker implements Initializable 
             Integer res = Comprador.comprar(
                     super.getUsuarioSesion().getUsuario().getSociedad(),
                     ofertas,
-                    pc.getCantidad()
+                    pc.getCantidad(),
+                    true
             );
 
             if (super.ejecutarTransaccion()) {

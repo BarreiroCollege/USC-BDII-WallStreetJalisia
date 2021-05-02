@@ -94,7 +94,7 @@ public class PagoDAO extends DAO<Pago> {
 
     public void bloquearSaldo(Pago pago, float saldoABloquear) {
         try (PreparedStatement ps = super.conexion.prepareStatement(
-                "UPDATE usuario SET saldo_bloqueado = (saldo_bloqueado + ?) WHERE usuario = ?"
+                "UPDATE usuario SET saldo_bloqueado = (saldo_bloqueado + ?) WHERE usuario.identificador = ?"
         )) {
             ps.setFloat(1, saldoABloquear);
             ps.setString(2, pago.getEmpresa().getUsuario().getSuperUsuario().getIdentificador());
@@ -119,7 +119,7 @@ public class PagoDAO extends DAO<Pago> {
 
     public void quitarSaldo(Pago pago, float saldoABloquear) {
         try (PreparedStatement ps = super.conexion.prepareStatement(
-                "UPDATE usuario SET saldo = (saldo - ?) WHERE usuario = ?"
+                "UPDATE usuario SET saldo = (saldo - ?) WHERE usuario.identificador = ?"
         )) {
             ps.setFloat(1, saldoABloquear);
             ps.setString(2, pago.getEmpresa().getUsuario().getSuperUsuario().getIdentificador());
@@ -144,7 +144,7 @@ public class PagoDAO extends DAO<Pago> {
 
     public void quitarSaldoBloqueado(Pago pago, float saldoABloquear) {
         try (PreparedStatement ps = super.conexion.prepareStatement(
-                "UPDATE usuario SET saldo_bloqueado = (saldo_bloqueado - ?) WHERE usuario = ?"
+                "UPDATE usuario SET saldo_bloqueado = (saldo_bloqueado - ?) WHERE usuario.identificador = ?"
         )) {
             ps.setFloat(1, saldoABloquear);
             ps.setString(2, pago.getEmpresa().getUsuario().getSuperUsuario().getIdentificador());

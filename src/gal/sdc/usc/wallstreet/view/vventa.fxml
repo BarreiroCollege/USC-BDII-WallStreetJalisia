@@ -4,6 +4,7 @@
 <?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXSnackbar?>
 <?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXToggleButton?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -27,7 +28,7 @@
         <JFXTextField fx:id="campoPrecio" labelFloat="true" layoutX="595.0" layoutY="275.0"
                       prefHeight="31.0" prefWidth="146.0" promptText="Precio"/>
         <JFXButton layoutX="592.0" layoutY="351.0" onAction="#nuevaOfertaVenta" prefHeight="35.0" prefWidth="152.0"
-                   text="Lanzar oferta" buttonType="RAISED" styleClass="btn-primario"/>
+                   text="Lanzar oferta" buttonType="RAISED" styleClass="btn-primario" fx:id="btnLanzar"/>
         <JFXButton fx:id="btnVolver" layoutX="17.0" layoutY="351.0" prefHeight="35.0" prefWidth="81.0"
                    text="Volver"/>
         <JFXComboBox fx:id="empresaComboBox" layoutX="57.0" layoutY="67.0" onAction="#actualizarDatosTabla"
@@ -44,6 +45,8 @@
                    prefWidth="35.0"/>
         <JFXSnackbar fx:id="notificationBar" layoutX="55.0" layoutY="17.0"/>
         <JFXButton layoutX="423.0" layoutY="351.0" onAction="#retirarOferta" prefHeight="35.0"
-                   prefWidth="152.0" text="Retirar oferta"/>
+                   prefWidth="152.0" text="Retirar oferta" fx:id="btnRetirar"/>
+        <JFXToggleButton fx:id="tglSociedad" layoutX="271.0" layoutY="340.0" prefHeight="35.0" prefWidth="152.0"
+                         text="Usuario"/>
     </children>
 </AnchorPane>

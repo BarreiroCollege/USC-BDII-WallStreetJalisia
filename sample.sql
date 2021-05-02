@@ -62,8 +62,8 @@ values ('sherlock', '10011001S', 'Shelock', 'Holmes');
 
 insert into usuario(identificador, clave)
 values ('regulador', 'sha1:64000:18:fRyIy2KpkOhXIkFl9+OCu6BPq32xY2+Y:d5j3M7amOsYqisxLDk6VbSL3');
-insert into regulador(usuario, comision)
-values ('regulador', 0.05);
+insert into regulador(usuario, comision, comision_sociedad)
+values ('regulador', 0.05, 0.04);
 
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
 values ('teceric', 'sha1:64000:18:amY24vKwv1SJGpgjVpdLsWWx9qc69qMl:2AidJweG25zNE4orrhkVxkMF', 'Calle 10 de Marzo', '36210', 'Vigo', 986331724, 7012.0, 0.0, null, null,'GWI7QDYNDQZQ3BZU7I6WTGPCIK5S5Q75','aaI', false );
