@@ -2,6 +2,7 @@ package gal.sdc.usc.wallstreet.controller;
 
 import com.jfoenix.controls.*;
 import com.jfoenix.validation.IntegerValidator;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.OfertaVenta;
 import gal.sdc.usc.wallstreet.model.Pago;
@@ -9,6 +10,7 @@ import gal.sdc.usc.wallstreet.model.Participacion;
 import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.repository.*;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
+import gal.sdc.usc.wallstreet.util.Iconos;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -242,13 +244,8 @@ public class ReguladorController extends DatabaseLinker {
         btnParaTabla.setVisible(false);
         btnTransferir.setVisible(false);
 
-        // Icon en el menú item
-        Image iconoCerrarSesion = new javafx.scene.image.Image(getClass().getResourceAsStream("/resources/sign_out.png"));
-        ImageView menuIcon = new javafx.scene.image.ImageView(iconoCerrarSesion);
-        menuIcon.setOpacity(0.5);
-        menuIcon.setFitHeight(25);
-        menuIcon.setFitWidth(40);
-        btnCerrarSesion.setGraphic(menuIcon);
+        // Icono de cerrar sesión
+        btnCerrarSesion.setGraphic(Iconos.icono(FontAwesomeIcon.POWER_OFF));
 
         // Opciones ComboBox
         List<String> opcionesComboBox = new ArrayList<>(Arrays.asList("---", "Empresas", "Inversores"));

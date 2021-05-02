@@ -86,6 +86,7 @@
                            <font>
                               <Font size="14.0" />
                            </font></JFXButton>
+                        <JFXButton fx:id="btnCerrarSesion" layoutX="608.0" layoutY="30.0" onAction="#cerrarSesion" ripplerFill="#606463" style="-fx-background-color: #939292;" />
                      </children>
                   </AnchorPane>
               </content>
@@ -166,6 +167,5 @@
             </Tab>
          </tabs>
       </JFXTabPane>
-      <JFXButton fx:id="btnCerrarSesion" layoutX="617.0" layoutY="46.0" onAction="#cerrarSesion" ripplerFill="#606463" style="-fx-background-color: #939292;" />
    </children>
 </AnchorPane>
