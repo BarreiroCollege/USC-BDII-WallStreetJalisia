@@ -1,18 +1,14 @@
 package gal.sdc.usc.wallstreet.controller;
 
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXTextField;
 import gal.sdc.usc.wallstreet.Main;
-import gal.sdc.usc.wallstreet.model.Inversor;
 import gal.sdc.usc.wallstreet.model.OfertaVenta;
 import gal.sdc.usc.wallstreet.model.SuperUsuario;
-import gal.sdc.usc.wallstreet.model.Usuario;
 import gal.sdc.usc.wallstreet.model.ddl.Entidad;
-import gal.sdc.usc.wallstreet.repository.EmpresaDAO;
-import gal.sdc.usc.wallstreet.repository.InversorDAO;
-import gal.sdc.usc.wallstreet.repository.OfertaVentaDAO;
-import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
+import gal.sdc.usc.wallstreet.repository.*;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.Comunicador;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -22,36 +18,39 @@ import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class RevisarOfertasVentaController extends DatabaseLinker {
 
     @FXML
-    private Button btn_aceptar;
+    private JFXButton btnVerUsuario;
     @FXML
-    private Button btn_rechazar;
+    private Label txtUsuarioSociedad;
     @FXML
-    private Button btn_siguiente;
+    private JFXTextField txtComisionPorDefecto;
     @FXML
-    private Button btn_anterior;
+    private Button btnAceptar;
     @FXML
-    private Label txt_fecha;
+    private Button btnRechazar;
     @FXML
-    private Label txt_empresa;
+    private Button btnSiguiente;
     @FXML
-    private Label txt_usuario;
+    private Button btnAnterior;
     @FXML
-    private Label txt_num_part;
+    private Label txtFecha;
     @FXML
-    private Label txt_precio_venta;
+    private Label txtEmpresa;
+    @FXML
+    private Label txtUsuario;
+    @FXML
+    private Label txtNumPart;
+    @FXML
+    private Label txtPrecioVenta;
 
     public List<OfertaVenta> ofertasPendientes;
     public OfertaVenta ofertaActual;            // Oferta que el regulador está viendo
@@ -74,11 +73,24 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
     }
 
     public void mostrarDatos() {
-        txt_fecha.setText(ofertaActual.getFecha().toString());
-        txt_empresa.setText(ofertaActual.getEmpresa().getNombre());
-        txt_usuario.setText(ofertaActual.getUsuario().getIdentificador());
-        txt_num_part.setText(ofertaActual.getNumParticipaciones().toString());
-        txt_precio_venta.setText(ofertaActual.getPrecioVenta().toString());
+        txtFecha.setText(ofertaActual.getFecha().toString());
+        txtEmpresa.setText(ofertaActual.getEmpresa().getNombre());
+        txtUsuario.setText(ofertaActual.getUsuario().getIdentificador());
+        txtNumPart.setText(ofertaActual.getNumParticipaciones().toString());
+        txtPrecioVenta.setText(ofertaActual.getPrecioVenta().toString());
+        // La comisión por defecto es 0.05 para usuarios y 0.04 para sociedades
+        txtComisionPorDefecto.setText(ofertaActual.getComision().toString());
+
+        if (Math.abs(
+                ofertaActual.getComision() - super.getDAO(ReguladorDAO.class).getRegulador().getComision()
+                ) < 0.005){       // La comisión es un punto flotante
+            txtUsuarioSociedad.setText("Usuario");
+            btnVerUsuario.setVisible(true);
+        } else {        // Comision no corresponde a un usuario -> La oferta de venta fue creada por una sociedad
+            txtUsuarioSociedad.setText("Sociedad");
+            // Las sociedades no tienen atributos de interés más allá del saldo comunal y la tolerancia
+            btnVerUsuario.setVisible(false);
+        }
     }
 
     // Botón de retroceso
@@ -96,8 +108,8 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
     }
 
     public void controlarVisibilidadesAnteriorPosterior() {
-        btn_siguiente.setVisible(ofertasPendientes.indexOf(ofertaActual) != ofertasPendientes.size() - 1);
-        btn_anterior.setVisible(ofertasPendientes.indexOf(ofertaActual) != 0);
+        btnSiguiente.setVisible(ofertasPendientes.indexOf(ofertaActual) != ofertasPendientes.size() - 1);
+        btnAnterior.setVisible(ofertasPendientes.indexOf(ofertaActual) != 0);
     }
 
     /**
@@ -130,7 +142,6 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
      * Se admite un nivel de aislamiento con lecturas no comprometidas, puesto que es imposible que se produzcan cambios
      * sobre la oferta de venta si el regulador aún no la ha aceptado/rechazado. Esto acelera la ejecución concurrente.
      */
-    //TODO: documentar
     public void aceptar() {
         super.iniciarTransaccion(Connection.TRANSACTION_READ_UNCOMMITTED);
         super.getDAO(OfertaVentaDAO.class).aceptarOfertaVenta(ofertaActual);
@@ -150,7 +161,7 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
     }
 
     public void cerrarVentana() {
-        Stage stage = (Stage) btn_siguiente.getScene().getWindow();
+        Stage stage = (Stage) btnSiguiente.getScene().getWindow();
         stage.close();
     }
 
@@ -201,7 +212,7 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
             stage.setScene(new Scene(root, 350, 500));
             // La ventana de ofertas de venta es la ventana padre. Queda visible, pero desactivada.
             stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(btn_aceptar.getScene().getWindow());
+            stage.initOwner(btnAceptar.getScene().getWindow());
             stage.show();
         } catch (Exception e){
             e.printStackTrace();
@@ -236,7 +247,7 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
             stage.setScene(new Scene(root, 350, 500));
             // La ventana de ofertas de venta es la ventana padre. Queda visible, pero desactivada.
             stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(btn_aceptar.getScene().getWindow());
+            stage.initOwner(btnAceptar.getScene().getWindow());
             stage.show();
         } catch (Exception e){
             e.printStackTrace();

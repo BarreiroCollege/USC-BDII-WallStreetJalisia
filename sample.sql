@@ -87,12 +87,6 @@ insert into empresa (usuario, cif, nombre)
 values ('zappaco', 'B-32552648', 'Zapatos Paco');
 
 
-insert into usuario(identificador,clave)
-values('regulador','sha1:64000:18:uuqgRLKOUbYT/r2zESN5CWus/xOZWTM4:nyDuvYpnE7gFwOOHT1wJmDX8');
-insert into regulador(usuario, comision)
-values ('regulador',0.05);
-
-
 insert into participacion (usuario, empresa, cantidad, cantidad_bloqueada)
 values ('teceric', 'teceric', 8000, 0);
 insert into participacion (usuario, empresa, cantidad, cantidad_bloqueada)

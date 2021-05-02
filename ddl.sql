@@ -263,6 +263,17 @@ select m.identificador, m.saldo, i.usuario as usuario_inversor, i.dni, i.nombre,
 from (empresa e RIGHT JOIN usuario u ON e.usuario = u.identificador) as m LEFT JOIN inversor i ON m.identificador = i.usuario
 where (m.usuario is not null or i.usuario is not null) and m.alta is null;
 
+create materialized view estadistica as
+select empresa.usuario as empresa, avg(beneficio_por_participacion) as beneficio_medio, avg(participacion_por_participacion) as participaciones_medias,
+	(select count(*) from empresa as e join pago as p on e.usuario = p.empresa
+	 where fecha > (now() - interval '1 month') and e.usuario = empresa.usuario group by usuario) as num_pagos_mes,
+	 (select avg(precio_venta)
+	 from oferta_venta as ov, venta as v, empresa as e2
+	 where v.ov_fecha = ov.fecha and v.ov_usuario = ov.usuario and ov.empresa = e2.usuario and
+		v.fecha > (now() - interval '1 month') and e2.usuario = empresa.usuario) as precio_medio_mes
+from empresa left join pago on empresa.usuario = pago.empresa
+group by empresa.usuario;
+
 -- text no limita el número de caracteres máximo, a diferencia de varchar
 create or replace function dato_regulador(atributo text) returns text as $dr$
 declare
