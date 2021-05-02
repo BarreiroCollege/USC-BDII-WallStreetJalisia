@@ -233,7 +233,7 @@ public class ReguladorController extends DatabaseLinker {
                 cbEmpresa.getItems().add(pago.getEmpresa().getNombre());
         });
 
-        empresas = cbEmpresa.getItems().filtered(null);
+        empresas = cbEmpresa.getItems().filtered(p -> true);
     }
 
     public void setupComponentes() {
