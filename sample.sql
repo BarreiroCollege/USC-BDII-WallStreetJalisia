@@ -61,7 +61,7 @@ insert into inversor (usuario, dni, nombre, apellidos)
 values ('sherlock', '10011001S', 'Shelock', 'Holmes');
 
 insert into usuario(identificador, clave)
-values ('regulador', 'sha1:64000:18:fRyIy2KpkOhXIkFl9+OCu6BPq32xY2+Y:d5j3M7amOsYqisxLDk6VbSL3');
+values ('regulador', 'sha1:64000:18:ljlGzpCvRIM4hmOxwXAkHT2wNrjz8hk1:p92Hg6eQSjCEs0b10fo9lkUj');
 insert into regulador(usuario, comision, comision_sociedad)
 values ('regulador', 0.05, 0.04);
 
