@@ -160,6 +160,7 @@ public class ReguladorController extends DatabaseLinker {
 
     @FXML
     public void initialize() {
+        cbTipo.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> onActionComboBoxTipo());
         actualizarDatosPendientes();        // Se indica cuántos registros, bajas y ofertas de venta hay pendientes
         // Dependiendo de esas cantidades, se mostrarán unos botones u otros
 

@@ -47,6 +47,10 @@ public class Participacion extends Entidad {
         this.cantidadBloqueada = cantidadBloqueada;
     }
 
+    public Integer getCantidadDisponible() {
+        return cantidad - cantidadBloqueada;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
