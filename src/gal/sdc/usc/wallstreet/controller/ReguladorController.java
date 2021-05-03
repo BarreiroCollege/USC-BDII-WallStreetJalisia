@@ -23,7 +23,6 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
@@ -615,60 +614,48 @@ public class ReguladorController extends DatabaseLinker {
      * Abre la ventana de revisión de registros
      */
     public void mostrarRevisarRegistros() {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("../view/revisarregistros.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Peticiones de registro");
-            stage.setResizable(false);
-            stage.setScene(new Scene(root, 600, 400));
-            // La ventana del regulador es la ventana padre. Queda visible, pero desactivada.
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(btnAceptarTodoBajas.getScene().getWindow());
-            stage.setOnHidden(event -> actualizarRegistrosPendientes());
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Parent root = Main.getView("revisarregistros");
+        Stage stage = new Stage();
+        stage.setTitle("Peticiones de registro");
+        stage.setResizable(false);
+        stage.setScene(new Scene(root, 600, 400));
+        // La ventana del regulador es la ventana padre. Queda visible, pero desactivada.
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(btnAceptarTodoBajas.getScene().getWindow());
+        stage.setOnHidden(event -> actualizarRegistrosPendientes());
+        stage.show();
     }
 
     /**
      * Abre la ventana de revisión de bajas
      */
     public void mostrarRevisarBajas() {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("../view/revisarbajas.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Peticiones de baja");
-            stage.setResizable(false);
-            stage.setScene(new Scene(root, 600, 400));
-            // La ventana del regulador es la ventana padre. Queda visible, pero desactivada.
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(btnAceptarTodoBajas.getScene().getWindow());
-            stage.setOnHidden(event -> actualizarBajasPendientes());
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Parent root = Main.getView("revisarbajas");
+        Stage stage = new Stage();
+        stage.setTitle("Peticiones de baja");
+        stage.setResizable(false);
+        stage.setScene(new Scene(root, 600, 400));
+        // La ventana del regulador es la ventana padre. Queda visible, pero desactivada.
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(btnAceptarTodoBajas.getScene().getWindow());
+        stage.setOnHidden(event -> actualizarBajasPendientes());
+        stage.show();
     }
 
     /**
      * Abre la ventana de revisión de ofertas de venta
      */
     public void mostrarRevisarOfertasVenta() {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("../view/revisarofertasventa.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Ofertas de venta no confirmadas");
-            stage.setResizable(false);
-            stage.setScene(new Scene(root, 550, 350));
-            // La ventana del regulador es la ventana padre. Queda visible, pero desactivada.
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(btnAceptarTodoBajas.getScene().getWindow());
-            stage.setOnHidden(event -> actualizarOfertasPendientes());
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Parent root = Main.getView("revisarofertasventa");
+        Stage stage = new Stage();
+        stage.setTitle("Ofertas de venta no confirmadas");
+        stage.setResizable(false);
+        stage.setScene(new Scene(root, 550, 350));
+        // La ventana del regulador es la ventana padre. Queda visible, pero desactivada.
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(btnAceptarTodoBajas.getScene().getWindow());
+        stage.setOnHidden(event -> actualizarOfertasPendientes());
+        stage.show();
     }
 
     public void eliminarPago() {

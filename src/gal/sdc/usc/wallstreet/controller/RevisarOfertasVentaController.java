@@ -15,7 +15,6 @@ import gal.sdc.usc.wallstreet.repository.ReguladorDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.Comunicador;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -241,19 +240,15 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
         };
         VerUsuarioController.setComunicador(comunicador);
 
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("../view/verusuario.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Empresa de la oferta de venta");
-            stage.setResizable(false);
-            stage.setScene(new Scene(root, 350, 500));
-            // La ventana de ofertas de venta es la ventana padre. Queda visible, pero desactivada.
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(btnAceptar.getScene().getWindow());
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Parent root = Main.getView("verusuario");
+        Stage stage = new Stage();
+        stage.setTitle("Empresa de la oferta de venta");
+        stage.setResizable(false);
+        stage.setScene(new Scene(root, 350, 500));
+        // La ventana de ofertas de venta es la ventana padre. Queda visible, pero desactivada.
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(btnAceptar.getScene().getWindow());
+        stage.show();
     }
 
     /**
@@ -276,18 +271,14 @@ public class RevisarOfertasVentaController extends DatabaseLinker {
         };
         VerUsuarioController.setComunicador(comunicador);
 
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("../view/verusuario.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Usuario creador de la oferta de venta");
-            stage.setResizable(false);
-            stage.setScene(new Scene(root, 350, 500));
-            // La ventana de ofertas de venta es la ventana padre. Queda visible, pero desactivada.
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(btnAceptar.getScene().getWindow());
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Parent root = Main.getView("verusuario");
+        Stage stage = new Stage();
+        stage.setTitle("Usuario creador de la oferta de venta");
+        stage.setResizable(false);
+        stage.setScene(new Scene(root, 350, 500));
+        // La ventana de ofertas de venta es la ventana padre. Queda visible, pero desactivada.
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(btnAceptar.getScene().getWindow());
+        stage.show();
     }
 }

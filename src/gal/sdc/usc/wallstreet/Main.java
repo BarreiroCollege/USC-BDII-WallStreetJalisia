@@ -52,30 +52,35 @@ public class Main extends Application {
         Main.setScene(view, width, height, titulo, false);
     }
 
-    private static void setScene(String view, int width, int height, String titulo, boolean modal) {
+    public static Parent getView(String view) {
         try {
-            Stage stage = new Stage();
-            Parent root = FXMLLoader.load(Main.class.getResource("view/" + view + ".fxml"));
-
-            stage.setScene(new Scene(root, width, height));
-            stage.setWidth(width);
-            stage.setHeight(height);
-            stage.setResizable(false);
-            stage.setTitle(titulo + " | eMercado de Abastos");
-
-            if (modal) {
-                stage.initOwner(Main.primaryStage);
-                stage.initModality(Modality.WINDOW_MODAL);
-                stage.show();
-            } else {
-                Main.primaryStage.close();
-                Main.snackbar = new JFXSnackbar((AnchorPane) root);
-
-                Main.primaryStage = stage;
-                Main.primaryStage.show();
-            }
+            return FXMLLoader.load(Main.class.getResource("view/" + view + ".fxml"));
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        return null;
+    }
+
+    private static void setScene(String view, int width, int height, String titulo, boolean modal) {
+        Stage stage = new Stage();
+        Parent root = Main.getView(view);
+
+        stage.setScene(new Scene(root, width, height));
+        stage.setWidth(width);
+        stage.setHeight(height);
+        stage.setResizable(false);
+        stage.setTitle(titulo + " | eMercado de Abastos");
+
+        if (modal) {
+            stage.initOwner(Main.primaryStage);
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.show();
+        } else {
+            Main.primaryStage.close();
+            Main.snackbar = new JFXSnackbar((AnchorPane) root);
+
+            Main.primaryStage = stage;
+            Main.primaryStage.show();
         }
     }
 
