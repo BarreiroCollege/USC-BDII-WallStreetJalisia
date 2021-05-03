@@ -2,7 +2,6 @@ package gal.sdc.usc.wallstreet.controller;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
-import com.sun.xml.internal.ws.wsdl.writer.document.Part;
 import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.Empresa;
 import gal.sdc.usc.wallstreet.model.Participacion;
