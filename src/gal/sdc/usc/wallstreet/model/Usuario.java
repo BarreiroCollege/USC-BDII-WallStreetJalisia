@@ -29,10 +29,10 @@ public class Usuario extends Entidad implements UsuarioComprador {
     private Integer telefono;
 
     @Columna("saldo")
-    private Float saldo = 1000.f;
+    private Float saldo = 0.0f;
 
     @Columna("saldo_bloqueado")
-    private Float saldoBloqueado = 0.f;
+    private Float saldoBloqueado = 0.0f;
 
     @Columna("alta")
     private Date alta;
