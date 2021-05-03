@@ -32,11 +32,11 @@ insert into sociedad(identificador, saldo_comunal, tolerancia)
 values ('urrs',0,2);
 
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
-values ('manuel', 'sha1:64000:18:SVe0FlPbMUEQY71rlvaYveyCUSgFXhLz:HOrb28zdabCt2xaWdl5fKyla', 'Calle del olmo, 27', '28012', 'Madrid', 617483290, 529.0, 0.0, null, null,'H3MSFZO7X7A3OKZOA4OYOJXBN3C4ED5Q','aai', true );
+values ('manuel', 'sha1:64000:18:SVe0FlPbMUEQY71rlvaYveyCUSgFXhLz:HOrb28zdabCt2xaWdl5fKyla', 'Calle del olmo, 27', '28012', 'Madrid', 617483290, 6500.0, 0.0, null, null,'H3MSFZO7X7A3OKZOA4OYOJXBN3C4ED5Q','aai', true );
 insert into inversor (usuario, dni, nombre, apellidos)
 values ('manuel', '14782689F', 'Manuel', 'Iglesias Suárez');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
-values ('marcos', 'sha1:64000:18:nt7r6x4PAJtz7hzGRYeWXNnMGyok+h++:d6zcs5/whc/aroAWWaSw1edA', 'Calle Abedul, 12', '28036', 'Madrid', 628714222, 1067.0, 0.0, null, null,'QZ3YM24E7KHVUIQTFNZIKZ2FIKNT6FTW','invemena', false);
+values ('marcos', 'sha1:64000:18:nt7r6x4PAJtz7hzGRYeWXNnMGyok+h++:d6zcs5/whc/aroAWWaSw1edA', 'Calle Abedul, 12', '28036', 'Madrid', 628714222, 4000.0, 0.0, null, null,'QZ3YM24E7KHVUIQTFNZIKZ2FIKNT6FTW','invemena', false);
 insert into inversor (usuario, dni, nombre, apellidos)
 values ('marcos', '47157847C', 'Marcos', 'Vázquez García');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
@@ -100,15 +100,15 @@ values ('manuel', 'teceric', 320, 60);
 
 
 insert into oferta_venta (fecha, empresa, usuario, num_participaciones, precio_venta, confirmado, comision, restantes)
-values ('2021-01-30 19:52:33', 'teceric', 'marcos', 60, 15, true, 0.05, 0);
+values ('2021-01-30 19:52:33', 'teceric', 'marcos', 60, 15, true, 0.05, 60);
 insert into oferta_venta (fecha, empresa, usuario, num_participaciones, precio_venta, confirmado, comision, restantes)
-values ('2021-02-16 16:48:02', 'teceric', 'marcos', 100, 20, true, 0.05, 0);
+values ('2021-02-16 16:48:02', 'teceric', 'marcos', 100, 20, true, 0.05, 100);
 insert into oferta_venta (fecha, empresa, usuario, num_participaciones, precio_venta, confirmado, comision, restantes)
-values ('2021-02-18 18:55:54', 'garcables', 'garcables', 50, 10, true, 0.05, 0);
+values ('2021-02-18 18:55:54', 'garcables', 'garcables', 50, 10, true, 0.05, 50);
 insert into oferta_venta (fecha, empresa, usuario, num_participaciones, precio_venta, confirmado, comision, restantes)
-values ('2021-03-14 14:16:10', 'teceric', 'manuel', 70, 15, true, 0.05, 60);
+values ('2021-03-14 14:16:10', 'teceric', 'manuel', 70, 15, true, 0.05, 70);
 insert into oferta_venta (fecha, empresa, usuario, num_participaciones, precio_venta, confirmado, comision, restantes)
-values ('2021-03-20 12:16:31', 'garcables', 'marcos', 80, 25, true, 0.1, 60);
+values ('2021-03-20 12:16:31', 'garcables', 'marcos', 80, 25, true, 0.1, 80);
 
 
 insert into venta (fecha, ov_fecha, ov_usuario, usuario_compra, cantidad)
@@ -133,10 +133,6 @@ insert into pago (fecha, empresa, beneficio_por_participacion, participacion_por
 values ('2021-04-14 13:29:32', 'garcables', 5, 2, null, 1, 0);
 insert into pago (fecha, empresa, beneficio_por_participacion, participacion_por_participacion, fecha_anuncio, porcentaje_beneficio, porcentaje_participacion)
 values ('2021-05-29 18:00:00', 'garcables', 3, 4, '2021-04-18 11:14:21', 0.75, 0.25);
-insert into pago (fecha, empresa, beneficio_por_participacion, participacion_por_participacion, fecha_anuncio, porcentaje_beneficio, porcentaje_participacion)
-values ('2021-06-29 18:00:00', 'garcables', 6, 0, '2021-04-18 11:13:20', 1, 0);
-insert into pago (fecha, empresa, beneficio_por_participacion, participacion_por_participacion, fecha_anuncio, porcentaje_beneficio, porcentaje_participacion)
-values ('2021-06-04 16:00:00', 'teceric', 2, 2, '2021-04-16 09:32:47', 0.5, 0.5);
 
 insert into pago_usuario (usuario, pago_fecha, pago_empresa, num_participaciones)
 values ('marcos', '2021-04-15 10:00:00', 'teceric', 420);
