@@ -80,9 +80,7 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        System.out.println(com.sun.javafx.runtime.VersionInfo.getRuntimeVersion());
-        System.out.println(System.getProperty("javafx.runtime.version"));
-        // launch(args);
+        launch(args);
     }
 
     @Override
