@@ -188,6 +188,7 @@ public class VVentaController extends DatabaseLinker {
 
         // INICIAMOS TRANSACCION
         super.iniciarTransaccion();
+        actualizarParticipaciones(); // Recogemos el saldo de participaciones disponibles actualizado
         Boolean ejecutada = true;
         // Si no tiene suficientes o el precio es 0, se informa al usuario y se para
         if (Integer.parseInt(campoNumero.getText()) > Integer.parseInt(campoParticipaciones.getText()) || Integer.parseInt(campoNumero.getText()) <= 0) {
