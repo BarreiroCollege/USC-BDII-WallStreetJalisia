@@ -7,6 +7,7 @@ import gal.sdc.usc.wallstreet.Main;
 import gal.sdc.usc.wallstreet.model.Sociedad;
 import gal.sdc.usc.wallstreet.model.SuperUsuario;
 import gal.sdc.usc.wallstreet.model.Usuario;
+import gal.sdc.usc.wallstreet.repository.ReguladorDAO;
 import gal.sdc.usc.wallstreet.repository.UsuarioDAO;
 import gal.sdc.usc.wallstreet.repository.helpers.DatabaseLinker;
 import gal.sdc.usc.wallstreet.util.Comunicador;
@@ -52,6 +53,12 @@ public class SociedadMiembroController extends DatabaseLinker implements Initial
         );
 
         if (u == null) {
+            if (txtIdentificador.getValidators().size() == 1) txtIdentificador.getValidators().add(usuarioNoExiste);
+            txtIdentificador.validate();
+            return;
+        }
+
+        if (u.equals(super.getDAO(ReguladorDAO.class).getRegulador().getUsuario())) {
             if (txtIdentificador.getValidators().size() == 1) txtIdentificador.getValidators().add(usuarioNoExiste);
             txtIdentificador.validate();
             return;
