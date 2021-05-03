@@ -17,6 +17,8 @@ import java.util.List;
 /**
  * Clase que castea automáticamente los resultados de JDBC a
  * objetos de Java.
+ *
+ * @author Diego Barreiro [diego@barreiro.xyz]
  */
 public class Mapeador extends DatabaseLinker {
     // Clase constructora de las entidades

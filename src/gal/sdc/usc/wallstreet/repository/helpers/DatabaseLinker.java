@@ -31,6 +31,8 @@ import java.util.Properties;
 /**
  * Clase que actúa de enlace con la base de datos. Puede ser extendida por cualquier
  * clase al usar variables estáticas.
+ *
+ * @author Diego Barreiro [diego@barreiro.xyz]
  */
 public abstract class DatabaseLinker {
     public static boolean DEBUG = false;

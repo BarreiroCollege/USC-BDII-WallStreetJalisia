@@ -28,6 +28,7 @@ import java.util.Map;
  * uso sencillo de las entidades.
  *
  * @param <E> {@link Entidad} sobre la que trabaja
+ * @author Diego Barreiro [diego@barreiro.xyz]
  */
 public abstract class DAO<E extends Entidad> {
     // Conexión a la base de datos
