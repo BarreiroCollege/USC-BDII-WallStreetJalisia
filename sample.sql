@@ -70,7 +70,7 @@ values ('teceric', 'sha1:64000:18:amY24vKwv1SJGpgjVpdLsWWx9qc69qMl:2AidJweG25zNE
 insert into empresa (usuario, cif, nombre)
 values ('teceric', 'B-76365789', 'Teclados Eric');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
-values ('garcables', 'sha1:64000:18:66YcELkG9EpMakgQj8xzGHJANDIzW+Sm:yuMuFHuREUlSIyM6SlEg30tp', 'Avenida Ramón y Cajal, 79', '28016', 'Madrid', 677100888, 2410.0, 0.0, null, null,'UXIUSTUQRMMPN4UO2GNJIQWQPJENVLBM','invemena', true );
+values ('garcables', 'sha1:64000:18:66YcELkG9EpMakgQj8xzGHJANDIzW+Sm:yuMuFHuREUlSIyM6SlEg30tp', 'Avenida Ramón y Cajal, 79', '28016', 'Madrid', 677100888, 2410.0, 0.0, null, null,null,'invemena', true );
 insert into empresa (usuario, cif, nombre)
 values ('garcables', 'A-70012249', 'Garaje de cables');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
@@ -82,7 +82,7 @@ values ('libjaim', 'sha1:64000:18:F6FSExk6qPHHWVo0oJbFbYXzY5BSv9cb:LLFrrCJ9XXzmm
 insert into empresa (usuario, cif, nombre)
 values ('libjaim', 'P-19752648', 'Libros Jaime');
 insert into usuario (identificador, clave, direccion, cp, localidad, telefono, saldo, saldo_bloqueado, alta, baja, otp, sociedad, lider)
-values ('zappaco', 'sha1:64000:18:OSzPTY/zeDfGLB2iz2qYB7cyTmISEryN:f1yCiK+grKN/F+BbiKn/QTq8', 'Calle Alta, 41', '17501', 'Santiago de Compostela', 648572333, 200.0, 0.0, null, null,'EXI2KZIUCCGMR4EGYXEJJEXDN2GNMIUD','ubicorp', true );
+values ('zappaco', 'sha1:64000:18:OSzPTY/zeDfGLB2iz2qYB7cyTmISEryN:f1yCiK+grKN/F+BbiKn/QTq8', 'Calle Alta, 41', '17501', 'Santiago de Compostela', 648572333, 200.0, 0.0, null, null,null,'ubicorp', true );
 insert into empresa (usuario, cif, nombre)
 values ('zappaco', 'B-32552648', 'Zapatos Paco');
 
