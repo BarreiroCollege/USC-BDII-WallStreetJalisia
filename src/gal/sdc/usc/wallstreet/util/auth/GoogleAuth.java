@@ -12,6 +12,7 @@ import java.security.SecureRandom;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+// https://thegreyblog.blogspot.com/2011/12/google-authenticator-using-it-in-your.html
 public class GoogleAuth {
     private final static String HOST = "eMercado de Abastos";
 
