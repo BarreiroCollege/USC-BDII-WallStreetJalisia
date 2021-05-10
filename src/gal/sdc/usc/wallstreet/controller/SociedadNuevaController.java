@@ -53,15 +53,19 @@ public class SociedadNuevaController extends DatabaseLinker implements Initializ
             return;
         }
 
+        super.iniciarTransaccion();
+
         Sociedad s = new Sociedad.Builder()
                 .withSuperUsuario(new SuperUsuario.Builder(txtIdentificador.getText()).build())
                 .build();
 
-        if (super.getDAO(SociedadDAO.class).insertar(s)) {
-            super.getUsuarioSesion().getUsuario().setLider(true);
-            super.getUsuarioSesion().getUsuario().setSociedad(s);
-            super.getDAO(UsuarioDAO.class).actualizar(super.getUsuarioSesion().getUsuario());
+        super.getDAO(SociedadDAO.class).insertar(s);
 
+        super.getUsuarioSesion().getUsuario().setLider(true);
+        super.getUsuarioSesion().getUsuario().setSociedad(s);
+        super.getDAO(UsuarioDAO.class).actualizar(super.getUsuarioSesion().getUsuario());
+
+        if (super.ejecutarTransaccion()) {
             ((Stage) anchor.getScene().getWindow()).close();
             comunicador.onSuccess();
             comunicador = null;
