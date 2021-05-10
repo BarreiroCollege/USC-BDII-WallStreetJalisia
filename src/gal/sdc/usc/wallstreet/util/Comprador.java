@@ -21,21 +21,15 @@ public class Comprador extends DatabaseLinker {
     private final UsuarioComprador u;
     private final List<OfertaVenta> ofertaVentas;
     private final Integer cantidad;
-    private final Boolean esSociedad;
 
-    private Comprador(UsuarioComprador u, List<OfertaVenta> ofertasVenta, Integer cantidad, Boolean esSociedad) {
+    private Comprador(UsuarioComprador u, List<OfertaVenta> ofertasVenta, Integer cantidad) {
         this.u = u;
         this.ofertaVentas = ofertasVenta;
         this.cantidad = cantidad;
-        this.esSociedad = esSociedad;
     }
 
     public static Integer comprar(UsuarioComprador u, List<OfertaVenta> ofertasVenta, Integer cantidad) {
-        return Comprador.comprar(u, ofertasVenta, cantidad, false);
-    }
-
-    public static Integer comprar(UsuarioComprador u, List<OfertaVenta> ofertasVenta, Integer cantidad, Boolean esSociedad) {
-        Comprador c = new Comprador(u, ofertasVenta, cantidad, esSociedad);
+        Comprador c = new Comprador(u, ofertasVenta, cantidad);
         return c.comprar();
     }
 
