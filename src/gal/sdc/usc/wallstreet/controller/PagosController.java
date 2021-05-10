@@ -487,7 +487,7 @@ public class PagosController extends DatabaseLinker {
         }
 
         Participacion participacion = super.getDAO(ParticipacionDAO.class).seleccionar(pago.getEmpresa().getUsuario().getSuperUsuario(), pago.getEmpresa());
-        if (participacionesAQuitar > 0.0f && (participacion == null || participacion.getCantidad() < participacionesAQuitar)) {
+        if (participacionesAQuitar > 0.0f && (participacion == null || participacion.getCantidadDisponible() < participacionesAQuitar)) {
             Main.mensaje("No dispones de suficientes participaciones", 3);
             return false;
         }
