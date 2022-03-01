@@ -1,5 +1,9 @@
 # eMercado de Abastos
 
+## Memoria
+
+La memoria del proyecto está disponible en [este enlace a Google Docs](https://docs.google.com/document/d/1bgUnxa1-Yb4MkAcBiI0G1I_IZzglqv0DmBPf8d7ct0g/edit?usp=sharing).
+
 ## Instalación
 
 Este proyecto funciona en JDK 8. Sin embargo, si se desea ejecutar en la máquina
